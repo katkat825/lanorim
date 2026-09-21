@@ -1,0 +1,23 @@
+# Godot
+.godot/
+*.translation
+
+# .NET / C#
+.mono/
+[Bb]in/
+[Oo]bj/
+*.user
+*.userprefs
+
+# Raw asset downloads — large source material, never committed (see THIRD_PARTY.md)
+assets/
+
+# Runtime player saves — not part of the project
+saves/
+
+# Internal design scratch kept out of the repo (spreadsheets, raw notes, name ideas)
+_design_docs/
+
+# OS
+.DS_Store
+Thumbs.db
