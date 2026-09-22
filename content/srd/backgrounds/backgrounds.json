@@ -1,0 +1,24 @@
+{
+  "_": "SRD 5.2.1 backgrounds, CC-BY-4.0, kept light per decisions_checklist.md section 2: two skills, a little gear, and the +2/+1 to spend on three named abilities.",
+
+  "backgrounds": [
+    { "id": "acolyte", "skills": ["insight", "religion"], "abilities": ["int", "wis", "cha"],
+      "gear": ["holy_symbol"], "gold": 8 },
+    { "id": "artisan", "skills": ["investigation", "persuasion"],
+      "abilities": ["str", "dex", "int"], "gear": ["rope"], "gold": 32 },
+    { "id": "charlatan", "skills": ["deception", "sleight_of_hand"],
+      "abilities": ["dex", "con", "cha"], "gear": ["dagger"], "gold": 15 },
+    { "id": "criminal", "skills": ["sleight_of_hand", "stealth"],
+      "abilities": ["dex", "con", "int"], "gear": ["dagger", "thieves_tools"], "gold": 16 },
+    { "id": "guard", "skills": ["athletics", "perception"], "abilities": ["str", "int", "wis"],
+      "gear": ["spear", "light_crossbow"], "gold": 12 },
+    { "id": "hermit", "skills": ["medicine", "religion"], "abilities": ["con", "wis", "cha"],
+      "gear": ["quarterstaff"], "gold": 16 },
+    { "id": "sage", "skills": ["arcana", "history"], "abilities": ["con", "int", "wis"],
+      "gear": ["quarterstaff"], "gold": 8 },
+    { "id": "soldier", "skills": ["athletics", "intimidation"],
+      "abilities": ["str", "dex", "con"], "gear": ["spear", "shortbow"], "gold": 14 },
+    { "id": "wayfarer", "skills": ["insight", "stealth"], "abilities": ["dex", "wis", "cha"],
+      "gear": ["dagger", "rope"], "gold": 16 }
+  ]
+}

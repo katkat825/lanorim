@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://bl4n0r1mbrd01"]
+
+; THE MAP. Board builds every tile, wall and door from the MapLayout it is handed, so there is
+; nothing here to lay out square by square - the map builder makes the maps and this draws them.
+;
+; TO LAY OUT:
+;   - the four materials. They are the whole look of the map until the models arrive, and they
+;     want the painted-miniature shader on them rather than a StandardMaterial3D.
+;   - WallModel / DoorwayModel / RubbleModel: drop a Quaternius piece in each and BoardTiles uses
+;     it instead of the box it falls back to. It fits and turns the model itself, so a piece
+;     modelled at any scale still lands on the square.
+;   - Paint: the painted-miniature shader. It goes on the tiles AND on every mini, which is the
+;     point - one shader relighting everything identically is what makes four asset packs look
+;     like one game (ART_DIRECTION section 8).
+
+[ext_resource type="Script" path="res://Board/Board.cs" id="1_board"]
+[ext_resource type="PackedScene" uid="uid://bl4n0r1mmn101" path="res://Board/mini.tscn" id="2_mini"]
+[ext_resource type="Material" path="res://shaders/painted.tres" id="3_paint"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_mat"]
+albedo_color = Color(0.2, 0.21, 0.19, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Mat_wall"]
+albedo_color = Color(0.34, 0.32, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Mat_door"]
+albedo_color = Color(0.4, 0.27, 0.16, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_rough"]
+albedo_color = Color(0.3, 0.28, 0.23, 1)
+roughness = 1.0
+
+[node name="Board" type="Node3D"]
+script = ExtResource("1_board")
+CellSize = 0.06
+MiniScene = ExtResource("2_mini")
+Paint = ExtResource("3_paint")
+MatMaterial = SubResource("Mat_mat")
+WallMaterial = SubResource("Mat_wall")
+DoorMaterial = SubResource("Mat_door")
+RoughMaterial = SubResource("Mat_rough")

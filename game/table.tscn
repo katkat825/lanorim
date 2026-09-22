@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://bl4n0r1mtbl01"]
+
+; THE TABLE. One tray, one camera, one lamp - the least that can be looked at.
+;
+; TO LAY OUT (all of this is yours, ART_DIRECTION sections 4 and 7):
+;   - the table top itself: felt, a rulebook, pencils, a mug ring. Best cheap investment in
+;     identity there is, and it is where the menus and saves will live as objects.
+;   - the lamp. One warm key light over a table is the whole lighting model. The DirectionalLight3D
+;     below is a stand-in so the scene is not black; a real lamp is an OmniLight3D with a shade.
+;   - where the tray sits, and the lift. updated_decisions.md wants it small on the table, lifting
+;     to be thrown and settling back once the player has read it.
+;   - the grid map at three quarters of the screen, the GM screen, the companion, the help button.
+;
+; The camera is at the documented 60 degrees off the felt and turns in ninety-degree snaps (Q and
+; E; - and = zoom). Its subject is the tray for now because the tray is all there is; point it at
+; the board when the board arrives.
+
+[ext_resource type="Script" path="res://Table/Table.cs" id="1_table"]
+[ext_resource type="Script" path="res://Table/TableCamera.cs" id="2_camera"]
+[ext_resource type="PackedScene" uid="uid://bl4n0r1mtr4y1" path="res://Tray/dice_tray.tscn" id="3_tray"]
+[ext_resource type="PackedScene" uid="uid://bl4n0r1mbrd01" path="res://Board/board.tscn" id="4_board"]
+
+[sub_resource type="PlaneMesh" id="Mesh_tabletop"]
+size = Vector2(2.2, 1.7)
+
+[sub_resource type="StandardMaterial3D" id="Mat_tabletop"]
+albedo_color = Color(0.26, 0.19, 0.13, 1)
+roughness = 0.75
+
+[sub_resource type="Environment" id="Env_table"]
+background_mode = 1
+background_color = Color(0.06, 0.055, 0.05, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.5, 0.47, 0.42, 1)
+ambient_light_energy = 0.35
+tonemap_mode = 2
+
+[node name="Table" type="Node3D"]
+script = ExtResource("1_table")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_table")
+
+; a stand-in for the lamp: warm, from above and slightly to the near side, so the dice cast the
+; short shadows a table lamp gives them
+[node name="Lamp" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 1.2, 0.6)
+light_color = Color(1, 0.94, 0.86, 1)
+light_energy = 1.4
+shadow_enabled = true
+
+; A TABLE FOR THINGS TO SIT ON. Without it the board and the tray hang in black, which reads as a
+; bug rather than as a game. It is a plain brown quad and it is a stand-in: ART_DIRECTION section 7
+; wants felt, a rulebook, pencils, a lamp and a mug ring here, and calls it the best cheap
+; investment in identity there is.
+[node name="TableTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.004, 0)
+mesh = SubResource("Mesh_tabletop")
+material_override = SubResource("Mat_tabletop")
+
+; what the camera looks at: between the board and the tray, so both are in the picture. Move it
+; when the table is laid out properly and the framing follows it.
+[node name="Framing" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.14)
+
+; the map takes three quarters of the screen and the tray sits beside it, small, lifting to be
+; thrown (updated_decisions.md). Both of those placements are yours - what is here only puts them
+; in two different places so neither is inside the other.
+[node name="Board" parent="." instance=ExtResource("4_board")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.16)
+
+; NEVER SCALE THIS NODE. Every die in the tray is a RigidBody3D, and scaling their parent scales
+; the bodies and their collision shapes - but not gravity, which stays 9.8 m/s^2. A half-size tray
+; at full gravity behaves like a full-size tray at double gravity: the dice bounce relatively
+; higher and harder, and they leave. A 0.55 scale sat here briefly and 15% of throws ended up on
+; the floor, re-thrown at reduced energy, which measurably skewed the faces.
+;
+; To make the tray smaller, make the TRAY smaller - the box sizes in dice_tray.tscn - and re-run
+; check-dice.ps1, because bounce and size are what that check exists to measure.
+[node name="DiceTray" parent="." instance=ExtResource("3_tray")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
+
+[node name="TableCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 0.9, 0.52)
+script = ExtResource("2_camera")
+SubjectPath = NodePath("../Framing")
+Pitch = 60.0
+Nearest = 0.35
+Furthest = 2.2
+Zoom = 0.42

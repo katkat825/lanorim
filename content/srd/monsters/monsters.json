@@ -1,0 +1,186 @@
+{
+  "_": "SRD 5.2.1 monsters, CC-BY-4.0. 'challenge_times_ten' because JSON has no fractions we want to trust: CR 1/4 is 2 (rounded down from 2.5), CR 1/2 is 5. 'mini' names the Quaternius model per docs/v1_minis_map.md - several statblocks share one, which is how a small pack covers a big bestiary.",
+
+  "monsters": [
+    {
+      "id": "goblin", "hit_points": 7, "armor_class": 15, "speed": 30,
+      "challenge_times_ten": 2, "hit_die": "d6", "mini": "goblin",
+      "tags": ["humanoid", "goblinoid"],
+      "scores": { "str": 8, "dex": 15, "con": 10, "int": 10, "wis": 8, "cha": 8 },
+      "skills": ["stealth"],
+      "instincts": ["cautious"],
+      "attacks": [
+        { "id": "scimitar", "damage": "1d6", "damage_type": "slashing", "ability": "dex",
+          "finesse": true },
+        { "id": "goblin_shortbow", "damage": "1d6", "damage_type": "piercing", "ability": "dex",
+          "range": 16, "long_range": 64 }
+      ]
+    },
+    {
+      "id": "goblin_archer", "hit_points": 7, "armor_class": 13, "speed": 30,
+      "challenge_times_ten": 2, "hit_die": "d6", "mini": "goblin",
+      "tags": ["humanoid", "goblinoid"],
+      "scores": { "str": 8, "dex": 16, "con": 10, "int": 10, "wis": 8, "cha": 8 },
+      "skills": ["stealth"],
+      "instincts": ["skirmisher"],
+      "attacks": [
+        { "id": "goblin_shortbow", "damage": "1d6", "damage_type": "piercing", "ability": "dex",
+          "range": 16, "long_range": 64 },
+        { "id": "goblin_dagger", "damage": "1d4", "damage_type": "piercing", "ability": "dex",
+          "finesse": true }
+      ]
+    },
+    {
+      "id": "goblin_boss", "hit_points": 21, "armor_class": 17, "speed": 30,
+      "challenge_times_ten": 10, "hit_die": "d6", "mini": "goblin",
+      "tags": ["humanoid", "goblinoid"],
+      "scores": { "str": 10, "dex": 14, "con": 10, "int": 10, "wis": 8, "cha": 10 },
+      "multiattack": 2,
+      "instincts": ["finisher"],
+      "attacks": [
+        { "id": "scimitar", "damage": "1d6", "damage_type": "slashing", "ability": "dex",
+          "finesse": true, "damage_bonus": 2 }
+      ]
+    },
+    {
+      "id": "skeleton", "hit_points": 13, "armor_class": 13, "speed": 30,
+      "challenge_times_ten": 2, "hit_die": "d8", "mini": "skeleton",
+      "tags": ["undead"],
+      "scores": { "str": 10, "dex": 14, "con": 15, "int": 6, "wis": 8, "cha": 5 },
+      "defenses": { "poison": "immune", "bludgeoning": "vulnerable" },
+      "instincts": ["stubborn"],
+      "attacks": [
+        { "id": "rusted_shortsword", "damage": "1d6", "damage_type": "piercing", "ability": "dex",
+          "finesse": true }
+      ]
+    },
+    {
+      "id": "zombie", "hit_points": 22, "armor_class": 8, "speed": 20,
+      "challenge_times_ten": 2, "hit_die": "d8", "mini": "zombie",
+      "tags": ["undead"],
+      "scores": { "str": 13, "dex": 6, "con": 16, "int": 3, "wis": 6, "cha": 5 },
+      "defenses": { "poison": "immune" },
+      "instincts": ["stubborn"],
+      "attacks": [
+        { "id": "slam", "damage": "1d6", "damage_type": "bludgeoning" }
+      ]
+    },
+    {
+      "id": "bandit", "hit_points": 11, "armor_class": 12, "speed": 30,
+      "challenge_times_ten": 1, "hit_die": "d8", "mini": "bandit",
+      "tags": ["humanoid"],
+      "scores": { "str": 11, "dex": 12, "con": 12, "int": 10, "wis": 10, "cha": 10 },
+      "attacks": [
+        { "id": "bandit_scimitar", "damage": "1d6", "damage_type": "slashing", "ability": "dex",
+          "finesse": true },
+        { "id": "bandit_crossbow", "damage": "1d8", "damage_type": "piercing", "ability": "dex",
+          "range": 16, "long_range": 64 }
+      ]
+    },
+    {
+      "id": "cultist", "hit_points": 9, "armor_class": 12, "speed": 30,
+      "challenge_times_ten": 1, "hit_die": "d8", "mini": "bandit",
+      "tags": ["humanoid"],
+      "scores": { "str": 11, "dex": 12, "con": 10, "int": 10, "wis": 11, "cha": 10 },
+      "skills": ["deception", "religion"],
+      "attacks": [
+        { "id": "cultist_scimitar", "damage": "1d6", "damage_type": "slashing", "ability": "dex",
+          "finesse": true }
+      ]
+    },
+    {
+      "id": "wolf", "hit_points": 11, "armor_class": 13, "speed": 40,
+      "challenge_times_ten": 2, "hit_die": "d8", "mini": "wolf",
+      "tags": ["beast"],
+      "scores": { "str": 14, "dex": 15, "con": 12, "int": 3, "wis": 12, "cha": 6 },
+      "skills": ["perception", "stealth"],
+      "instincts": ["finisher"],
+      "attacks": [
+        { "id": "bite", "damage": "2d4", "damage_type": "piercing" }
+      ]
+    },
+    {
+      "id": "dire_wolf", "hit_points": 37, "armor_class": 14, "speed": 50,
+      "challenge_times_ten": 10, "hit_die": "d10", "mini": "wolf",
+      "tags": ["beast"],
+      "scores": { "str": 17, "dex": 15, "con": 15, "int": 3, "wis": 12, "cha": 7 },
+      "skills": ["perception", "stealth"],
+      "instincts": ["finisher"],
+      "attacks": [
+        { "id": "dire_bite", "damage": "2d6", "damage_type": "piercing" }
+      ]
+    },
+    {
+      "id": "giant_spider", "hit_points": 26, "armor_class": 14, "speed": 30,
+      "challenge_times_ten": 10, "hit_die": "d10", "mini": "spider",
+      "tags": ["beast"],
+      "scores": { "str": 14, "dex": 16, "con": 12, "int": 2, "wis": 11, "cha": 4 },
+      "skills": ["stealth"],
+      "instincts": ["skirmisher"],
+      "attacks": [
+        { "id": "spider_bite", "damage": "1d8", "damage_type": "piercing", "ability": "dex",
+          "finesse": true },
+        { "id": "web_line", "damage": "1d6", "damage_type": "bludgeoning", "ability": "dex",
+          "range": 6, "long_range": 12 }
+      ]
+    },
+    {
+      "id": "ogre", "hit_points": 59, "armor_class": 11, "speed": 40,
+      "challenge_times_ten": 20, "hit_die": "d10", "mini": "ogre",
+      "tags": ["giant"],
+      "scores": { "str": 19, "dex": 8, "con": 16, "int": 5, "wis": 7, "cha": 7 },
+      "instincts": ["stubborn"],
+      "attacks": [
+        { "id": "greatclub_swing", "damage": "2d8", "damage_type": "bludgeoning" },
+        { "id": "thrown_rock", "damage": "2d6", "damage_type": "bludgeoning",
+          "range": 6, "long_range": 24 }
+      ]
+    },
+    {
+      "id": "werewolf", "hit_points": 58, "armor_class": 12, "speed": 30,
+      "challenge_times_ten": 30, "hit_die": "d8", "mini": "werewolf",
+      "tags": ["humanoid", "shapechanger"],
+      "scores": { "str": 15, "dex": 13, "con": 14, "int": 10, "wis": 11, "cha": 10 },
+      "skills": ["perception", "stealth"],
+      "defenses": { "bludgeoning": "resistant", "piercing": "resistant", "slashing": "resistant" },
+      "multiattack": 2,
+      "instincts": ["finisher"],
+      "attacks": [
+        { "id": "claw", "damage": "2d4", "damage_type": "slashing" },
+        { "id": "werewolf_bite", "damage": "1d8", "damage_type": "piercing", "damage_bonus": 2 }
+      ]
+    },
+    {
+      "id": "imp", "hit_points": 10, "armor_class": 13, "speed": 20,
+      "challenge_times_ten": 10, "hit_die": "d4", "mini": "imp",
+      "tags": ["fiend"],
+      "scores": { "str": 6, "dex": 17, "con": 13, "int": 11, "wis": 12, "cha": 14 },
+      "skills": ["deception", "insight", "persuasion", "stealth"],
+      "saves": ["dex", "cha"],
+      "defenses": { "fire": "immune", "poison": "immune", "cold": "resistant" },
+      "instincts": ["skirmisher", "cautious"],
+      "attacks": [
+        { "id": "sting", "damage": "1d4", "damage_type": "piercing", "ability": "dex",
+          "finesse": true },
+        { "id": "imp_bolt", "damage": "1d6", "damage_type": "fire", "ability": "cha",
+          "range": 12, "long_range": 24 }
+      ]
+    },
+    {
+      "id": "death_knight", "hit_points": 180, "armor_class": 20, "speed": 30,
+      "challenge_times_ten": 170, "hit_die": "d10", "mini": "death_knight",
+      "tags": ["undead"],
+      "scores": { "str": 20, "dex": 11, "con": 20, "int": 12, "wis": 16, "cha": 18 },
+      "saves": ["dex", "wis", "cha"],
+      "defenses": { "poison": "immune", "necrotic": "immune" },
+      "multiattack": 2,
+      "instincts": ["finisher"],
+      "attacks": [
+        { "id": "dread_longsword", "damage": "2d8", "damage_type": "slashing",
+          "damage_bonus": 5 },
+        { "id": "hellfire_orb", "damage": "6d6", "damage_type": "fire", "ability": "cha",
+          "range": 24, "long_range": 48 }
+      ]
+    }
+  ]
+}

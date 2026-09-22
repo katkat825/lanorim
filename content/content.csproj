@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Content</RootNamespace>
+    <AssemblyName>Content</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../core/core.csproj" />
+  </ItemGroup>
+
+  <!-- SRD 5.2.1 reference data travels inside the assembly, not beside it: the sim, the tests and
+       Godot all get the same bytes with no path resolution and nothing to forget in an export
+       filter. Campaign packs are the opposite - those stay loose on disk so a Workshop author can
+       edit them in a text editor. -->
+  <ItemGroup>
+    <EmbeddedResource Include="srd/**/*.json" />
+  </ItemGroup>
+
+  <!-- never references Godot either -->
+
+</Project>

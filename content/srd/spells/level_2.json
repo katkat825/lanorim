@@ -1,0 +1,194 @@
+{
+  "_": "SRD 5.2.1 level 2 spells, CC-BY-4.0. Ranges are in squares: one square is five feet.",
+
+  "spells": [
+    {
+      "id": "hold_person",
+      "level": 2,
+      "school": "enchantment",
+      "range": 12,
+      "concentration": true,
+      "classes": ["mage", "cleric", "druid"],
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "condition": "stunned",
+          "save": "wis",
+          "on_save": "negates",
+          "duration": "concentration"
+        }
+      ]
+    },
+    {
+      "id": "invisibility",
+      "level": 2,
+      "school": "illusion",
+      "range": 0,
+      "concentration": true,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "sway": 5,
+          "touches": "checks",
+          "skill": "stealth",
+          "duration": "concentration"
+        },
+        {
+          "primitive": "sway",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "sway": 0,
+          "sway_dice": "1d4",
+          "touches": "attacks",
+          "duration": "concentration",
+          "note": "unseen attackers roll with advantage in SRD; v1 spends the boon system's die on it"
+        }
+      ]
+    },
+    {
+      "id": "lesser_restoration",
+      "level": 2,
+      "school": "abjuration",
+      "range": 0,
+      "classes": ["cleric", "druid", "paladin"],
+      "effects": [
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "poisoned"
+        },
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "frightened"
+        }
+      ]
+    },
+    {
+      "id": "mirror_image",
+      "level": 2,
+      "school": "illusion",
+      "range": 0,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "caster",
+          "sway": 3,
+          "touches": "armor_class",
+          "duration": "encounter",
+          "note": "SRD tracks three duplicates and rolls to see which is hit; v1 spends the same expected value as armor class, because a duplicate ledger is a subsystem for one spell"
+        }
+      ]
+    },
+    {
+      "id": "misty_step",
+      "level": 2,
+      "school": "conjuration",
+      "range": 6,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "shift",
+          "reach": "caster",
+          "note": "teleport to a seen square within range; the board layer moves the mini"
+        }
+      ]
+    },
+    {
+      "id": "scorching_ray",
+      "level": 2,
+      "school": "evocation",
+      "range": 24,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creatures",
+          "targets": 3,
+          "extra_targets_per_level": 1,
+          "amount": "2d6",
+          "damage_type": "fire",
+          "attack_roll": true
+        }
+      ]
+    },
+    {
+      "id": "shatter",
+      "level": 2,
+      "school": "evocation",
+      "range": 12,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "burst",
+          "radius": 2,
+          "amount": "3d8",
+          "per_extra_level": "1d8",
+          "damage_type": "thunder",
+          "save": "con",
+          "on_save": "half"
+        }
+      ]
+    },
+    {
+      "id": "spiritual_weapon",
+      "level": 2,
+      "school": "evocation",
+      "range": 12,
+      "concentration": true,
+      "classes": ["cleric", "paladin"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "1d8",
+          "per_extra_level": "1d8",
+          "damage_type": "force",
+          "attack_roll": true
+        },
+        {
+          "primitive": "summon",
+          "reach": "place",
+          "duration": "concentration",
+          "note": "the floating weapon is a marker on the board, not a second controllable actor"
+        }
+      ]
+    },
+    {
+      "id": "web",
+      "level": 2,
+      "school": "conjuration",
+      "range": 12,
+      "concentration": true,
+      "classes": ["mage", "druid"],
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "burst",
+          "radius": 2,
+          "condition": "restrained",
+          "save": "dex",
+          "on_save": "negates",
+          "duration": "concentration"
+        },
+        {
+          "primitive": "zone",
+          "reach": "place",
+          "radius": 2,
+          "duration": "concentration"
+        }
+      ]
+    }
+  ]
+}

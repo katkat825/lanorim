@@ -1,0 +1,36 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+; THE PAINTED MINIATURE, as a material you can drop on things. One of these on the Board's Paint
+; slot puts it on every tile, prop and mini at once - PaintedModel.Paint walks a whole model and
+; overrides every mesh in it, so a Quaternius character with six materials comes out as one
+; painted figure.
+;
+; EVERY NUMBER IN IT IS A DIAL AND THEY ARE MEANT TO BE TURNED. The shader says so at the top of
+; the file and ART_DIRECTION section 8 says it again: "Do not author them blind. This is the
+; natural home for the screenshot loop - apply the shader, screenshot the table, adjust the dials
+; against feedback, repeat."
+;
+; The values here are the shader's own defaults, written out so they are visible in the inspector
+; rather than hidden behind an empty resource. Nothing about them has been judged by eye, because
+; the only eyes on this project so far have been unable to see.
+
+[ext_resource type="Shader" path="res://shaders/painted_miniature.gdshader" id="1_shader"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/tint = Color(1, 1, 1, 1)
+shader_parameter/bands = 3
+shader_parameter/band_blend = 0.14
+shader_parameter/shade_floor = 0.28
+shader_parameter/albedo_in_light = 0.0
+shader_parameter/liner = Color(0.086, 0.075, 0.102, 1)
+shader_parameter/liner_width = 0.45
+shader_parameter/liner_strength = 0.5
+shader_parameter/primer = Color(0.42, 0.41, 0.4, 1)
+shader_parameter/primer_depth = 0.28
+shader_parameter/brush_strength = 0.08
+shader_parameter/brush_scale = 55.0
+shader_parameter/brush_stretch = 4.0
+shader_parameter/varnish = 0.06
+shader_parameter/varnish_tightness = 22.0

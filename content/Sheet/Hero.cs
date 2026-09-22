@@ -1,0 +1,430 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Content.Classes;
+using Content.Inventory;
+using Content.Items;
+using Content.Species;
+using Core.Characters;
+using Core.Combat;
+using Core.Dice;
+using Core.Magic;
+using Core.Resolution;
+using Core.Rules;
+
+namespace Content.Sheet
+{
+    // the whole character: the Actor the rules roll against, plus everything the rules do not
+    // need to know about - which class it is, what is in the pack, which spells are on the card
+    // rack. the character sheet UI binds to this; nothing here draws anything.
+    public sealed class Hero
+    {
+        public Hero(string name, CharacterClass cls, Kind species, Background background,
+                    AbilityScores scores, int level = 1, Kind lineage = null)
+        {
+            Name = name ?? "";
+            Class = cls ?? throw new ArgumentNullException(nameof(cls));
+            Species = species ?? throw new ArgumentNullException(nameof(species));
+            Background = background;
+            Lineage = lineage;
+
+            Actor = new Actor(Id(name), level, scores ?? new AbilityScores(), Allegiance.Hero);
+
+            Pack = new Pack();
+            Equipment = new Equipment();
+        }
+
+        // the player types a name, so it is not a localization key - it is the one string in the
+        // game that is neither authored nor translated
+        public string Name { get; set; }
+
+        public Actor Actor { get; }
+
+        public CharacterClass Class { get; }
+
+        public Kind Species { get; }
+
+        public Kind Lineage { get; }
+
+        public Background Background { get; }
+
+        public Pack Pack { get; }
+
+        public Equipment Equipment { get; }
+
+        public Caster Caster { get; private set; }
+
+        public int Level => Actor.Level;
+
+        public bool Casts => Caster != null;
+
+        static string Id(string name)
+        {
+            // the actor id has to survive being a key segment; the player's own spelling does not
+            var id = new System.Text.StringBuilder();
+
+            foreach (char c in (name ?? "").ToLowerInvariant())
+                if (c >= 'a' && c <= 'z' || c >= '0' && c <= '9') id.Append(c);
+                else if (c == ' ' || c == '_' || c == '-') id.Append('_');
+
+            return id.Length == 0 ? "hero" : id.ToString();
+        }
+
+        public IEnumerable<Feature> Features =>
+            Class.By(Level).Concat(Species.Features.Where(f => f.Level <= Level))
+                 .Concat(Lineage?.Features.Where(f => f.Level <= Level) ??
+                         Enumerable.Empty<Feature>());
+
+        // what the "Special" section of the sheet lists: the things with a button on them
+        public IEnumerable<Feature> Activatable => Features.Where(f => f.IsActive);
+
+        public IEnumerable<Attack> Attacks => Equipment.Attacks;
+
+        public IEnumerable<Spell> Spells => Caster?.Known ?? Enumerable.Empty<Spell>();
+
+
+        // --- building -------------------------------------------------------------------------
+
+        // everything the class, species, background and gear do to the actor, applied in the SRD
+        // order: species and background before the class, because the class's hit points read
+        // Constitution after the background has raised it.
+        public void Build(IReadOnlyDictionary<Ability, int> backgroundSpend = null,
+                          IEnumerable<Skill> chosenSkills = null,
+                          IEnumerable<Skill> expertise = null,
+                          ItemShelf shelf = null,
+                          IEnumerable<Spell> spells = null)
+        {
+            Species.Outfit(Actor, Level);
+            Lineage?.Outfit(Actor, Level);
+            Background?.Outfit(Actor, backgroundSpend);
+
+            Class.Outfit(Actor, Level, chosenSkills);
+
+            foreach (Skill skill in expertise ?? Enumerable.Empty<Skill>())
+                Actor.Train(skill, Training.Expert);
+
+            // the ASI levels: feats are deferred, so each is a straight +2 to spend
+            // (decisions_checklist.md section 1). the sheet spends it on the class's first
+            // priority until that hits 20, then the second.
+            for (int i = 0; i < AbilityScoreImprovements(Level); i++) SpendImprovement();
+
+            // hit points are read after the bumps, so they have to be set again
+            Actor.SetHealth(new Health(
+                Class.HitPointsAt(Level, Actor.AbilityModifier(Ability.Constitution)),
+                Class.HitDie, Level));
+
+            if (Class.Casts)
+            {
+                Caster = new Caster(Actor, Class.CastingAbility.Value);
+
+                foreach (Spell spell in spells ?? Enumerable.Empty<Spell>()) Caster.Learn(spell);
+
+                Actor.ManaMax = Class.ManaAt(Level, Actor.AbilityModifier(Class.CastingAbility.Value));
+                Actor.FillMana();
+            }
+
+            if (shelf != null) Kit(shelf);
+
+            Budget = BuildBudget();
+        }
+
+        // SRD grants one at 4, 8, 12, 16 and 19
+        public static int AbilityScoreImprovements(int level) =>
+            new[] { 4, 8, 12, 16, 19 }.Count(l => level >= l);
+
+        public const int ImprovementPoints = 2;
+
+        public void SpendImprovement()
+        {
+            foreach (Ability ability in Class.Priority.Concat(Abilities.All))
+            {
+                if (Actor.Scores.Base(ability) >= Abilities.Ceiling - 1) continue;
+
+                Actor.Scores.Raise(ability, ImprovementPoints);
+                return;
+            }
+        }
+
+        void Kit(ItemShelf shelf)
+        {
+            foreach (string id in Class.StartingGear.Concat(Background?.Gear ??
+                                                            Enumerable.Empty<string>()))
+            {
+                Item item = shelf.Find(id);
+
+                if (item == null) continue;
+
+                Pack.Take(item);
+            }
+
+            Pack.Earn(Background?.Gold ?? 0);
+
+            // put the best of it on: the highest armor class body armor it may wear, a shield if
+            // the class trains with one, and the biggest weapon
+            foreach (Item armor in Pack.Stacks.Select(s => s.Item)
+                                      .Where(i => i.Kind == ItemKind.Armor &&
+                                                  i.Armor.HasValue &&
+                                                  Class.ArmorTraining.Contains(i.Armor.Value.Weight))
+                                      .OrderByDescending(i => i.Armor.Value.BaseArmorClass)
+                                      .Take(1))
+                Wear(armor);
+
+            Item weapon = Pack.Stacks.Select(s => s.Item)
+                              .Where(i => i.Attack != null && i.Slot != Slot.TwoHand)
+                              .OrderByDescending(i => i.Attack.Damage.Average)
+                              .FirstOrDefault()
+                       ?? Pack.Stacks.Select(s => s.Item)
+                              .Where(i => i.Attack != null)
+                              .OrderByDescending(i => i.Attack.Damage.Average)
+                              .FirstOrDefault();
+
+            if (weapon != null) Wear(weapon);
+
+            if (Class.Shields)
+                foreach (Item shield in Pack.Stacks.Select(s => s.Item)
+                                            .Where(i => i.Kind == ItemKind.Shield).Take(1))
+                    Wear(shield);
+
+            foreach (Item trinket in Pack.Stacks.Select(s => s.Item)
+                                         .Where(i => i.Slot == Slot.Trinket).Take(1))
+                Wear(trinket);
+        }
+
+        // wearing something takes it out of the pack, and whatever comes off goes back in
+        public bool Wear(Item item)
+        {
+            if (item == null || Equipment.Refuses(item, Actor, Class.Id) != null) return false;
+
+            IReadOnlyList<Item> off = Equipment.Wear(item, Actor, Class.Id);
+
+            Pack.Drop(item.Id);
+
+            foreach (Item was in off) Pack.Take(was);
+
+            return true;
+        }
+
+        public bool TakeOff(Slot slot)
+        {
+            Item was = Equipment.Remove(slot, Actor);
+
+            if (was == null) return false;
+
+            Pack.Take(was);
+            return true;
+        }
+
+
+        // --- the action economy ------------------------------------------------------------
+
+        public ActionBudget Budget { get; private set; } = new ActionBudget();
+
+        ActionBudget BuildBudget()
+        {
+            var budget = new ActionBudget();
+
+            foreach (Feature feature in Features.Where(f => f.Trait == Trait.ActionGrant))
+            {
+                int how = Math.Max(1, feature.Count);
+
+                if (feature.Uses > 0)
+                {
+                    budget.ExtraActionsPerLongRest += feature.Uses;
+                    continue;
+                }
+
+                switch (feature.Grants)
+                {
+                    case Grants.BonusAction:
+                        budget.ExtraBonusActionsEachRound += how;
+                        break;
+
+                    case Grants.Reaction:
+                        budget.ExtraReactionsEachRound += how;
+                        break;
+
+                    default:
+                        budget.ExtraActionsEachRound += how;
+                        break;
+                }
+            }
+
+            budget.LongRest();
+
+            return budget;
+        }
+
+
+        // --- hitting things ------------------------------------------------------------------
+
+        // every rider the hero's features hand to a blow. the fight layer asks once per attack;
+        // whether Sneak Attack fires is a question about the attack, not about the Rogue.
+        public IReadOnlyList<Rider> RidersFor(bool hadAdvantage, bool spent = false) =>
+            Features.Select(f => f.RiderFor(Level, hadAdvantage, spent))
+                    .Where(r => r != null)
+                    .ToList();
+
+        public Blow Hit(Encounter fight, Turn turn, Actor target, Attack attack,
+                        bool spendResource = false)
+        {
+            if (fight == null || turn == null || attack == null) return null;
+
+            // Sneak Attack's setup: whether the attack has advantage is worked out before the
+            // roll, so the rider can be handed to it rather than patched on afterwards
+            bool advantage = Actor.AttackAdvantage.And(target.AdvantageAgainstMe) ==
+                             Advantage.Advantage;
+
+            return fight.Hit(turn, target, attack, Spend.Action, Advantage.Flat,
+                             RidersFor(advantage, spendResource));
+        }
+
+
+        // --- stances and recovery -------------------------------------------------------------
+
+        readonly Dictionary<string, int> _spent = new Dictionary<string, int>();
+
+        public int UsesLeft(Feature feature) =>
+            feature == null || feature.Uses <= 0
+                ? int.MaxValue
+                : feature.Uses - (_spent.TryGetValue(feature.Id, out int used) ? used : 0);
+
+        public bool Invoke(Feature feature, IResolver resolver = null)
+        {
+            if (feature == null || UsesLeft(feature) <= 0) return false;
+
+            switch (feature.Trait)
+            {
+                case Trait.Stance:
+                    Boon boon = feature.BoonFor(Level);
+
+                    if (boon == null) return false;
+
+                    Actor.Boons.Add(boon);
+                    break;
+
+                case Trait.Recovery:
+                    if (resolver == null) return false;
+
+                    Actor.Mend(Math.Max(feature.Flat,
+                                        resolver.Roll(feature.AmountAt(Level)) + feature.Flat));
+                    break;
+
+                default:
+                    return false;
+            }
+
+            if (feature.Uses > 0)
+                _spent[feature.Id] = (_spent.TryGetValue(feature.Id, out int used) ? used : 0) + 1;
+
+            return true;
+        }
+
+        public bool EndStance(Feature feature)
+        {
+            if (feature == null) return false;
+
+            return Actor.Boons.EndFrom(feature.Id) > 0;
+        }
+
+        // the Orc's Relentless Endurance and the Barbarian's Relentless Rage: at 0 hit points,
+        // spend a use and stay up on one instead of taking the death save
+        public Feature DeathIntercept =>
+            Features.FirstOrDefault(f => f.Trait == Trait.DeathIntercept && UsesLeft(f) > 0);
+
+        public bool Intercept()
+        {
+            Feature intercept = DeathIntercept;
+
+            if (intercept == null || !Actor.IsDown || Actor.IsDead) return false;
+
+            Actor.Health.Revive(Math.Max(1, intercept.Flat));
+            Actor.Remove(Condition.Unconscious);
+
+            _spent[intercept.Id] =
+                (_spent.TryGetValue(intercept.Id, out int used) ? used : 0) + 1;
+
+            return true;
+        }
+
+
+        // --- resting ---------------------------------------------------------------------------
+
+        // short rest: spend hit dice by choice, and everything per-rest comes back
+        public int ShortRest(IResolver resolver, int hitDiceToSpend = 0)
+        {
+            int healed = 0;
+
+            for (int i = 0; i < hitDiceToSpend; i++)
+                healed += Actor.Health.SpendHitDie(resolver,
+                                                   Actor.AbilityModifier(Ability.Constitution));
+
+            Actor.ShortRest();
+
+            _spent.Clear();
+            Budget.LongRest();
+
+            Equipment.Apply(Actor);
+
+            return healed;
+        }
+
+        // long rest: full hit points, the delta from SRD (updated_decisions.md)
+        public void LongRest()
+        {
+            Actor.LongRest();
+
+            _spent.Clear();
+            Budget.LongRest();
+
+            Equipment.Apply(Actor);
+        }
+
+        public void FightOver()
+        {
+            Actor.Boons.FightOver();
+            Actor.EndConcentration();
+            Equipment.Apply(Actor);
+        }
+
+        // milestone levelling: the campaign says when, and the sheet is rebuilt at the new level
+        public void LevelTo(int level, IReadOnlyDictionary<Ability, int> backgroundSpend = null)
+        {
+            if (level <= Level) return;
+
+            int was = Level;
+
+            Actor.SetLevel(level);
+
+            for (int i = AbilityScoreImprovements(was); i < AbilityScoreImprovements(level); i++)
+                SpendImprovement();
+
+            foreach (Feature feature in Features) feature.Grant(Actor, level);
+
+            int wasCurrent = Actor.Health.Current;
+            int wasMax = Actor.Health.Maximum;
+
+            Actor.SetHealth(new Health(
+                Class.HitPointsAt(level, Actor.AbilityModifier(Ability.Constitution)),
+                Class.HitDie, level));
+
+            // levelling is not healing: the damage already taken comes with you
+            Actor.Health.Take(Math.Max(0, wasMax - wasCurrent));
+
+            if (Class.Casts)
+            {
+                Actor.ManaMax = Class.ManaAt(level,
+                                             Actor.AbilityModifier(Class.CastingAbility.Value));
+                Actor.GrantMana(Actor.ManaMax);
+            }
+
+            Budget = BuildBudget();
+            Equipment.Apply(Actor);
+        }
+
+        public override string ToString() =>
+            $"{Name} the level {Level} {Species.Id} {Class.Id}: {Actor.Health}, " +
+            $"ac {Actor.ArmorClass}" +
+            (Casts ? $", {Actor.Mana}/{Actor.ManaMax} mana, {Caster.Known.Count} spells" : "") +
+            $", {Pack}";
+    }
+}

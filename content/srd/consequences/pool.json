@@ -1,0 +1,35 @@
+{
+  "_": "The nat-1 / nat-20 consequence pool. This is a Lanorim delta, not SRD: the check still passes or fails on its numbers alone, and the natural 1 or 20 draws from here regardless (docs/updated_decisions.md, skill checks). The two worked examples in that doc - the stubbed toe and the found pouch - are the first entry on each side. A campaign adds its own with ConsequencePool.With.",
+
+  "consequences": [
+    { "id": "stubbed_toe", "polarity": "bane", "kind": "health", "amount": "1d4", "weight": 3 },
+    { "id": "wrenched_shoulder", "polarity": "bane", "kind": "health", "amount": "1d6",
+      "weight": 2 },
+    { "id": "that_took_it_out_of_you", "polarity": "bane", "kind": "ability_shift",
+      "ability": "wis", "amount": "-1", "weight": 3 },
+    { "id": "rattled", "polarity": "bane", "kind": "ability_shift", "ability": "cha",
+      "amount": "-1", "weight": 2 },
+    { "id": "aching_arms", "polarity": "bane", "kind": "ability_shift", "ability": "str",
+      "amount": "-1", "weight": 2 },
+    { "id": "a_nasty_landing", "polarity": "bane", "kind": "condition", "condition": "prone",
+      "weight": 2 },
+    { "id": "something_in_the_air", "polarity": "bane", "kind": "condition",
+      "condition": "poisoned", "weight": 1 },
+    { "id": "dropped_your_purse", "polarity": "bane", "kind": "gold", "amount": "1d6",
+      "scales_with_level": true, "weight": 2 },
+    { "id": "a_bad_feeling", "polarity": "bane", "kind": "flavour", "weight": 3 },
+
+    { "id": "a_pouch_on_the_floor", "polarity": "boon", "kind": "gold", "amount": "5",
+      "scales_with_level": true, "weight": 3 },
+    { "id": "that_went_well", "polarity": "boon", "kind": "ability_shift", "ability": "cha",
+      "amount": "1", "weight": 3 },
+    { "id": "steady_hands", "polarity": "boon", "kind": "ability_shift", "ability": "dex",
+      "amount": "1", "weight": 2 },
+    { "id": "clear_headed", "polarity": "boon", "kind": "ability_shift", "ability": "int",
+      "amount": "1", "weight": 2 },
+    { "id": "second_breath", "polarity": "boon", "kind": "health", "amount": "1d6", "weight": 2 },
+    { "id": "back_on_your_feet", "polarity": "boon", "kind": "condition", "condition": "prone",
+      "weight": 1 },
+    { "id": "a_good_omen", "polarity": "boon", "kind": "flavour", "weight": 3 }
+  ]
+}

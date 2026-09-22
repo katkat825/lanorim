@@ -1,0 +1,149 @@
+[gd_scene format=3 uid="uid://bl4n0r1mtr4y1"]
+
+; THE TRAY IS AN OBJECT, NOT A ROOM. It has no camera, no light and no environment of its own, so
+; opening this scene alone renders black - which is correct. Open res://table.tscn to see it.
+;
+; The floor is one box and the walls are four more, in TWO StaticBody3D: physics_material_override
+; lives on the body, not on the shape, so a felt floor and wooden walls have to be two bodies or
+; they would share one bounce. DiceTray measures all of it at _Ready, so moving a wall moves the
+; tray's idea of where the felt ends without anything here being told twice.
+;
+; The walls lean outward by about eight degrees (that is the 0.99/0.139 in their transforms) so a
+; die that reaches one is turned back down rather than stopped dead.
+;
+; EIGHT SEATS. A check is one d20, advantage is two, and damage is a handful - eight covers a
+; Fireball's 8d6 in one throw. Anything larger (Meteor Swarm is 20d6) the tray throws in
+; successive handfuls, the way a person does, and adds them up.
+;
+; TO LAY OUT: the throw points are guesses at where a hand lets go. They want an eye on them -
+; dice that leave on the same arc land on top of each other, and that is where cocked landings
+; come from. Nudge them, throw a few hundred, and see.
+
+[ext_resource type="Script" path="res://Tray/DiceTray.cs" id="1_tray"]
+[ext_resource type="PackedScene" uid="uid://bl4n0r1md1e01" path="res://Dice/die.tscn" id="2_die"]
+[ext_resource type="Resource" path="res://Tray/skins/wood.tres" id="3_skin"]
+
+[sub_resource type="BoxShape3D" id="Shape_floor"]
+size = Vector3(0.64, 0.02, 0.49)
+
+[sub_resource type="BoxMesh" id="Mesh_floor"]
+size = Vector3(0.64, 0.02, 0.49)
+
+[sub_resource type="BoxShape3D" id="Shape_wall_x"]
+size = Vector3(0.02, 0.12, 0.49)
+
+[sub_resource type="BoxMesh" id="Mesh_wall_x"]
+size = Vector3(0.02, 0.12, 0.49)
+
+[sub_resource type="BoxShape3D" id="Shape_wall_z"]
+size = Vector3(0.64, 0.12, 0.02)
+
+[sub_resource type="BoxMesh" id="Mesh_wall_z"]
+size = Vector3(0.64, 0.12, 0.02)
+
+[node name="DiceTray" type="Node3D"]
+script = ExtResource("1_tray")
+Skin = ExtResource("3_skin")
+
+[node name="TrayFloor" type="StaticBody3D" parent="."]
+
+[node name="Floor" type="CollisionShape3D" parent="TrayFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0)
+shape = SubResource("Shape_floor")
+
+[node name="Mesh" type="MeshInstance3D" parent="TrayFloor/Floor"]
+mesh = SubResource("Mesh_floor")
+
+[node name="TrayWalls" type="StaticBody3D" parent="."]
+
+[node name="WallEast" type="CollisionShape3D" parent="TrayWalls"]
+transform = Transform3D(0.990268, -0.139173, 0, 0.139173, 0.990268, 0, 0, 0, 1, 0.31, 0.055, 0)
+shape = SubResource("Shape_wall_x")
+
+[node name="Mesh" type="MeshInstance3D" parent="TrayWalls/WallEast"]
+mesh = SubResource("Mesh_wall_x")
+
+[node name="WallWest" type="CollisionShape3D" parent="TrayWalls"]
+transform = Transform3D(0.990268, 0.139173, 0, -0.139173, 0.990268, 0, 0, 0, 1, -0.31, 0.055, 0)
+shape = SubResource("Shape_wall_x")
+
+[node name="Mesh" type="MeshInstance3D" parent="TrayWalls/WallWest"]
+mesh = SubResource("Mesh_wall_x")
+
+[node name="WallNear" type="CollisionShape3D" parent="TrayWalls"]
+transform = Transform3D(1, 0, 0, 0, 0.990268, 0.139173, 0, -0.139173, 0.990268, 0, 0.055, 0.235)
+shape = SubResource("Shape_wall_z")
+
+[node name="Mesh" type="MeshInstance3D" parent="TrayWalls/WallNear"]
+mesh = SubResource("Mesh_wall_z")
+
+[node name="WallFar" type="CollisionShape3D" parent="TrayWalls"]
+transform = Transform3D(1, 0, 0, 0, 0.990268, -0.139173, 0, 0.139173, 0.990268, 0, 0.055, -0.235)
+shape = SubResource("Shape_wall_z")
+
+[node name="Mesh" type="MeshInstance3D" parent="TrayWalls/WallFar"]
+mesh = SubResource("Mesh_wall_z")
+
+[node name="ThrowPoints" type="Node3D" parent="."]
+
+[node name="ThrowPoint1" type="Marker3D" parent="ThrowPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24, 0.185)
+
+[node name="ThrowPoint2" type="Marker3D" parent="ThrowPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14, 0.225, 0.165)
+
+[node name="ThrowPoint3" type="Marker3D" parent="ThrowPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14, 0.225, 0.165)
+
+[node name="ThrowPoint4" type="Marker3D" parent="ThrowPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, 0.205, 0.135)
+
+[node name="ThrowPoint5" type="Marker3D" parent="ThrowPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24, 0.205, 0.135)
+
+[node name="ThrowPoint6" type="Marker3D" parent="ThrowPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.275, 0.105)
+
+[node name="ThrowPoint7" type="Marker3D" parent="ThrowPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.275, 0.105)
+
+[node name="ThrowPoint8" type="Marker3D" parent="ThrowPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.305, 0.075)
+
+[node name="Dice" type="Node3D" parent="."]
+
+; Die1 is the one the game throws most: a check, a save, an attack. Its seat is the middle of the
+; near edge, straight in front of the player, because that is the die they will be watching.
+[node name="Die1" parent="Dice" instance=ExtResource("2_die")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24, 0.185)
+Size = 20
+
+; and Die2 is the second d20, for advantage and disadvantage - both are thrown and both are shown,
+; because the player is owed the die that did not count as well as the one that did
+[node name="Die2" parent="Dice" instance=ExtResource("2_die")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14, 0.225, 0.165)
+Size = 20
+
+[node name="Die3" parent="Dice" instance=ExtResource("2_die")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14, 0.225, 0.165)
+Size = 6
+
+[node name="Die4" parent="Dice" instance=ExtResource("2_die")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, 0.205, 0.135)
+Size = 6
+
+[node name="Die5" parent="Dice" instance=ExtResource("2_die")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24, 0.205, 0.135)
+Size = 6
+
+[node name="Die6" parent="Dice" instance=ExtResource("2_die")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.275, 0.105)
+Size = 8
+
+[node name="Die7" parent="Dice" instance=ExtResource("2_die")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.275, 0.105)
+Size = 8
+
+[node name="Die8" parent="Dice" instance=ExtResource("2_die")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.305, 0.075)
+Size = 12

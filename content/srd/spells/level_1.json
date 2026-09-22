@@ -1,0 +1,316 @@
+{
+  "_": "SRD 5.2.1 level 1 spells, CC-BY-4.0. Ranges are in squares: one square is five feet.",
+
+  "spells": [
+    {
+      "id": "bless",
+      "level": 1,
+      "school": "enchantment",
+      "range": 6,
+      "concentration": true,
+      "classes": ["cleric", "paladin"],
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "creatures",
+          "targets": 3,
+          "extra_targets_per_level": 1,
+          "sway_dice": "1d4",
+          "touches": "attacks|saves",
+          "duration": "concentration"
+        }
+      ]
+    },
+    {
+      "id": "burning_hands",
+      "level": 1,
+      "school": "evocation",
+      "range": 3,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "around",
+          "radius": 3,
+          "amount": "3d6",
+          "per_extra_level": "1d6",
+          "damage_type": "fire",
+          "save": "dex",
+          "on_save": "half"
+        }
+      ]
+    },
+    {
+      "id": "charm_person",
+      "level": 1,
+      "school": "enchantment",
+      "range": 6,
+      "classes": ["mage", "druid"],
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "condition": "frightened",
+          "save": "wis",
+          "on_save": "negates",
+          "duration": "encounter",
+          "note": "SRD charms; v1 has no charmed condition, so the target is handled as frightened of the caster's foes and authored dialogue carries the rest"
+        }
+      ],
+      "approximated": true
+    },
+    {
+      "id": "cure_wounds",
+      "level": 1,
+      "school": "abjuration",
+      "range": 0,
+      "classes": ["cleric", "druid", "paladin"],
+      "effects": [
+        {
+          "primitive": "heal",
+          "reach": "creature",
+          "amount": "2d8",
+          "per_extra_level": "2d8"
+        }
+      ]
+    },
+    {
+      "id": "detect_magic",
+      "level": 1,
+      "school": "divination",
+      "range": 0,
+      "concentration": true,
+      "ritual": true,
+      "classes": ["mage", "cleric", "druid", "paladin"],
+      "effects": [
+        {
+          "primitive": "reveal",
+          "reach": "around",
+          "radius": 6,
+          "duration": "concentration"
+        }
+      ]
+    },
+    {
+      "id": "disguise_self",
+      "level": 1,
+      "school": "illusion",
+      "range": 0,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "narrate",
+          "reach": "caster",
+          "duration": "rest",
+          "note": "authored dialogue reacts to the disguise; there is no general appearance system"
+        }
+      ]
+    },
+    {
+      "id": "entangle",
+      "level": 1,
+      "school": "conjuration",
+      "range": 18,
+      "concentration": true,
+      "classes": ["druid"],
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "burst",
+          "radius": 2,
+          "condition": "restrained",
+          "save": "str",
+          "on_save": "negates",
+          "duration": "concentration"
+        },
+        {
+          "primitive": "zone",
+          "reach": "place",
+          "radius": 2,
+          "duration": "concentration"
+        }
+      ]
+    },
+    {
+      "id": "find_familiar",
+      "level": 1,
+      "school": "conjuration",
+      "range": 2,
+      "ritual": true,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "summon",
+          "reach": "place",
+          "duration": "rest",
+          "note": "fixed familiar archetypes and a scouting command menu; no freeform animal simulation (v1_spell_list.md)"
+        }
+      ]
+    },
+    {
+      "id": "guiding_bolt",
+      "level": 1,
+      "school": "evocation",
+      "range": 24,
+      "classes": ["cleric"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "4d6",
+          "per_extra_level": "1d6",
+          "damage_type": "radiant",
+          "attack_roll": true
+        },
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "sway": 0,
+          "sway_dice": "1d4",
+          "touches": "attacks",
+          "duration": "encounter",
+          "note": "SRD grants the next attacker advantage; v1 expresses it as a bonus on attacks against it, which the boon system already carries"
+        }
+      ]
+    },
+    {
+      "id": "hex",
+      "level": 1,
+      "school": "enchantment",
+      "range": 18,
+      "concentration": true,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "sway": -2,
+          "touches": "checks",
+          "duration": "concentration"
+        }
+      ]
+    },
+    {
+      "id": "hunters_mark",
+      "level": 1,
+      "school": "divination",
+      "range": 18,
+      "concentration": true,
+      "classes": ["druid", "paladin"],
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "caster",
+          "sway": 2,
+          "touches": "damage",
+          "duration": "concentration",
+          "note": "SRD adds 1d6 against the marked creature only; v1 has no per-target damage rider on a boon, so it is a flat bonus while the mark is held"
+        }
+      ],
+      "approximated": true
+    },
+    {
+      "id": "mage_armor",
+      "level": 1,
+      "school": "abjuration",
+      "range": 0,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "sway": 3,
+          "touches": "armor_class",
+          "duration": "rest",
+          "note": "SRD sets unarmored AC to 13 + Dex; the +3 is the same number for an unarmored caster and needs no special case in the AC pipeline"
+        }
+      ]
+    },
+    {
+      "id": "magic_missile",
+      "level": 1,
+      "school": "evocation",
+      "range": 24,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creatures",
+          "targets": 3,
+          "extra_targets_per_level": 1,
+          "amount": "1d4+1",
+          "damage_type": "force"
+        }
+      ]
+    },
+    {
+      "id": "shield",
+      "level": 1,
+      "school": "abjuration",
+      "range": 0,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "caster",
+          "sway": 5,
+          "touches": "armor_class",
+          "duration": "encounter",
+          "note": "SRD is a reaction lasting until your next turn. v1 has opportunity attacks and nothing else as a reaction (decisions_checklist.md section 6), so it is cast on your turn and holds for the fight. Flagged for the sim: this is the strongest of the eight approximations"
+        }
+      ]
+    },
+    {
+      "id": "sleep",
+      "level": 1,
+      "school": "enchantment",
+      "range": 18,
+      "concentration": true,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "burst",
+          "radius": 2,
+          "condition": "stunned",
+          "save": "wis",
+          "on_save": "negates",
+          "duration": "concentration",
+          "note": "SRD's hit-point pool is replaced by a save; incapacitated is the closest v1 condition to asleep"
+        }
+      ],
+      "approximated": true
+    },
+    {
+      "id": "thunderwave",
+      "level": 1,
+      "school": "evocation",
+      "range": 0,
+      "classes": ["mage", "druid"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "around",
+          "radius": 3,
+          "amount": "2d8",
+          "per_extra_level": "1d8",
+          "damage_type": "thunder",
+          "save": "con",
+          "on_save": "half"
+        },
+        {
+          "primitive": "shift",
+          "reach": "around",
+          "radius": 3,
+          "save": "con",
+          "on_save": "negates",
+          "note": "pushed two squares away from the caster"
+        }
+      ]
+    }
+  ]
+}

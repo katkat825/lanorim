@@ -1,0 +1,162 @@
+{
+  "_": "SRD 5.2.1 cantrips, CC-BY-4.0. See ../../../THIRD_PARTY.md. Ranges are in squares: one square is five feet.",
+
+  "spells": [
+    {
+      "id": "eldritch_blast",
+      "level": 0,
+      "school": "evocation",
+      "range": 24,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "1d10",
+          "damage_type": "force",
+          "attack_roll": true,
+          "cantrip_scaling": true
+        }
+      ]
+    },
+    {
+      "id": "fire_bolt",
+      "level": 0,
+      "school": "evocation",
+      "range": 24,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "1d10",
+          "damage_type": "fire",
+          "attack_roll": true,
+          "cantrip_scaling": true
+        }
+      ]
+    },
+    {
+      "id": "guidance",
+      "level": 0,
+      "school": "divination",
+      "range": 0,
+      "concentration": true,
+      "classes": ["cleric", "druid"],
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "sway_dice": "1d4",
+          "touches": "checks",
+          "duration": "concentration"
+        }
+      ]
+    },
+    {
+      "id": "light",
+      "level": 0,
+      "school": "evocation",
+      "range": 0,
+      "classes": ["mage", "cleric"],
+      "effects": [
+        {
+          "primitive": "illuminate",
+          "reach": "place",
+          "radius": 4,
+          "duration": "rest"
+        }
+      ]
+    },
+    {
+      "id": "mage_hand",
+      "level": 0,
+      "school": "conjuration",
+      "range": 6,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "narrate",
+          "reach": "place",
+          "duration": "encounter",
+          "note": "a spectral hand that moves and manipulates. the campaign decides what it can reach"
+        }
+      ]
+    },
+    {
+      "id": "minor_illusion",
+      "level": 0,
+      "school": "illusion",
+      "range": 6,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "narrate",
+          "reach": "place",
+          "duration": "encounter",
+          "note": "a sound or an image. authored interactables answer it; there is no illusion sandbox"
+        }
+      ]
+    },
+    {
+      "id": "prestidigitation",
+      "level": 0,
+      "school": "transmutation",
+      "range": 2,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "narrate",
+          "reach": "place",
+          "duration": "encounter",
+          "note": "the small tricks. narrative only, by design"
+        }
+      ]
+    },
+    {
+      "id": "sacred_flame",
+      "level": 0,
+      "school": "evocation",
+      "range": 12,
+      "classes": ["cleric"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "1d8",
+          "damage_type": "radiant",
+          "save": "dex",
+          "on_save": "negates",
+          "cantrip_scaling": true
+        }
+      ]
+    },
+    {
+      "id": "vicious_mockery",
+      "level": 0,
+      "school": "enchantment",
+      "range": 12,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "1d6",
+          "damage_type": "psychic",
+          "save": "wis",
+          "on_save": "negates",
+          "cantrip_scaling": true
+        },
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "sway": -2,
+          "touches": "attacks",
+          "save": "wis",
+          "on_save": "negates",
+          "duration": "encounter"
+        }
+      ]
+    }
+  ]
+}

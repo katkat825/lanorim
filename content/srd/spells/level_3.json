@@ -1,0 +1,184 @@
+{
+  "_": "SRD 5.2.1 level 3 spells, CC-BY-4.0. Ranges are in squares: one square is five feet.",
+
+  "spells": [
+    {
+      "id": "counterspell",
+      "level": 3,
+      "school": "abjuration",
+      "range": 12,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "dispel",
+          "reach": "creature",
+          "note": "SRD interrupts a spell as it is cast. v1 has no interrupt reactions (decisions_checklist.md section 6), so it ends what the target is holding up instead"
+        }
+      ]
+    },
+    {
+      "id": "dispel_magic",
+      "level": 3,
+      "school": "abjuration",
+      "range": 24,
+      "classes": ["mage", "cleric", "druid", "paladin"],
+      "effects": [
+        {
+          "primitive": "dispel",
+          "reach": "creature"
+        }
+      ]
+    },
+    {
+      "id": "fireball",
+      "level": 3,
+      "school": "evocation",
+      "range": 30,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "burst",
+          "radius": 4,
+          "amount": "8d6",
+          "per_extra_level": "1d6",
+          "damage_type": "fire",
+          "save": "dex",
+          "on_save": "half"
+        }
+      ]
+    },
+    {
+      "id": "fly",
+      "level": 3,
+      "school": "transmutation",
+      "range": 0,
+      "concentration": true,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "shift",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "duration": "concentration",
+          "note": "a terrain-ignoring state on authored maps, not general 3D flight (v1_species_roster.md takes the same line with Draconic Flight)"
+        }
+      ]
+    },
+    {
+      "id": "haste",
+      "level": 3,
+      "school": "transmutation",
+      "range": 6,
+      "concentration": true,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "sway": 2,
+          "touches": "armor_class",
+          "duration": "concentration"
+        },
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "sway": 2,
+          "touches": "saves",
+          "save": null,
+          "duration": "concentration",
+          "note": "SRD grants advantage on Dex saves and an extra action. the hero already has two actions (v1_class_roster.md), so the extra action is not ported and the bonus is spent on the save"
+        }
+      ]
+    },
+    {
+      "id": "hypnotic_pattern",
+      "level": 3,
+      "school": "illusion",
+      "range": 24,
+      "concentration": true,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "burst",
+          "radius": 3,
+          "condition": "stunned",
+          "save": "wis",
+          "on_save": "negates",
+          "duration": "concentration"
+        }
+      ]
+    },
+    {
+      "id": "lightning_bolt",
+      "level": 3,
+      "school": "evocation",
+      "range": 20,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "burst",
+          "radius": 3,
+          "amount": "8d6",
+          "per_extra_level": "1d6",
+          "damage_type": "lightning",
+          "save": "dex",
+          "on_save": "half",
+          "note": "SRD is a 100-foot line. v1 keeps one area shape - a burst (decisions_checklist.md section 6, grid tactics) - so the line ships as a burst of the same footprint"
+        }
+      ]
+    },
+    {
+      "id": "slow",
+      "level": 3,
+      "school": "transmutation",
+      "range": 24,
+      "concentration": true,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "burst",
+          "radius": 4,
+          "sway": -2,
+          "touches": "attacks|armor_class",
+          "save": "wis",
+          "on_save": "negates",
+          "duration": "concentration"
+        }
+      ]
+    },
+    {
+      "id": "spirit_guardians",
+      "level": 3,
+      "school": "conjuration",
+      "range": 0,
+      "concentration": true,
+      "classes": ["cleric", "paladin"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "around",
+          "radius": 3,
+          "amount": "3d8",
+          "per_extra_level": "1d8",
+          "damage_type": "radiant",
+          "save": "wis",
+          "on_save": "half"
+        },
+        {
+          "primitive": "zone",
+          "reach": "place",
+          "radius": 3,
+          "duration": "concentration"
+        }
+      ]
+    }
+  ]
+}

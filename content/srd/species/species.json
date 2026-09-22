@@ -1,0 +1,117 @@
+{
+  "_": "The seven v1 species (docs/v1_species_roster.md), from SRD 5.2.1 (CC-BY-4.0). SRD 5.2.1 puts ability increases on the background, not the species, so none of these carry bumps. Darkvision is a narrative trait in v1: the map layer has no light model yet.",
+
+  "species": [
+    {
+      "id": "human",
+      "speed": 30,
+      "features": [
+        { "id": "resourceful", "trait": "training", "level": 1, "saves": ["wis"], "flat": 1,
+          "note": "SRD grants Heroic Inspiration on a long rest; v1 spends it as a small standing bonus until the inspiration economy exists" },
+        { "id": "skillful", "trait": "training", "level": 1, "skills": ["insight"] },
+        { "id": "versatile", "trait": "training", "level": 1, "skills": ["perception"],
+          "note": "SRD grants an Origin feat. feats are deferred (decisions_checklist.md), so this is the one extra trained skill v1_species_roster.md asks for" }
+      ]
+    },
+
+    {
+      "id": "elf",
+      "speed": 30,
+      "lineages": ["elf_drow", "elf_high", "elf_wood"],
+      "features": [
+        { "id": "elf_darkvision", "trait": "narrate", "level": 1,
+          "note": "no light model on the map in v1; authored dark places can ask for it" },
+        { "id": "fey_ancestry", "trait": "training", "level": 1, "saves": ["cha"], "flat": 2 },
+        { "id": "keen_senses", "trait": "training", "level": 1, "skills": ["perception"] },
+        { "id": "trance", "trait": "narrate", "level": 1,
+          "note": "camp flavour and a small rest benefit, not a time simulation" }
+      ]
+    },
+    {
+      "id": "elf_drow", "lineage_of": "elf", "speed": 30,
+      "features": [
+        { "id": "drow_magic", "trait": "narrate", "level": 1,
+          "note": "grants dancing_lights, faerie_fire and darkness once those are in the catalogue; only faerie_fire's shape exists in the MUST set" }
+      ]
+    },
+    {
+      "id": "elf_high", "lineage_of": "elf", "speed": 30,
+      "features": [
+        { "id": "high_elf_cantrip", "trait": "narrate", "level": 1,
+          "note": "one wizard cantrip from the catalogue, chosen at creation" }
+      ]
+    },
+    {
+      "id": "elf_wood", "lineage_of": "elf", "speed": 35,
+      "features": [
+        { "id": "fleet_of_foot", "trait": "speed", "level": 1, "flat": 5 }
+      ]
+    },
+
+    {
+      "id": "dragonborn",
+      "speed": 30,
+      "features": [
+        { "id": "breath_weapon", "trait": "rider", "level": 1, "amount": "1d10",
+          "per_level": "1d10", "per_levels": 5, "damage_type": "fire",
+          "note": "one breath template with the damage type as an ancestry parameter; ancestry is otherwise cosmetic (v1_species_roster.md)" },
+        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "fire",
+          "defense": "resistant" },
+        { "id": "dragonborn_darkvision", "trait": "narrate", "level": 1 },
+        { "id": "draconic_flight", "trait": "narrate", "level": 5,
+          "note": "a short ignore-terrain state on authored maps, not general 3D flight" }
+      ]
+    },
+
+    {
+      "id": "tiefling",
+      "speed": 30,
+      "features": [
+        { "id": "infernal_legacy", "trait": "resistance", "level": 1, "damage_type": "fire",
+          "defense": "resistant",
+          "note": "Infernal is the launch legacy; the other two are data once their spells are in the catalogue" },
+        { "id": "tiefling_darkvision", "trait": "narrate", "level": 1 },
+        { "id": "otherworldly_presence", "trait": "training", "level": 1,
+          "skills": ["intimidation"] }
+      ]
+    },
+
+    {
+      "id": "dwarf",
+      "speed": 30,
+      "features": [
+        { "id": "dwarven_resilience", "trait": "resistance", "level": 1, "damage_type": "poison",
+          "defense": "resistant" },
+        { "id": "dwarven_toughness", "trait": "training", "level": 1, "saves": ["con"],
+          "flat": 1 },
+        { "id": "dwarf_darkvision", "trait": "narrate", "level": 1 },
+        { "id": "stonecunning", "trait": "narrate", "level": 1,
+          "note": "a step up on authored stone secrets and hazards, not a tremorsense simulation" }
+      ]
+    },
+
+    {
+      "id": "halfling",
+      "speed": 30,
+      "features": [
+        { "id": "brave", "trait": "training", "level": 1, "saves": ["wis"], "flat": 2 },
+        { "id": "halfling_nimbleness", "trait": "training", "level": 1, "skills": ["acrobatics"] },
+        { "id": "halfling_luck", "trait": "narrate", "level": 1, "uses": 1,
+          "note": "REDESIGNED so it does not erase the nat-1 loop: once per rest, reroll a die showing a 1 OR downgrade a consequence to a cosmetic one (v1_species_roster.md)" },
+        { "id": "naturally_stealthy", "trait": "training", "level": 1, "skills": ["stealth"] }
+      ]
+    },
+
+    {
+      "id": "orc",
+      "speed": 30,
+      "features": [
+        { "id": "adrenaline_rush", "trait": "action_grant", "level": 1, "count": 1, "uses": 1 },
+        { "id": "orc_darkvision", "trait": "narrate", "level": 1 },
+        { "id": "relentless_endurance", "trait": "death_intercept", "level": 1, "flat": 1,
+          "uses": 1,
+          "note": "at 0 hit points, spend the use to stay up on 1 instead. the reusable death-intercept this validates is what the Barbarian's Relentless Rage reuses" }
+      ]
+    }
+  ]
+}

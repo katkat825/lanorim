@@ -1,0 +1,230 @@
+{
+  "_": "SRD 5.2.1 level 6 to 9 spells, CC-BY-4.0. Ranges are in squares: one square is five feet.",
+
+  "spells": [
+    {
+      "id": "chain_lightning",
+      "level": 6,
+      "school": "evocation",
+      "range": 30,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creatures",
+          "targets": 4,
+          "extra_targets_per_level": 1,
+          "amount": "10d8",
+          "damage_type": "lightning",
+          "save": "dex",
+          "on_save": "half"
+        }
+      ]
+    },
+    {
+      "id": "disintegrate",
+      "level": 6,
+      "school": "transmutation",
+      "range": 12,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "10d6+40",
+          "per_extra_level": "3d6",
+          "damage_type": "force",
+          "save": "dex",
+          "on_save": "negates"
+        }
+      ]
+    },
+    {
+      "id": "heal",
+      "level": 6,
+      "school": "abjuration",
+      "range": 12,
+      "classes": ["cleric", "druid"],
+      "effects": [
+        {
+          "primitive": "heal",
+          "reach": "creature",
+          "amount": "70",
+          "per_extra_level": "10"
+        },
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "poisoned"
+        }
+      ]
+    },
+    {
+      "id": "sunbeam",
+      "level": 6,
+      "school": "evocation",
+      "range": 12,
+      "concentration": true,
+      "classes": ["mage", "cleric", "druid"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "burst",
+          "radius": 3,
+          "amount": "6d8",
+          "damage_type": "radiant",
+          "save": "con",
+          "on_save": "negates",
+          "note": "SRD is a repeating 60-foot line; v1's one area shape is a burst, fired once per cast"
+        },
+        {
+          "primitive": "illuminate",
+          "reach": "place",
+          "radius": 3,
+          "duration": "concentration"
+        }
+      ]
+    },
+
+    {
+      "id": "finger_of_death",
+      "level": 7,
+      "school": "necromancy",
+      "range": 12,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "7d8+30",
+          "per_extra_level": "1d8",
+          "damage_type": "necrotic",
+          "save": "con",
+          "on_save": "half"
+        }
+      ]
+    },
+    {
+      "id": "teleport",
+      "level": 7,
+      "school": "conjuration",
+      "range": 2,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "shift",
+          "reach": "creatures",
+          "targets": 4,
+          "note": "choose a discovered place; the mishap table is kept only for unvisited destinations (v1_spell_list.md)"
+        }
+      ]
+    },
+
+    {
+      "id": "dominate_monster",
+      "level": 8,
+      "school": "enchantment",
+      "range": 12,
+      "concentration": true,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "creature",
+          "condition": "stunned",
+          "save": "wis",
+          "on_save": "negates",
+          "duration": "concentration",
+          "note": "a short tactical command set and authored dialogue reactions, not general AI obedience (v1_spell_list.md). until the command set exists the target is held."
+        }
+      ]
+    },
+    {
+      "id": "sunburst",
+      "level": 8,
+      "school": "evocation",
+      "range": 30,
+      "classes": ["mage", "druid"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "burst",
+          "radius": 12,
+          "amount": "12d6",
+          "damage_type": "radiant",
+          "save": "con",
+          "on_save": "half"
+        },
+        {
+          "primitive": "illuminate",
+          "reach": "place",
+          "radius": 12,
+          "duration": "encounter"
+        }
+      ]
+    },
+
+    {
+      "id": "meteor_swarm",
+      "level": 9,
+      "school": "evocation",
+      "range": 200,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "burst",
+          "radius": 8,
+          "amount": "20d6",
+          "damage_type": "fire",
+          "save": "dex",
+          "on_save": "half"
+        },
+        {
+          "primitive": "damage",
+          "reach": "burst",
+          "radius": 8,
+          "amount": "20d6",
+          "damage_type": "bludgeoning",
+          "save": "dex",
+          "on_save": "half"
+        }
+      ]
+    },
+    {
+      "id": "power_word_kill",
+      "level": 9,
+      "school": "enchantment",
+      "range": 12,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "100",
+          "damage_type": "psychic",
+          "note": "SRD kills outright below 100 hit points; 100 psychic damage with no save is the same outcome without a second death path in the engine"
+        }
+      ]
+    },
+    {
+      "id": "wish",
+      "level": 9,
+      "school": "conjuration",
+      "range": 0,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "narrate",
+          "reach": "caster",
+          "note": "duplicate a spell of level 8 or lower, or pick from a small authored menu. no free-text reality alteration (v1_spell_list.md)"
+        }
+      ]
+    }
+  ]
+}

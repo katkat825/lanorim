@@ -1,0 +1,108 @@
+{
+  "_": "SRD 5.2.1 armor and adventuring gear, CC-BY-4.0.",
+
+  "items": [
+    {
+      "id": "padded_armor", "kind": "armor", "cost": 5, "slot": "body",
+      "armor": { "weight": "light", "base": 11, "noisy": true }
+    },
+    {
+      "id": "leather_armor", "kind": "armor", "cost": 10, "slot": "body",
+      "armor": { "weight": "light", "base": 11 }
+    },
+    {
+      "id": "studded_leather_armor", "kind": "armor", "cost": 45, "slot": "body",
+      "armor": { "weight": "light", "base": 12 }
+    },
+    {
+      "id": "hide_armor", "kind": "armor", "cost": 10, "slot": "body",
+      "armor": { "weight": "medium", "base": 12 }
+    },
+    {
+      "id": "chain_shirt", "kind": "armor", "cost": 50, "slot": "body",
+      "armor": { "weight": "medium", "base": 13 }
+    },
+    {
+      "id": "scale_mail", "kind": "armor", "cost": 50, "slot": "body",
+      "armor": { "weight": "medium", "base": 14, "noisy": true }
+    },
+    {
+      "id": "breastplate", "kind": "armor", "cost": 400, "slot": "body",
+      "armor": { "weight": "medium", "base": 14 }
+    },
+    {
+      "id": "half_plate_armor", "kind": "armor", "cost": 750, "slot": "body",
+      "armor": { "weight": "medium", "base": 15, "noisy": true }
+    },
+    {
+      "id": "ring_mail", "kind": "armor", "cost": 30, "slot": "body",
+      "armor": { "weight": "heavy", "base": 14, "noisy": true }
+    },
+    {
+      "id": "chain_mail", "kind": "armor", "cost": 75, "slot": "body",
+      "armor": { "weight": "heavy", "base": 16, "strength": 13, "noisy": true }
+    },
+    {
+      "id": "splint_armor", "kind": "armor", "cost": 200, "slot": "body",
+      "armor": { "weight": "heavy", "base": 17, "strength": 15, "noisy": true }
+    },
+    {
+      "id": "plate_armor", "kind": "armor", "cost": 1500, "slot": "body",
+      "armor": { "weight": "heavy", "base": 18, "strength": 15, "noisy": true }
+    },
+    {
+      "id": "shield", "kind": "shield", "cost": 10, "slot": "shield"
+    },
+
+    {
+      "id": "potion_of_healing", "kind": "consumable", "cost": 50, "stackable": true,
+      "heals": "2d4+2"
+    },
+    {
+      "id": "greater_potion_of_healing", "kind": "consumable", "cost": 150, "stackable": true,
+      "minimum_level": 5, "heals": "4d4+4"
+    },
+    {
+      "id": "antitoxin", "kind": "consumable", "cost": 50, "stackable": true
+    },
+    {
+      "id": "torch", "kind": "tool", "cost": 1, "stackable": true
+    },
+    {
+      "id": "rope", "kind": "tool", "cost": 1, "stackable": true
+    },
+    {
+      "id": "thieves_tools", "kind": "tool", "cost": 25, "classes": ["rogue"]
+    },
+    {
+      "id": "holy_symbol", "kind": "trinket", "cost": 5, "slot": "trinket",
+      "classes": ["cleric", "paladin"]
+    },
+    {
+      "id": "druidic_focus", "kind": "trinket", "cost": 10, "slot": "trinket",
+      "classes": ["druid"]
+    },
+    {
+      "id": "arcane_focus", "kind": "trinket", "cost": 10, "slot": "trinket",
+      "classes": ["mage"]
+    },
+    {
+      "id": "ring_of_protection", "kind": "trinket", "cost": 2000, "slot": "trinket",
+      "minimum_level": 5,
+      "boons": [
+        { "id": "ring_of_protection", "touches": "saves|armor_class", "flat": 1,
+          "duration": "rest" }
+      ]
+    },
+    {
+      "id": "cloak_of_the_quiet_step", "kind": "trinket", "cost": 800, "slot": "trinket",
+      "boons": [
+        { "id": "cloak_of_the_quiet_step", "touches": "checks", "skill": "stealth",
+          "flat": 2, "duration": "rest" }
+      ]
+    },
+    {
+      "id": "gemstone", "kind": "treasure", "cost": 50, "stackable": true, "sell_percent": 100
+    }
+  ]
+}

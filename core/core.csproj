@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- net8.0 because Godot's .NET runtime loads it; the tests and the sim run net10 and a net8
+         library referenced from a net10 app is fine -->
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Core</RootNamespace>
+    <AssemblyName>Core</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- never references Godot: the headless tests and the balance sim depend on that.
+       BUILD_FOR_CLAUDE_CODE.md, working agreement 1. -->
+
+</Project>

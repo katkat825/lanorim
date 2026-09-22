@@ -1,0 +1,187 @@
+{
+  "_": "SRD 5.2.1 level 4 and 5 spells, CC-BY-4.0. Ranges are in squares: one square is five feet.",
+
+  "spells": [
+    {
+      "id": "banishment",
+      "level": 4,
+      "school": "abjuration",
+      "range": 12,
+      "concentration": true,
+      "classes": ["mage", "cleric", "paladin"],
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "condition": "stunned",
+          "save": "cha",
+          "on_save": "negates",
+          "duration": "concentration",
+          "note": "sent elsewhere for the duration; v1 leaves the mini on the board and marks it out of the fight"
+        }
+      ],
+      "approximated": true
+    },
+    {
+      "id": "dimension_door",
+      "level": 4,
+      "school": "conjuration",
+      "range": 100,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "shift",
+          "reach": "caster",
+          "note": "teleport anywhere on the map the caster has seen"
+        }
+      ]
+    },
+    {
+      "id": "greater_invisibility",
+      "level": 4,
+      "school": "illusion",
+      "range": 0,
+      "concentration": true,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "sway": 5,
+          "touches": "checks",
+          "skill": "stealth",
+          "duration": "concentration"
+        },
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "sway": 2,
+          "sway_dice": "1d4",
+          "touches": "attacks",
+          "duration": "concentration"
+        }
+      ]
+    },
+    {
+      "id": "wall_of_fire",
+      "level": 4,
+      "school": "evocation",
+      "range": 24,
+      "concentration": true,
+      "classes": ["mage", "druid"],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "burst",
+          "radius": 2,
+          "amount": "5d8",
+          "per_extra_level": "1d8",
+          "damage_type": "fire",
+          "save": "dex",
+          "on_save": "half"
+        },
+        {
+          "primitive": "zone",
+          "reach": "place",
+          "radius": 2,
+          "duration": "concentration"
+        }
+      ]
+    },
+
+    {
+      "id": "cone_of_cold",
+      "level": 5,
+      "school": "evocation",
+      "range": 12,
+      "classes": ["mage", "druid"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "burst",
+          "radius": 4,
+          "amount": "8d8",
+          "per_extra_level": "1d8",
+          "damage_type": "cold",
+          "save": "con",
+          "on_save": "half",
+          "note": "SRD is a 60-foot cone; v1's one area shape is a burst of the same footprint"
+        }
+      ]
+    },
+    {
+      "id": "greater_restoration",
+      "level": 5,
+      "school": "abjuration",
+      "range": 0,
+      "classes": ["cleric", "druid"],
+      "effects": [
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "poisoned"
+        },
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "frightened"
+        },
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "stunned"
+        },
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "restrained"
+        },
+        {
+          "primitive": "dispel",
+          "reach": "creature"
+        }
+      ]
+    },
+    {
+      "id": "hold_monster",
+      "level": 5,
+      "school": "enchantment",
+      "range": 18,
+      "concentration": true,
+      "classes": ["mage"],
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "condition": "stunned",
+          "save": "wis",
+          "on_save": "negates",
+          "duration": "concentration"
+        }
+      ]
+    },
+    {
+      "id": "wall_of_force",
+      "level": 5,
+      "school": "abjuration",
+      "range": 24,
+      "concentration": true,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "zone",
+          "reach": "place",
+          "radius": 3,
+          "duration": "concentration",
+          "note": "snaps to grid edges and fixed shapes; no freehand geometry (v1_spell_list.md)"
+        }
+      ]
+    }
+  ]
+}
