@@ -14,8 +14,13 @@ namespace Game.Board
         // height is stated, scale is derived, so swapping the model keeps the piece the right height
         [Export] public NodePath FigurePath { get; set; } = "Figure";
 
-        // 75 mm on a 60 mm square, taller than walls so a piece is never hidden
-        [Export] public float FigureHeight { get; set; } = 0.075f;
+        // 1.25 squares tall, taller than walls so a piece is never hidden. board.tscn's CellSize is
+        // the other half of that ratio - move one and move the other
+        [Export] public float FigureHeight { get; set; } = 0.1875f;
+
+        // the model this piece stands up. null and the scene's own stand-in stays, which is what
+        // every piece was before there were models - so a board with no models still plays
+        [Export] public PackedScene FigureModel { get; set; }
 
         [Export] public Material Paint { get; set; }
 
@@ -67,21 +72,105 @@ namespace Game.Board
                 GD.PushWarning("mini: the figure has no paint - it will wear whatever its pack " +
                                "came with. Put res://shaders/painted.tres on the Board's Paint slot.");
 
+            Dress(figure);
+
             PaintedModel.Paint(figure, Paint);
 
+            // a rigged figure is measured off its posed skeleton, because its AABB is stuck in the
+            // bind pose; anything else is measured off its geometry, which is telling the truth
+            bool rigged = PaintedModel.PosedHeight(figure, out float tall, out float feet);
+
             Aabb bounds = PaintedModel.Bounds(figure);
-            float scale = PaintedModel.ToFitHeight(bounds, FigureHeight);
+
+            if (!rigged)
+            {
+                tall = bounds.Size.Y;
+                feet = bounds.Position.Y;
+            }
+
+            float scale = tall <= 0f ? 1f : FigureHeight / tall;
 
             figure.Scale = Vector3.One * scale;
 
             // only the height is corrected: centring the bounding box would push an off-centre figure's feet off the square
             figure.Position = new Vector3(
                 figure.Position.X,
-                figure.Position.Y - bounds.Position.Y * scale,
+                figure.Position.Y - feet * scale,
                 figure.Position.Z);
 
-            GD.Print($"mini    {figure.Name} {bounds.Size} units -> {FigureHeight * 1000f:0} mm tall");
+            GD.Print($"mini    {figure.Name} {tall:0.00} units {(rigged ? "posed" : "measured")} " +
+                     $"-> {FigureHeight * 1000f:0} mm tall");
         }
+
+        // SWAP THE STAND-IN FOR A REAL MODEL, AND STOP IT MOVING.
+        //
+        // The Quaternius packs are rigged and animated - seventeen clips each - and a mini is not.
+        // ART_DIRECTION section 5 is explicit: on-map pieces are objects that get picked up and set
+        // down, not things that walk, and section 1 counts "no walk cycles" as a feature rather than
+        // a gap. So the rig is used for exactly one thing: to stand the figure in the pack's own
+        // idle pose and then stop. A model imported and left alone sits in its BIND pose, which for
+        // these packs is a T-pose - arms straight out, which reads as a crucifixion rather than a
+        // miniature - and one frame of Idle is the cheapest fix that does not need a modeller.
+        //
+        // The player is then stopped dead. Nothing ticks, nothing blends, and the piece is as static
+        // as the cylinder it replaced.
+        void Dress(Node3D figure)
+        {
+            if (FigureModel == null) return;
+
+            foreach (Node child in figure.GetChildren())
+            {
+                figure.RemoveChild(child);
+                child.QueueFree();
+            }
+
+            Node model = FigureModel.Instantiate();
+
+            if (model == null)
+            {
+                GD.PushError($"mini: '{FigureModel.ResourcePath}' did not instantiate - the piece " +
+                             "will be a base with nothing on it");
+                return;
+            }
+
+            figure.AddChild(model);
+
+            Pose(model);
+        }
+
+        // the pack's idle, held on one frame. Named clips vary between packs, so it takes the one
+        // called Idle if there is one and the first clip if there is not, rather than assuming
+        static void Pose(Node model)
+        {
+            AnimationPlayer player = null;
+
+            foreach (Node child in model.GetChildren())
+                if (child is AnimationPlayer found) { player = found; break; }
+
+            if (player == null) return;
+
+            string clip = null;
+
+            foreach (string name in player.GetAnimationList())
+            {
+                if (name.Contains("Idle", StringComparison.OrdinalIgnoreCase)) { clip = name; break; }
+
+                clip ??= name;
+            }
+
+            if (clip == null) return;
+
+            // seek with update:true writes the pose onto the skeleton, then the player is switched
+            // off entirely - advance(0) on a stopped player would put the rest pose back
+            player.Play(clip);
+            player.Seek(RestingFrame, true);
+            player.Pause();
+            player.ProcessMode = ProcessModeEnum.Disabled;
+        }
+
+        // seconds into the idle. not 0: the first frame of a loop is often the neutral pose the
+        // clip was built from, and a little way in reads more like a figure caught standing
+        const float RestingFrame = 0.35f;
 
         public void PlaceAt(Vector3 boardLocal)
         {

@@ -9,6 +9,13 @@ can tell when v1 is *done*. Written 2026-09-21.
 **Legend:** `[ ]` to build · `[~]` in progress · `[x]` done · `[HARVEST]` reuse/adapt old game code ·
 `[DEFER]` explicitly post-v1.
 
+## Progress snapshot — 2026-09-23
+*Marks reflect code present in the repo (file-level survey, not a full functional/test pass — confirm with `dotnet test` + the check scripts).*
+
+- **Working:** the Godot/C# solution builds; the **physical table** is coming together — dice physics + your modeled tray (wood + felt), the board grid, placeholder minis, audio, the painted-mini shader path — and **localization** (keys-not-strings) is ported.
+- **Scaffolded / in progress:** the **rules engine** (d20 resolution, abilities, attack/damage/crits, HP + death save, action economy, grid/space, combat loop), the **data layer** (schema, classes, species, items, inventory, spells, monsters, sheet, maps, creation), the **spell-primitive** start, and the **accessibility** layer.
+- **Not started — the big frontier is UI + narrative + content:** **no UI exists yet** (start-game/menu, character sheet, inventory/merchant, dialog/text popup, spell cards, HUD, settings, the Kenney theme/fonts/icons); the **narrative/GM** layer (dialogue runtime, GM narrator, narrative flow, random encounters); **save/load + campaign loader**, the **campaign system + map builder + Workshop**; the rest of the rules/data (rest, leveling, full 131 spells, conditions depth, merchant); **content** (campaigns/tutorials), **presentation polish**, **demo**, **release**.
+
 ---
 
 ## 0. The finish line — what "v1 done" means
@@ -38,22 +45,22 @@ done.**
 
 ## 1. Foundation
 
-- `[ ]` **Godot project + C# setup** — project, folder layout, palette-unify/painted-miniature shader path.
-- `[ ]` **Content data model** — the schema for classes, species, spells, monsters, items, conditions as
+- `[x]` **Godot project + C# setup** — project, folder layout, palette-unify/painted-miniature shader path.
+- `[~]` **Content data model** — the schema for classes, species, spells, monsters, items, conditions as
   *reference data* (the cheap layer). Everything else reads from this.
 - `[HARVEST]` **Content / campaign package format + loader** — data-driven package the game loads (paradigm-agnostic; reusable from the old game).
 - `[HARVEST]` **Save/load** — autosave on events + manual saves (save all if feasible, else last 10), reload-on-death.
-- `[HARVEST]` **Localization / string keys** — so all player text is keyed.
+- `[x]` **Localization / string keys** — so all player text is keyed.
 
 ## 2. Rules engine
 
-- `[ ]` **d20 resolution** — roll + mods vs DC/AC, advantage/disadvantage.
-- `[ ]` **Ability scores, modifiers, proficiency bonus** (+2→+6).
+- `[~]` **d20 resolution** — roll + mods vs DC/AC, advantage/disadvantage.
+- `[~]` **Ability scores, modifiers, proficiency bonus** (+2→+6).
 - `[ ]` **Skill checks** — 18 skills, DC ladder or campaign custom, **nat-1/nat-20 consequence pool**.
 - `[ ]` **Saving throws** — six saves + class proficiencies.
-- `[ ]` **Attack + damage + crits** — weapon die + mod; crit = double + consequence pool.
-- `[ ]` **HP / damage / healing / death save** — single d20 ≥ 10 death save.
-- `[ ]` **Action economy + turn structure** — 2 actions + 1 bonus + 1 reaction; class extras.
+- `[~]` **Attack + damage + crits** — weapon die + mod; crit = double + consequence pool.
+- `[~]` **HP / damage / healing / death save** — single d20 ≥ 10 death save.
+- `[~]` **Action economy + turn structure** — 2 actions + 1 bonus + 1 reaction; class extras.
 - `[ ]` **Conditions** — v1 subset (prone, poisoned, stunned, frightened, restrained, grappled), core effects.
 - `[ ]` **Damage types + simple resistance** — tag types; ×0.5 / ×2 / ×0.
 - `[ ]` **Rest** — short (spend hit dice) / long (full HP + mana).
@@ -61,7 +68,7 @@ done.**
 
 ## 3. Spellcasting
 
-- `[ ]` **Spell-effect primitive library** — damage, heal, apply-condition, buff/debuff, move, area,
+- `[~]` **Spell-effect primitive library** — damage, heal, apply-condition, buff/debuff, move, area,
   utility-narrative — the composition engine (the #1 cost; see `v1_spell_list.md`).
 - `[ ]` **Mana point pool** — cantrips at-will; leveled spells cost points by level; upcasting = more points; refill on rest.
 - `[ ]` **Concentration** — binary (held until ended or downed).
@@ -70,35 +77,35 @@ done.**
 
 ## 4. Classes, species, progression
 
-- `[ ]` **7 classes + core features** — Barbarian, Fighter, Rogue, Mage (merged), Cleric, Paladin, Druid (`v1_class_roster.md`); one subclass each.
+- `[~]` **7 classes + core features** — Barbarian, Fighter, Rogue, Mage (merged), Cleric, Paladin, Druid (`v1_class_roster.md`); one subclass each.
 - `[ ]` **Druid Wild Shape** — 3–5 curated form cards (highest-cost feature).
-- `[ ]` **7 species + traits** — Human, Elf, Dragonborn, Tiefling, Dwarf, Halfling, Orc (`v1_species_roster.md`).
+- `[~]` **7 species + traits** — Human, Elf, Dragonborn, Tiefling, Dwarf, Halfling, Orc (`v1_species_roster.md`).
 - `[ ]` **Backgrounds** — SRD, light (skills/flavor).
-- `[ ]` **Starting gear + loot tables** — per class.
+- `[~]` **Starting gear + loot tables** — per class.
 
 ## 5. Character sheet & inventory
 
 - `[ ]` **Character sheet UI** — identity, basics, abilities, skills, actions/bonus/reactions, weapons, spells, special (`character_sheet_decisions.md`).
-- `[ ]` **Inventory system** — flat 40 slots, stacking, equip, buy/sell, discard-to-make-room, class/level gating (`inventory_decisions.md`).
+- `[~]` **Inventory system** — flat 40 slots, stacking, equip, buy/sell, discard-to-make-room, class/level gating (`inventory_decisions.md`).
 - `[ ]` **Merchant** — buy/sell, unlimited gold default, buy-prevention when full.
 
 ## 6. Combat
 
-- `[ ]` **Turn-based loop** — initiative, turn order, action economy.
-- `[ ]` **Grid movement + range checks**; **radius AoE**; **opportunity attacks only**.
+- `[~]` **Turn-based loop** — initiative, turn order, action economy.
+- `[~]` **Grid movement + range checks**; **radius AoE**; **opportunity attacks only**.
 - `[ ]` **Combat interaction UX** — how the player issues an action (menu/targeting feel). *Design during this build — the one big undesigned piece.*
 - `[ ]` **Enemy AI** — basic approach + attack with tags.
-- `[ ]` **Monster statblocks + ability primitives** — multiattack, save-or-condition, recharge, resistance; spellcaster monsters reuse the spell system; skip legendary/lair.
+- `[~]` **Monster statblocks + ability primitives** — multiattack, save-or-condition, recharge, resistance; spellcaster monsters reuse the spell system; skip legendary/lair.
 - `[ ]` **Fleeing combat** — whichever is more expected + easier.
 
 ## 7. The table & presentation
 
-- `[ ]` **3D table scene** — grid map (3/4 screen), lifting dice tray, GM screen, companion, help button.
-- `[HARVEST]` **Dice physics + roll + sound** — reuse the old dice system + the moved sound pool.
-- `[ ]` **GM screen** — a bent quad with a static Admurin parallax image on the player side (per campaign).
+- `[~]` **3D table scene** — grid map (3/4 screen), lifting dice tray, GM screen, companion, help button.
+- `[x]` **Dice physics + roll + sound** — reuse the old dice system + the moved sound pool.
+- `[~]` **GM screen** — first-party GM-screen models made (`game/models/gm_screen/`); wire **blank** for now, per-campaign backgrounds later.
 - `[ ]` **Companion mini** — Quaternius creature, idle presence + hints (off-map token).
-- `[ ]` **Mini rendering on grid** — heroes + monsters, palette-unified.
-- `[ ]` **Camera + lighting** for the table.
+- `[~]` **Mini rendering on grid** — heroes + monsters, palette-unified.
+- `[~]` **Camera + lighting** for the table.
 
 ## 8. Narrative & GM
 
@@ -125,17 +132,17 @@ done.**
 - `[ ]` **Settings.**
 - `[ ]` **Tutorial / onboarding** — ask beginner/intermediate/advanced → matching replayable tutorial campaign.
 - `[ ]` **UI theme** — Kenney UI kit (panels/buttons/borders); **icons** game-icons.net (CC-BY, credit authors); **fonts** (EB Garamond cards / Alegreya SC UI / storytelling font).
-- `[ ]` **Accessibility** — in v1, at the highest depth feasible.
+- `[~]` **Accessibility** — in v1, at the highest depth feasible.
 
 ## 11. Audio
 
-- `[HARVEST]` **Dice + mini-move + table SFX** — the moved Freesound pool.
+- `[x]` **Dice + mini-move + table SFX** — the moved Freesound pool.
 - `[ ]` **UI SFX** — Kenney interface sounds (trial fit).
 - `[DEFER]` **Music + ambient SFX.**
 
 ## 12. Content to author (the actual v1 game)
 
-- `[ ]` **SRD data entry** — the 7 classes, 7 species, 131 spells, monster set, items as structured data (AI-assistable, but real volume).
+- `[~]` **SRD data entry** — the 7 classes, 7 species, 131 spells, monster set, items as structured data (AI-assistable, but real volume).
 - `[ ]` **3 tutorial campaigns** — beginner / intermediate / advanced, replayable.
 - `[ ]` **A handful of one-shots** — self-contained short adventures.
 - `[ ]` **A couple of level-block campaigns** — mid-length arcs over a level range.

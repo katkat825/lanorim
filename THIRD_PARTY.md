@@ -23,7 +23,7 @@ carved out of the SRD (Beholder, Mind Flayer, Displacer Beast, etc.), non-SRD ru
 published adventures. Every campaign we ship is our own. Exact attribution wording and placement get
 confirmed at the one-hour IP/legal review before the game sells.
 
-## 3D assets — Quaternius (single-creator base)
+## 3D assets — Quaternius (a base source)
 
 Every 3D asset in lanorim comes from **Quaternius** (quaternius.com): characters, dungeon and other
 environments (village, wilderness, sci-fi), monsters, and animals/companions. One creator, one style
@@ -46,7 +46,7 @@ Packs in use (all from quaternius.com; downloaded 2026-09-21 into `lanorim/asset
 
 | Pack | Role | Notes |
 |---|---|---|
-| Ultimate Animated Character Pack | Characters / heroes | The player-mini source. |
+| Ultimate Animated Character Pack | Characters / heroes | The player-mini source. Pulled into the project so far: `Goblin_Male` → `game/models/minis/`. The hero mini is **`rogue_v2.glb`, Kathleen’s own model** (source in the gitignored `assets/modified/`, processed copy committed). Its skinned body rides this pack’s armature — 25 joints, `CharacterArmature`, the pack’s 17 clip names — so that part is a QAL derivative and ships baked into the game like any other, not redistributable raw. **Its cloak and hood are two separate unskinned meshes named `character_skeleton_mage_cloak` and `Skeleton_Rogue_Hood`, which are KayKit Skeletons names — provenance UNCONFIRMED and owed an entry of its own if so.** That matters twice: KayKit is retired from lanorim on art-cohesion grounds (`docs/decisions_checklist.md` §4), and non-Quaternius assets carry their own licence and get a full individual entry per the rule above. `Ninja_Male` is still in the repo, now unreferenced. |
 | Ultimate Fantasy RTS | Characters + fantasy buildings | Extra unit/character variety. |
 | Bestiary – Dungeon Monsters Kit [Standard] | Monsters | Standard/free tier = Imp + Puglin only; full 7-monster set is a paid upgrade. |
 | Ultimate Animated Animals | Companions + beast minis | Wolf, fox, etc. — companion source *and* quadruped-beast enemies. |
@@ -86,8 +86,6 @@ SFX) or supplement it (paper props, map decor). Each keeps its own licence. (Tra
 |---|---|---|---|
 | Dragon Bodyparts Bundle v1.0.5 (nimbuspawtales) | [itch](https://nimbuspawtales.itch.io/blender-dragon-bodyparts-bundle) | Free commercial & non-commercial; may ship in games; **no reselling/repackaging raw assets**; credit optional. DL 2026-09-21. | Kitbash kit — dragons, owlbears, drakes, beasts. |
 | KittyCatGames — Books & Papers (`Meshes.zip`) | [itch](https://kittycatgames.itch.io/books-papers) | Custom — 100% free personal/commercial, **no attribution required**. `.fbx` → convert to `.glb`. | Paper props — character sheet, campaign book. |
-| KayKit — Forest Nature Pack | [itch](https://kaylousberg.itch.io/kaykit-forest) | CC0 | Map decor — nature props. |
-| KayKit — Halloween Bits | [itch](https://kaylousberg.itch.io/halloween-bits) | CC0 | Map decor — spooky/seasonal props. |
 
 **UI, icons & sounds** (Quaternius makes none of these)
 
@@ -113,6 +111,31 @@ licence, Workshop caveat).
 **Planned (not yet purchased):** individual **Downrain DC** ([itch](https://downraindc3d.itch.io/)) animated
 creatures for **companion** minis — verify each licence at purchase and add its row. Going with what we have
 for now.
+
+## 3D assets — KayKit (CC0 — a second base)
+
+KayKit (Kay Lousberg, [kaylousberg.itch.io](https://kaylousberg.itch.io)) is the **second base 3D source**
+alongside Quaternius, used for **kitbash** — cannibalizing parts across packs and mixing them to build what's
+needed. **Licence: CC0 (public domain)** — commercial use, modification, and redistribution all permitted, no
+attribution required. That's *more* permissive than Quaternius's QAL (no reselling restriction), which
+matters if a Workshop campaign ever bundles a KayKit-derived part. (We credit KayKit anyway, on goodwill.)
+One coherent cute low-poly style; the palette bake + painted-miniature shader fold it in with Quaternius.
+
+Packs in use (all CC0; in `lanorim/assets/`):
+
+| Pack | Source | Role |
+|---|---|---|
+| KayKit Adventurers 2.0 | [kaykit-adventurers](https://kaylousberg.itch.io/kaykit-adventurers) | Hero / character parts |
+| KayKit Dungeon Pack 1.1 | [kaykit-dungeon-pack](https://kaylousberg.itch.io/kaykit-dungeon-pack) | Dungeon environment / tiles |
+| KayKit Skeletons 1.1 | [kaykit-skeletons](https://kaylousberg.itch.io/kaykit-skeletons) | Undead enemies |
+| KayKit Fantasy Weapons Bits 1.0 | kaylousberg.itch.io | Weapon / gear parts |
+| KayKit Furniture Bits 1.0 | kaylousberg.itch.io | Furniture / table dressing |
+| KayKit RPG Tools Bits 1.0 | kaylousberg.itch.io | Tabletop props |
+| KayKit Forest Nature Pack 1.0 | [kaykit-forest](https://kaylousberg.itch.io/kaykit-forest) | Map decor — nature |
+| KayKit Halloween Bits 1.0 | [halloween-bits](https://kaylousberg.itch.io/halloween-bits) | Map decor — spooky / seasonal |
+
+**Kitbash note:** parts are cannibalized across packs and mixed with Quaternius; the one-palette bake unifies
+colour and the painted-miniature shader unifies shading, so mixed-source builds read as one game.
 
 ## Audio
 
@@ -185,10 +208,10 @@ Downloaded 2026-08-04. All three sources publish under CC0 1.0: commercial use f
 | `Onyx011`, blue/tan swirls | Die material |
 | `Onyx013`, dark swirly | Die material, obsidian |
 | `Onyx015`, white faint swirls | Die material |
-| `Wood067`, 1K | Tray frame. In the project at `game/textures/tray_wood/` |
+| `Wood067`, 1K | **The table top**, in the project at `game/textures/table_wood067/` (color, normalgl, roughness — displacement dropped, the table uses no parallax). A dark walnut: raw albedo averages rgb(56, 31, 14), which is why it is the table and Wood047 is the tray. It was the old build's tray frame, hence the name in the zip. |
 | `Fabric034`, 1K felt | Tray floor. `game/textures/tray_felt/`, tinted green and teal |
 | `Onyx011`, 1K | Dice. `game/textures/die_onyx/`, triplanar |
-| `Plastic018B`, 2K | Map surface — the wet-erase battle map. Recoloured grey → mottled sepia/parchment into `game/textures/map_parchment/` (color, normalgl, roughness at 1K), roughness biased matte. See the note below. |
+| `Plastic018B`, 2K | Map surface — the wet-erase battle map. Recoloured grey → mottled sepia/parchment into `game/textures/map_parchment/` (color, normalgl, roughness at 1K), roughness biased matte. See the note below. **In lanorim these three maps were copied over from `../solo_ttrpg_game` rather than re-derived** — the sepia ramp was chosen by rendering variants and looking at them, so the looked-at output is the asset. |
 
 ### Poly Haven — https://polyhaven.com
 
@@ -220,10 +243,8 @@ The collectible die materials are nearly all there: wood (`dark_wood`, `rosewood
 
 ## 3D models — processing note
 
-lanorim's 3D provenance and the full pack list live in **"3D assets — Quaternius"** near the top of this
-file. The old KayKit-based pipeline that used to sit here has been **retired** — KayKit is no longer used in
-lanorim (see the art-cohesion decision, `docs/decisions_checklist.md` §4). Only the still-relevant
-bits are kept below.
+lanorim's 3D provenance and pack lists live in the **"3D assets — Quaternius"** and **"3D assets — KayKit"**
+sections near the top. Only the still-relevant process notes are kept below.
 
 **Bringing a pack model into the game:** pull just the models this game needs out of the zip, run them
 through the one-palette recolour + painted-miniature shader so mixed sources read as one game, and commit the
@@ -272,11 +293,9 @@ outside licence applies. *(Open: whether to also release any of these on itch.io
 
 ### Retired from lanorim
 
-Superseded by Quaternius and removed: the **KayKit** character/environment packs — Adventurers, Dungeon,
-Skeletons, Fantasy Weapons, Furniture, RPG Tools (Quaternius covers heroes, dungeon, monsters, weapons,
-furniture). **Kept as supplements** (see *Non-Quaternius supplements* above): KayKit Forest Nature + Halloween
-Bits (map decor) and KittyCatGames Books & Papers (paper props) — Quaternius doesn't cover those niches as
-well.
+Nothing is currently retired. KayKit was briefly set aside under an all-Quaternius plan, then brought back as
+a **second base source** for kitbash — see *"3D assets — KayKit"* above. KittyCatGames Books & Papers stays as
+a niche paper-prop supplement.
 
 ## Code
 
@@ -418,5 +437,5 @@ CC0 requires nothing, but three lines on a credits screen are cheap:
 
 > Textures from ambientCG.com, PolyHaven.com and ShareTextures.com.
 > Sound from Freesound.org.
-> 3D models from Quaternius.
+> 3D models from Quaternius and KayKit (Kay Lousberg).
 > (Not all under CC0 — 3D is Quaternius Asset License, the SRD is CC-BY-4.0; see the sections above. This blanket line gets rebuilt into a proper per-source credit when the credits screen is built.)

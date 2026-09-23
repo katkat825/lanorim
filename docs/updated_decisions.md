@@ -95,6 +95,10 @@ note: examples are simply one of many examples and used to express the point rat
   * when combat resolves, return to the main narrative at the defined point.
   * campaigns may define different post-combat paths based on the result when applicable.
 
+# player characters
+- offer skin tone options
+- offer hair color options
+
 # open questions
 - continue button on the dialog?
 
@@ -102,6 +106,10 @@ note: examples are simply one of many examples and used to express the point rat
 
 - is fleeing combat an option?
 
-- Are backpack/horse/cart inventories separate containers or simply additive character capacity?
-    - is inventory globally accessible? maybe there's a lost and found in every town where you can get all of your inventory back?
+- [DEFERRED] Are backpack/horse/cart inventories separate containers or simply additive character capacity?
+    - is inventory globally accessible? maybe there's a lost and found in every town where you can get all of your inventory back?  
+
+- skin tone and hair color use color picker or pre-determined list?
+    - skin tone list (if list): #F4DDC5, #E1B992, #C88A5E, #9A5E3B, #3B241a, #3A3D36
+    - hair color list (if list): tbd
 

@@ -1,0 +1,41 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+; THE TABLE. ambientCG Wood067, a dark walnut, unpacked per THIRD_PARTY.md's "Unpacking an
+; ambientCG zip": Color, NormalGL and Roughness kept, NormalDX and the authoring formats dropped.
+;
+; IT IS THE DARK HALF OF A PAIR. The tray wears Wood047, a light blonde ash (tray_wood047.tres),
+; and the whole reason those are two different woods is so the tray reads as an object standing ON
+; the table instead of dissolving into it. Measured, so the gap is a number and not a hope:
+;
+;   Wood047 raw rgb(173, 139, 104) x its (0.62, 0.55, 0.46) tint -> luma 0.317   the tray
+;   Wood067 raw rgb( 56,  31,  14) x this (1.20, 1.08, 0.95)     -> luma 0.153   the table
+;
+; so the table sits at about half the tray's value. Keep it there: closing that gap is what made
+; the swap to Wood047 necessary in the first place.
+;
+; The tint is ABOVE 1 here, which is the mirror of what the tray does. Wood047 was too light and
+; is multiplied down; Wood067 is so dark that untinted it lands at luma 0.137 and the grain stops
+; reading against a near-black background. This lifts it just enough to read as walnut rather than
+; as a hole, and warms it while it is there. It is a dial - turn it if the table is too heavy.
+;
+; NO PARALLAX, deliberately. heightmap_enabled is what the tray uses and it is wrong here: a 2.5 m
+; plane seen at 60 degrees is exactly where parallax swims as the camera drifts, so the
+; displacement map is not even kept in the folder. The normal map does the work.
+;
+; uv1_scale 8 puts a repeat every 0.5 m across the 4.0 m top, which reads as wide boards. The
+; number is not the tray's 4 because the number is meaningless on its own - what matters is the
+; PHYSICAL size of a repeat, and the tray's 4 across 0.53 m is a 0.13 m grain. A table has wider
+; planks than a tray frame, so this is deliberately coarser than that, not finer.
+
+[ext_resource type="Texture2D" path="res://textures/table_wood067/color.jpg" id="1_color"]
+[ext_resource type="Texture2D" path="res://textures/table_wood067/roughness.jpg" id="2_rough"]
+[ext_resource type="Texture2D" path="res://textures/table_wood067/normalgl.jpg" id="3_normal"]
+
+[resource]
+albedo_color = Color(1.2, 1.08, 0.95, 1)
+albedo_texture = ExtResource("1_color")
+roughness_texture = ExtResource("2_rough")
+roughness_texture_channel = 4
+normal_enabled = true
+normal_texture = ExtResource("3_normal")
+uv1_scale = Vector3(8, 8, 8)

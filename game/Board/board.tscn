@@ -1,11 +1,50 @@
 [gd_scene format=3 uid="uid://bl4n0r1mbrd01"]
 
-; THE MAP. Board builds every tile, wall and door from the MapLayout it is handed, so there is
-; nothing here to lay out square by square - the map builder makes the maps and this draws them.
+; THE MAP. Board builds every tile, wall, door and grid line from the MapLayout it is handed, so
+; there is nothing here to lay out square by square - the map builder makes the maps and this
+; draws them.
+;
+; The mat is a WET-ERASE BATTLE MAP surface, not felt: ambientCG Plastic018B recoloured from its
+; neutral grey to a mottled sepia parchment (textures/map_parchment/, and THIRD_PARTY.md's
+; "Recolouring the map to parchment" for why a gradient map and not a tint). Those three maps are
+; HARVESTED from the old build rather than re-derived - the sepia ramp was picked by rendering
+; several variants and looking at them, which is not a judgement this end of the process can make.
+;
+; The grid over it is soft sepia ink. It is meant to be FAINT: on a real table the map reads first
+; and the grid sits under it. The old build shipped a first pass at (0.29, 0.21, 0.12) that was so
+; dark the grid won out over the parchment, then lightened it to what is here - so this value is
+; the SECOND answer to that question, not the first.
+;
+; THE FIGURES. The enemy is Quaternius' Goblin_Male, straight out of the Ultimate Animated
+; Character Pack and paired off docs/v1_minis_map.md. The hero is rogue_v2.glb - KATHLEEN'S OWN
+; MODEL, built on the pack's rig and kept in assets/modified/. It is not the Ninja that doc names;
+; it is a hooded rogue with a cloak, and the doc's row wants updating to say so.
+;
+; rogue_v2 is THREE meshes, not one: a skinned body (skin, clothes, details, eyes) plus a cloak and
+; a hood that are NOT skinned and hang off the root rather than off a bone. That is worth knowing
+; before anyone animates a mini, because those two pieces will not follow a skeleton anywhere. For
+; a piece that is posed once and then stands still it is fine, and it was checked by rendering the
+; figure posed and unposed side by side rather than assumed: the hood and cloak sit where they
+; should through the idle.
+;
+; They are rigged and they are NOT animated here - Mini.Dress stands each one in a single frame of
+; its own idle and switches the AnimationPlayer off, because a mini is an object that gets moved,
+; not a thing that walks (ART_DIRECTION section 5). Left alone they stand in the pack's bind pose,
+; which is a T-pose, so the posing is not a flourish - it is the difference between a miniature and
+; a crucifixion.
+;
+; Both carry flat-colour materials and no texture at all, which is why they need no palette bake:
+; the painted shader on Paint relights them and that IS their look. It also means their colour
+; lives in one float per surface, so an export that drops baseColorFactor drops the entire look -
+; rogue_v1 arrived that way and rendered as a white blob.
+;
+; They are chosen by ALLEGIANCE, which means every enemy is a goblin. Board's HeroFigure/EnemyFigure
+; say why: the real pairing is class-to-mini and statblock-to-mini, and that is the Phase 7 mini
+; pack, not something an Actor can answer today.
 ;
 ; TO LAY OUT:
-;   - the four materials. They are the whole look of the map until the models arrive, and they
-;     want the painted-miniature shader on them rather than a StandardMaterial3D.
+;   - the terrain materials. Wall, door and rough are told apart by SILHOUETTE first and colour
+;     second, because at 60 degrees a low block and a tall one are obvious and two browns are not.
 ;   - WallModel / DoorwayModel / RubbleModel: drop a Quaternius piece in each and BoardTiles uses
 ;     it instead of the box it falls back to. It fits and turns the model itself, so a piece
 ;     modelled at any scale still lands on the square.
@@ -16,29 +55,61 @@
 [ext_resource type="Script" path="res://Board/Board.cs" id="1_board"]
 [ext_resource type="PackedScene" uid="uid://bl4n0r1mmn101" path="res://Board/mini.tscn" id="2_mini"]
 [ext_resource type="Material" path="res://shaders/painted.tres" id="3_paint"]
+[ext_resource type="Texture2D" path="res://textures/map_parchment/color.jpg" id="4_color"]
+[ext_resource type="Texture2D" path="res://textures/map_parchment/normalgl.jpg" id="5_normal"]
+[ext_resource type="Texture2D" path="res://textures/map_parchment/roughness.jpg" id="6_rough"]
+[ext_resource type="PackedScene" uid="uid://cct5pm1obpwiu" path="res://models/minis/rogue_v2.glb" id="7_hero"]
+[ext_resource type="PackedScene" uid="uid://dalitcw5x4nb1" path="res://models/minis/goblin_male.gltf" id="8_enemy"]
 
+; no albedo_color tint: the parchment's colour is baked into the map, which is the one deliberate
+; exception to "tint in the material" and the whole point of the recolour. normal_scale is halved
+; because a battle map is nearly flat and the plastic's full relief swims at this camera angle.
 [sub_resource type="StandardMaterial3D" id="Mat_mat"]
-albedo_color = Color(0.2, 0.21, 0.19, 1)
-roughness = 0.95
+albedo_texture = ExtResource("4_color")
+roughness_texture = ExtResource("6_rough")
+roughness_texture_channel = 4
+normal_enabled = true
+normal_texture = ExtResource("5_normal")
+normal_scale = 0.5
+uv1_scale = Vector3(1, 1, 1)
 
-[sub_resource type="StandardMaterial3D" id="Mat_wall"]
-albedo_color = Color(0.34, 0.32, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="Mat_door"]
-albedo_color = Color(0.4, 0.27, 0.16, 1)
-roughness = 0.8
-
-[sub_resource type="StandardMaterial3D" id="Mat_rough"]
-albedo_color = Color(0.3, 0.28, 0.23, 1)
+; the wet-erase grid: soft, light sepia ink, and deliberately low-contrast against the parchment
+; it is drawn on. Painted lines are lit, so this lands a touch darker in-scene than it reads here.
+[sub_resource type="StandardMaterial3D" id="Mat_lines"]
+albedo_color = Color(0.58, 0.5, 0.38, 1)
 roughness = 1.0
 
+[sub_resource type="StandardMaterial3D" id="Mat_wall"]
+albedo_color = Color(0.42, 0.41, 0.39, 1)
+roughness = 0.95
+metallic_specular = 0.1
+
+[sub_resource type="StandardMaterial3D" id="Mat_door"]
+albedo_color = Color(0.44, 0.29, 0.16, 1)
+roughness = 0.8
+
+; a patch on the map rather than an object on it - darker and duller than the parchment
+[sub_resource type="StandardMaterial3D" id="Mat_rough"]
+albedo_color = Color(0.35, 0.3, 0.23, 1)
+roughness = 1.0
+
+; CELLSIZE IS WHAT MAKES THE MAP BIG. updated_decisions.md wants the grid map at three quarters of
+; the screen with the tray small beside it, and at the old 60 mm a ten-square map was 0.6 m against
+; a 0.53 m tray - the two were nearly the same size and neither dominated. 150 mm puts a 10 x 8 map
+; at 1.5 x 1.2 m, which is about two thirds of the frame against the tray's quarter.
+;
+; It is the square that grew, not the node: scaling the Board node would leave BoardMetrics
+; reporting 60 mm squares while drawing 150 mm ones, and mini.tscn's FigureHeight moved with it so
+; a figure still stands 1.25 squares tall.
 [node name="Board" type="Node3D"]
 script = ExtResource("1_board")
-CellSize = 0.06
+CellSize = 0.15
 MiniScene = ExtResource("2_mini")
+HeroFigure = ExtResource("7_hero")
+EnemyFigure = ExtResource("8_enemy")
 Paint = ExtResource("3_paint")
 MatMaterial = SubResource("Mat_mat")
+LinesMaterial = SubResource("Mat_lines")
 WallMaterial = SubResource("Mat_wall")
 DoorMaterial = SubResource("Mat_door")
 RoughMaterial = SubResource("Mat_rough")

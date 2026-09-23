@@ -12,6 +12,9 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 
 ---
 
+## Other
+- **[OPEN] combat leveling** - need a way to account for leveling in the combat engine! just because I plan a campaign for them to follow the possible side quests in line with the main quests doesn't mean it'll happen. need to think that through.
+
 ## 1. Rules — deltas from the SRD
 
 - **[DECIDED] Ability scores** — 5e SRD point-buy (`character_sheet_decisions.md`). (SRD is 27-point, 8–15
@@ -32,7 +35,7 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED] Ability Score Improvements** — SRD grants an ASI/feat at set levels; feats are deferred, so at
   those levels: a straight +2 to spend. 
 - **[DECIDED] Saving throws** — six SRD saves + class proficiencies.
-- **[DECIDED] Critical hits in combat** — double damage plus the standard pool of consequences.
+- **[DECIDED] Critical hits in combat** — double the damage dice plus the standard pool of consequences.
 - **[DECIDED] Armor Class** — derived from equipped armor + Dex (SRD, shields) 
 - **[DECIDED] Movement & grid scale** — SRD
 - **[DECIDED] Currency** — Confirmed gold-only.
@@ -100,11 +103,12 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED] Art cohesion** — **Quaternius** low-poly 3D is the game's look (everything — dungeon, hero, monsters, companions, 3D UI); 2D art only ever as framed content
   on a prop (GM-screen panel bent with the folds, or small accents), never environment/UI; all 2D from a
   single coherent source.
-- **[DECIDED] 3D pack cohesion — single creator: Quaternius for everything.** Characters, dungeon and
+- **[DECIDED] 3D pack cohesion — two bases: Quaternius + KayKit.** Characters, dungeon and
   other environments (village, wilderness, sci-fi), monsters, and animals/companions all come from
   Quaternius — one style family, one licence (QAL), one relationship for any future commissions. Within
-  Quaternius, keep to one consistent sub-style (don't mix its realistic and "cute" lines). **KayKit is
-  retired from lanorim.** **Monsters are the one thin spot:** the only style-matching, TTRPG-recognizable
+  Quaternius, keep to one consistent sub-style (don't mix its realistic and "cute" lines). **KayKit is a second base source (CC0 — even more permissive than
+  the QAL): kitbashed and mixed with Quaternius, unified by the one-palette bake + painted-miniature shader;
+  its Skeletons also broaden the enemy roster.** **Monsters are the one thin spot:** the only style-matching, TTRPG-recognizable
   Quaternius monsters are the **Bestiary** (7 — werewolf, ogre, goblin, skeleton, imp, demon, death
   knight); the other Quaternius monster packs are cutesy and off-style (yeti, cactus, panda), so they're
   rejected. v1 enemies = the Bestiary + **reused character-pack humanoids** (goblin, zombie,

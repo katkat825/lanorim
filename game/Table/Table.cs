@@ -202,9 +202,16 @@ namespace Game.Table
 
             GD.Print($"table   {Board}, {map}");
 
-            // every square the hero could walk to this turn, lit the way the UI will light them
+            // every square the hero could walk to this turn, lit the way the UI will light them.
+            //
+            // ALPHA 0.14, DOWN FROM 0.35. CellLights blends ADDITIVE, so what this costs depends
+            // entirely on what it is drawn over - and the mat underneath it changed. Against the
+            // old near-black placeholder mat, 0.35 read as a blue wash on dark grey. Against the
+            // parchment it now lands on, the same value added up to near-white and swallowed two
+            // thirds of the map, texture and grid and all. This is the same cue at a weight the
+            // lighter surface can carry; it is an eye dial and wants checking whenever the mat does.
             Board.ShowReach(_field, hero.Actor, hero.Actor.Speed / Turn.FeetPerSquare,
-                            new Color(0.3f, 0.6f, 0.9f, 0.35f));
+                            new Color(0.3f, 0.6f, 0.9f, 0.14f));
         }
 
         Battlefield _field;

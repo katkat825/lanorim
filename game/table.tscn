@@ -1,31 +1,42 @@
 [gd_scene format=3 uid="uid://bl4n0r1mtbl01"]
 
-; THE TABLE. One tray, one camera, one lamp - the least that can be looked at.
+; THE TABLE. A map, a tray and a lamp over them.
+;
+; THE COMPOSITION IS THE DECISION (updated_decisions.md): the grid map takes about three quarters
+; of the frame and the dice tray sits BESIDE it, small - "too small to read when it's on the
+; table", because the tray is meant to lift to be thrown and settle back once the player has read
+; it. So the map being large and the dice being unreadable from here is the design, not a mistake
+; to correct by shrinking the map.
+;
+; They are side by side, not one behind the other. The map was at -Z and the tray at +Z, which
+; stacked them up the screen and cost the map most of its width; now the map is at -X and the tray
+; at +X, and Framing sits between them weighted toward the map, so the camera holds both with the
+; larger thing nearer the middle.
+;
+; ACROSS THE TABLE, LEFT TO RIGHT:
+;   0.10   margin        1.50   the map        0.17   gap        0.53   the tray        0.19
+; on a 2.5 m top. The tray is 21% of the content to the map's 69%.
 ;
 ; TO LAY OUT (all of this is yours, ART_DIRECTION sections 4 and 7):
-;   - the table top itself: felt, a rulebook, pencils, a mug ring. Best cheap investment in
-;     identity there is, and it is where the menus and saves will live as objects.
+;   - the rest of the table: a rulebook, pencils, a mug ring. Section 7 calls this the best cheap
+;     investment in identity there is, and it is where the menus and saves will live as objects.
 ;   - the lamp. One warm key light over a table is the whole lighting model. The DirectionalLight3D
 ;     below is a stand-in so the scene is not black; a real lamp is an OmniLight3D with a shade.
-;   - where the tray sits, and the lift. updated_decisions.md wants it small on the table, lifting
-;     to be thrown and settling back once the player has read it.
-;   - the grid map at three quarters of the screen, the GM screen, the companion, the help button.
+;   - the tray's LIFT. It is placed but it does not rise to be thrown yet, which is the half of
+;     "small tray" that makes the small tray work.
+;   - the GM screen, the companion, the help button.
 ;
 ; The camera is at the documented 60 degrees off the felt and turns in ninety-degree snaps (Q and
-; E; - and = zoom). Its subject is the tray for now because the tray is all there is; point it at
-; the board when the board arrives.
+; E; - and = zoom).
 
 [ext_resource type="Script" path="res://Table/Table.cs" id="1_table"]
 [ext_resource type="Script" path="res://Table/TableCamera.cs" id="2_camera"]
 [ext_resource type="PackedScene" uid="uid://bl4n0r1mtr4y1" path="res://Tray/dice_tray.tscn" id="3_tray"]
 [ext_resource type="PackedScene" uid="uid://bl4n0r1mbrd01" path="res://Board/board.tscn" id="4_board"]
+[ext_resource type="Material" path="res://textures/table_wood067/table_wood067.tres" id="5_wood"]
 
 [sub_resource type="PlaneMesh" id="Mesh_tabletop"]
-size = Vector2(2.2, 1.7)
-
-[sub_resource type="StandardMaterial3D" id="Mat_tabletop"]
-albedo_color = Color(0.26, 0.19, 0.13, 1)
-roughness = 0.75
+size = Vector2(4, 2.3)
 
 [sub_resource type="Environment" id="Env_table"]
 background_mode = 1
@@ -49,25 +60,33 @@ light_color = Color(1, 0.94, 0.86, 1)
 light_energy = 1.4
 shadow_enabled = true
 
-; A TABLE FOR THINGS TO SIT ON. Without it the board and the tray hang in black, which reads as a
-; bug rather than as a game. It is a plain brown quad and it is a stand-in: ART_DIRECTION section 7
-; wants felt, a rulebook, pencils, a lamp and a mug ring here, and calls it the best cheap
-; investment in identity there is.
+; THE TABLE ITSELF. ambientCG Wood067, a dark walnut, at about half the value of the tray's blonde
+; ash - that gap is the whole reason they are two different woods, and table_wood067.tres has the
+; measured numbers.
+;
+; IT IS SIZED TO FILL THE FRAME, NOT TO BE A REAL TABLE. A camera looking down at 60 degrees sees
+; a trapezoid of ground that flares wide at the far edge - at this distance about 3.6 m across up
+; there against 2.5 m near the viewer - so a plane cut to a believable table size leaves black
+; triangles in the top corners, which is exactly what the review caught. 4.0 x 2.3 covers the
+; whole trapezoid, so every pixel behind the map and the tray is wood.
+;
+; The trade is that the table's own edge is never in shot. If you want to SEE an edge, shrink this
+; toward 3.2 x 2.0 and accept a little darkness at the far corners, or raise Pitch so the camera
+; looks down more steeply and the flare narrows.
 [node name="TableTop" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.004, 0)
 mesh = SubResource("Mesh_tabletop")
-material_override = SubResource("Mat_tabletop")
+material_override = ExtResource("5_wood")
 
-; what the camera looks at: between the board and the tray, so both are in the picture. Move it
-; when the table is laid out properly and the framing follows it.
+; what the camera looks at. NOT the midpoint between the two: weighted by their widths, so the map
+; - the thing the player is actually reading - sits nearer the middle of the frame than the tray.
 [node name="Framing" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.14)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0, 0)
 
-; the map takes three quarters of the screen and the tray sits beside it, small, lifting to be
-; thrown (updated_decisions.md). Both of those placements are yours - what is here only puts them
-; in two different places so neither is inside the other.
+; the map, on the left and large. Its size is set by CellSize in board.tscn, not by a scale here -
+; scaling the node would leave BoardMetrics describing a map half the size of the one on screen.
 [node name="Board" parent="." instance=ExtResource("4_board")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.16)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.38, 0, 0)
 
 ; NEVER SCALE THIS NODE. Every die in the tray is a RigidBody3D, and scaling their parent scales
 ; the bodies and their collision shapes - but not gravity, which stays 9.8 m/s^2. A half-size tray
@@ -75,16 +94,34 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.16)
 ; higher and harder, and they leave. A 0.55 scale sat here briefly and 15% of throws ended up on
 ; the floor, re-thrown at reduced energy, which measurably skewed the faces.
 ;
-; To make the tray smaller, make the TRAY smaller - the box sizes in dice_tray.tscn - and re-run
-; check-dice.ps1, because bounce and size are what that check exists to measure.
+; MOVING it is fine and is all that was done here. To make the tray smaller, make the TRAY smaller
+; - the model scale and collision in dice_tray.tscn - and re-run check-dice.ps1, because bounce and
+; size are what that check exists to measure.
 [node name="DiceTray" parent="." instance=ExtResource("3_tray")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 0)
 
+; FOV 40, DOWN FROM GODOT'S DEFAULT 75. This is the change that made the composition work, and it
+; is worth a paragraph. At 75 degrees the camera is a wide-angle lens: the near edge of the table
+; is enormous, the far edge races away, and the ground trapezoid flares so hard that no sanely
+; sized table can fill the corners. It also does not look like a person leaning over a table, it
+; looks like a GoPro strapped to one. 40 is a long-normal lens - the old build used 35 for the same
+; reason - and it lets a 4 m plane cover the frame while the map stays square-ish across its width.
+;
+; Pitch, fov and the two zoom ends are one system: change any of them and the other three want
+; re-checking. At fov 40, pitch 60 and 2.06 m the camera sees about 2.65 m across the map's plane,
+; which holds the 2.17 m of map-plus-tray with a margin either side.
+;
+; Nearest 0.9 is "leaning over one mini" - about four squares across at this fov. Furthest 2.6 is
+; the whole table. Zoom is the dial: 0 parks at Furthest, 1 at Nearest.
+;
+; The transform below is only what the editor shows. TableCamera.Place() sets position and
+; orientation every frame from Pitch, Zoom and the subject, so it owns this at runtime.
 [node name="TableCamera" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 0.9, 0.52)
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, -0.15, 1.781, 1.028)
+fov = 40.0
 script = ExtResource("2_camera")
 SubjectPath = NodePath("../Framing")
 Pitch = 60.0
-Nearest = 0.35
-Furthest = 2.2
-Zoom = 0.42
+Nearest = 0.9
+Furthest = 2.6
+Zoom = 0.32
