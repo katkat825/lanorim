@@ -253,6 +253,23 @@ if a campaign *bundles* one of these files and is shared via Steam Workshop, tha
 the asset, which the licence forbids. Safest: ship the backgrounds with the **base game** and have campaigns
 reference one by id. Settle before enabling Workshop.
 
+**Update (2026-09-22) — not an issue at present.** The GM-screen images are now **attached to first-party 3D
+GM-screen models** (`game/models/gm_screen/`, made by Kathleen), so they ship as part of an integrated 3D
+asset rather than as standalone image files — a campaign references a first-party GM-screen *model*, never a
+raw Admurin image. That satisfies Admurin's "must be integrated" term and clears the present Workshop
+concern. **The dependency note above stays, just in case** a future use ever separates an image back out
+from its model.
+
+### First-party assets (Kathleen's own — all rights reserved)
+
+Original assets made by Kathleen, not third-party. Covered by the repo `LICENSE` (all rights reserved); no
+outside licence applies. *(Open: whether to also release any of these on itch.io under CC0 — undecided, not done.)*
+
+| Asset | Files | Note |
+|---|---|---|
+| Dice trays | `assets/dice_trays/dice_tray_basic_rectangle.glb`, `dice_tray_basic_square.glb` → staged to `game/models/tray/` | Modeled to fix the rim/floor gap the box-primitive tray had. Two material slots: `Tray_Wood` (rim/frame) + `Tray_Liner` (floor); wear `tray_wood047.tres` and `tray_felt/felt_green.tres`. |
+| GM screens | `assets/gm_screens/gm_screen_blank.glb` + `_cave`, `_dead-forest`, `_plains`, `_snowy-mountains` → staged to `game/models/gm_screen/` | First-party GM-screen models with the background art attached (see Admurin note above). One per campaign; blank for none. |
+
 ### Retired from lanorim
 
 Superseded by Quaternius and removed: the **KayKit** character/environment packs — Adventurers, Dungeon,

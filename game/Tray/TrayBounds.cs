@@ -46,7 +46,8 @@ namespace Game.Tray
             HalfWidth > WallThickness && HalfDepth > WallThickness && WallThickness >= 0f;
 
         // the tray dice_tray.tscn was authored with, and the fallback when the scene can't be measured; a test holds these to the scene's real values
-        public static readonly TrayBounds Shipped = new(0.32f, 0.245f, 0f, 0.02f);
+        // these are the modelled tray (models/tray/dice_tray_basic_rectangle.glb at 0.33), fitted to its liner quad and its inner faces - not a round number anywhere, because the model chose them
+        public static readonly TrayBounds Shipped = new(0.24676f, 0.30845f, 0.010766f, 0.017242f);
 
         // developer only, not localized, must never reach the screen
         public override string ToString() =>

@@ -14,7 +14,6 @@ model, material and light is a stand-in. Start in `docs/`.
 
 - **`docs/`** — the design record. Start with `docs/README.md`, then `decisions_checklist.md` (what the
   game is) and `v1_build_checklist.md` (what gets built + the definition of "done").
-- **`_design_docs/`** — internal handoff docs: `BUILD_FOR_CLAUDE_CODE.md` (the build sequence),
   `HARVEST_PLAN.md` (what to lift from the old build) and `HARVEST_REPORT.md` (what was actually lifted,
   and the Phase 0 verdict on the old Kits system).
 - **`THIRD_PARTY.md`** — provenance and licences for every third-party asset and for the ruleset.

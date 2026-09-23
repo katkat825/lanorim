@@ -2,21 +2,23 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://sfqlr6m3ifkm"
-path.s3tc="res://.godot/imported/color.jpg-6cbd33106a410d63fdf80defe9d00b22.s3tc.ctex"
+uid="uid://ei8xxthwk850"
+path="res://.godot/imported/gm_screen_plains_gm_screen_plains_image.png-1a05ecede38a3c8bc3826cd2a3c36c15.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
+}
+generator_parameters={
+"md5": "054460a99b6c356dadefa8002dfc9012"
 }
 
 [deps]
 
-source_file="res://textures/tray_wood047/color.jpg"
-dest_files=["res://.godot/imported/color.jpg-6cbd33106a410d63fdf80defe9d00b22.s3tc.ctex"]
+source_file="res://models/gm_screen/gm_screen_plains_gm_screen_plains_image.png"
+dest_files=["res://.godot/imported/gm_screen_plains_gm_screen_plains_image.png-1a05ecede38a3c8bc3826cd2a3c36c15.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -38,4 +40,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1
