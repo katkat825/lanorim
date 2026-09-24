@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Characters;
+using Core.Magic;
 using Core.Dice;
 using Core.Localization;
 using Core.Rules;
@@ -35,7 +36,7 @@ namespace Content.Classes
         // resistance or immunity to a damage type. the Dwarf's poison, the Dragonborn's ancestry
         Resistance,
 
-        // makes the character a caster: the ability, the mana pool, the spell list
+        // makes the character a caster: the ability, the progression, the spell list
         Spellcasting,
 
         // more squares per turn. the Wood Elf's
@@ -93,7 +94,7 @@ namespace Content.Classes
                        IReadOnlyList<Skill> skills = null,
                        IReadOnlyList<Ability> saves = null,
                        Core.Magic.Sways touches = Core.Magic.Sways.None,
-                       int manaPerLevel = 0, int manaFlat = 0,
+                       CasterProgression progression = CasterProgression.None,
                        string note = null)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
@@ -115,8 +116,7 @@ namespace Content.Classes
             Skills = skills ?? Array.Empty<Skill>();
             Saves = saves ?? Array.Empty<Ability>();
             Touches = touches;
-            ManaPerLevel = manaPerLevel;
-            ManaFlat = manaFlat;
+            Progression = progression;
             Note = note ?? "";
         }
 
@@ -164,9 +164,11 @@ namespace Content.Classes
 
         public Core.Magic.Sways Touches { get; }
 
-        public int ManaPerLevel { get; }
-
-        public int ManaFlat { get; }
+        // HOW FAST THIS CASTER CLIMBS THE SPELL LEVELS, and the only spellcasting number a class
+        // data file carries now. It used to be two - mana_per_level and mana_flat - because there
+        // was one pool and its size was the whole resource. A named progression serves BOTH modes:
+        // the slot table reads it directly, and the point pool derives from it.
+        public CasterProgression Progression { get; }
 
         public string Note { get; }
 

@@ -281,8 +281,11 @@ namespace Sim
                         : $"{feature.DamageType.Id()} damage is halved",
 
                 Trait.Spellcasting =>
-                    $"you cast with {Ability(feature.Ability.Value.Id())}, from a pool of mana " +
-                    "that fills on a long rest",
+                    $"you cast with {Ability(feature.Ability.Value.Id())}, paying with " +
+                    (feature.Progression == Core.Magic.CasterProgression.Half
+                        ? "half a caster's spell slots or spell points"
+                        : "spell slots or spell points") +
+                    ", whichever you chose, and both come back on a long rest",
 
                 Trait.Speed => $"{feature.Flat} more feet of movement",
 

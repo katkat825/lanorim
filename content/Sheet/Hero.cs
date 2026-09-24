@@ -20,19 +20,31 @@ namespace Content.Sheet
     public sealed class Hero
     {
         public Hero(string name, CharacterClass cls, Kind species, Background background,
-                    AbilityScores scores, int level = 1, Kind lineage = null)
+                    AbilityScores scores, int level = 1, Kind lineage = null,
+                    SpellResourceMode resource = SpellResourceMode.Slots)
         {
             Name = name ?? "";
             Class = cls ?? throw new ArgumentNullException(nameof(cls));
             Species = species ?? throw new ArgumentNullException(nameof(species));
             Background = background;
             Lineage = lineage;
+            Resource = resource;
 
             Actor = new Actor(Id(name), level, scores ?? new AbilityScores(), Allegiance.Hero);
 
             Pack = new Pack();
             Equipment = new Equipment();
         }
+
+        // WHICH WAY THIS CHARACTER PAYS FOR LEVELED SPELLS, chosen once at creation and kept for
+        // life. Slots is the default because it is the SRD's, and because a player who does not
+        // care which they have should end up with the faithful one.
+        //
+        // It is settable so a save can put back the mode it was written with, and so the creation
+        // screen can flip it while the character is still being built. Flipping it after that is
+        // not a supported move: it would hand the character a full resource of the other shape,
+        // which is a free long rest.
+        public SpellResourceMode Resource { get; set; }
 
         // the player types a name, so it is not a localization key - it is the one string in the
         // game that is neither authored nor translated
@@ -115,12 +127,10 @@ namespace Content.Sheet
 
             if (Class.Casts)
             {
-                Caster = new Caster(Actor, Class.CastingAbility.Value);
+                Caster = new Caster(Actor, Class.CastingAbility.Value,
+                                    Class.ResourceAt(Level, Resource));
 
                 foreach (Spell spell in spells ?? Enumerable.Empty<Spell>()) Caster.Learn(spell);
-
-                Actor.ManaMax = Class.ManaAt(Level, Actor.AbilityModifier(Class.CastingAbility.Value));
-                Actor.FillMana();
             }
 
             if (shelf != null) Kit(shelf);
@@ -360,6 +370,10 @@ namespace Content.Sheet
 
             Actor.ShortRest();
 
+            // gives nothing back in either mode today; the call is here so that if a short rest
+            // ever does, it is one line and not a thing somebody has to remember to add
+            Caster?.Rested(Rest.Short);
+
             _spent.Clear();
             Budget.LongRest();
 
@@ -372,6 +386,9 @@ namespace Content.Sheet
         public void LongRest()
         {
             Actor.LongRest();
+
+            // slots all come back; points refills and forgets which high spells went off today
+            Caster?.Rested(Rest.Long);
 
             _spent.Clear();
             Budget.LongRest();
@@ -410,12 +427,11 @@ namespace Content.Sheet
             // levelling is not healing: the damage already taken comes with you
             Actor.Health.Take(Math.Max(0, wasMax - wasCurrent));
 
-            if (Class.Casts)
-            {
-                Actor.ManaMax = Class.ManaAt(level,
-                                             Actor.AbilityModifier(Class.CastingAbility.Value));
-                Actor.GrantMana(Actor.ManaMax);
-            }
+            // LEVELLING REBUILDS THE RESOURCE AND FILLS IT. A new level is a bigger table or a
+            // bigger pool, and there is no sensible way to carry "three quarters spent" across a
+            // change of shape - so a level-up is a rest for spells, the way it is for hit points.
+            if (Class.Casts && Caster != null)
+                Caster.Resource = Class.ResourceAt(level, Resource);
 
             Budget = BuildBudget();
             Equipment.Apply(Actor);
@@ -424,7 +440,7 @@ namespace Content.Sheet
         public override string ToString() =>
             $"{Name} the level {Level} {Species.Id} {Class.Id}: {Actor.Health}, " +
             $"ac {Actor.ArmorClass}" +
-            (Casts ? $", {Actor.Mana}/{Actor.ManaMax} mana, {Caster.Known.Count} spells" : "") +
+            (Casts ? $", {Caster.Resource?.Describe()}, {Caster.Known.Count} spells" : "") +
             $", {Pack}";
     }
 }

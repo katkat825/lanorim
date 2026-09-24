@@ -38,6 +38,10 @@ namespace Content.Schema
                      { ArmorWeight.None, ArmorWeight.Light, ArmorWeight.Medium, ArmorWeight.Heavy })
                 yield return weight.NameKey();
 
+            // the two ways of paying for a spell, as the creation screen offers them. Derived from
+            // the enum, so a third mode would be owed its words the day it existed
+            foreach (string key in Content.Creation.Creation.ResourceKeys()) yield return key;
+
             // everything the SRD data ships: spells, items, classes, species, backgrounds and
             // the merchant's refusals
             foreach (string key in Library.Srd().Keys()) yield return key;

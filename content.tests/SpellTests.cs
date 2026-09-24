@@ -78,12 +78,18 @@ namespace Content.Tests
             Assert.Equal(17, Book.Approximations.Count());
         }
 
+        // WHAT A SPELL COSTS IS NO LONGER A PROPERTY OF THE SPELL. It used to be its level, in
+        // mana, because there was one pool and one price. Now the price depends on the mode the
+        // player chose, so the spell carries its LEVEL and the resource decides what that costs -
+        // which is why SpellResourceTests owns the prices and this file no longer mentions them.
         [Fact]
-        public void ACantripCostsNothingAndALeveledSpellCostsItsLevel()
+        public void ACantripIsLevelZeroAndALeveledSpellCarriesItsLevel()
         {
-            Assert.Equal(0, Book.Find("fire_bolt").Cost);
-            Assert.Equal(3, Book.Find("fireball").Cost);
-            Assert.Equal(5, Book.Find("fireball").CostAt(5));
+            Assert.Equal(0, Book.Find("fire_bolt").Level);
+            Assert.True(Book.Find("fire_bolt").IsCantrip);
+
+            Assert.Equal(3, Book.Find("fireball").Level);
+            Assert.False(Book.Find("fireball").IsCantrip);
         }
 
         [Fact]
@@ -208,21 +214,24 @@ namespace Content.Tests
 
         static readonly SpellBook Book = SpellBook.Srd();
 
-        static Caster Mage(out Actor actor, int level = 5, int mana = 20)
+        // POINTS, NOT SLOTS, and on purpose: these tests are about what a spell DOES, and a
+        // pool with a number in it makes "this cast cost more than that one" a readable assertion.
+        // SpellResourceTests is where each mode is held to its own rules.
+        static Caster Mage(out Actor actor, int level = 5, int points = 20)
         {
             actor = new Actor("mage", level, new AbilityScores(8, 14, 14, 18, 10, 10),
                               Allegiance.Hero);
 
             actor.SetHealth(new Health(30, Die.D6, level));
-            actor.ManaMax = mana;
-            actor.FillMana();
 
-            var caster = new Caster(actor, Ability.Intelligence);
+            var caster = new Caster(actor, Ability.Intelligence, new SpellPoints(points));
 
             foreach (Spell spell in Book.All) caster.Learn(spell);
 
             return caster;
         }
+
+        static int Pool(Caster caster) => ((SpellPoints)caster.Resource).Remaining;
 
         static Actor Dummy(string id = "dummy", int hp = 100, int ac = 10)
         {
@@ -260,11 +269,11 @@ namespace Content.Tests
             Casting result = cast.Cast(mage, Book.Find("fire_bolt"), Aim.At(Dummy()));
 
             Assert.True(result.Cast);
-            Assert.Equal(20, actor.Mana);
+            Assert.Equal(20, Pool(mage));
         }
 
         [Fact]
-        public void ACantripGrowsWithTheCastersLevelAndNotWithMana()
+        public void ACantripGrowsWithTheCastersLevelAndNotWithTheResource()
         {
             SpellEffect bolt = Book.Find("fire_bolt").Effects[0];
 
@@ -282,11 +291,13 @@ namespace Content.Tests
 
             cast.Cast(mage, Book.Find("magic_missile"), Aim.At(Dummy()));
 
-            Assert.Equal(19, actor.Mana);
+            // a 1st-level spell costs 2
+            Assert.Equal(18, Pool(mage));
 
+            // and the same spell thrown at 4th costs 6
             cast.Cast(mage, Book.Find("magic_missile"), Aim.At(Dummy()), 4);
 
-            Assert.Equal(15, actor.Mana);
+            Assert.Equal(12, Pool(mage));
         }
 
         [Fact]
@@ -299,16 +310,16 @@ namespace Content.Tests
         }
 
         [Fact]
-        public void ASpellWithoutTheManaIsRefusedAndNothingIsSpent()
+        public void ASpellTheResourceCannotPayForIsRefusedAndNothingIsSpent()
         {
-            Caster mage = Mage(out Actor actor, mana: 1);
+            Caster mage = Mage(out Actor actor, points: 1);
             var cast = new Incantation(new StandardResolver(new ScriptedRng(10)));
 
             Casting result = cast.Cast(mage, Book.Find("fireball"), Aim.On(new Cell(3, 1)));
 
             Assert.False(result.Cast);
-            Assert.Contains("mana", result.Refusal);
-            Assert.Equal(1, actor.Mana);
+            Assert.Contains("nothing left", result.Refusal);
+            Assert.Equal(1, Pool(mage));
         }
 
         [Fact]
@@ -477,10 +488,8 @@ namespace Content.Tests
         public void ASpellNotOnTheSheetIsRefused()
         {
             var actor = new Actor("novice", 1, new AbilityScores(), Allegiance.Hero);
-            actor.ManaMax = 10;
-            actor.FillMana();
 
-            var empty = new Caster(actor, Ability.Intelligence);
+            var empty = new Caster(actor, Ability.Intelligence, new SpellPoints(10));
             var cast = new Incantation(new StandardResolver(new ScriptedRng(10)));
 
             Casting result = cast.Cast(empty, Book.Find("fireball"), Aim.On(new Cell(1, 1)));

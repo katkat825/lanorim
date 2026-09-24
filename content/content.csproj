@@ -15,6 +15,14 @@
     <ProjectReference Include="../core/core.csproj" />
   </ItemGroup>
 
+  <!-- THE BRANCHING-DIALOGUE RUNTIME, and deliberately not ours. The COMPILER is referenced rather
+       than a build step because a campaign ships .yarn SOURCE and the loader compiles it - which is
+       what lets a Workshop author write dialogue in a text editor with no tooling at all. MIT;
+       recorded in THIRD_PARTY.md. -->
+  <ItemGroup>
+    <PackageReference Include="YarnSpinner.Compiler" Version="3.2.2" />
+  </ItemGroup>
+
   <!-- SRD 5.2.1 reference data travels inside the assembly, not beside it: the sim, the tests and
        Godot all get the same bytes with no path resolution and nothing to forget in an export
        filter. Campaign packs are the opposite - those stay loose on disk so a Workshop author can

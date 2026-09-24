@@ -243,25 +243,10 @@ namespace Core.Characters
 
         // --- magic ----------------------------------------------------------------------------
 
-        // one pool, spent by spell level, refilled on a long rest. no slot grid
-        // (decisions_checklist.md section 1).
-        public int ManaMax { get; set; }
-
-        public int Mana { get; private set; }
-
-        public void FillMana() => Mana = ManaMax;
-
-        public bool CanAfford(int cost) => cost <= Mana;
-
-        public bool SpendMana(int cost)
-        {
-            if (cost < 0 || cost > Mana) return false;
-
-            Mana -= cost;
-            return true;
-        }
-
-        public void GrantMana(int amount) => Mana = Math.Min(ManaMax, Mana + Math.Max(0, amount));
+        // AN ACTOR NO LONGER HOLDS A SPELL RESOURCE. It used to carry one mana pool, because there
+        // was only ever one way to pay; the resource is now the player's choice between slots and
+        // points, so it lives on the Caster beside the spells it pays for (Core.Magic.Caster).
+        // A goblin has neither and carries neither.
 
         // binary: held until you end it or you go down. no CON save on damage
         // (decisions_checklist.md section 6).
@@ -305,7 +290,6 @@ namespace Core.Characters
             if (IsDead) return;
 
             Health.LongRest();
-            FillMana();
             Scores.Rested();
             ClearConditions();
             EndConcentration();
@@ -314,7 +298,6 @@ namespace Core.Characters
 
         public override string ToString() =>
             $"{Id} (level {Level} {Side.ToString().ToLowerInvariant()}) {Health}, ac {ArmorClass}" +
-            (ManaMax > 0 ? $", {Mana}/{ManaMax} mana" : "") +
             (_conditions.Count > 0
                 ? ", " + string.Join(" ", _conditions.Select(c => c.Id()))
                 : "");

@@ -74,6 +74,60 @@ namespace Content.Schema
                   .Concat(Inventory.Merchant.Keys())
                   .Distinct();
 
+        // A CAMPAIGN'S CONTENT, LAID ON TOP OF THE SRD'S. The SRD library is never edited: the game
+        // holds one, and starting a campaign makes a SECOND that has both - so unloading a campaign
+        // is dropping a reference, not undoing a merge, and two campaigns can never leak into each
+        // other through a library somebody mutated.
+        //
+        // Ids in a pack are scoped to the campaign, so a pack's "goblin" cannot shadow the SRD's.
+        // A pack that is not sound adds nothing: Shelf has already said why, and half its content
+        // is worse than none of it.
+        // IDS ARE NOT SCOPED HERE YET, AND A COLLISION IS REFUSED RATHER THAN RESOLVED. ContentId
+        // knows how to spell "this campaign's goblin" and nothing calls it on the way in, because
+        // rescoping content means rebuilding a Monster, an Item and a Spell with a new id, and what
+        // a scoped id looks like at the table is part of finalizing the pack format - Phase 7.
+        //
+        // Until then a campaign may not redefine something the SRD already ships. That is a real
+        // limit, and the point of doing it this way is that it is a SENTENCE rather than a silent
+        // shadowing: whoever hits it is told which id, and Phase 7 is where it stops being true.
+        public Library With(Campaigns.Package pack)
+        {
+            if (pack == null || !pack.Sound) return this;
+
+            var problems = new List<string>(Problems);
+
+            var monsters = Keep(pack.Monsters, m => m.Id, Bestiary.Has, "monster", pack.Id, problems);
+            var items = Keep(pack.Items, i => i.Id, Items.Has, "item", pack.Id, problems);
+            var spells = Keep(pack.Spells, s => s.Id, Spells.Has, "spell", pack.Id, problems);
+
+            return new Library(Spells.With(spells), Items.With(items),
+                               Classes, Species, Backgrounds,
+                               Bestiary.With(monsters), Consequences, problems);
+        }
+
+        static List<T> Keep<T>(IEnumerable<T> offered, Func<T, string> idOf,
+                               Func<string, bool> alreadyThere, string what, string campaign,
+                               List<string> problems)
+        {
+            var kept = new List<T>();
+
+            foreach (T one in offered)
+            {
+                string id = idOf(one);
+
+                if (alreadyThere(id))
+                {
+                    problems.Add($"{campaign}: the {what} '{id}' is already one the SRD ships, and " +
+                                 "a campaign cannot redefine it yet - rename it");
+                    continue;
+                }
+
+                kept.Add(one);
+            }
+
+            return kept;
+        }
+
         static Library _srd;
 
         public static Library Srd() => _srd ??= Load();

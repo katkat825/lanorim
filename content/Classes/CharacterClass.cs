@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Characters;
+using Core.Magic;
 using Core.Dice;
 using Core.Localization;
 
@@ -83,14 +84,19 @@ namespace Content.Classes
                    Math.Max(0, level - 1) * (sides / 2 + 1 + constitutionModifier);
         }
 
-        public int ManaAt(int level, int abilityModifier)
-        {
-            Feature casting = Spellcasting;
+        // how fast this class climbs the spell levels; None for a class that does not cast
+        public CasterProgression Progression => Spellcasting?.Progression ?? CasterProgression.None;
 
-            return casting == null
-                ? 0
-                : Core.Magic.Mana.Pool(level, casting.ManaPerLevel, casting.ManaFlat,
-                                       abilityModifier);
+        // THE RESOURCE THIS CLASS HANDS A CHARACTER OF THIS LEVEL, in the mode they chose at
+        // creation. One progression feeds both: the slot table reads it directly, and the point
+        // pool derives its size from it.
+        public ISpellResource ResourceAt(int level, SpellResourceMode mode)
+        {
+            if (!Casts) return null;
+
+            return mode == SpellResourceMode.Points
+                ? SpellPoints.For(Progression, level)
+                : SpellSlots.For(Progression, level);
         }
 
         public string NameKey => KeyConventions.ClassName(Id);
@@ -127,11 +133,9 @@ namespace Content.Classes
 
             foreach (Feature feature in By(level)) feature.Grant(actor, level);
 
-            if (Casts)
-            {
-                actor.ManaMax = ManaAt(level, actor.AbilityModifier(CastingAbility.Value));
-                actor.FillMana();
-            }
+            // the spell resource is NOT set here. Outfit is handed an Actor, and an Actor no
+            // longer holds one - it belongs to the Caster, which is Hero's to build because only
+            // Hero knows which mode the player picked.
         }
 
         public override string ToString() =>

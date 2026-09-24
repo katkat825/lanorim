@@ -6,6 +6,7 @@ using Content.Schema;
 using Content.Sheet;
 using Content.Species;
 using Core.Characters;
+using Core.Localization;
 using Core.Magic;
 
 namespace Content.Creation
@@ -22,6 +23,13 @@ namespace Content.Creation
         Abilities,
         Skills,
         Spells,
+
+        // A STEP `Next` NEVER STOPS ON, and that is not an oversight. The choice is pre-answered
+        // with the SRD's own mode, so there is nothing creation has to wait for - a player who
+        // never opens this step gets slots, which is the right default. It is a Step so the UI has
+        // somewhere to put it; ChoosesResource says whether to show it at all.
+        SpellResource,
+
         Name,
         Done,
     }
@@ -90,6 +98,37 @@ namespace Content.Creation
         public int ExpertisePicksLeft => Math.Max(0, ExpertisePicks - _expertise.Count);
 
         // the spells a fresh caster may put on the sheet: its class's list, cantrips and level 1
+        // WHICH WAY THIS CHARACTER WILL PAY FOR LEVELED SPELLS. Slots is pre-selected because it
+        // is the SRD's own answer, and a player who does not care which they have should end up
+        // holding the faithful one rather than the variant.
+        //
+        // Both labels are keys, not words: the screen shows "Spell slots (classic D&D)" against
+        // "Spell points (simpler bookkeeping)" in whatever language it is being read in.
+        public SpellResourceMode Resource { get; private set; } = SpellResourceMode.Slots;
+
+        // a non-caster is never asked, and answering for one is refused rather than ignored
+        public bool ChoosesResource => Class != null && Class.Casts;
+
+        public bool Pick(SpellResourceMode mode)
+        {
+            if (!ChoosesResource) return false;
+
+            Resource = mode;
+            return true;
+        }
+
+        public static string LabelKey(SpellResourceMode mode) =>
+            KeyConventions.Key(KeyConventions.UiNs, "spell_resource",
+                               mode.ToString().ToLowerInvariant(), "name");
+
+        public static string BlurbKey(SpellResourceMode mode) =>
+            KeyConventions.Key(KeyConventions.UiNs, "spell_resource",
+                               mode.ToString().ToLowerInvariant(), "description");
+
+        public static IEnumerable<string> ResourceKeys() =>
+            System.Enum.GetValues<SpellResourceMode>()
+                       .SelectMany(m => new[] { LabelKey(m), BlurbKey(m) });
+
         public IEnumerable<Spell> SpellChoices =>
             Class == null || !Class.Casts
                 ? Enumerable.Empty<Spell>()
@@ -287,7 +326,8 @@ namespace Content.Creation
         {
             if (!Ready) return null;
 
-            var hero = new Hero(Name, Class, Species, Background, Scores.Copy(), Level, Lineage);
+            var hero = new Hero(Name, Class, Species, Background, Scores.Copy(), Level, Lineage,
+                                Resource);
 
             hero.Build(_backgroundSpend, _skills, _expertise, Library.Items, _spells);
 

@@ -12,8 +12,11 @@
 # Raw asset downloads — large source material, never committed (see THIRD_PARTY.md)
 assets/
 
-# Runtime player saves — not part of the project
-saves/
+# Runtime player saves — not part of the project.
+# ANCHORED TO THE ROOT ON PURPOSE. Bare `saves/` matches at any depth, and Windows matches it
+# case-insensitively - so it silently swallowed `content/Saves/`, the save system itself, and git
+# never showed the files at all.
+/saves/
 
 # Internal design scratch kept out of the repo (spreadsheets, raw notes, name ideas)
 _design_docs/

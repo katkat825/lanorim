@@ -103,6 +103,7 @@ namespace Game.Table
 
             Demonstrate();
 
+
             // and a picture of it, if one was asked for. Added last so it photographs the table
             // with everything already on it
             if (Shot.RequestedFrom(OS.GetCmdlineUserArgs(), out string path, out int after))
@@ -162,21 +163,21 @@ namespace Game.Table
                 return;
             }
 
-            var draft = new Content.Maps.MapDraft(10, 8);
+            var draft = new Content.Maps.MapDraft(12, 10);
 
-            draft.Paint(new Cell(0, 0), new Cell(9, 7), Tile.Floor);
+            draft.Paint(new Cell(0, 0), new Cell(11, 9), Tile.Floor);
             draft.Enclose();
 
             // a little difficult ground and a wall to walk round, so the tiles have something to
             // draw other than floor
-            draft.Paint(new Cell(4, 2), new Cell(5, 3), Tile.Rough);
+            draft.Paint(new Cell(5, 3), new Cell(6, 4), Tile.Rough);
 
-            for (int y = 0; y < 5; y++) draft.Wall(new Border(new Cell(6, y), true), Edge.Wall);
+            for (int y = 0; y < 6; y++) draft.Wall(new Border(new Cell(7, y), true), Edge.Wall);
 
-            draft.Wall(new Border(new Cell(6, 3), true), Edge.Door);
+            draft.Wall(new Border(new Cell(7, 4), true), Edge.Door);
 
-            draft.PlaceStart(new Cell(1, 4));
-            draft.PlaceSpawn(1, new Cell(8, 1));
+            draft.PlaceStart(new Cell(1, 5));
+            draft.PlaceSpawn(1, new Cell(10, 1));
 
             if (!draft.Sound)
             {
@@ -202,16 +203,17 @@ namespace Game.Table
 
             GD.Print($"table   {Board}, {map}");
 
-            // every square the hero could walk to this turn, lit the way the UI will light them.
+            // THE REACH IS NOT LIT ON BOOT ANY MORE, and that is the whole of the "washed out
+            // squares" report. Board.ShowReach lights every square the hero could walk to, which on
+            // this map is about a third of it - so opening the scene painted a third of the
+            // parchment blue and it read as the map being two different colours, or as the lighting
+            // being wrong. It was neither: it was a gameplay cue nobody had asked for yet, held up
+            // permanently because Demonstrate() called it once and nothing ever took it down.
             //
-            // ALPHA 0.14, DOWN FROM 0.35. CellLights blends ADDITIVE, so what this costs depends
-            // entirely on what it is drawn over - and the mat underneath it changed. Against the
-            // old near-black placeholder mat, 0.35 read as a blue wash on dark grey. Against the
-            // parchment it now lands on, the same value added up to near-white and swallowed two
-            // thirds of the map, texture and grid and all. This is the same cue at a weight the
-            // lighter surface can carry; it is an eye dial and wants checking whenever the mat does.
-            Board.ShowReach(_field, hero.Actor, hero.Actor.Speed / Turn.FeetPerSquare,
-                            new Color(0.3f, 0.6f, 0.9f, 0.14f));
+            // A reach is something you hold up WHILE A PLAYER IS DECIDING and drop when they have.
+            // There is no player and no decision here, so there is nothing to hold up. ShowReach
+            // and CellLights are untouched and tested; the real turn UI is what will call them.
+            _ = hero;
         }
 
         Battlefield _field;

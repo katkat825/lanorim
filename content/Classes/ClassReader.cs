@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Content.Schema;
+using Core.Magic;
 using Core.Characters;
 using Core.Dice;
 
@@ -153,6 +154,13 @@ namespace Content.Classes
             if (!DamageTypes.TryParse(raw.Text("defense", "resistant"), out Defense defense))
                 defense = Defense.Resistant;
 
+            // absent is None, which only a spellcasting feature is then refused for - every other
+            // kind of feature has no progression and should not have to say so
+            if (!Vocabulary.TryWord(raw.Text("progression", "none"),
+                                    out CasterProgression progression))
+                problems.Add($"{owner}/{id}: '{raw.Text("progression")}' is not a caster " +
+                             "progression - it is " + Vocabulary.Offer<CasterProgression>());
+
             var skills = new List<Skill>();
 
             foreach (string skill in raw.Strings("skills"))
@@ -187,8 +195,7 @@ namespace Content.Classes
                                       skills,
                                       saves,
                                       touches,
-                                      raw.Number("mana_per_level"),
-                                      raw.Number("mana_flat"),
+                                      progression,
                                       raw.Text("note"));
 
             Check(feature, owner, problems);
@@ -229,8 +236,11 @@ namespace Content.Classes
                     if (!feature.Ability.HasValue)
                         problems.Add($"{where}: spellcasting needs its ability");
 
-                    if (feature.ManaPerLevel <= 0 && feature.ManaFlat <= 0)
-                        problems.Add($"{where}: a caster with no mana pool");
+                    if (feature.Progression == CasterProgression.None)
+                        problems.Add($"{where}: spellcasting needs a progression - it is " +
+                                     Vocabulary.Offer<CasterProgression>() +
+                                     ", and it is what both the slot table and the point pool " +
+                                     "are read from");
                     break;
 
                 case Trait.Recovery:

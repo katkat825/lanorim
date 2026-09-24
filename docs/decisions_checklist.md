@@ -28,6 +28,7 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   `character_sheet_decisions.md`). *Sub-decision left:* whether to keep SRD's
   bonus-action-spell restriction (cast a bonus-action spell → your action spell must be a cantrip). I'd
   drop it for simplicity.
+- **[DECIDED 2026-09-23] The base 2 actions are solo compensation, NOT a substitute for Extra Attack.** One player runs one hero instead of a party, so everyone gets a blanket extra action to keep turns feeling full. Class features that grant actions still port on top of that: **Extra Attack → +1 action** (an Extra-Attack martial ends up at **3 actions + 1 bonus + 1 reaction**), **Action Surge → +1 action once per rest**, **Cunning Action → the Dash/Disengage/Hide options on your bonus action** (not a squeezed extra action). Reverses the earlier "no feature grants a full extra action" reading.
     drop for simplicity
 - **[DECIDED] Death save** — single d20 ≥ 10, no mods, intentional solo delta.
 - **[DECIDED] Attack & damage, initiative** — d20 + mods vs. AC; damage = weapon die + mod;
@@ -42,12 +43,31 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DEFERRED] Damage types & resistances** — full SRD, tagged-but-simple, or flatten? (see §6) deferred or flatten
 - **[DECIDED] Conditions** — v1 subset: prone, poisoned, stunned, frightened, restrained, grappled — core effects only; exhaustion's 6-level ladder deferred (decided in §6).
 - **[DECIDED] Rest** — pin exact recovery to SRD (long rest = half hit dice + all slots; short rest spends hit dice) unless you simplify. except long rest = full hp recovery
-- **[DECIDED, one part open] Spellcasting** — SRD spell lists + effects + concentration **[DECIDED]**;
-  **flat known/equipped model [DECIDED]** — the spells on your sheet are what you can cast: no 5e slot
-  tables, no daily preparation, no "Channeling" (that word is retired). *Which spells FUNCTION in v1* is
-  settled (`v1_spell_list.md`). **Cantrips at-will [DECIDED].** **Leveled spells = point pool / mana [DECIDED]** — one pool, each
-  spell costs points by its level, upcasting = spend more points, pool refills on rest; no 5e slot grid.
-  (Ritual/upcasting depth: §6.)
+- **[DECIDED, updated 2026-09-23] Spellcasting** — SRD spell lists + effects + concentration **[DECIDED]**;
+  **flat known/equipped model [DECIDED]** — the spells on your sheet are what you can cast: no daily
+  preparation, no "Channeling" (that word is retired). *Which spells FUNCTION in v1* is settled
+  (`v1_spell_list.md`). **Cantrips at-will [DECIDED]** in every mode. **Leveled-spell resource = the player's
+  choice at character creation, between two modes [DECIDED]:**
+  - **(A) Spell slots — the SRD default (pre-selected).** Slots by level from the standard full-caster table
+    (Mage, Cleric, Druid) and half-caster table (Paladin); cast by spending a slot of the spell's level or
+    higher (upcast); long rest refills. Fully faithful — nothing to disclose.
+  - **(B) Spell points — simpler bookkeeping.** One pool; fixed cost per spell level (1st=2, 2nd=3, 3rd=5,
+    4th=6, 5th=7, 6th=9, 7th=10, 8th=11, 9th=13); upcasting spends more; pool refills on rest; **cap: each
+    spell of 6th level or higher is castable only once per long rest** (keeps points from being strictly
+    stronger than slots). *Provenance: spell points is an official **DMG optional variant, NOT SRD** — we
+    implement the mechanics (numbers aren't copyrightable) and label it our own; never cite it as SRD/CC-BY.*
+  Both modes ride the same cast-at-level engine, so spell effects and upcasting are shared; only the resource
+  accounting and the sheet widget differ. (Ritual/upcasting depth: §6.)
+- **[DECIDED 2026-09-23 — HARD RULE] A 5e spell name is a promise. If a spell's *effect* differs from the
+  5e SRD version, it gets a NEW, distinct name and never ships under the SRD name.** Rules-lawyer casters
+  will rage at a "Shield" or "Fireball" that behaves differently than they know — so an SRD name only ever
+  sits on the SRD effect. Scope: the spell's *own* mechanics — dice, save, range/shape, duration, targets,
+  condition. **Universal system substitutions that hit every spell equally** — mana instead of slots,
+  milestone leveling, binary concentration, one flat known/equipped list — are disclosed once in a "how
+  spells work here" screen and do **not** trigger a rename. Consequences: (a) a spell implemented faithfully
+  keeps its SRD name; (b) a spell we implement differently is renamed and the SRD-named version is not shipped
+  with that changed effect; (c) a spell we don't implement can still ship as a faithful SRD **reference card**
+  under its real name. This also satisfies CC-BY's "indicate if changes were made."
 - **[DEFER] Feats · Multiclassing · Encumbrance.**
 
 ## 2. Content scope for v1
@@ -68,8 +88,8 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   literally (hero has 2 actions); Wild Shape = 3–5 curated forms.
 - **[DECIDED] Spells** — full ~339 SRD list ships as reference cards (all CC-BY, legal); a **131-spell
   subset (62 MUST + 69 SHOULD) fully FUNCTIONS in v1**, composed from effect primitives
-  (`v1_spell_list.md`). Only useable spells exist as cards; ~8 high-cost spells ship as bounded
-  approximations (flagged in the list).
+  (`v1_spell_list.md`). Only useable spells exist as cards; the handful that still can't match the SRD
+  effect ship as bounded approximations **under new names** (per the HARD RULE in §1), flagged in the list.
 - **[DECIDED] Starting gear & loot tables** — per class.
 - **[DECIDED] Characters per campaign / save slots** — carry the old "5 per campaign"
 
@@ -151,12 +171,13 @@ and expensive as *working mechanics*.** Decide, per hotspot, how faithful v1 is.
   actions).
 - **[DECIDED]** a few ability primitives (multiattack, save-or-condition, recharge, resistance);
 - **[DECIDED] skip legendary/lair actions in v1**; spellcaster monsters reuse the spell system.
-- **[DECIDED] Grid tactics — cover, line-of-sight, flanking, AoE templates.** v1 does simple range checks and radius AoE; 
+- **[DECIDED] Grid tactics — cover, line-of-sight, flanking, AoE templates.** v1 does range checks and **radius, line, and cone** AoE templates (2026-09-23: line + cone added to scope — makes Lightning Bolt / Cone of Cold faithful, not approximations); 
 - **[DEFERRED] cover/flanking/LoS** (or add later).
-- **[DEFERRED] Reactions & interrupts.** interrupt reactions (counterspell,
-  shield, hellish rebuke) are fiddly timing. 
-- **[DECIDED]:** v1 = opportunity attack only; other
-  reactions are author-scripted or deferred.
+- **[DECIDED 2026-09-23] Reactions & interrupts are a real system.** v1 builds a general reaction/
+  interrupt window: a creature spends its 1 reaction to interrupt. Opportunity attacks are one case;
+  Shield, Counterspell, Hellish Rebuke and other reaction spells cast as genuine reactions — Shield
+  resolves *before* the hit lands, so it can turn a hit into a miss. Reverses the earlier
+  "opportunity attack only" call: we're building the reaction window anyway, so the reaction spells come along.
 - **[DEFERRED] Concentration damage-saves.** SRD makes you roll a CON save to keep concentration when hit.
 - **[DECIDED]** v1 concentration is binary (held until you end it or are downed); skip the saves.
 - **[DECIDED] Spell preparation rules.** one flat "known/equipped spells" model for everyone (your sheet already leans this).
@@ -184,3 +205,5 @@ Dialog popup vs. bottom-bar · Continue button · fleeing combat · horse/cart i
 additive (currently deferred; v1 is flat 40 slots) · global inventory / lost-and-found.
 
 *Add anything here as it comes up. Half-formed is fine.*
+
+- **[OPEN] Campaign-specific nat-1 / nat-20 consequences.** *(raised 2026-09-24 — the campaign's goat is growing a personality.)* **Not currently wired up.** The engine already supports it — the consequence pool is data with a `.With()` layer, and there's a `Flavour` kind that's a pure narrator line (no mechanics) — but the campaign seam isn't connected: a campaign `Package` has no `consequences` folder, and `Library.With(pack)` passes the SRD pool through unchanged. Two levels: **(a) campaign-wide** additions (goat-tone banes/boons that can be drawn on any nat-1/20 in that campaign) is a ~3-edit wire and easy — and since the pool is additive it sidesteps the "can't redefine SRD content yet" limit entirely; **(b) encounter/NPC-scoped** (a line that fires *only* around the goat / in one encounter) is a bigger add — the pool has no context/tag filtering today, only polarity. Decision pending on whether to wire (a), and whether (b) is worth it.

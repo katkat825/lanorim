@@ -137,9 +137,13 @@ namespace Core.Magic
             if (!caster.Knows(spell.Id))
                 return Casting.Refused(spell, caster.Actor, castAt, "not on the sheet");
 
+            // THE ONLY QUESTION ASKED OF THE RESOURCE, and it does not say which mode answered
+            // it. A slots caster with no 3rd-level slot and a points caster who has already
+            // cast their one 6th today are refused by the same line.
             if (!caster.CanCast(spell, castAt))
                 return Casting.Refused(spell, caster.Actor, castAt,
-                                       $"needs {spell.CostAt(castAt)} mana, has {caster.Actor.Mana}");
+                                       $"nothing left to cast a level {castAt} spell with " +
+                                       $"({caster.Resource?.Describe() ?? "no spell resource"})");
 
             aim ??= Aim.Nothing;
 
@@ -149,8 +153,11 @@ namespace Core.Magic
             if (turn != null && !turn.Take(Spend.Action))
                 return Casting.Refused(spell, caster.Actor, castAt, "no action left");
 
-            if (!spell.IsCantrip && !caster.Actor.SpendMana(spell.CostAt(castAt)))
-                return Casting.Refused(spell, caster.Actor, castAt, "mana went missing");
+            // paid after the action is taken and before anything resolves, so a cast that is
+            // refused downstream has still cost what it cost - which is the table's rule
+            if (!caster.Pay(spell, castAt))
+                return Casting.Refused(spell, caster.Actor, castAt,
+                                       "the spell resource would not pay");
 
             // taking up a new concentration drops whatever was being held, and its boons with it
             if (spell.Concentration) Hold(caster.Actor, spell.Id);

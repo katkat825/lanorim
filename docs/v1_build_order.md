@@ -81,6 +81,7 @@ Phases 0–3 build to exactly that. Get it working end to end before adding brea
 
 ## Phase 7 — Narrative, GM & campaign system
 - Dialogue runtime (YarnSpinner) + popup UI — **(Claude)** → **(You in Godot)**
+- Generic companion speaker (`companion` alias) — resolves to the player's actual companion so one in-narrative line can be "said by any companion"; companion-specific lines override; follows the `dm` reserved-speaker precedent — **(Claude)** → **(You in Godot)** *(base-game only; not in Workshop)*
 - Diegetic GM narrator + narrative branch-out/return for checks & combat — **(Claude)**
 - Random-encounter tables + hidden GM rolls — **(Claude)**
 - Campaign package format + loader — **(Claude)**

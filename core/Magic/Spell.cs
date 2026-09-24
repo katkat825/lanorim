@@ -209,11 +209,6 @@ namespace Core.Magic
             yield return DescriptionKey;
         }
 
-        // cantrips are free; a leveled spell costs its level in mana, and casting it higher costs
-        // the higher number (decisions_checklist.md section 1)
-        public int CostAt(int castAt) => Math.Max(0, Math.Max(Level, castAt));
-
-        public int Cost => CostAt(Level);
 
         public override string ToString() =>
             $"{Id} (level {Level} {School.ToString().ToLowerInvariant()}" +

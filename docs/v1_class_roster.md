@@ -30,20 +30,21 @@ Decisions baked in (2026-09-21):
 
 **Barbarian** — *Path of the Berserker*. STR, d12. Furious frontline survivor.
 Keep Rage, Unarmored Defense, Reckless Attack, Weapon Mastery, Danger Sense.
-Adapt: Rage's per-day use table → one bounded stance (cost/cooldown); **Extra Attack → an on-hit /
-action-quality benefit**, because the hero already gets 2 actions. *Companion: bonded wolf.*
+Adapt: Rage's per-day use table → one bounded stance (cost/cooldown); **Extra Attack → +1 action**
+(stacks on the base 2, so a raging Barbarian at the Extra-Attack level gets 3 actions). *Companion: bonded wolf.*
 
 **Fighter** — *Champion*. STR or DEX, d10. Disciplined weapon master.
 Keep Fighting Style, Second Wind, Weapon Mastery, tactical riders, Improved Critical.
-Adapt: **do not port Action Surge or the multiattack ladder literally** — the hero already has 2 actions;
-express Fighter's edge through action quality, extra on-hit riders, and reliability.
+Adapt: **Extra Attack → +1 action** (3 actions at the Extra-Attack level); **Action Surge → +1 action once
+per rest** (a burst turn, not every round); the higher multiattack ladder collapses into that single +1
+for v1. Fighter's edge is more actions plus fighting-style riders and reliability.
 *Companion: shares the Barbarian's bonded wolf (no new lane).*
 
 **Rogue** — *Thief*. DEX, d8. Skilled infiltrator and opportunist.
 Keep Expertise, Sneak Attack, Cunning Action, Uncanny Dodge, Evasion, Thieves' Tools.
-Adapt: Sneak Attack fires as a damage rider when a setup condition is met; Cunning Action becomes action
-compression inside the 2-action economy; campaign-specific tricks use authored interactable tags rather
-than a general object sandbox. *Companion: gossiping raven.*
+Adapt: Sneak Attack fires as a damage rider when a setup condition is met; **Cunning Action stays a
+bonus-action feature** — Dash / Disengage / Hide on your bonus action, no extra full action; campaign-
+specific tricks use authored interactable tags rather than a general object sandbox. *Companion: gossiping raven.*
 
 **Mage** *(merged)* — Wizard (*Evoker*) breadth + Warlock (*Fiend*) pact identity + Sorcerer (*Draconic*)
 innate themes. INT / CHA, d6. Broad arcane effects plus pact flavor.
@@ -60,7 +61,7 @@ armored-smite / protection growth route covers most of Paladin without a sixth c
 **Paladin** — *Oath of Devotion*. STR + CHA, d10. Holy knight — armored melee, burst smite, protective conviction.
 Keep Lay on Hands, Spellcasting (the paladin list is already inside the v1 spell set), Channel Divinity,
 Weapon Mastery, Divine Smite.
-Adapt: **Extra Attack not literal** (2 actions already); Divine Smite is a damage rider; auras → a
+Adapt: **Extra Attack → +1 action** (3 actions at the Extra-Attack level); Divine Smite is a damage rider; auras → a
 self-centered defensive stance, not a party buff; Faithful Steed → authored travel access, not a
 controlled actor. As a Cleric + Fighter hybrid it reuses both classes' systems; only the aura stance is new.
 *Companion: shares Cleric's saint's fragment (no new lane).*
@@ -103,8 +104,10 @@ Licence: Quaternius Asset License (commercial use, no credit required, no resell
 
 ## Cross-cutting terminology corrections (applies to every class)
 
-- **Extra Attack / multiattack:** not ported literally — the hero already gets 2 actions per turn. A
-  martial class's edge is expressed as action quality, on-hit riders, and reliability.
+- **Extra Attack / multiattack:** ports literally as **+1 action**, stacking on the base 2 (an Extra-Attack
+  martial gets 3 actions + 1 bonus + 1 reaction). The base 2 is solo compensation for running one hero, not a
+  replacement for Extra Attack. The 5e multiattack ladder (2/3/4 attacks) collapses to a single +1 in v1;
+  Action Surge = +1 action once per rest. *(Corrected 2026-09-23 — earlier drafts said "not literal".)*
 - **Spell resource:** the spells shown on your sheet are the ones you can cast (flat **known/equipped**
   model). v1 uses 5e spell *lists and effects*, **not** the 5e slot tables or daily preparation.
   **Expenditure [DECIDED]:** cantrips are at-will; leveled spells use a **point pool (mana)** — cost by

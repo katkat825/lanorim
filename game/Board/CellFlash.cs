@@ -10,8 +10,10 @@ namespace Game.Board
         // share held at full strength before it fades; fading from the start looks like a rendering fault
         [Export] public float HoldShare { get; set; } = 0.25f;
 
-        // a hair above the grid lines, so it lights the square not a stripe
-        public const float Lift = 0.0016f;
+        // ABOVE THE GRID LINES, as a share of a square rather than a fixed 1.6 mm. The flat number
+        // was a hair above the grid on a 60 mm map and level with it on a fine one, which is a
+        // stripe of flicker instead of a square lighting up. Board.Pulse passes the cell size in.
+        public const float Lift = 0.024f;
 
         MeshInstance3D _lit;
 
@@ -46,11 +48,11 @@ namespace Game.Board
             Visible = false;
         }
 
-        public void Show(Vector3 at)
+        public void Show(Vector3 at, float cellSize)
         {
             if (_lit == null) return;
 
-            Position = at + new Vector3(0f, Lift, 0f);
+            Position = at + new Vector3(0f, cellSize * Lift, 0f);
             _left = Seconds;
             Visible = true;
 

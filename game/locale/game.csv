@@ -587,3 +587,7 @@ ui.caption.busy.name,"Pages, a pencil, dice going back in the cup."
 ui.caption.dice.name,The dice go up.
 ui.caption.reacting.name,A small noise from behind the screen.
 ui.caption.room.name,The room is quiet.
+ui.spell_resource.points.description,"One pool. Every spell level has a price, and a long rest refills it. Spells of 6th level and above are still once a day."
+ui.spell_resource.points.name,Spell points (simpler bookkeeping)
+ui.spell_resource.slots.description,"A grid of slots by level, refilled by a long rest. Cast a spell by spending a slot of its level or higher."
+ui.spell_resource.slots.name,Spell slots (classic D&D)

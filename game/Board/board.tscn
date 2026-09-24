@@ -94,16 +94,19 @@ albedo_color = Color(0.35, 0.3, 0.23, 1)
 roughness = 1.0
 
 ; CELLSIZE IS WHAT MAKES THE MAP BIG. updated_decisions.md wants the grid map at three quarters of
-; the screen with the tray small beside it, and at the old 60 mm a ten-square map was 0.6 m against
-; a 0.53 m tray - the two were nearly the same size and neither dominated. 150 mm puts a 10 x 8 map
-; at 1.5 x 1.2 m, which is about two thirds of the frame against the tray's quarter.
+; the screen with the tray small beside it, and at the original 60 mm a ten-square map was 0.6 m
+; against a 0.53 m tray - the two were nearly the same size and neither dominated.
 ;
-; It is the square that grew, not the node: scaling the Board node would leave BoardMetrics
-; reporting 60 mm squares while drawing 150 mm ones, and mini.tscn's FigureHeight moved with it so
-; a figure still stands 1.25 squares tall.
+; 125 mm puts a 12 x 10 map at 1.50 x 1.25 m: the same footprint on the table as the 10 x 8 map at
+; 150 mm, but with finer squares and two more of them each way. That is the trade - the map is not
+; bigger, the squares are smaller, so there is more room to manoeuvre in the same space.
+;
+; It is the square that changed, not the node: scaling the Board node would leave BoardMetrics
+; reporting one size while drawing another, and mini.tscn's FigureHeight moves with it so a figure
+; still stands 1.25 squares tall.
 [node name="Board" type="Node3D"]
 script = ExtResource("1_board")
-CellSize = 0.15
+CellSize = 0.125
 MiniScene = ExtResource("2_mini")
 HeroFigure = ExtResource("7_hero")
 EnemyFigure = ExtResource("8_enemy")

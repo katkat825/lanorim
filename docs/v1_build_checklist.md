@@ -9,12 +9,13 @@ can tell when v1 is *done*. Written 2026-09-21.
 **Legend:** `[ ]` to build · `[~]` in progress · `[x]` done · `[HARVEST]` reuse/adapt old game code ·
 `[DEFER]` explicitly post-v1.
 
-## Progress snapshot — 2026-09-23
-*Marks reflect code present in the repo (file-level survey, not a full functional/test pass — confirm with `dotnet test` + the check scripts).*
+## Progress snapshot — 2026-09-24
+*Marks reflect code + unit tests present in the repo (a file/test survey — not a play-through, and not a fresh `dotnet test` run this session; the harvest report records the last green run). `[x]` = built and unit-tested at the code layer; `[~]` = partial, or built but not yet wired to UI / play-verified.*
 
-- **Working:** the Godot/C# solution builds; the **physical table** is coming together — dice physics + your modeled tray (wood + felt), the board grid, placeholder minis, audio, the painted-mini shader path — and **localization** (keys-not-strings) is ported.
-- **Scaffolded / in progress:** the **rules engine** (d20 resolution, abilities, attack/damage/crits, HP + death save, action economy, grid/space, combat loop), the **data layer** (schema, classes, species, items, inventory, spells, monsters, sheet, maps, creation), the **spell-primitive** start, and the **accessibility** layer.
-- **Not started — the big frontier is UI + narrative + content:** **no UI exists yet** (start-game/menu, character sheet, inventory/merchant, dialog/text popup, spell cards, HUD, settings, the Kenney theme/fonts/icons); the **narrative/GM** layer (dialogue runtime, GM narrator, narrative flow, random encounters); **save/load + campaign loader**, the **campaign system + map builder + Workshop**; the rest of the rules/data (rest, leveling, full 131 spells, conditions depth, merchant); **content** (campaigns/tutorials), **presentation polish**, **demo**, **release**.
+- **Built + unit-tested (rules & data engine):** the content **schema** + campaign **package format/loader**, **save/load**, **localization**; **d20 resolution** + **abilities/proficiency**, **attack/damage/crits**, **HP + death save**, **action economy + turn loop**, **grid movement**; the **spell-primitive engine** (13 primitives; the 62 MUST spells compose); the **two-mode spell resource** — slots + points, chosen at creation, built 2026-09-24; **inventory**; the **branching dialogue runtime** (Yarn + the beats "shared spine"). ~350 unit tests across core + content.
+- **Built at the code layer, needs eyes (the physical table):** dice physics + your modeled tray, board grid, minis, audio, camera, the painted-mini shader path — tuning and the dice-fairness confirmation are Godot-side.
+- **Partial:** conditions, damage types/resistance, rest, milestone leveling, concentration, the full 131-spell + monster/class/species data; enemy AI; the diegetic GM narrator + narrative flow.
+- **Not started — the frontier is UI:** **no screen UI exists yet** (start-game/menu, character sheet, inventory/merchant, dialog popup, spell cards, HUD, settings, creation flow, the Kenney theme/fonts/icons). Also: the **map builder + Workshop**, **random-encounter tables**, the just-decided **line/cone shapes**, **reaction/interrupt spells** and **companion alias**, all **content** (campaigns/tutorials), **demo**, **release**.
 
 ---
 
@@ -46,33 +47,33 @@ done.**
 ## 1. Foundation
 
 - `[x]` **Godot project + C# setup** — project, folder layout, palette-unify/painted-miniature shader path.
-- `[~]` **Content data model** — the schema for classes, species, spells, monsters, items, conditions as
+- `[x]` **Content data model** — the schema for classes, species, spells, monsters, items, conditions as
   *reference data* (the cheap layer). Everything else reads from this.
-- `[HARVEST]` **Content / campaign package format + loader** — data-driven package the game loads (paradigm-agnostic; reusable from the old game).
-- `[HARVEST]` **Save/load** — autosave on events + manual saves (save all if feasible, else last 10), reload-on-death.
+- `[x]` **Content / campaign package format + loader** — data-driven package the game loads (paradigm-agnostic; reusable from the old game).
+- `[x]` **Save/load** — autosave on events + manual saves (save all if feasible, else last 10), reload-on-death.
 - `[x]` **Localization / string keys** — so all player text is keyed.
 
 ## 2. Rules engine
 
-- `[~]` **d20 resolution** — roll + mods vs DC/AC, advantage/disadvantage.
-- `[~]` **Ability scores, modifiers, proficiency bonus** (+2→+6).
-- `[ ]` **Skill checks** — 18 skills, DC ladder or campaign custom, **nat-1/nat-20 consequence pool**.
-- `[ ]` **Saving throws** — six saves + class proficiencies.
-- `[~]` **Attack + damage + crits** — weapon die + mod; crit = double + consequence pool.
-- `[~]` **HP / damage / healing / death save** — single d20 ≥ 10 death save.
-- `[~]` **Action economy + turn structure** — 2 actions + 1 bonus + 1 reaction; class extras.
-- `[ ]` **Conditions** — v1 subset (prone, poisoned, stunned, frightened, restrained, grappled), core effects.
-- `[ ]` **Damage types + simple resistance** — tag types; ×0.5 / ×2 / ×0.
-- `[ ]` **Rest** — short (spend hit dice) / long (full HP + mana).
-- `[ ]` **Leveling** — milestone, to level 20; ASI level = +2 to spend.
+- `[x]` **d20 resolution** — roll + mods vs DC/AC, advantage/disadvantage.
+- `[x]` **Ability scores, modifiers, proficiency bonus** (+2→+6).
+- `[~]` **Skill checks** — 18 skills, DC ladder or campaign custom, **nat-1/nat-20 consequence pool**.
+- `[~]` **Saving throws** — six saves + class proficiencies.
+- `[x]` **Attack + damage + crits** — weapon die + mod; crit = double + consequence pool.
+- `[x]` **HP / damage / healing / death save** — single d20 ≥ 10 death save.
+- `[x]` **Action economy + turn structure** — 2 actions + 1 bonus + 1 reaction; class extras. *(base built + tested; the Extra-Attack/Action-Surge action grants from the 2026-09-23 correction still to add in class data.)*
+- `[~]` **Conditions** — v1 subset (prone, poisoned, stunned, frightened, restrained, grappled), core effects.
+- `[~]` **Damage types + simple resistance** — tag types; ×0.5 / ×2 / ×0.
+- `[~]` **Rest** — short (spend hit dice) / long (full HP + mana).
+- `[~]` **Leveling** — milestone, to level 20; ASI level = +2 to spend.
 
 ## 3. Spellcasting
 
-- `[~]` **Spell-effect primitive library** — damage, heal, apply-condition, buff/debuff, move, area,
+- `[x]` **Spell-effect primitive library** — damage, heal, apply-condition, buff/debuff, move, area,
   utility-narrative — the composition engine (the #1 cost; see `v1_spell_list.md`).
-- `[ ]` **Mana point pool** — cantrips at-will; leveled spells cost points by level; upcasting = more points; refill on rest.
-- `[ ]` **Concentration** — binary (held until ended or downed).
-- `[ ]` **131 functioning spells** composed from primitives; **~8 bounded approximations** (flagged).
+- `[x]` **Spell resource — two modes, chosen at creation** — **(A) spell slots** (full/half tables) and **(B) spell points** (fixed cost per level + 6th+-once-per-rest cap); cantrips at-will in both; refill on rest; one `ISpellResource` abstraction over the shared cast-at-level engine. *(2026-09-23: was mana-only. Built + unit-tested 2026-09-24 — slots + points + 6th+ cap; the choose-at-creation UI is §10.)*
+- `[~]` **Concentration** — binary (held until ended or downed).
+- `[~]` **131 functioning spells** composed from primitives; bounded approximations — count re-pinned after line/cone + reactions land.
 - `[ ]` **Spell cards UI** — text cards; full ~339 SRD list as reference cards.
 
 ## 4. Classes, species, progression
@@ -86,15 +87,16 @@ done.**
 ## 5. Character sheet & inventory
 
 - `[ ]` **Character sheet UI** — identity, basics, abilities, skills, actions/bonus/reactions, weapons, spells, special (`character_sheet_decisions.md`).
-- `[~]` **Inventory system** — flat 40 slots, stacking, equip, buy/sell, discard-to-make-room, class/level gating (`inventory_decisions.md`).
+- `[x]` **Inventory system** — flat 40 slots, stacking, equip, buy/sell, discard-to-make-room, class/level gating (`inventory_decisions.md`).
 - `[ ]` **Merchant** — buy/sell, unlimited gold default, buy-prevention when full.
 
 ## 6. Combat
 
-- `[~]` **Turn-based loop** — initiative, turn order, action economy.
-- `[~]` **Grid movement + range checks**; **radius AoE**; **opportunity attacks only**.
+- `[x]` **Turn-based loop** — initiative, turn order, action economy.
+- `[~]` **Grid movement + range checks**; **radius, line & cone AoE templates**. *(radius/burst built + tested; line/cone still pending — see cc task.)*
+- `[~]` **Reaction / interrupt system** — a creature spends its 1 reaction to interrupt: opportunity attacks *plus* reaction spells (Shield resolves before the hit lands, Counterspell on an enemy cast). *(2026-09-23: promoted from "opportunity attacks only". The opportunity-attack reaction is built + tested; the interrupt window + Shield/Counterspell are the pending part.)*
 - `[ ]` **Combat interaction UX** — how the player issues an action (menu/targeting feel). *Design during this build — the one big undesigned piece.*
-- `[ ]` **Enemy AI** — basic approach + attack with tags.
+- `[~]` **Enemy AI** — basic approach + attack with tags.
 - `[~]` **Monster statblocks + ability primitives** — multiattack, save-or-condition, recharge, resistance; spellcaster monsters reuse the spell system; skip legendary/lair.
 - `[ ]` **Fleeing combat** — whichever is more expected + easier.
 
@@ -109,14 +111,15 @@ done.**
 
 ## 8. Narrative & GM
 
-- `[ ]` **Diegetic GM narrator** — the figure behind the screen delivers the story.
-- `[HARVEST]` **Branching dialogue runtime** — YarnSpinner (already chosen); popup + Continue button.
-- `[ ]` **Narrative flow** — branch-out/return for skill checks and combat.
+- `[~]` **Diegetic GM narrator** — the figure behind the screen delivers the story.
+- `[x]` **Branching dialogue runtime** — YarnSpinner (already chosen); popup + Continue button. *(Runtime + the beats "shared spine" built + tested; the popup UI is §10.)*
+- `[ ]` **Generic companion speaker (`companion` alias)** — a reserved speaker the presentation resolves to the player's actual companion, so a base-game campaign can write one in-narrative line "said by any companion"; a companion-specific line overrides it. Follows the existing `dm` reserved-speaker precedent. *(Base-game only; not needed in Workshop.)*
+- `[~]` **Narrative flow** — branch-out/return for skill checks and combat.
 - `[ ]` **Random-encounter tables + hidden GM rolls** — weighted table + trigger + hidden-roll surface.
 
 ## 9. Campaign format & Workshop
 
-- `[ ]` **Campaign format** — scenes, encounters, maps, NPCs, dialogue, tables as data.
+- `[~]` **Campaign format** — scenes, encounters, maps, NPCs, dialogue, tables as data.
 - `[ ]` **MAP BUILDER (wanted early).** In-engine visual editor: shows the grid + a palette of the
   Quaternius/asset library; **click/drag to place** floor tiles, walls, props, and monster/spawn markers on
   squares; save as a campaign map file. Purpose: you *and* Workshop authors build maps **without touching

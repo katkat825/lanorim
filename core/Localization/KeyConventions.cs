@@ -81,6 +81,12 @@ namespace Core.Localization
         public static string Line(string speaker, string aspect, string situation, int index) =>
             Indexed(DialogueNs, speaker, aspect, situation, index);
 
+        // A BARK IS A LINE WITH ITS ASPECT SPELLED ONCE. The companion's short reactions are the
+        // one kind of line the engine itself asks for by name, so the word "bark" belongs here
+        // beside the other conventions rather than in the dialogue module that happens to use it.
+        public static string Bark(string speaker, string situation, int index) =>
+            Line(speaker, "bark", situation, index);
+
 
         static bool IsSegment(string s) =>
             s.Length > 0 && s.All(c => (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_');

@@ -107,7 +107,7 @@
       "starting_gear": ["quarterstaff", "dagger", "arcane_focus"],
       "features": [
         { "id": "arcane_spellcasting", "trait": "spellcasting", "level": 1, "ability": "int",
-          "mana_per_level": 2, "mana_flat": 1 },
+          "progression": "full" },
         { "id": "pact_resilience", "trait": "resistance", "level": 3, "damage_type": "fire",
           "defense": "resistant",
           "note": "the Warlock's pact identity, folded into the merged Mage (v1_class_roster.md)" },
@@ -134,7 +134,7 @@
       "starting_gear": ["mace", "shield", "chain_shirt", "holy_symbol"],
       "features": [
         { "id": "divine_spellcasting", "trait": "spellcasting", "level": 1, "ability": "wis",
-          "mana_per_level": 2, "mana_flat": 1 },
+          "progression": "full" },
         { "id": "disciple_of_life", "trait": "recovery", "level": 1, "amount": "1d4", "flat": 2,
           "uses": 2 },
         { "id": "channel_divinity", "trait": "stance", "level": 2, "flat": 2,
@@ -170,7 +170,7 @@
           "per_level": "1d8", "per_levels": 5, "damage_type": "radiant",
           "when": "when_spent" },
         { "id": "oath_spellcasting", "trait": "spellcasting", "level": 2, "ability": "cha",
-          "mana_per_level": 1, "mana_flat": 1 },
+          "progression": "half" },
         { "id": "sacred_weapon", "trait": "stance", "level": 3, "flat": 2, "touches": "attacks",
           "uses": 2, "duration": "encounter" },
         { "id": "aura_of_protection", "trait": "stance", "level": 6, "flat": 3,
@@ -197,7 +197,7 @@
       "starting_gear": ["quarterstaff", "sickle", "leather_armor", "druidic_focus"],
       "features": [
         { "id": "primal_spellcasting", "trait": "spellcasting", "level": 1, "ability": "wis",
-          "mana_per_level": 2, "mana_flat": 1 },
+          "progression": "full" },
         { "id": "wild_shape", "trait": "shape", "level": 2, "count": 4, "uses": 2,
           "note": "three to five curated form cards, not a beast-catalogue converter. the declared product constraint of v1_class_roster.md" },
         { "id": "natural_recovery", "trait": "recovery", "level": 2, "amount": "1d8", "flat": 1,

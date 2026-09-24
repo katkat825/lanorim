@@ -180,19 +180,33 @@ namespace Content.Tests
             Assert.Contains(paladin.By(2), f => f.Id == "divine_smite");
         }
 
+        // the resource grows with the level, whichever mode the character chose
         [Fact]
-        public void TheManaPoolGrowsWithTheLevelAndTheCastingAbility()
+        public void ACastersResourceGrowsWithTheLevel()
         {
             CharacterClass mage = Srd.Class("mage");
 
-            // 2 a level, +1, + the Intelligence modifier
-            Assert.Equal(7, mage.ManaAt(1, 4));
-            Assert.Equal(15, mage.ManaAt(5, 4));
+            var first = (SpellSlots)mage.ResourceAt(1, SpellResourceMode.Slots);
+            var fifth = (SpellSlots)mage.ResourceAt(5, SpellResourceMode.Slots);
+
+            Assert.Equal(1, first.Highest);
+            Assert.Equal(3, fifth.Highest);
+
+            Assert.True(SpellPoints.PoolFor(CasterProgression.Full, 5) >
+                        SpellPoints.PoolFor(CasterProgression.Full, 1));
         }
 
         [Fact]
-        public void APaladinIsAHalfCaster() =>
-            Assert.True(Srd.Class("paladin").ManaAt(10, 3) < Srd.Class("cleric").ManaAt(10, 3));
+        public void APaladinIsAHalfCaster()
+        {
+            Assert.Equal(CasterProgression.Half, Srd.Class("paladin").Progression);
+            Assert.Equal(CasterProgression.Full, Srd.Class("cleric").Progression);
+
+            var paladin = (SpellSlots)Srd.Class("paladin").ResourceAt(10, SpellResourceMode.Slots);
+            var cleric = (SpellSlots)Srd.Class("cleric").ResourceAt(10, SpellResourceMode.Slots);
+
+            Assert.True(paladin.Highest < cleric.Highest);
+        }
     }
 
     public class HeroTests
@@ -427,12 +441,14 @@ namespace Content.Tests
                        Srd.Spells.For("mage").Where(s => s.Level <= 3));
 
             hero.Actor.Suffer(5, DamageType.Slashing);
-            hero.Actor.SpendMana(5);
+            hero.Caster.Resource.Pay(1);
 
             hero.LongRest();
 
             Assert.Equal(hero.Actor.Health.Maximum, hero.Actor.Health.Current);
-            Assert.Equal(hero.Actor.ManaMax, hero.Actor.Mana);
+
+            // and the day's magic is back too, whichever mode this character chose
+            Assert.Equal(3, hero.Caster.Resource.Highest);
         }
 
         [Fact]

@@ -18,7 +18,16 @@ Pure-utility spells outside this set are handled as narrative / campaign content
 **Resource model reminder:** these are the spells a caster can *know/equip*. **Cantrips are at-will; leveled spells use a point pool (mana)** — cost by spell level, upcasting
 spends more, refills on rest. See `decisions_checklist.md` §1.
 
-**[C]** = requires concentration. **⚠** = ships as a bounded approximation, not a general subsystem.
+**[C]** = requires concentration. **⚠** = its effect can't match the SRD, so it ships as a bounded approximation **under a NEW NAME** (see the naming rule below), not a general subsystem.
+
+**Area shapes (2026-09-23):** v1 supports **radius/sphere, line, and cone** templates, and **reaction spells cast as real reactions** (see `decisions_checklist.md` §6). So Lightning Bolt (line), Cone of Cold / Burning Hands / Sunbeam (cone), and Shield / Counterspell (reaction) are **faithful, not ⚠ approximations** — the ⚠ flags below are only the genuinely-hard spells.
+
+**HARD NAMING RULE (`decisions_checklist.md` §1):** a 5e spell name only ever sits on the 5e effect. Any
+spell whose *own* mechanics differ from the SRD (dice, save, shape, duration, targets, condition) is renamed
+and never ships under the SRD name — rules-lawyer players will not forgive a familiar name that behaves wrong.
+Universal substitutions that hit every spell the same (mana, milestone leveling, binary concentration) are
+disclosed once globally and don't count. So every ⚠ spell below needs a new name before it ships; the SRD name
+survives only as a faithful reference card if we choose to show one.
 
 
 
