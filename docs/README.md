@@ -16,7 +16,7 @@ docs are the source of truth for what the game is and what gets built.
 
 - `v1_class_roster.md` — the 7 v1 classes (one subclass each) and their adaptations.
 - `v1_species_roster.md` — the 7 v1 species.
-- `v1_spell_list.md` — the 131 functioning v1 spells + the full-list reference-card plan.
+- `v1_spell_list.md` — the 123 functioning v1 spells + the full-list reference-card plan.
 - `v1_minis_map.md` — every mini (hero, companion, monster) and where its model comes from.
 - `character_sheet_decisions.md` — the character sheet layout; abilities/skills/spells basis.
 - `inventory_decisions.md` — the lean v1 inventory (40 slots, buy/sell, equip, gating).

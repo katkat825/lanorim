@@ -233,6 +233,111 @@ namespace Core.Magic
         // ends it - Hold Person's, Blindness's
         public bool RepeatSave { get; init; }
 
+        // the escape check's skill and DC, when they are not the usual ones: Maze's Study action
+        // is Intelligence (Investigation) against DC 20, not the caster's DC
+        public Skill EscapeSkill { get; init; }
+
+        public int EscapeDc { get; init; }
+
+        // FLYING and what rides with it (2026-09-25): Fly, Gaseous Form
+        public int FlySpeed { get; init; }
+
+        public bool NoAttacks { get; init; }
+
+        public bool NoCasting { get; init; }
+
+        public IReadOnlyList<Condition> Immune { get; init; } = Array.Empty<Condition>();
+
+        // an area that touches only so many of the creatures in it: Slow's "up to six"
+        public int UpTo { get; init; }
+
+        // the target leaves the board for the duration and comes back when it ends: Banishment,
+        // Maze
+        public bool Banishes { get; init; }
+
+        // held this many rounds, a banished creature with one of these tags doesn't come back:
+        // Banishment's minute on an Aberration, Celestial, Elemental, Fey or Fiend
+        public int GoneAfterRounds { get; init; }
+
+        public IReadOnlyList<string> GoneTags { get; init; } = Array.Empty<string>();
+
+        // a zone on the ground, which a flyer passes over: Grease, Spike Growth
+        public bool Ground { get; init; }
+
+        // it ends on a target that drops to 0 hit points: Gaseous Form
+        public bool EndsAtZero { get; init; }
+
+        // an afflict that ends the moment its bearer makes an attack roll, deals damage or casts a
+        // spell: Invisibility
+        public bool EndsOnAct { get; init; }
+
+        // a sway that turns a named spell's damage away while it lasts: Shield and Magic Missile
+        public string WardsSpell { get; init; } = "";
+
+        // an area that leaves its caster out: Entangle's "each creature (other than you)"
+        public bool SparesCaster { get; init; }
+
+        // dim light beyond the bright: Light's "Dim Light for an additional 20 feet". light is
+        // told, not played, in a fight - this is the number the table would draw
+        public int DimRadius { get; init; }
+
+        // the advantage against the bearer counts only for an attacker that can see it: Faerie Fire
+        public bool IfSeen { get; init; }
+
+        // the disadvantage against the bearer doesn't hold for an attacker with Truesight: Blur
+        public bool NotVsTruesight { get; init; }
+
+        // the attack is made from the spell's own zone, against a creature this many squares from
+        // it: Spiritual Weapon's force, "a creature within 5 feet of the force"
+        public int NearZone { get; init; }
+
+        // a failed save turns a shape-shifted creature back, and it can't shift again until it
+        // leaves the zone: Moonbeam
+        public bool RevertsShape { get; init; }
+
+        // creatures with these tags make the save with disadvantage: Shatter's Construct
+        public IReadOnlyList<string> DisadvantageTags { get; init; } = Array.Empty<string>();
+
+        // creatures with these tags fail the save without rolling: Blight's Plant
+        public IReadOnlyList<string> AutoFailTags { get; init; } = Array.Empty<string>();
+
+        // the abilities a 'chosen' ability may be: Enhance Ability's five (not Constitution)
+        public IReadOnlyList<Ability> AbilityChoices { get; init; } = Array.Empty<Ability>();
+
+        // an afflict from a zone that holds only while its bearer is in the zone: Web's "while in
+        // the webs"
+        public bool WhileInZone { get; init; }
+
+        // every creature after the first must be within this many squares of the first, and each
+        // only once: Chain Lightning's leaps
+        public int NearFirst { get; init; }
+
+        // reduced to 0 hit points by it, the creature is dust: dead at once and past any revival
+        // v1 has. Disintegrate
+        public bool Dust { get; init; }
+
+        // it ends a creation of magical force at the aimed square: Disintegrate
+        public bool EndsForce { get; init; }
+
+        // a creature with this tag killed by it rises as this statblock at the start of the
+        // caster's next turn, on the caster's side: Finger of Death's Humanoid and Zombie
+        public string RaisesAs { get; init; } = "";
+
+        public string RaisesTag { get; init; } = "";
+
+        // a teleport that brings one willing creature from beside the caster along: Dimension Door
+        public bool Passenger { get; init; }
+
+        // a teleport to anywhere in range, seen or not, that fails for 4d6 force on an occupied
+        // square: Dimension Door
+        public bool Unseen { get; init; }
+
+        // held this many rounds, the condition stays when the spell ends: Flesh to Stone's minute
+        public int PermanentAfterRounds { get; init; }
+
+        // a zone of exactly one square, radius 0 on purpose: Spiritual Weapon's force
+        public bool Point { get; init; }
+
         // narrows a check or save lean to one ability: Enlarge's Strength
         public Ability? LeansOn { get; init; }
 
@@ -625,6 +730,32 @@ namespace Core.Magic
 
         // what must not be shown under an SRD spell's name
         public bool Renamed => Approximated || NotInSrd;
+
+        // --- 2026-09-25, the SRD check -------------------------------------------------------------
+
+        // a reaction spell that also answers being targeted by this spell: Shield's Magic Missile
+        public string AnswersSpell { get; init; } = "";
+
+        // a casting time of a minute or more - Identify, Raise Dead, Foresight. v1 casts these out
+        // of a fight only, where the minute passes in the telling
+        public bool OutOfCombat { get; init; }
+
+        // cast at this level or higher it needs no concentration: Major Image at 4+. 0 is never
+        public int ConcentrationBelow { get; init; }
+
+        // casting it again ends the one already cast: Foresight
+        public bool EndsPrevious { get; init; }
+
+        // its repeat moves it to a new creature, and only once the one it is on has dropped to 0
+        // hit points: Hex, Hunter's Mark
+        public bool MovesWhenDown { get; init; }
+
+        // a creation of magical force, which Disintegrate destroys: Wall of Force, Forcecage
+        public bool ForceCreation { get; init; }
+
+        // the save DC is 8 + proficiency + this ability's modifier, whoever casts it: a species'
+        // own attack (the Dragonborn's Breath Weapon uses Constitution)
+        public Ability? DcAbility { get; init; }
 
         public int RangeAt(int casterLevel) =>
             RangeScales && IsCantrip ? Range << SpellEffect.CantripTiers(casterLevel) : Range;

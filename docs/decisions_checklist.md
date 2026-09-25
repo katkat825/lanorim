@@ -30,6 +30,11 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   drop it for simplicity.
 - **[DECIDED 2026-09-23] The base 2 actions are solo compensation, NOT a substitute for Extra Attack.** One player runs one hero instead of a party, so everyone gets a blanket extra action to keep turns feeling full. Class features that grant actions still port on top of that: **Extra Attack → +1 action** (an Extra-Attack martial ends up at **3 actions + 1 bonus + 1 reaction**), **Action Surge → +1 action once per rest**, **Cunning Action → the Dash/Disengage/Hide options on your bonus action** (not a squeezed extra action). Reverses the earlier "no feature grants a full extra action" reading.
     drop for simplicity
+- **[DECIDED 2026-09-25] Monsters don't get the solo extra action.** The base 2 actions are the *hero's*
+  solo compensation, not everyone's. A monster plays its SRD statblock's turn: **one action** — the Attack
+  action is **a single attack**, and only a monster whose SRD statblock has a **Multiattack** makes more
+  (exactly the number its Multiattack lists) — plus its move, a bonus action only if its statblock has one,
+  and 1 reaction. This is what keeps one hero against a group fair. (Answers run-log question 15.)
 - **[DECIDED] Death save** — single d20 ≥ 10, no mods, intentional solo delta.
 - **[DECIDED] Attack & damage, initiative** — d20 + mods vs. AC; damage = weapon die + mod;
   initiative d20 + Dex. Flag if you want a delta.
@@ -69,6 +74,21 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   keeps its SRD name; (b) a spell we implement differently is renamed and the SRD-named version is not shipped
   with that changed effect; (c) a spell we don't implement can still ship as a faithful SRD **reference card**
   under its real name. This also satisfies CC-BY's "indicate if changes were made."
+  - **[DECIDED 2026-09-25] The exceptions.** Kathleen approved these bounded versions to keep their SRD names
+    ("close enough"). Each keeps "(v1 ships a bounded version of this spell.)" in its description, which is how
+    CC-BY's "indicate changes" is met. The naming test allow-lists exactly these, each with its reason
+    (`KeptUnderTheirSrdNames` in `content.tests/ShapesAndReactionsTests.cs`):
+    - **Find Familiar**: fixed familiar archetypes and a scouting menu, not any creature.
+    - **Dominate Monster**: a short command set, not full obedience.
+    - **Wish**: duplicates a spell or picks from an authored menu; no free-text reality change.
+    - **Polymorph**: curated form cards, not any beast's statblock.
+    - **Shapechange**: curated high-level form cards.
+    - **Fly**: a Flying status with speed 60 and no altitude. It drops the extra creature per slot level above 3.
+    - **Gaseous Form**: the same Flying status at speed 10 and no altitude; the rest is the SRD text.
+    - **Slow**: the SRD text minus the clause on casting spells with a Somatic component (v1 doesn't track
+      components).
+    Any other spell that can't match still takes a new name (Wall of Force ships as *Cube of Force*, Teleport as
+    *Waypoint*).
 - **[DECIDED 2026-09-24] Spell fidelity is the priority.** As many v1 spells as possible ship **exactly as the
   SRD 5.2.1 spell, under its SRD name** — build the missing mechanics rather than approximate. Only a spell that
   genuinely can't be made faithful keeps a new name (the HARD RULE above). **A spell that isn't in SRD 5.2.1 at
@@ -80,7 +100,7 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED] Races/ancestries** — **7 v1 species: Human, Elf, Dragonborn, Tiefling, Dwarf, Halfling,
   Orc** (`v1_species_roster.md`); Gnome/Goliath deferred. Light to implement; minis reusable; v1 may
   ignore species for the mini. The cost knee is the visual pipeline, not the mechanics.
-- **[DECIDED, approach] Backgrounds** — SRD; light (skills/flavor). *(2026-09-24: 5 of the 9 in the data may not be SRD 5.2.1 — a review list is being produced; decision pending.)*
+- **[DECIDED, approach] Backgrounds** — SRD; light (skills/flavor). *(2026-09-24: 5 of the 9 in the data may not be SRD 5.2.1 — a review list is being produced; decision pending.)* *(2026-09-25: confirmed against the SRD text: only Acolyte, Criminal, Sage and Soldier are SRD 5.2.1 (SRD p.83). The removals are `cc_task_review-naming-and-backgrounds.md`'s.)*
 - **[DECIDED, approach] Monsters** — full SRD pool + custom per campaign. Statblocks are
   cheap; *special abilities are the cost* (§6).
 - **[DECIDED] Level range & leveling** — milestone leveling, up to level 20; XP deferred (allowing both,
@@ -91,10 +111,12 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   Cleric + Fighter hybrid) shares Cleric's** — no new dialogue lanes. Bard/Ranger/Sorcerer/Monk deferred
   or route-covered (Ranger was the next cheap candidate, intentionally held). Extra Attack ports as +1
   action (corrected 2026-09-23, §1); Wild Shape = 3–5 curated forms.
-- **[DECIDED] Spells** — full ~339 SRD list ships as reference cards (all CC-BY, legal); a **131-spell
-  subset (62 MUST + 69 SHOULD) fully FUNCTIONS in v1**, composed from effect primitives
+- **[DECIDED] Spells** — full ~339 SRD list ships as reference cards (all CC-BY, legal); a **123-spell
+  subset (62 MUST + 61 SHOULD) fully FUNCTIONS in v1**, composed from effect primitives
   (`v1_spell_list.md`). Only useable spells exist as cards; the handful that still can't match the SRD
-  effect ship as bounded approximations **under new names** (per the HARD RULE in §1), flagged in the list.
+  effect ship as bounded approximations **under new names** (per the HARD RULE in §1, and its exception list),
+  flagged in the list. *(2026-09-25: was 131. Kathleen deferred Feather Fall, Heat Metal, Plane Shift, Reverse
+  Gravity, Antimagic Field, Earthquake and True Polymorph (`deferred.md`) and cut Suggestion.)*
 - **[DECIDED] Starting gear & loot tables** — per class.
 - **[DECIDED] Characters per campaign / save slots** — carry the old "5 per campaign"
 
@@ -166,7 +188,7 @@ and expensive as *working mechanics*.** Decide, per hotspot, how faithful v1 is.
   **Cheap path:** build a small library of spell-effect *primitives* (damage, heal, apply-condition,
   buff/debuff, move, area, utility-narrative) and compose spells from them; ship a curated **v1 subset
   that fully functions**, list the rest as reference cards, and treat pure-utility spells as
-  narrative/campaign-handled rather than coded. **Specced:** the primitive foundation + 131-spell v1 subset are in `v1_spell_list.md`.
+  narrative/campaign-handled rather than coded. **Specced:** the primitive foundation + 123-spell v1 subset (131 until 2026-09-25) are in `v1_spell_list.md`.
 - **[DECIDED] Class features & subclasses.** Each class is a progression of features (rage, sneak attack,
   spellcasting, ki, wild shape, channel divinity…), and subclasses multiply it. **Cheap path:** v1 ships
   a **small set of classes**, implement their core features, **skip subclasses for v1** (or one each),
@@ -201,7 +223,7 @@ and expensive as *working mechanics*.** Decide, per hotspot, how faithful v1 is.
 (sheet + abilities/skills/spells = SRD, action economy) · `inventory_decisions.md` (lean v1 inventory:
 flat 40 slots, stacking, buy/sell, discard flow, equip, class/level gating) · `deferred.md` (the parked
 pile) · `../THIRD_PARTY.md` (SRD Option B + asset provenance) · **`v1_class_roster.md`** (7
-classes) · **`v1_species_roster.md`** (7 species) · **`v1_spell_list.md`** (131 functioning + full-list
+classes) · **`v1_species_roster.md`** (7 species) · **`v1_spell_list.md`** (123 functioning + full-list
 cards).
 
 ## 8. Open questions & running additions

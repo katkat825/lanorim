@@ -55,6 +55,23 @@ namespace Content.Classes
 
         public IReadOnlyList<string> StartingGear { get; }
 
+        // the gold the starting kit comes with (SRD 5.2.1's option A)
+        public int Gold { get; init; }
+
+        // tool proficiencies: a Rogue's Thieves' Tools, a Druid's Herbalism Kit. carried on the
+        // sheet; no v1 check reads them yet
+        public IReadOnlyList<string> Tools { get; init; } = Array.Empty<string>();
+
+        // weapon training (SRD 5.2.1): "simple", "martial", or the Rogue's "martial_finesse_or_light"
+        public IReadOnlyList<string> Weapons { get; init; } = Array.Empty<string>();
+
+        // an attack the class is trained with; a weapon with no category is taken as trained
+        public bool TrainedWith(Attack attack) =>
+            attack == null || attack.Category.Length == 0 || Weapons.Count == 0 ||
+            Weapons.Contains(attack.Category) ||
+            attack.Category == "martial" && Weapons.Contains("martial_finesse_or_light") &&
+            (attack.Finesse || attack.Light);
+
         public IReadOnlyList<Feature> Features { get; }
 
         public string Subclass { get; }

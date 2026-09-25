@@ -35,7 +35,7 @@ class.champion.name,Champion
 class.circle_of_the_land.name,Circle of the Land
 class.cleric.description,"Hit die d8; saves with Wisdom and Charisma; trained in light, medium armor and shields; casts with Wisdom; 2 skills of your choosing."
 class.cleric.name,Cleric
-class.druid.description,"Hit die d8; saves with Intelligence and Wisdom; trained in light, medium armor and shields; casts with Wisdom; 2 skills of your choosing."
+class.druid.description,Hit die d8; saves with Intelligence and Wisdom; trained in light armor and shields; casts with Wisdom; 2 skills of your choosing.
 class.druid.name,Druid
 class.evoker.name,Evoker
 class.fighter.description,"Hit die d10; saves with Strength and Constitution; trained in light, medium, heavy armor and shields; 2 skills of your choosing."
@@ -70,11 +70,11 @@ condition.petrified.description,"You are stone. You can't act or move, Strength 
 condition.petrified.name,Petrified
 condition.poisoned.description,Your attacks and your ability checks are at disadvantage.
 condition.poisoned.name,Poisoned
-condition.prone.description,"You are on the ground. Your attacks at anything further than arm's reach are at disadvantage, and anything that reaches you has the advantage. Standing up costs half your movement."
+condition.prone.description,Your attacks are at disadvantage. Attacks from within 5 feet have the advantage against you; attacks from further off are at disadvantage. Moving means crawling - each square costs double - or spending half your speed to stand.
 condition.prone.name,Prone
 condition.restrained.description,"You cannot move. Your attacks and your Dexterity saving throws are at disadvantage, and attacks against you have the advantage."
 condition.restrained.name,Restrained
-condition.stunned.description,"You cannot act or move. Strength and Dexterity saving throws fail automatically, and attacks against you have the advantage."
+condition.stunned.description,"You can't take actions, bonus actions or reactions. Strength and Dexterity saves fail automatically, and attacks against you have the advantage."
 condition.stunned.name,Stunned
 condition.unconscious.description,"You are out cold and on the floor. You can't act or move, Strength and Dexterity saving throws fail, attacks against you have the advantage, and a hit from close by is a critical hit."
 condition.unconscious.name,Unconscious
@@ -137,21 +137,21 @@ feature.action_surge_second.description,Action Surge twice between rests.
 feature.action_surge_second.name,Action Surge (two uses)
 feature.additional_fighting_style.description,A second fighting style.
 feature.additional_fighting_style.name,Additional Fighting Style
-feature.adrenaline_rush.description,"One extra action, once between rests."
+feature.adrenaline_rush.description,"Bonus action: Dash, and gain temporary hit points equal to your proficiency bonus. Uses equal your proficiency bonus; back on a short rest."
 feature.adrenaline_rush.name,Adrenaline Rush
 feature.arcane_recovery.description,Recover some spell slots on a short rest.
 feature.arcane_recovery.name,Arcane Recovery
-feature.arcane_spellcasting.description,"You cast with Intelligence, from a pool of mana that fills on a long rest."
+feature.arcane_spellcasting.description,"You cast with Intelligence, spending spell slots or spell points that come back on a long rest."
 feature.arcane_spellcasting.name,Arcane Spellcasting
-feature.archdruid.description,+2 to Nature checks.
+feature.archdruid.description,"Wild Shape that renews itself, slots from your shapes, and a long life. Told by the narrator for now."
 feature.archdruid.name,Archdruid
 feature.aura_expansion.description,Your auras reach farther.
 feature.aura_expansion.name,Aura Expansion
-feature.aura_of_courage.description,+2 to Charisma saving throws.
+feature.aura_of_courage.description,You can't be frightened.
 feature.aura_of_courage.name,Aura of Courage
 feature.aura_of_devotion.description,You cannot be charmed.
 feature.aura_of_devotion.name,Aura of Devotion
-feature.aura_of_protection.description,"While it is up, +3 to saving throws."
+feature.aura_of_protection.description,"Add your Charisma modifier (at least +1) to your saving throws, unless you are incapacitated."
 feature.aura_of_protection.name,Aura of Protection
 feature.barbarian_extra_attack.description,An extra action every round.
 feature.barbarian_extra_attack.name,Extra Attack
@@ -161,67 +161,65 @@ feature.barbarian_weapon_mastery.description,The mastery properties of two kinds
 feature.barbarian_weapon_mastery.name,Weapon Mastery
 feature.beast_spells.description,Cast spells while in a wild shape.
 feature.beast_spells.name,Beast Spells
-feature.blessed_healer.description,Restores 2d4 plus 2 hit points. 2 times between rests.
+feature.blessed_healer.description,Healing another creature with a slot heals you 2 plus the slot's level.
 feature.blessed_healer.name,Blessed Healer
-feature.brave.description,+2 to Wisdom saving throws.
+feature.brave.description,Advantage on saving throws against being Frightened.
 feature.brave.name,Brave
-feature.breath_weapon.description,1d10 extra fire damage on a hit.
+feature.breath_weapon.description,"Exhale a 15-foot cone or a 30-foot line: Dexterity save, 1d10 damage of your ancestry, more as you level. Uses equal your proficiency bonus."
 feature.breath_weapon.name,Breath Weapon
-feature.brutal_strike.description,1d10 extra damage on a hit.
+feature.brutal_strike.description,"Attacking recklessly, give up the advantage on your first Strength attack of a turn: a hit deals 1d10 extra damage (2d10 at 17th level)."
 feature.brutal_strike.name,Brutal Strike
-feature.brutal_strike_die.description,Brutal Strike deals 2d10 extra damage.
+feature.brutal_strike_die.description,"Brutal Strike deals 2d10 extra damage, with two of its blows."
 feature.brutal_strike_die.name,Improved Brutal Strike
-feature.channel_divinity.description,"While it is up, +2 to attack rolls and saving throws. 2 times between rests."
+feature.channel_divinity.description,"Divine power to spend: 2 uses (3 at 6th level, 4 at 18th); a short rest gives one back. Preserve Life spends it."
 feature.channel_divinity.name,Channel Divinity
-feature.circle_of_the_land_spells.description,"The spells of your land, always known."
+feature.circle_of_the_land_spells.description,"The spells of your land - Web, then Stinking Cloud at 5th level and Polymorph at 7th - always prepared."
 feature.circle_of_the_land_spells.name,Circle of the Land Spells
-feature.cunning_action.description,An extra action every round.
+feature.cunning_action.description,"Dash, Disengage or Hide with your bonus action."
 feature.cunning_action.name,Cunning Action
 feature.cunning_strike.description,"Trade Sneak Attack dice to poison, trip or slip away from a foe."
 feature.cunning_strike.name,Cunning Strike
-feature.danger_sense.description,+2 to Dexterity saving throws.
+feature.danger_sense.description,"Advantage on Dexterity saving throws, unless you are incapacitated."
 feature.danger_sense.name,Danger Sense
 feature.devious_strikes.description,"Cunning strikes that daze, knock out or blind."
 feature.devious_strikes.name,Devious Strikes
-feature.disciple_of_life.description,Restores 1d4 plus 2 hit points. 2 times between rests.
+feature.disciple_of_life.description,A healing spell cast with a slot restores 2 plus the slot's level more hit points.
 feature.disciple_of_life.name,Disciple of Life
 feature.divine_intervention.description,Call on your god for a miracle.
 feature.divine_intervention.name,Divine Intervention
 feature.divine_order.description,"Protector or Thaumaturge: armor and weapons, or more magic."
 feature.divine_order.name,Divine Order
-feature.divine_smite.description,2d8 extra radiant damage when you spend the power to do it.
-feature.divine_smite.name,Divine Smite
 feature.divine_spark.description,Channel Divinity to heal or to harm.
 feature.divine_spark.name,Divine Spark
-feature.divine_spellcasting.description,"You cast with Wisdom, from a pool of mana that fills on a long rest."
+feature.divine_spellcasting.description,"You cast with Wisdom, spending spell slots or spell points that come back on a long rest."
 feature.divine_spellcasting.name,Divine Spellcasting
-feature.divine_strike.description,1d8 extra radiant damage on a hit.
+feature.divine_strike.description,"Once a turn, 1d8 extra radiant damage on a weapon hit."
 feature.divine_strike.name,Divine Strike
 feature.draconic_flight.description,"A short ignore-terrain state on authored maps, not general 3D flight."
 feature.draconic_flight.name,Draconic Flight
-feature.draconic_resistance.description,Fire damage is halved.
+feature.draconic_resistance.description,Resistance to your ancestry's damage type.
 feature.draconic_resistance.name,Draconic Resistance
-feature.dragonborn_darkvision.description,The narrator decides what this does.
+feature.dragonborn_darkvision.description,You see in the dark to 60 feet. The narrator decides what it reveals.
 feature.dragonborn_darkvision.name,Dragonborn Darkvision
-feature.drow_magic.description,"Grants dancing_lights, faerie_fire and darkness once those are in the catalogue; only faerie_fire's shape exists in the MUST set."
+feature.drow_magic.description,"Faerie Fire at 3rd level and Darkness at 5th, each once a day without a slot."
 feature.drow_magic.name,Drow Magic
-feature.druidic.description,The secret language of druids.
+feature.druidic.description,"The secret language of druids, and Speak with Animals always prepared."
 feature.druidic.name,Druidic
-feature.dwarf_darkvision.description,The narrator decides what this does.
+feature.dwarf_darkvision.description,You see in the dark to 120 feet. The narrator decides what it reveals.
 feature.dwarf_darkvision.name,Dwarf Darkvision
-feature.dwarven_resilience.description,Poison damage is halved.
+feature.dwarven_resilience.description,"Poison damage is halved, and advantage on saving throws against being Poisoned."
 feature.dwarven_resilience.name,Dwarven Resilience
-feature.dwarven_toughness.description,+1 to Constitution saving throws.
+feature.dwarven_toughness.description,One more hit point every level.
 feature.dwarven_toughness.name,Dwarven Toughness
-feature.elemental_fury.description,1d8 extra cold damage on your weapon hits.
+feature.elemental_fury.description,"Once a turn, 1d8 extra cold damage on a weapon hit."
 feature.elemental_fury.name,Elemental Fury
-feature.elf_darkvision.description,No light model on the map in v1; authored dark places can ask for it.
+feature.elf_darkvision.description,"You see in the dark to 60 feet, 120 for a Drow. The narrator decides what it reveals."
 feature.elf_darkvision.name,Elf Darkvision
 feature.elusive.description,No attack against you has advantage.
 feature.elusive.name,Elusive
-feature.empowered_evocation.description,1d8 extra force damage on a hit.
+feature.empowered_evocation.description,Add your Intelligence modifier to one damage roll of each evocation spell you cast.
 feature.empowered_evocation.name,Empowered Evocation
-feature.evasion.description,+2 to Dexterity saving throws.
+feature.evasion.description,"A Dexterity save for half damage: none on a success, half on a failure - unless you are incapacitated."
 feature.evasion.name,Evasion
 feature.evocation_savant.description,Evocation spells come easily to you.
 feature.evocation_savant.name,Evocation Savant
@@ -235,49 +233,45 @@ feature.fast_movement.description,Your speed is 10 feet faster when you are not 
 feature.fast_movement.name,Fast Movement
 feature.feral_instinct.description,Advantage on initiative.
 feature.feral_instinct.name,Feral Instinct
-feature.fey_ancestry.description,+2 to Charisma saving throws.
+feature.fey_ancestry.description,Advantage on saving throws against being Charmed.
 feature.fey_ancestry.name,Fey Ancestry
 feature.fighter_extra_attack.description,An extra action every round.
 feature.fighter_extra_attack.name,Extra Attack
 feature.fighter_weapon_mastery.description,The mastery properties of three kinds of weapon you use.
 feature.fighter_weapon_mastery.name,Weapon Mastery
-feature.fighting_style.description,2 extra damage on a hit.
+feature.fighting_style.description,Defense: +1 to Armor Class while you wear armor.
 feature.fighting_style.name,Fighting Style
-feature.fleet_of_foot.description,5 more feet of movement.
-feature.fleet_of_foot.name,Fleet of Foot
-feature.frenzy.description,"Raging and attacking recklessly, your first hit each turn deals 2d6 extra damage."
+feature.frenzy.description,"Raging and attacking recklessly, the first creature you hit each turn takes 2d6 extra damage (3d6 at 9th level, 4d6 at 16th)."
 feature.frenzy.name,Frenzy
 feature.greater_divine_intervention.description,A greater miracle.
 feature.greater_divine_intervention.name,Greater Divine Intervention
 feature.greater_expertise.description,Double your proficiency on 2 skills.
-feature.greater_expertise.name,Greater Expertise
+feature.greater_expertise.name,Expertise
 feature.halfling_luck.description,"REDESIGNED so it does not erase the nat-1 loop: once per rest, reroll a die showing a 1 OR downgrade a consequence to a cosmetic one (v1_species_roster.md)."
 feature.halfling_luck.name,Halfling Luck
-feature.halfling_nimbleness.description,You are trained in Acrobatics.
+feature.halfling_nimbleness.description,You can move through the space of a bigger creature. The narrator decides what it allows.
 feature.halfling_nimbleness.name,Halfling Nimbleness
 feature.heroic_warrior.description,Heroic Inspiration at the start of each of your turns.
 feature.heroic_warrior.name,Heroic Warrior
-feature.high_elf_cantrip.description,"One wizard cantrip from the catalogue, chosen at creation."
-feature.high_elf_cantrip.name,High Elf Cantrip
+feature.high_elf_magic.description,"Prestidigitation; Detect Magic at 3rd level and Misty Step at 5th, each once a day without a slot."
+feature.high_elf_magic.name,High Elf Magic
 feature.holy_nimbus.description,Blaze with holy light that burns your foes.
 feature.holy_nimbus.name,Holy Nimbus
-feature.improved_blessed_strikes.description,Your blessed strikes deal 2d8.
+feature.improved_blessed_strikes.description,Your blessed strike deals 2d8.
 feature.improved_blessed_strikes.name,Improved Blessed Strikes
 feature.improved_brutal_strike.description,Two more effects to choose from when you strike brutally.
 feature.improved_brutal_strike.name,Improved Brutal Strike
-feature.improved_critical.description,1d8 extra damage on a critical hit.
+feature.improved_critical.description,Your weapon attacks score a critical hit on a 19 or 20.
 feature.improved_critical.name,Improved Critical
 feature.improved_cunning_strike.description,Two cunning strike effects at once.
 feature.improved_cunning_strike.name,Improved Cunning Strike
-feature.improved_divine_smite.description,1d8 extra radiant damage on a hit.
-feature.improved_divine_smite.name,Improved Divine Smite
 feature.improved_elemental_fury.description,Elemental Fury deals 2d8.
 feature.improved_elemental_fury.name,Improved Elemental Fury
-feature.indomitable.description,"+1 to Wisdom saving throws, +1 to Charisma saving throws."
+feature.indomitable.description,"Reroll a failed saving throw, adding your fighter level. Once a long rest (twice at 13th level, three times at 17th)."
 feature.indomitable.name,Indomitable
-feature.indomitable_might.description,+2 to Athletics checks.
+feature.indomitable_might.description,A Strength check or save that totals less than your Strength score uses the score instead.
 feature.indomitable_might.name,Indomitable Might
-feature.infernal_legacy.description,Fire damage is halved.
+feature.infernal_legacy.description,"Fire damage is halved. Fire Bolt; Hellish Rebuke at 3rd level and Darkness at 5th, each once a day without a slot."
 feature.infernal_legacy.name,Infernal Legacy
 feature.instinctive_pounce.description,"When you rage, you can move up to half your speed."
 feature.instinctive_pounce.name,Instinctive Pounce
@@ -287,47 +281,49 @@ feature.keen_senses.description,You are trained in Perception.
 feature.keen_senses.name,Keen Senses
 feature.lands_aid.description,Spend a Wild Shape use to harm foes and heal yourself.
 feature.lands_aid.name,Land's Aid
-feature.lands_stride.description,+2 to Survival checks.
-feature.lands_stride.name,Lands Stride
-feature.lay_on_hands.description,Restores 0 plus 5 hit points. 1 times between rests.
+feature.lay_on_hands.description,"A bonus action: restore five times your paladin level in hit points, once a long rest."
 feature.lay_on_hands.name,Lay on Hands
-feature.life_domain_spells.description,Healing spells you always know.
+feature.life_domain_spells.description,"Aid, Bless, Cure Wounds and Lesser Restoration always prepared; Death Ward at 7th level and Greater Restoration at 9th."
 feature.life_domain_spells.name,Life Domain Spells
 feature.memorize_spell.description,Swap a spell on a short rest.
 feature.memorize_spell.name,Memorize Spell
 feature.mindless_rage.description,"While raging, you cannot be charmed or frightened."
 feature.mindless_rage.name,Mindless Rage
-feature.natural_recovery.description,Restores 1d8 plus 1 hit points. 1 times between rests.
+feature.natural_recovery.description,"Once a day, cast a circle spell without a slot, and recover some spell slots on a short rest. Told by the narrator for now."
 feature.natural_recovery.name,Natural Recovery
-feature.naturally_stealthy.description,You are trained in Stealth.
+feature.naturally_stealthy.description,You can hide behind a bigger creature. The narrator decides what it allows.
 feature.naturally_stealthy.name,Naturally Stealthy
 feature.natures_sanctuary.description,Call up spectral trees that shelter you.
 feature.natures_sanctuary.name,Nature's Sanctuary
-feature.natures_ward.description,Poison damage does not touch you.
-feature.natures_ward.name,Natures Ward
-feature.oath_spellcasting.description,"You cast with Charisma, from a pool of mana that fills on a long rest."
+feature.natures_ward.description,"You can't be poisoned, and you resist poison damage."
+feature.natures_ward.name,Nature's Ward
+feature.oath_of_devotion_spells.description,"Aid at 5th level, Dispel Magic at 9th and Flame Strike at 17th, always prepared."
+feature.oath_of_devotion_spells.name,Oath of Devotion Spells
+feature.oath_spellcasting.description,"You cast with Charisma, spending spell slots or spell points that come back on a long rest."
 feature.oath_spellcasting.name,Oath Spellcasting
-feature.orc_darkvision.description,The narrator decides what this does.
+feature.orc_darkvision.description,You see in the dark to 120 feet. The narrator decides what it reveals.
 feature.orc_darkvision.name,Orc Darkvision
-feature.otherworldly_presence.description,You are trained in Intimidation.
+feature.otherworldly_presence.description,You know the Thaumaturgy cantrip.
 feature.otherworldly_presence.name,Otherworldly Presence
-feature.overchannel.description,"While it is up, +2 to damage. 1 times between rests."
+feature.overchannel.description,"Deal maximum damage with a spell of 1st to 5th level - free once a day, painful after. Told by the narrator for now."
 feature.overchannel.name,Overchannel
 feature.pact_resilience.description,Fire damage is halved.
 feature.pact_resilience.name,Pact Resilience
-feature.paladin_channel_divinity.description,"Divine Sense, and your oath's Sacred Weapon."
+feature.paladin_channel_divinity.description,"Divine Sense, and Sacred Weapon: 2 uses (3 at 11th level); a short rest gives one back."
 feature.paladin_channel_divinity.name,Channel Divinity
 feature.paladin_extra_attack.description,An extra action every round.
 feature.paladin_extra_attack.name,Extra Attack
-feature.paladin_fighting_style.description,+1 damage on your weapon hits.
+feature.paladin_fighting_style.description,Defense: +1 to Armor Class while you wear armor.
 feature.paladin_fighting_style.name,Fighting Style
 feature.paladin_weapon_mastery.description,The mastery properties of two kinds of weapon you use.
 feature.paladin_weapon_mastery.name,Weapon Mastery
-feature.persistent_rage.description,Your rage lasts until you choose to end it.
+feature.paladins_smite.description,"Divine Smite always prepared, and once a long rest you can cast it without a slot."
+feature.paladins_smite.name,Paladin's Smite
+feature.persistent_rage.description,"Your rage lasts ten minutes, and once a day you regain all your rages as a fight begins."
 feature.persistent_rage.name,Persistent Rage
-feature.potent_cantrip.description,1d6 extra force damage on a hit.
+feature.potent_cantrip.description,"A damaging cantrip that misses, or is saved against, still deals half its damage."
 feature.potent_cantrip.name,Potent Cantrip
-feature.preserve_life.description,Channel Divinity to restore a great many hit points.
+feature.preserve_life.description,"An action and a use of Channel Divinity: restore five times your cleric level in hit points while bloodied, never past half your maximum."
 feature.preserve_life.name,Preserve Life
 feature.primal_champion.description,"Your Strength and Constitution rise by 4, to a maximum of 25."
 feature.primal_champion.name,Primal Champion
@@ -335,21 +331,23 @@ feature.primal_knowledge.description,One more skill from the barbarian list.
 feature.primal_knowledge.name,Primal Knowledge
 feature.primal_order.description,"Magician or Warden: more magic, or armor and weapons."
 feature.primal_order.name,Primal Order
-feature.primal_spellcasting.description,"You cast with Wisdom, from a pool of mana that fills on a long rest."
+feature.primal_spellcasting.description,"You cast with Wisdom, spending spell slots or spell points that come back on a long rest."
 feature.primal_spellcasting.name,Primal Spellcasting
-feature.rage.description,"While it is up, +2 to damage. 3 times between rests."
+feature.radiant_strikes.description,1d8 extra radiant damage when you hit with a melee weapon.
+feature.radiant_strikes.name,Radiant Strikes
+feature.rage.description,"A bonus action: resistance to bludgeoning, piercing and slashing damage, advantage on Strength checks and saves, and +2 damage on Strength attacks (+3 at 9th level, +4 at 16th) for the fight. 2 rages, more as you level; a short rest gives one back."
 feature.rage.name,Rage
-feature.reckless_attack.description,"While it is up, +0 to attack rolls."
+feature.reckless_attack.description,Free as you attack: advantage on Strength attack rolls until your next turn - and attack rolls against you have advantage too.
 feature.reckless_attack.name,Reckless Attack
-feature.relentless_endurance.description,"Once between rests, when you would fall, stay up on 1 hit point."
+feature.relentless_endurance.description,"Once between long rests, when you would fall, stay up on 1 hit point."
 feature.relentless_endurance.name,Relentless Endurance
-feature.relentless_rage.description,"Once between rests, when you would fall, stay up on 1 hit point."
+feature.relentless_rage.description,"Raging, when you drop to 0 hit points, a DC 10 Constitution save keeps you up with twice your level in hit points. The DC rises by 5 each time until you rest."
 feature.relentless_rage.name,Relentless Rage
-feature.reliable_talent.description,+2 to Stealth checks.
+feature.reliable_talent.description,"On a check with a skill you are trained in, a roll of 9 or lower counts as a 10."
 feature.reliable_talent.name,Reliable Talent
-feature.remarkable_athlete.description,"Trained in Athletics, and quick to act when a fight starts."
+feature.remarkable_athlete.description,Advantage on initiative and on Strength (Athletics) checks.
 feature.remarkable_athlete.name,Remarkable Athlete
-feature.resourceful.description,+1 to Wisdom saving throws.
+feature.resourceful.description,Heroic Inspiration after every long rest (the narrator spends it for now).
 feature.resourceful.name,Resourceful
 feature.restoring_touch.description,Lay on Hands also ends conditions.
 feature.restoring_touch.name,Restoring Touch
@@ -359,9 +357,9 @@ feature.ritual_adept.description,Cast your ritual spells without spending a slot
 feature.ritual_adept.name,Ritual Adept
 feature.rogue_weapon_mastery.description,The mastery properties of two kinds of weapon you use.
 feature.rogue_weapon_mastery.name,Weapon Mastery
-feature.sacred_weapon.description,"While it is up, +2 to attack rolls. 2 times between rests."
+feature.sacred_weapon.description,Spend Channel Divinity as you attack: your Charisma modifier (at least +1) to attack rolls for the fight.
 feature.sacred_weapon.name,Sacred Weapon
-feature.scholar.description,Expertise in one skill of learning.
+feature.scholar.description,"Expertise in one of Arcana, History, Investigation, Medicine, Nature or Religion."
 feature.scholar.name,Scholar
 feature.sculpt_spells.description,Your evocations spare your allies.
 feature.sculpt_spells.name,Sculpt Spells
@@ -369,7 +367,7 @@ feature.sear_undead.description,Turning undead also burns them.
 feature.sear_undead.name,Sear Undead
 feature.second_story_work.description,You climb as fast as you walk.
 feature.second_story_work.name,Second-Story Work
-feature.second_wind.description,Restores 1d10 plus 1 hit points. 2 times between rests.
+feature.second_wind.description,"A bonus action: regain 1d10 plus your fighter level in hit points. 2 uses (3 at 4th level, 4 at 10th); a short rest gives one back."
 feature.second_wind.name,Second Wind
 feature.signature_spells.description,"Two 3rd-level spells, each free once between rests."
 feature.signature_spells.name,Signature Spells
@@ -379,7 +377,7 @@ feature.slippery_mind.description,Trained in Wisdom and Charisma saving throws.
 feature.slippery_mind.name,Slippery Mind
 feature.smite_of_protection.description,Your smites grant cover.
 feature.smite_of_protection.name,Smite of Protection
-feature.sneak_attack.description,1d6 extra damage when you attack with the advantage.
+feature.sneak_attack.description,"Once a turn, 1d6 extra damage when you hit with a finesse or ranged weapon and had the advantage. One more d6 every two levels."
 feature.sneak_attack.name,Sneak Attack
 feature.spell_mastery.description,Two low-level spells you cast at will.
 feature.spell_mastery.name,Spell Mastery
@@ -387,13 +385,13 @@ feature.steady_aim.description,Stay still and your next attack has advantage.
 feature.steady_aim.name,Steady Aim
 feature.stonecunning.description,"A step up on authored stone secrets and hazards, not a tremorsense simulation."
 feature.stonecunning.name,Stonecunning
-feature.stroke_of_luck.description,+2 to Dexterity saving throws.
+feature.stroke_of_luck.description,"Turn a failed roll into a 20, once between rests. Told by the narrator for now."
 feature.stroke_of_luck.name,Stroke of Luck
 feature.studied_attacks.description,Miss a creature and your next attack against it has advantage.
 feature.studied_attacks.name,Studied Attacks
-feature.superior_critical.description,2d8 extra damage on a critical hit.
+feature.superior_critical.description,Your weapon attacks score a critical hit on an 18 to 20.
 feature.superior_critical.name,Superior Critical
-feature.supreme_healing.description,Restores 4d4 plus 4 hit points. 2 times between rests.
+feature.supreme_healing.description,Your healing spells restore the most their dice can.
 feature.supreme_healing.name,Supreme Healing
 feature.supreme_sneak.description,A cunning strike that keeps you hidden.
 feature.supreme_sneak.name,Supreme Sneak
@@ -411,15 +409,15 @@ feature.thieves_cant.description,The secret speech and signs of thieves.
 feature.thieves_cant.name,Thieves' Cant
 feature.three_extra_attacks.description,"Your extra attacks, which Lanorim plays as one extra action."
 feature.three_extra_attacks.name,Three Extra Attacks
-feature.tiefling_darkvision.description,The narrator decides what this does.
+feature.tiefling_darkvision.description,You see in the dark to 60 feet. The narrator decides what it reveals.
 feature.tiefling_darkvision.name,Tiefling Darkvision
-feature.trance.description,"Camp flavour and a small rest benefit, not a time simulation."
+feature.trance.description,"You need no sleep, and magic cannot put you to sleep."
 feature.trance.name,Trance
-feature.turn_undead.description,Leaves the target frightened on a hit.
+feature.turn_undead.description,"Spend Channel Divinity: undead within 30 feet make a Wisdom save or flee, frightened and incapacitated. Told by the narrator for now."
 feature.turn_undead.name,Turn Undead
 feature.two_extra_attacks.description,"Your extra attacks, which Lanorim plays as one extra action."
 feature.two_extra_attacks.name,Two Extra Attacks
-feature.uncanny_dodge.description,"While it is up, +2 to Armor Class."
+feature.uncanny_dodge.description,A reaction when an attacker you can see hits you: halve the attack's damage.
 feature.uncanny_dodge.name,Uncanny Dodge
 feature.use_magic_device.description,"Any magic item works for you, and wands last longer."
 feature.use_magic_device.name,Use Magic Device
@@ -429,8 +427,10 @@ feature.wild_companion.description,"A spirit companion, summoned with a Wild Sha
 feature.wild_companion.name,Wild Companion
 feature.wild_resurgence.description,Trade between spell slots and Wild Shape uses.
 feature.wild_resurgence.name,Wild Resurgence
-feature.wild_shape.description,"4 shapes you can take, 2 times between rests."
+feature.wild_shape.description,"4 shapes you can take, 2 times between rests (3 at 6th level, 4 at 17th); a short rest gives one back."
 feature.wild_shape.name,Wild Shape
+feature.wood_elf_magic.description,"Pass without Trace at 5th level, once a day without a slot."
+feature.wood_elf_magic.name,Wood Elf Magic
 form.black_bear.description,"Combat. Strong and steady: Armor Class 11, speed 30 feet, climbs and swims 30 feet, trained in Perception. Rend for 1d6 slashing. Opens at level 4."
 form.black_bear.name,Black Bear
 form.cat.description,"Scout. Small, quiet and hard to spot: Armor Class 12, speed 40 feet, climbs 40 feet, trained in Perception and Stealth. Scratch for 1 slashing."
@@ -447,9 +447,11 @@ item.armor_heavy.name,Heavy
 item.armor_light.name,Light
 item.armor_medium.name,Medium
 item.armor_none.name,None
-item.battleaxe.description,1d8 slashing damage. 10 gold.
+item.battleaxe.description,"1d8 slashing damage, 1d10 with both hands. 10 gold."
 item.battleaxe.name,Battleaxe
 item.bear_rend.name,Rend
+item.blowgun.description,"1 piercing damage, range 5. 10 gold."
+item.blowgun.name,Blowgun
 item.breastplate.description,"Armor Class 14, up to +2 Dexterity. 400 gold."
 item.breastplate.name,Breastplate
 item.cat_scratch.name,Scratch
@@ -459,64 +461,74 @@ item.chain_shirt.description,"Armor Class 13, up to +2 Dexterity. 50 gold."
 item.chain_shirt.name,Chain Shirt
 item.cloak_of_the_quiet_step.description,+2 to Stealth checks. 800 gold.
 item.cloak_of_the_quiet_step.name,Cloak of the Quiet Step
-item.club.description,1d4 bludgeoning damage. 1 gold.
+item.club.description,"1d4 bludgeoning damage, light. 1 gold."
 item.club.name,Club
-item.dagger.description,"1d4 piercing damage, range 4, finesse. 2 gold."
+item.dagger.description,"1d4 piercing damage, finesse, light, thrown, range 4. 2 gold."
 item.dagger.name,Dagger
+item.dart.description,"1d4 piercing damage, finesse, thrown, range 4. 1 gold."
+item.dart.name,Dart
 item.druidic_focus.description,For a Druid. 10 gold.
 item.druidic_focus.name,Druidic Focus
 item.flail.description,1d8 bludgeoning damage. 10 gold.
 item.flail.name,Flail
 item.gemstone.description,50 gold.
 item.gemstone.name,Gemstone
-item.glaive.description,"1d10 slashing damage, reach 2. 20 gold."
+item.glaive.description,"1d10 slashing damage, two-handed, heavy, reach. 20 gold."
 item.glaive.name,Glaive
 item.goodberry.description,A berry full of magic. Eat it as a bonus action to regain 1 hit point. It is gone by your next long rest.
 item.goodberry.name,Goodberry
-item.greataxe.description,1d12 slashing damage. 30 gold.
+item.greataxe.description,"1d12 slashing damage, two-handed, heavy. 30 gold."
 item.greataxe.name,Greataxe
-item.greatclub.description,1d8 bludgeoning damage. 1 gold.
+item.greatclub.description,"1d8 bludgeoning damage, two-handed. 1 gold."
 item.greatclub.name,Greatclub
 item.greater_potion_of_healing.description,Restores 4d4+4 hit points; level 5 and above. 150 gold.
 item.greater_potion_of_healing.name,Greater Potion of Healing
-item.greatsword.description,2d6 slashing damage. 50 gold.
+item.greatsword.description,"2d6 slashing damage, two-handed, heavy. 50 gold."
 item.greatsword.name,Greatsword
-item.halberd.description,"1d10 slashing damage, reach 2. 20 gold."
+item.halberd.description,"1d10 slashing damage, two-handed, heavy, reach. 20 gold."
 item.halberd.name,Halberd
 item.half_plate_armor.description,"Armor Class 15, up to +2 Dexterity; noisy: Stealth is at disadvantage. 750 gold."
 item.half_plate_armor.name,Half Plate Armor
-item.handaxe.description,"1d6 slashing damage, range 4. 5 gold."
+item.hand_crossbow.description,"1d6 piercing damage, light, range 6. 75 gold."
+item.hand_crossbow.name,Hand Crossbow
+item.handaxe.description,"1d6 slashing damage, light, thrown, range 4. 5 gold."
 item.handaxe.name,Handaxe
-item.heavy_crossbow.description,"1d10 piercing damage, range 20. 50 gold."
+item.heavy_crossbow.description,"1d10 piercing damage, two-handed, heavy, range 20. 50 gold."
 item.heavy_crossbow.name,Heavy Crossbow
 item.hide_armor.description,"Armor Class 12, up to +2 Dexterity. 10 gold."
 item.hide_armor.name,Hide Armor
 item.holy_symbol.description,For a Cleric or Paladin. 5 gold.
 item.holy_symbol.name,Holy Symbol
 item.horse_hooves.name,Hooves
-item.javelin.description,"1d6 piercing damage, range 6. 1 gold."
+item.javelin.description,"1d6 piercing damage, thrown, range 6. 1 gold."
 item.javelin.name,Javelin
+item.lance.description,"1d10 piercing damage, two-handed, heavy, reach. 10 gold."
+item.lance.name,Lance
 item.leather_armor.description,"Armor Class 11, plus Dexterity. 10 gold."
 item.leather_armor.name,Leather Armor
-item.light_crossbow.description,"1d8 piercing damage, range 16. 25 gold."
+item.light_crossbow.description,"1d8 piercing damage, two-handed, range 16. 25 gold."
 item.light_crossbow.name,Light Crossbow
-item.longbow.description,"1d8 piercing damage, range 30. 50 gold."
+item.light_hammer.description,"1d4 bludgeoning damage, light, thrown, range 4. 2 gold."
+item.light_hammer.name,Light Hammer
+item.longbow.description,"1d8 piercing damage, two-handed, heavy, range 30. 50 gold."
 item.longbow.name,Longbow
-item.longsword.description,1d8 slashing damage. 15 gold.
+item.longsword.description,"1d8 slashing damage, 1d10 with both hands. 15 gold."
 item.longsword.name,Longsword
 item.mace.description,1d6 bludgeoning damage. 5 gold.
 item.mace.name,Mace
-item.maul.description,2d6 bludgeoning damage. 10 gold.
+item.maul.description,"2d6 bludgeoning damage, two-handed, heavy. 10 gold."
 item.maul.name,Maul
 item.morningstar.description,1d8 piercing damage. 15 gold.
 item.morningstar.name,Morningstar
 item.padded_armor.description,"Armor Class 11, plus Dexterity; noisy: Stealth is at disadvantage. 5 gold."
 item.padded_armor.name,Padded Armor
+item.pike.description,"1d10 piercing damage, two-handed, heavy, reach. 5 gold."
+item.pike.name,Pike
 item.plate_armor.description,"Armor Class 18, no Dexterity; noisy: Stealth is at disadvantage. 1500 gold."
 item.plate_armor.name,Plate Armor
 item.potion_of_healing.description,Restores 2d4+2 hit points. 50 gold.
 item.potion_of_healing.name,Potion of Healing
-item.quarterstaff.description,1d6 bludgeoning damage. 1 gold.
+item.quarterstaff.description,"1d6 bludgeoning damage, 1d8 with both hands. 1 gold."
 item.quarterstaff.name,Quarterstaff
 item.rapier.description,"1d8 piercing damage, finesse. 25 gold."
 item.rapier.name,Rapier
@@ -528,19 +540,19 @@ item.rope.description,1 gold.
 item.rope.name,Rope
 item.scale_mail.description,"Armor Class 14, up to +2 Dexterity; noisy: Stealth is at disadvantage. 50 gold."
 item.scale_mail.name,Scale Mail
-item.scimitar.description,"1d6 slashing damage, finesse. 25 gold."
+item.scimitar.description,"1d6 slashing damage, finesse, light. 25 gold."
 item.scimitar.name,Scimitar
 item.shield.description,10 gold.
 item.shield.name,Shield
-item.shortbow.description,"1d6 piercing damage, range 16. 25 gold."
+item.shortbow.description,"1d6 piercing damage, two-handed, range 16. 25 gold."
 item.shortbow.name,Shortbow
-item.shortsword.description,"1d6 piercing damage, finesse. 10 gold."
+item.shortsword.description,"1d6 piercing damage, finesse, light. 10 gold."
 item.shortsword.name,Shortsword
-item.sickle.description,1d4 slashing damage. 1 gold.
+item.sickle.description,"1d4 slashing damage, light. 1 gold."
 item.sickle.name,Sickle
 item.sling.description,"1d4 bludgeoning damage, range 6. 1 gold."
 item.sling.name,Sling
-item.spear.description,"1d6 piercing damage, range 4. 1 gold."
+item.spear.description,"1d6 piercing damage, 1d8 with both hands, thrown, range 4. 1 gold."
 item.spear.name,Spear
 item.spider_bite.name,Bite
 item.splint_armor.description,"Armor Class 17, no Dexterity; noisy: Stealth is at disadvantage. 200 gold."
@@ -553,8 +565,15 @@ item.torch.description,1 gold.
 item.torch.name,Torch
 item.tray_gamblers.name,Gambler's tray
 item.tray_wood.name,Plain wooden tray
-item.warhammer.description,1d8 bludgeoning damage. 15 gold.
+item.trident.description,"1d8 piercing damage, 1d10 with both hands, thrown, range 4. 5 gold."
+item.trident.name,Trident
+item.unarmed_strike.name,Unarmed Strike
+item.war_pick.description,"1d8 piercing damage, 1d10 with both hands. 5 gold."
+item.war_pick.name,War Pick
+item.warhammer.description,"1d8 bludgeoning damage, 1d10 with both hands. 15 gold."
 item.warhammer.name,Warhammer
+item.whip.description,"1d4 slashing damage, finesse, reach. 2 gold."
+item.whip.name,Whip
 merchant.equipped.line,You're wearing that. Sure you want to part with it?
 merchant.greeting.line,Have a look. Everything you see is for sale.
 merchant.no_gold.line,Come back when you can pay for it.
@@ -568,45 +587,45 @@ monster.boar.description,13 hit points; Armor Class 11; speed 40 feet; Boar Gore
 monster.boar.name,Boar
 monster.brown_bear.description,22 hit points; Armor Class 11; speed 40 feet; Bear Bite for 1d8 piercing; Bear Claw for 1d4 slashing; attacks 2 times a turn.
 monster.brown_bear.name,Brown Bear
-monster.cultist.description,9 hit points; Armor Class 12; speed 30 feet; Cultist Scimitar for 1d6 slashing.
+monster.cultist.description,9 hit points; Armor Class 12; speed 30 feet; Sickle for 1d4 slashing.
 monster.cultist.name,Cultist
 monster.death_knight.description,180 hit points; Armor Class 20; speed 30 feet; Dread Longsword for 2d8 slashing; Hellfire Orb for 6d6 fire; attacks 2 times a turn; takes no poison damage; takes no necrotic damage.
 monster.death_knight.name,Death Knight
-monster.dire_wolf.description,37 hit points; Armor Class 14; speed 50 feet; Dire Bite for 2d6 piercing.
+monster.dire_wolf.description,22 hit points; Armor Class 14; speed 50 feet; Dire Bite for 1d10 piercing.
 monster.dire_wolf.name,Dire Wolf
 monster.ghoul.description,22 hit points; Armor Class 12; speed 30 feet; Ghoul Bite for 1d6 piercing; Ghoul Claw for 1d4 slashing; attacks 2 times a turn; takes no poison damage.
 monster.ghoul.name,Ghoul
 monster.giant_rat.description,7 hit points; Armor Class 13; speed 30 feet; Rat Bite for 1d4 piercing.
 monster.giant_rat.name,Giant Rat
-monster.giant_spider.description,26 hit points; Armor Class 14; speed 30 feet; Spider Bite for 1d8 piercing; Web Line for 1d6 bludgeoning.
+monster.giant_spider.description,26 hit points; Armor Class 14; speed 30 feet; Spider Bite for 1d8 piercing.
 monster.giant_spider.name,Giant Spider
-monster.goblin.description,7 hit points; Armor Class 15; speed 30 feet; Scimitar for 1d6 slashing; Goblin Shortbow for 1d6 piercing.
+monster.goblin.description,10 hit points; Armor Class 15; speed 30 feet; Scimitar for 1d6 slashing; Goblin Shortbow for 1d6 piercing.
 monster.goblin.name,Goblin
 monster.goblin_archer.description,7 hit points; Armor Class 13; speed 30 feet; Goblin Shortbow for 1d6 piercing; Goblin Dagger for 1d4 piercing.
 monster.goblin_archer.name,Goblin Archer
-monster.goblin_boss.description,21 hit points; Armor Class 17; speed 30 feet; Scimitar for 1d6 slashing; attacks 2 times a turn.
+monster.goblin_boss.description,21 hit points; Armor Class 17; speed 30 feet; Scimitar for 1d6 slashing; Goblin Shortbow for 1d6 piercing; attacks 2 times a turn.
 monster.goblin_boss.name,Goblin Boss
 monster.guard.description,11 hit points; Armor Class 16; speed 30 feet; Guard Spear for 1d6 piercing.
 monster.guard.name,Guard
-monster.imp.description,10 hit points; Armor Class 13; speed 20 feet; Sting for 1d4 piercing; Imp Bolt for 1d6 fire; takes no fire damage; takes no poison damage; halves cold damage.
+monster.imp.description,21 hit points; Armor Class 13; speed 20 feet; Sting for 1d6 piercing; takes no fire damage; takes no poison damage; halves cold damage.
 monster.imp.name,Imp
 monster.kobold_warrior.description,7 hit points; Armor Class 14; speed 30 feet; Kobold Dagger for 1d4 piercing.
 monster.kobold_warrior.name,Kobold Warrior
-monster.mage.description,81 hit points; Armor Class 15; speed 30 feet; Mage Dagger for 1d4 piercing.
+monster.mage.description,81 hit points; Armor Class 15; speed 30 feet; Arcane Burst for 3d8 force; attacks 3 times a turn.
 monster.mage.name,Mage
-monster.ogre.description,59 hit points; Armor Class 11; speed 40 feet; Greatclub Swing for 2d8 bludgeoning; Thrown Rock for 2d6 bludgeoning.
+monster.ogre.description,68 hit points; Armor Class 11; speed 40 feet; Greatclub Swing for 2d8 bludgeoning; Javelin for 2d6 piercing.
 monster.ogre.name,Ogre
 monster.owlbear.description,59 hit points; Armor Class 13; speed 40 feet; Owlbear Rend for 2d8 slashing; attacks 2 times a turn.
 monster.owlbear.name,Owlbear
-monster.priest.description,38 hit points; Armor Class 13; speed 30 feet; Priest Mace for 1d6 bludgeoning.
+monster.priest.description,38 hit points; Armor Class 13; speed 30 feet; Priest Mace for 1d6 bludgeoning; Radiant Flame for 2d10 radiant; attacks 2 times a turn.
 monster.priest.name,Priest
-monster.skeleton.description,13 hit points; Armor Class 13; speed 30 feet; Rusted Shortsword for 1d6 piercing; takes no poison damage; takes double bludgeoning damage.
+monster.skeleton.description,13 hit points; Armor Class 14; speed 30 feet; Rusted Shortsword for 1d6 piercing; Shortbow for 1d6 piercing; takes no poison damage; takes double bludgeoning damage.
 monster.skeleton.name,Skeleton
-monster.werewolf.description,58 hit points; Armor Class 12; speed 30 feet; Claw for 2d4 slashing; Werewolf Bite for 1d8 piercing; attacks 2 times a turn; halves bludgeoning damage; halves piercing damage; halves slashing damage.
+monster.werewolf.description,71 hit points; Armor Class 15; speed 30 feet; Claw for 2d6 slashing; Werewolf Bite for 2d8 piercing; Longbow for 2d8 piercing; attacks 2 times a turn.
 monster.werewolf.name,Werewolf
-monster.wolf.description,11 hit points; Armor Class 13; speed 40 feet; Bite for 2d4 piercing.
+monster.wolf.description,11 hit points; Armor Class 12; speed 40 feet; Bite for 1d6 piercing.
 monster.wolf.name,Wolf
-monster.zombie.description,22 hit points; Armor Class 8; speed 20 feet; Slam for 1d6 bludgeoning; takes no poison damage.
+monster.zombie.description,15 hit points; Armor Class 8; speed 20 feet; Slam for 1d8 bludgeoning; takes no poison damage.
 monster.zombie.name,Zombie
 prop.anvil.name,Anvil
 prop.banner.name,Banner
@@ -676,17 +695,27 @@ skill.religion.name,Religion
 skill.sleight_of_hand.name,Sleight of Hand
 skill.stealth.name,Stealth
 skill.survival.name,Survival
-species.dragonborn.description,Speed 30 feet; Breath Weapon; Draconic Resistance; Dragonborn Darkvision; Draconic Flight.
+species.dragonborn.description,"Speed 30 feet; Dragonborn Darkvision; Draconic Flight; choose an ancestry: Acid, Cold, Fire, Lightning, Poison."
 species.dragonborn.name,Dragonborn
+species.dragonborn_acid.description,Speed 30 feet; a Black or Copper dragon forebear: acid Breath Weapon and Draconic Resistance.
+species.dragonborn_acid.name,Acid Ancestry
+species.dragonborn_cold.description,Speed 30 feet; a Silver or White dragon forebear: cold Breath Weapon and Draconic Resistance.
+species.dragonborn_cold.name,Cold Ancestry
+species.dragonborn_fire.description,"Speed 30 feet; a Brass, Gold or Red dragon forebear: fire Breath Weapon and Draconic Resistance."
+species.dragonborn_fire.name,Fire Ancestry
+species.dragonborn_lightning.description,Speed 30 feet; a Blue or Bronze dragon forebear: lightning Breath Weapon and Draconic Resistance.
+species.dragonborn_lightning.name,Lightning Ancestry
+species.dragonborn_poison.description,Speed 30 feet; a Green dragon forebear: poison Breath Weapon and Draconic Resistance.
+species.dragonborn_poison.name,Poison Ancestry
 species.dwarf.description,Speed 30 feet; Dwarven Resilience; Dwarven Toughness; Dwarf Darkvision; Stonecunning.
 species.dwarf.name,Dwarf
 species.elf.description,"Speed 30 feet; Elf Darkvision; Fey Ancestry; Keen Senses; Trance; choose a lineage: Elf Drow, Elf High, Elf Wood."
 species.elf.name,Elf
 species.elf_drow.description,Speed 30 feet; Drow Magic.
 species.elf_drow.name,Elf Drow
-species.elf_high.description,Speed 30 feet; High Elf Cantrip.
+species.elf_high.description,Speed 30 feet; High Elf Magic.
 species.elf_high.name,Elf High
-species.elf_wood.description,Speed 35 feet; Fleet of Foot.
+species.elf_wood.description,Speed 35 feet; Wood Elf Magic.
 species.elf_wood.name,Elf Wood
 species.halfling.description,Speed 30 feet; Brave; Halfling Nimbleness; Halfling Luck; Naturally Stealthy.
 species.halfling.name,Halfling
@@ -698,27 +727,35 @@ species.tiefling.description,Speed 30 feet; Infernal Legacy; Tiefling Darkvision
 species.tiefling.name,Tiefling
 spell.aid.description,Level 2. Up to three creatures gain 5 to their hit point maximum and their current hit points until your next long rest. 5 more per level above 2.
 spell.aid.name,Aid
-spell.antimagic_field.description,Level 8. Ends the spells on the target; fills 10 feet around the point. Requires concentration. (v1 ships a bounded version of this spell.)
-spell.antimagic_field.name,Null Sphere
-spell.banishment.description,"Level 4. Leaves the target stunned, cha save to avoid it. Requires concentration. (v1 ships a bounded version of this spell.)"
-spell.banishment.name,Exile
+spell.banishment.description,"Level 4. One creature you can see within 30 feet: Charisma save, or it is sent to a harmless demiplane - off the board, and incapacitated there - until the spell ends, when it comes back where it left. Held for the full minute, an aberration, celestial, elemental, fey or fiend doesn't come back. One more creature per level above 4. Requires concentration."
+spell.banishment.name,Banishment
 spell.black_tentacles.description,"Level 4. Tentacles fill a 20-foot square of difficult terrain. A creature there when they appear, entering, or ending its turn there makes a Strength save or takes 3d6 bludgeoning damage and is restrained. An action and an Athletics check breaks free. Requires concentration."
 spell.black_tentacles.name,Black Tentacles
-spell.blade_barrier.description,"Level 6. A wall of whirling blades up to 100 feet long, or a ring 60 feet across. It gives three-quarters cover and is difficult terrain. A creature in it when it appears, entering it, or ending its turn there makes a Dexterity save or takes 6d10 slashing damage, half on a success. Requires concentration."
+spell.blade_barrier.description,"Level 6. A wall of whirling blades up to 100 feet long, or a ring 60 feet across. It gives three-quarters cover and is difficult terrain. A creature in it when it appears, entering it, or ending its turn there makes a Dexterity save or takes 6d10 force damage, half on a success. Requires concentration."
 spell.blade_barrier.name,Blade Barrier
 spell.bless.description,Level 1. +1d4 to attack rolls and saving throws. Requires concentration.
 spell.bless.name,Bless
-spell.blight.description,"Level 4. 8d8 necrotic damage, con save for half."
+spell.blight.description,"Level 4. 8d8 necrotic damage, con save for half. 1d8 more per level above 4."
 spell.blight.name,Blight
 spell.blindness_deafness.description,"Level 2. A creature you can see makes a Constitution save or is blinded or deafened, your choice, for the fight. It saves again at the end of each of its turns. One more target per level above 2."
 spell.blindness_deafness.name,Blindness/Deafness
 spell.blur.description,Level 2. Attack rolls against it have disadvantage. Requires concentration.
 spell.blur.name,Blur
+spell.breath_weapon_acid.description,A 15-foot cone or a 30-foot line of acid: Dexterity save for half.
+spell.breath_weapon_acid.name,Acid Breath
+spell.breath_weapon_cold.description,A 15-foot cone or a 30-foot line of cold: Dexterity save for half.
+spell.breath_weapon_cold.name,Cold Breath
+spell.breath_weapon_fire.description,A 15-foot cone or a 30-foot line of fire: Dexterity save for half.
+spell.breath_weapon_fire.name,Fire Breath
+spell.breath_weapon_lightning.description,A 15-foot cone or a 30-foot line of lightning: Dexterity save for half.
+spell.breath_weapon_lightning.name,Lightning Breath
+spell.breath_weapon_poison.description,A 15-foot cone or a 30-foot line of poison: Dexterity save for half.
+spell.breath_weapon_poison.name,Poison Breath
 spell.burning_hands.description,"Level 1. 3d6 fire damage in a 15-foot cone, dex save for half."
 spell.burning_hands.name,Burning Hands
 spell.call_lightning.description,"Level 3. A storm cloud 60 feet across gathers above you. A bolt strikes a point under it: 3d10 lightning damage within 5 feet, Dexterity save for half. An action calls another bolt on later turns. 1d10 more in a storm, and per level above 3. Requires concentration."
 spell.call_lightning.name,Call Lightning
-spell.chain_lightning.description,"Level 6. 10d8 lightning damage, dex save for half."
+spell.chain_lightning.description,"Level 6. A bolt at a creature, leaping to up to three others within 30 feet of it: each makes a Dexterity save or takes 10d8 lightning damage, half on a success. One more leap per level above 6."
 spell.chain_lightning.name,Chain Lightning
 spell.charm_person.description,"Level 1. A humanoid makes a Wisdom save, with advantage if you are fighting it, or is charmed by you for an hour. It ends if you or your allies hurt it. One more target per level above 1."
 spell.charm_person.name,Charm Person
@@ -728,7 +765,7 @@ spell.cloudkill.description,"Level 5. A 20-foot sphere of poison fog that blocks
 spell.cloudkill.name,Cloudkill
 spell.command.description,"Level 1. A one-word command: approach, drop, flee, grovel or halt. A creature you can see makes a Wisdom save or spends its next turn obeying. One more creature per level above 1."
 spell.command.name,Command
-spell.cone_of_cold.description,"Level 5. 8d8 cold damage in a 60-foot cone, con save for half."
+spell.cone_of_cold.description,"Level 5. 8d8 cold damage in a 60-foot cone, con save for half. 1d8 more per level above 5."
 spell.cone_of_cold.name,Cone of Cold
 spell.counterspell.description,"Level 3. Reaction, when you see a spell cast. Stops a spell as it is cast, con save to avoid it."
 spell.counterspell.name,Counterspell
@@ -738,28 +775,26 @@ spell.darkness.description,"Level 2. A 15-foot sphere of magical darkness. Nothi
 spell.darkness.name,Darkness
 spell.darkvision.description,Level 2. Its effect is told by the narrator.
 spell.darkvision.name,Darkvision
-spell.death_ward.description,"Level 4. Until your next long rest, the first time the creature would drop to 0 hit points it drops to 1 instead, and a spell that would kill it outright fails. Either ends the ward."
+spell.death_ward.description,"Level 4. Until your next long rest, the first time the creature would drop to 0 hit points it drops to 1 instead, and an effect that would kill it outright without dealing damage is negated. Either ends the ward."
 spell.death_ward.name,Death Ward
-spell.detect_magic.description,Level 1. Shows you what is hidden. Requires concentration.
+spell.detect_magic.description,"Level 1. You sense magic within 30 feet, and can see a faint aura around any creature or object that bears it, with the school of the spell behind it. Stone, earth, wood, metal and lead block it. Requires concentration. Can be cast as a ritual."
 spell.detect_magic.name,Detect Magic
-spell.dimension_door.description,Level 4. Moves you elsewhere.
+spell.dimension_door.description,"Level 4. You teleport up to 500 feet to a place you can see or picture, and can bring one willing creature from beside you. Arriving in an occupied space deals 4d6 force damage to each of you, and the spell fails."
 spell.dimension_door.name,Dimension Door
 spell.disguise_self.description,Level 1. Its effect is told by the narrator.
 spell.disguise_self.name,Disguise Self
-spell.disintegrate.description,"Level 6. 10d6+40 force damage, dex save to avoid it."
+spell.disintegrate.description,"Level 6. A green ray: Dexterity save or 10d6+40 force damage, and a creature it drops to 0 hit points is turned to dust. Or it destroys a creation of magical force, such as a Cube of Force. 3d6 more per level above 6."
 spell.disintegrate.name,Disintegrate
-spell.dispel_magic.description,Level 3. Ends the spells on the target.
+spell.dispel_magic.description,"Level 3. Ends the spells on a creature, or on a magical effect on the board: those of level 3 or lower at once, higher ones on a spellcasting check against 10 plus their level. Cast with a higher slot, it ends spells up to that level outright."
 spell.dispel_magic.name,Dispel Magic
-spell.dissonant_whispers.description,"Level 1. You breathe a few words only one creature can hear, and they crawl under its skin: 3d6 psychic damage, Wisdom save for half. If it fails, it spends its reaction fleeing from you as far as it can move. 1d6 more per level above 1."
-spell.dissonant_whispers.name,Murmur of Dread
+spell.dissonant_whispers.description,"Level 1. One creature you can see hears a discordant melody in its mind: Wisdom save, or 3d6 psychic damage and it must use its reaction to move as far from you as it can. Half damage on a success. 1d6 more per level above 1."
+spell.dissonant_whispers.name,Dissonant Whispers
 spell.divine_smite.description,"Level 1. Bonus action, right after you hit with a melee attack: the hit deals 2d8 radiant damage more, 3d8 against a fiend or an undead. 1d8 more per level above 1."
 spell.divine_smite.name,Divine Smite
 spell.dominate_monster.description,"Level 8. Leaves the target stunned, wis save to avoid it. Requires concentration. (v1 ships a bounded version of this spell.)"
-spell.dominate_monster.name,Master's Command
-spell.dragons_breath.description,"Level 2. Your throat fills with the heat, frost or venom of an old wyrm - acid, cold, fire, lightning or poison, chosen as you cast. While you hold the spell, an action breathes a 15-foot cone of it: 3d6 damage, Dexterity save for half. 1d6 more per level above 2. Requires concentration."
-spell.dragons_breath.name,Wyrmbreath Boon
-spell.earthquake.description,"Level 8. Leaves the target prone in a 100-foot burst, dex save to avoid it; fills 100 feet around the point. Requires concentration. (v1 ships a bounded version of this spell.)"
-spell.earthquake.name,Rending Quake
+spell.dominate_monster.name,Dominate Monster
+spell.dragons_breath.description,"Level 2. Bonus action. You touch a willing creature and choose acid, cold, fire, lightning or poison. While you hold the spell, it can take an action to exhale a 15-foot cone: Dexterity save, 3d6 damage of that type, half on a success. 1d6 more per level above 2. Requires concentration."
+spell.dragons_breath.name,Dragon's Breath
 spell.eldritch_blast.description,"Cantrip. 1d10 force damage, more beams as you level, on a hit."
 spell.eldritch_blast.name,Eldritch Blast
 spell.enhance_ability.description,Level 2. Advantage on ability checks. Requires concentration.
@@ -772,37 +807,35 @@ spell.faerie_fire.description,"Level 1. Attack rolls against it have advantage, 
 spell.faerie_fire.name,Faerie Fire
 spell.fear.description,"Level 3. Creatures in a 30-foot cone make a Wisdom save or drop what they hold and are frightened. Each turn they dash away from you, and save again only when they end a turn out of your sight. Requires concentration."
 spell.fear.name,Fear
-spell.feather_fall.description,Level 1. Its effect is told by the narrator. (v1 ships a bounded version of this spell.)
-spell.feather_fall.name,Drifting Descent
 spell.find_familiar.description,Level 1. Calls something to your side. (v1 ships a bounded version of this spell.)
-spell.find_familiar.name,Bonded Familiar
-spell.finger_of_death.description,"Level 7. 7d8+30 necrotic damage, con save for half."
+spell.find_familiar.name,Find Familiar
+spell.finger_of_death.description,"Level 7. Constitution save or 7d8+30 necrotic damage, half on a success. A humanoid it kills rises at the start of your next turn as a zombie that fights for you."
 spell.finger_of_death.name,Finger of Death
 spell.fire_bolt.description,"Cantrip. 1d10 fire damage, on a hit."
 spell.fire_bolt.name,Fire Bolt
 spell.fireball.description,"Level 3. 8d6 fire damage in a 20-foot burst, dex save for half."
 spell.fireball.name,Fireball
-spell.flame_strike.description,"Level 5. 5d6 fire damage in a 10-foot burst, dex save for half; 5d6 radiant damage in a 10-foot burst, the same save for half."
+spell.flame_strike.description,"Level 5. 5d6 fire damage in a 10-foot burst, dex save for half; 5d6 radiant damage in a 10-foot burst, the same save for half. 1d6 more of each per level above 5."
 spell.flame_strike.name,Flame Strike
 spell.flaming_sphere.description,"Level 2. A 5-foot sphere of fire. A creature that ends its turn within 5 feet of it makes a Dexterity save or takes 2d6 fire damage, half on a success. A bonus action rolls it up to 30 feet; rolled into a creature, it stops and that creature saves. 1d6 more per level above 2. Requires concentration."
 spell.flaming_sphere.name,Flaming Sphere
-spell.flesh_to_stone.description,"Level 6. A creature makes a Constitution save or is restrained; on a success it cannot move until your next turn. The restrained save again each turn: three successes end the spell, three failures turn it to stone. Constructs are immune. Requires concentration."
+spell.flesh_to_stone.description,"Level 6. A creature makes a Constitution save or is restrained; on a success it cannot move until your next turn. The restrained save again each turn: three successes end the spell, three failures turn it to stone. Constructs automatically succeed on the save. Requires concentration."
 spell.flesh_to_stone.name,Flesh to Stone
-spell.fly.description,Level 3. Moves you elsewhere. Requires concentration. (v1 ships a bounded version of this spell.)
-spell.fly.name,Skystride
-spell.fog_cloud.description,Level 1. A 20-foot sphere of fog that blocks sight entirely. 20 feet wider per level above 1. Requires concentration.
+spell.fly.description,"Level 3. A willing creature you touch flies at a speed of 60 feet, passing over difficult ground and anything on the ground. Requires concentration. (v1 ships a bounded version of this spell.)"
+spell.fly.name,Fly
+spell.fog_cloud.description,Level 1. A 20-foot-radius sphere of fog that blocks sight entirely. 20 feet wider per level above 1. Requires concentration.
 spell.fog_cloud.name,Fog Cloud
-spell.forcecage.description,"Level 7. An invisible prison of force for an hour: a cage of bars 20 feet on a side that can be seen and shot through, or a solid box 10 feet on a side that nothing passes. Nothing inside walks out, and magic to leave needs a Charisma save. Dispel Magic cannot end it."
+spell.forcecage.description,"Level 7. An invisible prison of force for as long as you concentrate, up to an hour: a cage of bars 20 feet on a side that can be seen and shot through, or a solid box 10 feet on a side that nothing passes. Nothing inside walks out, and magic to leave needs a Charisma save. Dispel Magic cannot end it. Requires concentration."
 spell.forcecage.name,Forcecage
-spell.foresight.description,"Level 9. Advantage on attack rolls, attack rolls against it have disadvantage, advantage on ability checks."
+spell.foresight.description,"Level 9. Takes a minute to cast - not in a fight. Until your next long rest, the creature you touch has advantage on attack rolls, ability checks and saving throws, and attack rolls against it have disadvantage. Casting it again ends the first."
 spell.foresight.name,Foresight
-spell.gaseous_form.description,Level 3. Moves you elsewhere. Requires concentration. (v1 ships a bounded version of this spell.)
-spell.gaseous_form.name,Mist Walk
+spell.gaseous_form.description,"Level 3. A willing creature you touch becomes a misty cloud: it flies at 10 feet, resists bludgeoning, piercing and slashing damage, can't be knocked prone, and has advantage on Strength, Dexterity and Constitution saves, but it can't attack or cast spells. It ends at 0 hit points. One more creature per level above 3. Requires concentration. (v1 ships a bounded version of this spell.)"
+spell.gaseous_form.name,Gaseous Form
 spell.globe_of_invulnerability.description,Level 6. A still barrier 10 feet around where you stand. A spell of level 5 or lower cast from outside cannot affect anything inside it; one level higher per level above 6. Requires concentration.
 spell.globe_of_invulnerability.name,Globe of Invulnerability
 spell.goodberry.description,Level 1. Ten magic berries appear in your pack for a day. Eating one is a bonus action and restores 1 hit point; one is a day's food.
 spell.goodberry.name,Goodberry
-spell.greater_invisibility.description,"Level 4. Advantage on attack rolls, attack rolls against it have disadvantage. Requires concentration."
+spell.greater_invisibility.description,"Level 4. A creature you touch is invisible until the spell ends, attacking or not. Requires concentration."
 spell.greater_invisibility.name,Greater Invisibility
 spell.greater_restoration.description,"Level 5. Removes one of these from the creature you touch: the charmed condition, the petrified condition, a curse, or any reduction to its ability scores."
 spell.greater_restoration.name,Greater Restoration
@@ -812,33 +845,31 @@ spell.guiding_bolt.description,"Level 1. 4d6 radiant damage, on a hit; the next 
 spell.guiding_bolt.name,Guiding Bolt
 spell.haste.description,"Level 3. A willing creature's speed doubles, it gains +2 AC and advantage on Dexterity saves, and it has one extra action each turn for a single weapon attack, Dash, Disengage or Hide. When the spell ends it is incapacitated and cannot move until the end of its next turn. Requires concentration."
 spell.haste.name,Haste
-spell.heal.description,Level 6. Restores 70 hit points; ends the poisoned condition.
+spell.heal.description,"Level 6. Restores 70 hit points and ends the blinded, deafened and poisoned conditions. 10 more hit points per level above 6."
 spell.heal.name,Heal
 spell.healing_word.description,Level 1. Bonus action. Restores 2d4 plus your spellcasting modifier hit points.
 spell.healing_word.name,Healing Word
-spell.heat_metal.description,"Level 2. 2d8 fire damage, and again on later turns while you hold it; disadvantage on attack rolls, disadvantage on ability checks. Requires concentration. (v1 ships a bounded version of this spell.)"
-spell.heat_metal.name,Forge Fever
 spell.hellish_rebuke.description,"Level 1. Reaction, when you are hurt. 2d10 fire damage, dex save for half."
 spell.hellish_rebuke.name,Hellish Rebuke
-spell.hex.description,Level 1. Bonus action. 1d6 necrotic damage whenever you hit it with an attack roll; disadvantage on checks with an ability you choose. Requires concentration.
+spell.hex.description,"Level 1. Bonus action. 1d6 necrotic damage whenever you hit the target with an attack roll, and disadvantage on its checks with an ability you choose. If it drops to 0 hit points, a bonus action on a later turn curses a new creature. Requires concentration."
 spell.hex.name,Hex
-spell.hideous_laughter.description,"Level 1. A creature makes a Wisdom save or falls prone laughing, incapacitated and unable to stand. It saves again at the end of each of its turns and whenever it takes damage, with advantage then. Requires concentration."
+spell.hideous_laughter.description,"Level 1. A creature makes a Wisdom save or falls prone laughing, incapacitated and unable to stand. It saves again at the end of each of its turns and whenever it takes damage, with advantage then. One more creature per level above 1. Requires concentration."
 spell.hideous_laughter.name,Hideous Laughter
 spell.hold_monster.description,Level 5. A creature you can see makes a Wisdom save or is paralyzed. It saves again at the end of each of its turns. One more target per level above 5. Requires concentration.
 spell.hold_monster.name,Hold Monster
 spell.hold_person.description,Level 2. A humanoid you can see makes a Wisdom save or is paralyzed. It saves again at the end of each of its turns. One more target per level above 2. Requires concentration.
 spell.hold_person.name,Hold Person
-spell.hunters_mark.description,Level 1. Bonus action. 1d6 force damage whenever you hit it with an attack roll. Requires concentration.
+spell.hunters_mark.description,"Level 1. Bonus action. 1d6 force damage whenever you hit the marked creature with an attack roll. If it drops to 0 hit points, a bonus action moves the mark to a new creature you can see. Requires concentration."
 spell.hunters_mark.name,Hunter's Mark
 spell.hypnotic_pattern.description,"Level 3. Every creature in a 30-foot cube that can see the pattern makes a Wisdom save or is charmed, incapacitated and unable to move. It ends for a creature that takes damage or is shaken awake. Requires concentration."
 spell.hypnotic_pattern.name,Hypnotic Pattern
-spell.ice_storm.description,"Level 4. 2d10 bludgeoning damage in a 20-foot burst, dex save for half; 4d6 cold damage in a 20-foot burst, the same save for half; fills 20 feet around the point, difficult terrain."
+spell.ice_storm.description,"Level 4. 2d10 bludgeoning damage in a 20-foot burst, dex save for half; 4d6 cold damage in a 20-foot burst, the same save for half; fills 20 feet around the point, difficult terrain. 1d10 more bludgeoning per level above 4."
 spell.ice_storm.name,Ice Storm
-spell.identify.description,Level 1. Shows you what is hidden.
+spell.identify.description,"Level 1. Takes a minute to cast (or as a ritual) - not in a fight. Touch an object to learn its magical properties, or a creature to learn which spells are affecting it."
 spell.identify.name,Identify
-spell.invisibility.description,"Level 2. Advantage on attack rolls, attack rolls against it have disadvantage, until it attacks or casts. Requires concentration."
+spell.invisibility.description,"Level 2. A creature you touch is invisible until the spell ends - or until it makes an attack roll, deals damage or casts a spell. One more creature per level above 2. Requires concentration."
 spell.invisibility.name,Invisibility
-spell.lesser_restoration.description,Level 2. Bonus action. Ends the poisoned condition.
+spell.lesser_restoration.description,"Level 2. Bonus action. A creature you touch is freed of one condition, chosen as you cast: blinded, deafened, paralyzed or poisoned."
 spell.lesser_restoration.name,Lesser Restoration
 spell.light.description,Cantrip. Lights 4 squares.
 spell.light.name,Light
@@ -848,28 +879,26 @@ spell.mage_armor.description,Level 1. Armor Class 13 plus Dexterity while wearin
 spell.mage_armor.name,Mage Armor
 spell.mage_hand.description,Cantrip. Its effect is told by the narrator.
 spell.mage_hand.name,Mage Hand
-spell.magic_missile.description,Level 1. 1d4+1 force damage.
+spell.magic_missile.description,"Level 1. Three glowing darts, each striking a creature you can see for 1d4+1 force damage - they never miss. One more dart per level above 1."
 spell.magic_missile.name,Magic Missile
-spell.major_image.description,Level 3. Its effect is told by the narrator. Requires concentration.
+spell.major_image.description,"Level 3. An illusion of an object, creature or other sight up to a 20-foot cube; its effect is told by the narrator. Requires concentration - unless cast with a level 4 slot or higher."
 spell.major_image.name,Major Image
-spell.maze.description,Level 8. Leaves the target stunned. Requires concentration. (v1 ships a bounded version of this spell.)
-spell.maze.name,Labyrinth Exile
+spell.maze.description,"Level 8. No save: a creature you can see within 60 feet is banished into a labyrinth, off the board, until the spell ends. On its turn it can study the maze - a DC 20 Intelligence (Investigation) check - and escapes on a success, ending the spell. It comes back where it left. Requires concentration."
+spell.maze.name,Maze
 spell.meteor_swarm.description,"Level 9. 20d6 fire damage in 4 40-foot bursts, dex save for half; 20d6 bludgeoning damage in 4 40-foot bursts, the same save for half."
 spell.meteor_swarm.name,Meteor Swarm
 spell.minor_illusion.description,Cantrip. Its effect is told by the narrator.
 spell.minor_illusion.name,Minor Illusion
 spell.mirror_image.description,"Level 2. Three illusory duplicates of you for the fight. Each time you are hit, roll a d6 for each duplicate left; on any 3 or higher a duplicate takes the hit and vanishes instead. Attackers that are blinded or have truesight are not fooled."
 spell.mirror_image.name,Mirror Image
-spell.misty_step.description,Level 2. Bonus action. Moves you elsewhere.
+spell.misty_step.description,Level 2. Bonus action. You teleport up to 30 feet to an unoccupied space you can see.
 spell.misty_step.name,Misty Step
-spell.moonbeam.description,"Level 2. Fills 5 feet around the point; 2d10 radiant damage when it appears, when a creature enters it, when a creature ends its turn there, con save for half; moves it up to 60 feet on a later turn. Requires concentration."
+spell.moonbeam.description,"Level 2. A beam of moonlight 5 feet around a point: Constitution save or 2d10 radiant damage when it appears, when a creature enters it, and when a creature ends its turn there, half on a success. A shape-shifted creature that fails reverts to its true form and can't shift again until it leaves. An action moves it up to 60 feet on a later turn. 1d10 more per level above 2. Requires concentration."
 spell.moonbeam.name,Moonbeam
 spell.pass_without_trace.description,Level 2. An aura 30 feet around you: you and your allies inside it have +10 to Stealth and leave no tracks. Requires concentration.
 spell.pass_without_trace.name,Pass without Trace
-spell.plane_shift.description,Level 7. Moves you elsewhere. (v1 ships a bounded version of this spell.)
-spell.plane_shift.name,Worldwalk
 spell.polymorph.description,Level 4. Grants 30 temporary hit points. Requires concentration. (v1 ships a bounded version of this spell.)
-spell.polymorph.name,Borrowed Form
+spell.polymorph.name,Polymorph
 spell.power_word_kill.description,Level 9. A creature with 100 hit points or fewer dies; anything else takes 12d12 psychic damage.
 spell.power_word_kill.name,Power Word Kill
 spell.power_word_stun.description,Level 8. No save. A creature with 150 hit points or fewer is stunned and makes a Constitution save at the end of each of its turns to end it. A tougher creature cannot move until the start of your next turn.
@@ -878,25 +907,23 @@ spell.prestidigitation.description,Cantrip. Its effect is told by the narrator.
 spell.prestidigitation.name,Prestidigitation
 spell.produce_flame.description,"Cantrip. Bonus action. A flame in your hand lights 20 feet around you for the fight. While it lasts, you can take an action to hurl it at a creature within 60 feet: a ranged spell attack for 1d8 fire damage. A die more at levels 5, 11 and 17."
 spell.produce_flame.name,Produce Flame
-spell.raise_dead.description,"Level 5. A creature dead no more than ten days comes back with 1 hit point, its poisons gone. It takes -4 to attacks, saves and checks, easing by 1 each long rest."
+spell.raise_dead.description,"Level 5. Takes an hour to cast - not in a fight. A creature dead no more than ten days comes back with 1 hit point, its poisons gone. It takes -4 to attacks, saves and checks, easing by 1 each long rest. Nothing brings back a creature turned to dust."
 spell.raise_dead.name,Raise Dead
 spell.ray_of_frost.description,"Cantrip. 1d8 cold damage, on a hit; -10 feet of speed."
 spell.ray_of_frost.name,Ray of Frost
 spell.remove_curse.description,"Level 3. Every curse on the creature you touch ends, whatever its level."
 spell.remove_curse.name,Remove Curse
-spell.reverse_gravity.description,"Level 7. Leaves the target restrained in a 50-foot burst, dex save to avoid it; fills 50 feet around the point. Requires concentration. (v1 ships a bounded version of this spell.)"
-spell.reverse_gravity.name,Skyward Fall
 spell.sacred_flame.description,"Cantrip. 1d8 radiant damage, dex save to avoid it."
 spell.sacred_flame.name,Sacred Flame
-spell.scorching_ray.description,"Level 2. 2d6 fire damage, on a hit."
+spell.scorching_ray.description,"Level 2. Three rays of fire, each a ranged spell attack for 2d6 fire damage on a hit. One more ray per level above 2."
 spell.scorching_ray.name,Scorching Ray
 spell.searing_smite.description,"Level 1. Bonus action, right after you hit with a melee attack: 1d6 fire damage more, and the target burns - 1d6 fire at the start of each of its turns, then a Constitution save to put it out. 1d6 more per level above 1."
 spell.searing_smite.name,Searing Smite
 spell.shapechange.description,Level 9. Grants 100 temporary hit points. Requires concentration. (v1 ships a bounded version of this spell.)
-spell.shapechange.name,Myriad Forms
+spell.shapechange.name,Shapechange
 spell.shatter.description,"Level 2. 3d8 thunder damage in a 10-foot burst, con save for half."
 spell.shatter.name,Shatter
-spell.shield.description,"Level 1. Reaction, when an attack hits you. +5 to Armor Class."
+spell.shield.description,"Level 1. Reaction, when you are hit by an attack roll or targeted by Magic Missile: +5 AC until the start of your next turn, against that attack too, and Magic Missile does you no harm."
 spell.shield.name,Shield
 spell.shillelagh.description,"Cantrip. Bonus action. For the fight your club or quarterstaff can use your spellcasting ability, rolls a d8 for damage and can deal force damage. The die grows to d10 at level 5, d12 at 11 and 2d6 at 17."
 spell.shillelagh.name,Shillelagh
@@ -904,44 +931,40 @@ spell.shocking_grasp.description,"Cantrip. 1d8 lightning damage, on a hit; it ca
 spell.shocking_grasp.name,Shocking Grasp
 spell.silent_image.description,Level 1. Its effect is told by the narrator. Requires concentration.
 spell.silent_image.name,Silent Image
-spell.sleep.description,"Level 1. Creatures of your choice in a 5-foot burst make a Wisdom save or are incapacitated. At the end of their next turn they save again, and a second failure puts them to sleep. Damage or a shake wakes them. Elves and the sleepless are immune. Requires concentration."
+spell.sleep.description,"Level 1. Creatures of your choice in a 5-foot-radius sphere within 60 feet make a Wisdom save or are incapacitated. At the end of their next turn they save again, and a second failure puts them to sleep. Damage or a shake wakes them. Elves and the sleepless are immune. Requires concentration."
 spell.sleep.name,Sleep
 spell.sleet_storm.description,"Level 3. Sleet fills a 20-foot radius, blocking sight and making difficult terrain. A creature that enters it or starts its turn there makes a Dexterity save or falls prone and loses its concentration. Requires concentration."
 spell.sleet_storm.name,Sleet Storm
-spell.slow.description,"Level 3. -2 to attack rolls and Armor Class, wis save to avoid it. Requires concentration. (v1 ships a bounded version of this spell.)"
-spell.slow.name,Leaden Limbs
+spell.slow.description,"Level 3. Up to six creatures of your choice in a 40-foot cube: Wisdom save, or its speed is halved, it takes -2 to AC and Dexterity saves, can't take reactions, takes an action or a bonus action but not both, and makes only one attack. It repeats the save at the end of each of its turns. Requires concentration. (v1 ships a bounded version of this spell.)"
+spell.slow.name,Slow
 spell.spare_the_dying.description,"Cantrip. A creature within 15 feet at 0 hit points and not dead becomes stable. The range doubles at levels 5, 11 and 17."
 spell.spare_the_dying.name,Spare the Dying
 spell.speak_with_animals.description,Level 1. Its effect is told by the narrator.
-spell.speak_with_animals.name,Speak With Animals
+spell.speak_with_animals.name,Speak with Animals
 spell.speak_with_dead.description,Level 3. Its effect is told by the narrator.
-spell.speak_with_dead.name,Speak With Dead
+spell.speak_with_dead.name,Speak with Dead
 spell.spike_growth.description,"Level 2. Fills 20 feet around the point, difficult terrain; 2d4 piercing damage for every 5 feet moved through it. Requires concentration."
 spell.spike_growth.name,Spike Growth
-spell.spirit_guardians.description,"Level 3. Surrounds you for 15 feet, difficult terrain; 3d8 radiant damage when a creature enters it, when a creature ends its turn there, wis save for half. Requires concentration."
+spell.spirit_guardians.description,"Level 3. Spirits surround you for 15 feet: other creatures' speed is halved there, and one that enters or ends its turn there makes a Wisdom save or takes 3d8 radiant or necrotic damage (your choice as you cast), half on a success. 1d8 more per level above 3. Requires concentration."
 spell.spirit_guardians.name,Spirit Guardians
-spell.spiritual_weapon.description,"Level 2. Bonus action. Calls something to your side; 1d8 plus your spellcasting modifier force damage, and again on later turns while you hold it, on a hit. Requires concentration."
+spell.spiritual_weapon.description,Level 2. Bonus action. A spectral weapon appears within 60 feet and makes a melee spell attack against a creature beside it: 1d8 plus your spellcasting modifier in force damage. On later turns a bonus action moves it up to 20 feet and attacks again. 1d8 more per level above 2. Requires concentration.
 spell.spiritual_weapon.name,Spiritual Weapon
 spell.stinking_cloud.description,Level 3. A 20-foot sphere of gas that blocks sight. A creature that starts its turn in it makes a Constitution save or is poisoned for that turn and can take no action or bonus action. Requires concentration.
 spell.stinking_cloud.name,Stinking Cloud
 spell.stoneskin.description,"Level 4. Resistance to bludgeoning, piercing, slashing damage. Requires concentration."
 spell.stoneskin.name,Stoneskin
-spell.suggestion.description,"Level 2. Its effect is told by the narrator, wis save to avoid it. Requires concentration. (v1 ships a bounded version of this spell.)"
-spell.suggestion.name,Honeyed Word
 spell.sunbeam.description,"Level 6. A 60-foot line of sunlight: 6d8 radiant damage and blinded until the start of your next turn, Constitution save for half and no blinding. You can take an action to fire a new beam on later turns. Sheds sunlight around you. Requires concentration."
 spell.sunbeam.name,Sunbeam
 spell.sunburst.description,"Level 8. A 60-foot burst of sunlight: 12d6 radiant damage and blinded for the fight, Constitution save for half and no blinding. The blinded save again at the end of each of their turns. Burns away magical darkness in the area."
 spell.sunburst.name,Sunburst
-spell.telekinesis.description,"Level 5. When you cast it and with an action on later turns: move a Huge or smaller creature up to 30 feet (Strength save to resist) and hold it restrained until the end of your next turn, or pull an object from a creature's grip in a contest of your spellcasting against its Strength. Requires concentration."
+spell.telekinesis.description,"Level 5. When you cast it and with an action on later turns: move a Huge or smaller creature up to 30 feet (Strength save to resist) and hold it restrained until the end of your next turn, or pull an object from a creature's grip (Strength save to resist). Requires concentration."
 spell.telekinesis.name,Telekinesis
 spell.teleport.description,Level 7. Moves you elsewhere. (v1 ships a bounded version of this spell.)
-spell.teleport.name,Far Travel
+spell.teleport.name,Waypoint
 spell.thaumaturgy.description,Cantrip. Its effect is told by the narrator.
 spell.thaumaturgy.name,Thaumaturgy
-spell.thunderwave.description,"Level 1. 2d8 thunder damage in a 15-foot cube, con save for half; moves you elsewhere in a 15-foot cube, on the same failed save."
+spell.thunderwave.description,"Level 1. A wave of thunderous force in a 15-foot cube from you: Constitution save, or 2d8 thunder damage and it is pushed 10 feet away from you; half damage and no push on a success. 1d8 more per level above 1."
 spell.thunderwave.name,Thunderwave
-spell.true_polymorph.description,"Level 9. Leaves the target stunned, wis save to avoid it. Requires concentration. (v1 ships a bounded version of this spell.)"
-spell.true_polymorph.name,Perfect Remaking
 spell.true_seeing.description,"Level 6. For an hour the creature has truesight: it sees the invisible and through magical darkness, and sees illusions for what they are."
 spell.true_seeing.name,True Seeing
 spell.true_strike.description,"Cantrip. Make one attack with the weapon you cast it with, using your spellcasting ability, dealing radiant damage or the weapon's own. At level 5 a hit deals 1d6 radiant more, 2d6 at 11 and 3d6 at 17."
@@ -952,12 +975,12 @@ spell.vitriolic_sphere.description,"Level 4. Acid bursts in a 20-foot radius: 10
 spell.vitriolic_sphere.name,Vitriolic Sphere
 spell.wall_of_fire.description,"Level 4. An opaque wall of fire up to 60 feet long, or a ring 20 feet across. Creatures in it when it appears make a Dexterity save or take 5d8 fire damage, half on a success. After that, entering the wall, or ending a turn in it or within 10 feet of the side you chose, deals 5d8 fire. 1d8 more per level above 4. Requires concentration."
 spell.wall_of_fire.name,Wall of Fire
-spell.wall_of_force.description,Level 5. Fills 15 feet around the point. Requires concentration. (v1 ships a bounded version of this spell.)
-spell.wall_of_force.name,Force Bulwark
-spell.web.description,"Level 2. Fills a 20-foot square, difficult terrain; leaves the target restrained when a creature enters it, when a creature starts its turn there, Strength check as an action to break free, dex save to avoid it. Requires concentration."
+spell.wall_of_force.description,"Level 5. Raises a cube of invisible force, 20 feet on a side, on the edges of the squares: nothing walks through it, and everything is seen through it. Requires concentration."
+spell.wall_of_force.name,Cube of Force
+spell.web.description,"Level 2. Fills a 20-foot cube with webs: difficult terrain and lightly obscured. A creature that enters or starts its turn there makes a Dexterity save or is restrained, and can use an action and a Strength check to break free. Requires concentration."
 spell.web.name,Web
 spell.wish.description,Level 9. Its effect is told by the narrator. (v1 ships a bounded version of this spell.)
-spell.wish.name,Heart's Desire
+spell.wish.name,Wish
 ui.act.help.name,Open the rules - {0}
 ui.act.reach_back.name,Move back to the last one - {0}
 ui.act.reach_next.name,Move to the next thing on the table - {0}
@@ -1032,11 +1055,15 @@ ui.combat_action.dash.name,Dash
 ui.combat_action.disengage.name,Disengage
 ui.combat_action.end_turn.name,End turn
 ui.combat_action.flee.name,Leave the map
+ui.combat_action.grapple.name,Grapple
 ui.combat_action.hide.name,Hide
 ui.combat_action.shake.name,Shake awake
+ui.combat_action.shove.name,Shove
+ui.combat_action.shove_prone.name,Knock prone
 ui.combat_action.stand_up.name,Stand up
 ui.combat_action.surge.name,Action Surge
 ui.combat_why.cannot_act.name,You can't act right now.
+ui.combat_why.cannot_cast.name,You can't cast spells in this form.
 ui.combat_why.charmed.name,You can't bring yourself to harm them.
 ui.combat_why.choose_mode.name,Choose how to cast it.
 ui.combat_why.choose_type.name,Choose a damage type.
@@ -1054,9 +1081,11 @@ ui.combat_why.nothing_to_break.name,Nothing here you can break out of.
 ui.combat_why.out_of_range.name,Nothing in reach or in range.
 ui.combat_why.pinned.name,Something is holding you down.
 ui.combat_why.rooted.name,You can't move right now.
+ui.combat_why.seen.name,You can't hide while an enemy can see you.
 ui.combat_why.shifted.name,You can't cast in a borrowed shape.
 ui.combat_why.spent.name,Nothing left to cast it with.
 ui.combat_why.too_far.name,Too far to reach this turn.
+ui.combat_why.too_long.name,It takes too long to cast in a fight.
 ui.create.name_hint,What are you called?
 ui.create.picks_left,{0} left to choose
 ui.create.points_left,{0} points left to spend

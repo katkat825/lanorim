@@ -18,7 +18,8 @@
           "damage_type": "lightning",
           "save": "dex",
           "on_save": "half",
-          "note": "SRD 5.2.1: the three leaps must land within 30 feet of the first target; the targeting UI owes that check, flagged in the build notes"
+          "note": "SRD 5.2.1: the three leaps must land within 30 feet of the first target (near_first: 6 squares)",
+          "near_first": 6
         }
       ]
     },
@@ -36,7 +37,17 @@
           "per_extra_level": "3d6",
           "damage_type": "force",
           "save": "dex",
-          "on_save": "negates"
+          "on_save": "negates",
+          "dust": true,
+          "mode": "creature",
+          "note": "SRD 5.2.1: Dex save or 10d6 + 40 Force; reduced to 0 Hit Points by it, the creature is gray dust, revived only by True Resurrection or Wish. +3d6 per slot level above 6"
+        },
+        {
+          "primitive": "dispel",
+          "reach": "place",
+          "ends_force": true,
+          "mode": "force",
+          "note": "or a creation of magical force, such as Wall of Force: it is disintegrated"
         }
       ]
     },
@@ -56,8 +67,17 @@
         {
           "primitive": "relieve",
           "reach": "creature",
-          "condition": "poisoned",
-          "note": "SRD 5.2.1 also ends blinded and deafened, which v1 does not have"
+          "condition": "poisoned"
+        },
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "blinded"
+        },
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "deafened"
         }
       ]
     },
@@ -89,7 +109,10 @@
           "amount": "7d8+30",
           "damage_type": "necrotic",
           "save": "con",
-          "on_save": "half"
+          "on_save": "half",
+          "raises_as": "zombie",
+          "raises_tag": "humanoid",
+          "note": "SRD 5.2.1: Con save, 7d8 + 30 Necrotic, half on a success. A Humanoid killed by it rises at the start of your next turn as a Zombie that follows your orders - on your side, fighting your enemies"
         }
       ]
     },
@@ -135,10 +158,30 @@
       "level": 8,
       "school": "evocation",
       "range": 30,
-      "classes": ["mage", "druid"],
+      "classes": ["cleric", "druid", "mage"],
       "effects": [
-        {"primitive": "damage", "reach": "burst", "radius": 12, "amount": "12d6", "damage_type": "radiant", "save": "con", "on_save": "half", "dispels_darkness": true},
-        {"primitive": "afflict", "reach": "burst", "radius": 12, "condition": "blinded", "save": "con", "on_save": "negates", "same_save": true, "repeat_save": true, "duration": "encounter", "note": "SRD 5.2.1: Blinded for 1 minute on a failed save, repeating the save at the end of each of its turns; the minute is the fight"}
+        {
+          "primitive": "damage",
+          "reach": "burst",
+          "radius": 12,
+          "amount": "12d6",
+          "damage_type": "radiant",
+          "save": "con",
+          "on_save": "half",
+          "dispels_darkness": true
+        },
+        {
+          "primitive": "afflict",
+          "reach": "burst",
+          "radius": 12,
+          "condition": "blinded",
+          "save": "con",
+          "on_save": "negates",
+          "same_save": true,
+          "repeat_save": true,
+          "duration": "encounter",
+          "note": "SRD 5.2.1: Blinded for 1 minute on a failed save, repeating the save at the end of each of its turns; the minute is the fight"
+        }
       ]
     },
 

@@ -161,7 +161,7 @@ namespace Sim
             foreach (Attack attack in monster.Attacks)
                 said.Add($"{Title(attack.Id)} for {attack.Damage} {attack.DamageType.Id()}");
 
-            if (monster.Multiattack > 1) said.Add($"attacks {monster.Multiattack} times a turn");
+            if (monster.Multiattack != null) said.Add($"attacks {monster.AttacksPerTurn} times a turn");
 
             foreach (var defense in monster.Defenses)
                 said.Add(defense.Value switch

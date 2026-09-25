@@ -46,7 +46,7 @@ dialogue.oda.line.sample_millbrook.oda_rats,Rats. Big ones. And tracks out the b
 dialogue.oda.line.sample_millbrook.oda_thanks,You'll eat with us tonight. And take this - it's not much.
 encounter.bandit_purse.loot.coin,A few coins in a bandit's purse.
 encounter.goblin_chest.loot.stolen_takings,"The mill's stolen takings, and a potion wrapped in a rag."
-encounter.mill_road.line.bandits,A figure steps into the road with a drawn blade.
+encounter.mill_road.line.bandits,Two figures step into the road with drawn blades.
 encounter.mill_road.line.crows,"Crows lift off the verge, complaining."
 encounter.mill_road.line.wolves,A wolf slinks out of the hedge.
 encounter.rat_nest.loot.gnawed_purse,"A gnawed purse, still heavy with coin."

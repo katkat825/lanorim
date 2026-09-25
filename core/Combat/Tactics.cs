@@ -38,6 +38,9 @@ namespace Core.Combat
 
     // approach the best target and hit it until the actions run out. deliberately plain: enemy AI
     // is "standard" per decisions_checklist.md section 3, and a predictable enemy is a readable one.
+    // it spends whatever budget the turn has: a monster's is one action, and its Multiattack when
+    // the statblock has one (ActionBudget.Statblock), so the same loop that gives a goblin one
+    // swing gives a brown bear its bite and its claw.
     public sealed class BasicTactics : ITactics
     {
         public BasicTactics(IReadOnlyList<Attack> attacks, Instinct instinct = Instinct.None)
@@ -59,6 +62,13 @@ namespace Core.Combat
             Actor me = turn.Actor;
 
             if (!me.CanAct)
+            {
+                fight.EndTurn();
+                return;
+            }
+
+            // off the board (Banishment, Maze): nothing here to walk to or swing at
+            if (!fight.Field.Where(me).HasValue)
             {
                 fight.EndTurn();
                 return;
@@ -127,8 +137,9 @@ namespace Core.Combat
 
         // the attack that can be used from where it is standing; the biggest average damage among
         // those, so a monster with a bow and a bite uses the right one at the right distance
-        Attack Best(Encounter fight, Actor me, Actor target) =>
+        Attack Best(Encounter fight, Actor me, Actor target, Turn turn = null) =>
             Attacks.Where(a => me.CanUse(a))
+                   .Where(a => turn == null || turn.Allows(a))
                    .Where(a => fight.Field.InRange(me, target, a.Reaches))
                    .Where(a => !Is(Instinct.Skirmisher) || !a.IsRanged ||
                                fight.Field.Distance(me, target) > 1)
@@ -138,9 +149,9 @@ namespace Core.Combat
 
         void Swing(Encounter fight, Turn turn, Actor target)
         {
-            while (turn.Can(Spend.Action) && !target.IsDown && !fight.Over)
+            while (turn.CanAttack && !target.IsDown && !fight.Over)
             {
-                Attack attack = Best(fight, turn.Actor, target);
+                Attack attack = Best(fight, turn.Actor, target, turn);
 
                 if (attack == null) return;
 

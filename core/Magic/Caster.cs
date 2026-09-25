@@ -46,6 +46,38 @@ namespace Core.Magic
 
         public bool Forget(string id) => _known.RemoveAll(s => s.Id == id) > 0;
 
+        // ALWAYS PREPARED (SRD 5.2.1): a feature's spells - a Life Domain's, Paladin's Smite's
+        // Divine Smite. on the sheet like any other, and not counted against the picks
+        readonly HashSet<string> _prepared = new(StringComparer.Ordinal);
+
+        public void Prepare(Spell spell)
+        {
+            if (spell == null) return;
+
+            Learn(spell);
+            _prepared.Add(spell.Id);
+        }
+
+        public bool IsPrepared(string id) => id != null && _prepared.Contains(id);
+
+        public IEnumerable<Spell> Picked => _known.Where(s => !_prepared.Contains(s.Id));
+
+        // casts at the spell's own level that cost no slot or points, so many each long rest:
+        // Paladin's Smite's one Divine Smite (SRD 5.2.1 p.54)
+        readonly Dictionary<string, (int PerDay, int Left)> _free = new(StringComparer.Ordinal);
+
+        public void GrantFree(string spellId, int perLongRest)
+        {
+            if (string.IsNullOrEmpty(spellId) || perLongRest <= 0) return;
+
+            _free[spellId] = (perLongRest, perLongRest);
+        }
+
+        public bool HasFree(string spellId) => spellId != null && _free.ContainsKey(spellId);
+
+        public int FreeLeft(string spellId) =>
+            spellId != null && _free.TryGetValue(spellId, out var f) ? f.Left : 0;
+
         public bool Knows(string id) => _known.Any(s => s.Id == id);
 
         public Spell Find(string id) => _known.FirstOrDefault(s => s.Id == id);
@@ -97,11 +129,16 @@ namespace Core.Magic
             // a borrowed shape casts nothing, cantrips included: SRD 5.2.1's Wild Shape
             if (Actor.IsShifted) return false;
 
+            // Gaseous Form: a misty cloud casts nothing
+            if (Actor.Boons.NoCasting) return false;
+
             // a statblock's recharge or daily use
             if (UseOf(spell.Id) is SpellUse use && !use.CanUse) return false;
 
             // a cantrip is at-will and costs nothing, ever
             if (spell.IsCantrip) return true;
+
+            if (castAt == spell.Level && FreeLeft(spell.Id) > 0) return true;
 
             return Resource != null && Resource.CanPay(castAt);
         }
@@ -119,6 +156,15 @@ namespace Core.Magic
 
             if (use != null && !use.CanUse) return false;
 
+            // a free cast is spent first: it is the one that would otherwise go to waste
+            if (!spell.IsCantrip && castAt == spell.Level && FreeLeft(spell.Id) > 0)
+            {
+                var f = _free[spell.Id];
+                _free[spell.Id] = (f.PerDay, f.Left - 1);
+                use?.Spend();
+                return true;
+            }
+
             bool paid = spell.IsCantrip || Resource != null && Resource.Pay(castAt);
 
             if (paid) use?.Spend();
@@ -131,7 +177,11 @@ namespace Core.Magic
             Resource?.Restore(rest);
 
             if (rest == Rest.Long)
+            {
                 foreach (SpellUse use in _uses.Values) use.Refill();
+
+                foreach (string id in _free.Keys.ToList()) _free[id] = (_free[id].PerDay, _free[id].PerDay);
+            }
         }
 
         public override string ToString() =>

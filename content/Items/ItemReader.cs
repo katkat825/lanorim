@@ -89,7 +89,17 @@ namespace Content.Items
                                     : slot == Slot.OffHand ? Hand.Off : Hand.Main,
                                     w.Flag("finesse"),
                                     w.Number("attack_bonus"),
-                                    w.Number("damage_bonus"));
+                                    w.Number("damage_bonus"))
+                {
+                    Thrown = w.Flag("thrown"),
+                    Light = w.Flag("light"),
+                    Heavy = w.Flag("heavy"),
+                    Versatile = w.Has("versatile") ? w.Dice("versatile", problems, id) : default,
+                    Category = w.Text("category") ?? "",
+                };
+
+                if (attack.Category.Length > 0 && attack.Category != "simple" && attack.Category != "martial")
+                    problems.Add($"{id}: a weapon's category is simple or martial");
             }
             else if (kind == ItemKind.Weapon)
             {

@@ -56,6 +56,15 @@ namespace Content.Combat
             // SRD: a spent recharge rolls its d6 at the start of the monster's turn
             _caster?.Recharge(fight.Resolver);
 
+            // in a maze: the Study action, every turn, until it gets out
+            if (fight.IsAway(me))
+            {
+                if (_incantation.CanStudy(me)) _incantation.Study(fight, turn);
+
+                if (!turn.Ended) fight.EndTurn();
+                return;
+            }
+
             // a craven thing that is bloodied runs, and does nothing else
             if (Is(Instinct.Craven) && me.Health.IsBloodied && Flee(fight, turn))
             {
@@ -67,7 +76,9 @@ namespace Content.Combat
             {
                 var tried = new HashSet<string>();
 
-                // actions first, then the bonus action - a spell for each while one beats a swing
+                // the action first, then the bonus action - a spell for each while one beats a
+                // swing. a statblock's turn has one action (ActionBudget.Statblock), so casting
+                // is instead of attacking, as the SRD has it
                 while (!turn.Ended && !fight.Over && turn.Can(Spend.Action) &&
                        CastBest(fight, turn, CastingTime.Action, tried))
                 {
@@ -180,7 +191,7 @@ namespace Content.Combat
                     best = Math.Max(best, value);
                 }
 
-            return best * Math.Max(1, _monster.Multiattack);
+            return best * _monster.AttacksPerTurn;
         }
 
         Plan PlanFor(Encounter fight, Actor me, Spell spell)

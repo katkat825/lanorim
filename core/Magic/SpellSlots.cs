@@ -146,7 +146,7 @@ namespace Core.Magic
         // nothing at 1, and it never reaches past 5th
         static readonly int[][] HalfTable =
         {
-            new[] { 0, 0, 0, 0, 0 },   //  1
+            new[] { 2, 0, 0, 0, 0 },   //  1  (SRD 5.2.1: a Paladin casts from level 1)
             new[] { 2, 0, 0, 0, 0 },   //  2
             new[] { 3, 0, 0, 0, 0 },   //  3
             new[] { 3, 0, 0, 0, 0 },   //  4

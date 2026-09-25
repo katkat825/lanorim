@@ -58,6 +58,13 @@ namespace Game.Play
 
         public override void Downed(Actor actor) => Add(new Step { What = "down", Actor = actor });
 
+        // Banishment, Maze: off the board and beside it, and back. the square it comes back to
+        // follows as a Moved of one square
+        public override void Away(Actor actor, bool away)
+        {
+            if (away) Add(new Step { What = "aside", Actor = actor });
+        }
+
         public void Log(LogLine line) => Add(new Step { What = "log", Line = line });
     }
 
@@ -213,6 +220,15 @@ namespace Game.Play
                 case "turn":
                     if (Camera != null && GameState.Settings.FollowEnemies && !step.Hero && Board.Of(step.Actor) is { } mini)
                         Camera.Following = mini.GlobalPosition;
+                    break;
+
+                case "aside":
+                    Board.SetAside(step.Actor);
+                    break;
+
+                // a single square is a piece put straight down: back from Banishment or a Maze
+                case "move" when step.Route.Length == 1:
+                    Board.BringBack(step.Actor, step.Route[0]);
                     break;
 
                 case "move":

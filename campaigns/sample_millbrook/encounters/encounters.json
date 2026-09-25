@@ -59,7 +59,8 @@
           "loot": "bandit_purse",
           "monsters": [
             {
-              "monster": "bandit"
+              "monster": "bandit",
+              "count": "2"
             }
           ]
         }

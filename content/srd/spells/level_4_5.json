@@ -6,7 +6,7 @@
       "id": "banishment",
       "level": 4,
       "school": "abjuration",
-      "range": 12,
+      "range": 6,
       "concentration": true,
       "classes": ["mage", "cleric", "paladin"],
       "effects": [
@@ -15,14 +15,27 @@
           "reach": "creatures",
           "targets": 1,
           "extra_targets_per_level": 1,
-          "condition": "stunned",
+          "condition": "incapacitated",
           "save": "cha",
           "on_save": "negates",
           "duration": "concentration",
-          "note": "sent elsewhere for the duration; v1 leaves the mini on the board and marks it out of the fight"
+          "note": "SRD 5.2.1 (SRD p.112): one creature you can see within 30 feet, Cha save or it is transported to a harmless demiplane for the duration, Incapacitated there. +1 creature per slot level above 4"
+        },
+        {
+          "primitive": "sway",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "save": "cha",
+          "on_save": "negates",
+          "same_save": true,
+          "banishes": true,
+          "gone_after_rounds": 10,
+          "gone_tags": ["aberration", "celestial", "elemental", "fey", "fiend"],
+          "duration": "concentration",
+          "note": "the demiplane is off the board: the mini stands beside the map. When the spell ends it reappears in the space it left or the nearest unoccupied one. Held for the full minute (10 rounds), an Aberration, Celestial, Elemental, Fey or Fiend doesn't return - it goes to its home plane"
         }
-      ],
-      "approximated": true
+      ]
     },
     {
       "id": "dimension_door",
@@ -31,7 +44,14 @@
       "range": 100,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "shift", "reach": "caster", "note": "teleport anywhere on the map the caster has seen", "teleports": true}
+        {
+          "primitive": "shift",
+          "reach": "caster",
+          "note": "SRD 5.2.1: teleport to a spot within 500 feet you can see, visualize or describe, with one willing creature from beside you arriving within 5 feet of you. Arriving in an occupied space deals 4d6 Force to each traveller and the teleport fails",
+          "teleports": true,
+          "passenger": true,
+          "unseen": true
+        }
       ]
     },
     {
@@ -43,11 +63,11 @@
       "classes": ["mage"],
       "effects": [
         {
-          "primitive": "sway",
+          "primitive": "afflict",
           "reach": "creature",
-          "leans": "advantage_on_attacks|disadvantage_against",
+          "condition": "invisible",
           "duration": "concentration",
-          "note": "SRD 5.2.1: the Invisible condition for the whole duration - attacking does not end it"
+          "note": "SRD 5.2.1: a creature you touch has the Invisible condition until the spell ends - attacking does not end it"
         }
       ]
     },
@@ -91,12 +111,33 @@
       "level": 5,
       "school": "abjuration",
       "range": 0,
-      "classes": ["cleric", "druid"],
+      "classes": ["cleric", "druid", "mage", "paladin"],
       "effects": [
-        {"primitive": "relieve", "reach": "creature", "condition": "charmed", "mode": "charmed"},
-        {"primitive": "relieve", "reach": "creature", "condition": "petrified", "mode": "petrified"},
-        {"primitive": "dispel", "reach": "creature", "curses": true, "mode": "curse"},
-        {"primitive": "relieve", "reach": "creature", "restores_abilities": true, "mode": "abilities", "note": "SRD 5.2.1: removes one of: an Exhaustion level, Charmed or Petrified, a curse, a reduction to an ability score, a reduction to the HP maximum. v1 has no exhaustion and nothing that lowers a maximum, so those two are not offered"}
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "charmed",
+          "mode": "charmed"
+        },
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "petrified",
+          "mode": "petrified"
+        },
+        {
+          "primitive": "dispel",
+          "reach": "creature",
+          "curses": true,
+          "mode": "curse"
+        },
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "restores_abilities": true,
+          "mode": "abilities",
+          "note": "SRD 5.2.1: removes one of: an Exhaustion level, Charmed or Petrified, a curse, a reduction to an ability score, a reduction to the HP maximum. v1 has no exhaustion and nothing that lowers a maximum, so those two are not offered"
+        }
       ]
     },
     {
@@ -113,7 +154,7 @@
     {
       "id": "wall_of_force",
       "level": 5,
-      "school": "abjuration",
+      "school": "evocation",
       "range": 24,
       "concentration": true,
       "classes": ["mage"],
@@ -121,12 +162,15 @@
       "effects": [
         {
           "primitive": "zone",
-          "reach": "place",
-          "radius": 3,
+          "reach": "square",
+          "length": 4,
+          "ring_size": 4,
+          "encloses": "bars",
           "duration": "concentration",
-          "note": "snaps to grid edges and fixed shapes; no freehand geometry (v1_spell_list.md)"
+          "note": "Cube of Force: SRD 5.2.1 Wall of Force (SRD p.172) is an invisible wall - a 10-foot-radius dome or globe, or ten 10-foot panels in any shape. v1 raises it as a cube: a 20-foot square of invisible force on the grid's edges that nothing walks through and everything is seen through (Forcecage's bars). Renamed because the panels aren't possible and a shot passes the bars"
         }
-      ]
+      ],
+      "force_creation": true
     }
   ]
 }

@@ -214,7 +214,42 @@ namespace Content.Spells
                 Lasts = lasts,
                 Shapes = entry.Strings("shapes"),
                 NotInSrd = entry.Flag("not_in_srd"),
+                AnswersSpell = entry.Text("answers_spell") ?? "",
+                OutOfCombat = entry.Flag("out_of_combat"),
+                ConcentrationBelow = entry.Number("concentration_below"),
+                EndsPrevious = entry.Flag("ends_previous"),
+                MovesWhenDown = entry.Flag("moves_when_down"),
+                ForceCreation = entry.Flag("force_creation"),
+                DcAbility = entry.Ability("dc_ability", problems, id),
             };
+        }
+
+        // Enhance Ability's five: the abilities a chosen ability may be
+        static List<Ability> AbilityList(JsonElement raw, string name, string where, List<string> problems)
+        {
+            var list = new List<Ability>();
+
+            foreach (string word in raw.Strings(name))
+            {
+                if (Abilities.TryParse(word, out Ability read)) list.Add(read);
+                else problems.Add($"{where}: '{word}' in '{name}' is not an ability");
+            }
+
+            return list;
+        }
+
+        // Gaseous Form's "Immunity to the Prone condition"
+        static List<Condition> Immunities(JsonElement raw, string where, List<string> problems)
+        {
+            var immune = new List<Condition>();
+
+            foreach (string word in raw.Strings("immune"))
+            {
+                if (Conditions.TryParse(word, out Condition read) && read != Condition.None) immune.Add(read);
+                else problems.Add($"{where}: '{word}' in 'immune' is not a condition");
+            }
+
+            return immune;
         }
 
         static SpellEffect ReadEffect(JsonElement raw, string spellId, int level,
@@ -410,6 +445,41 @@ namespace Content.Spells
                 SparesAllies = raw.Flag("spares_allies"),
                 Escape = raw.Ability("escape", problems, where),
                 RepeatSave = raw.Flag("repeat_save"),
+                EscapeSkill = string.IsNullOrEmpty(raw.Text("escape_skill"))
+                    ? Skill.None
+                    : raw.Skill("escape_skill", problems, where),
+                EscapeDc = raw.Number("escape_dc"),
+                FlySpeed = raw.Number("fly_speed"),
+                NoAttacks = raw.Flag("no_attacks"),
+                NoCasting = raw.Flag("no_casting"),
+                Immune = Immunities(raw, where, problems),
+                UpTo = raw.Number("up_to"),
+                Banishes = raw.Flag("banishes"),
+                GoneAfterRounds = raw.Number("gone_after_rounds"),
+                GoneTags = raw.Strings("gone_tags"),
+                Ground = raw.Flag("ground"),
+                EndsAtZero = raw.Flag("ends_at_zero"),
+                EndsOnAct = raw.Flag("ends_on_act"),
+                WardsSpell = raw.Text("wards_spell") ?? "",
+                SparesCaster = raw.Flag("spares_caster"),
+                DimRadius = raw.Number("dim_radius"),
+                IfSeen = raw.Flag("if_seen"),
+                NotVsTruesight = raw.Flag("not_vs_truesight"),
+                NearZone = raw.Number("near_zone"),
+                RevertsShape = raw.Flag("reverts_shape"),
+                DisadvantageTags = raw.Strings("disadvantage_tags"),
+                AutoFailTags = raw.Strings("auto_fail_tags"),
+                AbilityChoices = AbilityList(raw, "ability_choices", where, problems),
+                WhileInZone = raw.Flag("while_in_zone"),
+                NearFirst = raw.Number("near_first"),
+                Dust = raw.Flag("dust"),
+                EndsForce = raw.Flag("ends_force"),
+                RaisesAs = raw.Text("raises_as") ?? "",
+                RaisesTag = raw.Text("raises_tag") ?? "",
+                Passenger = raw.Flag("passenger"),
+                Unseen = raw.Flag("unseen"),
+                PermanentAfterRounds = raw.Number("permanent_after_rounds"),
+                Point = raw.Flag("point"),
                 LeansOn = raw.Ability("leans_on", problems, where),
                 Resists = resists,
                 Speed = raw.Number("speed"),
@@ -556,7 +626,10 @@ namespace Content.Spells
                                      effect.NoReactions || effect.ActionOrBonus ||
                                      effect.NoActions || effect.LimitedAction ||
                                      !effect.WeaponDice.IsNothing || effect.Decoys > 0 ||
-                                     effect.Weapons.Count > 0 || effect.SizeStep != 0;
+                                     effect.Weapons.Count > 0 || effect.SizeStep != 0 ||
+                                     effect.FlySpeed > 0 || effect.NoAttacks || effect.NoCasting ||
+                                     effect.Immune.Count > 0 || effect.Banishes ||
+                                     effect.WardsSpell.Length > 0;
 
                     if (numbers && effect.Touches == Sways.None)
                         problems.Add($"{spellId}: a sway that touches nothing - say which rolls " +
@@ -574,7 +647,9 @@ namespace Content.Spells
                 case Primitive.Zone:
                 case Primitive.Illuminate:
                     // a square zone is sized by its side; everything else by its radius
-                    if (effect.Reach != Reach.Square && effect.Reach != Reach.Wall && effect.Radius <= 0)
+                    // a point is one square on purpose: Spiritual Weapon's force
+                    if (effect.Reach != Reach.Square && effect.Reach != Reach.Wall && effect.Radius <= 0 &&
+                        !effect.Point)
                         problems.Add($"{spellId}: a {effect.Kind.Id()} with no 'radius'");
                     break;
             }
@@ -708,11 +783,17 @@ namespace Content.Spells
             if (effect.Reach == Reach.Square && effect.Length <= 0)
                 problems.Add($"{spellId}: a square needs a 'length' in squares");
 
-            if (effect.Escape.HasValue && effect.Kind != Primitive.Afflict)
+            if (effect.Banishes && effect.Kind != Primitive.Sway)
+                problems.Add($"{spellId}: 'banishes' rides on a sway");
+
+            if (effect.Escape.HasValue && effect.Kind != Primitive.Afflict &&
+                !(effect.Kind == Primitive.Sway && effect.Banishes))
                 problems.Add($"{spellId}: 'escape' is for a condition a creature can break out of");
 
-            if (effect.RepeatSave && (effect.Kind != Primitive.Afflict || !effect.Save.HasValue))
-                problems.Add($"{spellId}: 'repeat_save' needs an afflict with a save to repeat");
+            // Slow: a sway can be saved against again at the end of each turn, like a condition
+            if (effect.RepeatSave && (effect.Kind != Primitive.Afflict && effect.Kind != Primitive.Sway ||
+                                      !effect.Save.HasValue))
+                problems.Add($"{spellId}: 'repeat_save' needs an afflict or a sway with a save to repeat");
 
             if (effect.SlaysAtOrBelow > 0 && effect.Kind != Primitive.Damage)
                 problems.Add($"{spellId}: 'slays_at_or_below' on something that is not damage");

@@ -31,6 +31,10 @@ namespace Core.Combat
 
         void Downed(Actor actor);
 
+        // taken off the board by a spell (Banishment, Maze), or put back on it. the table stands
+        // the mini beside the map while it is away
+        void Away(Actor actor, bool away) { }
+
         void DeathSaved(Actor actor, Attempt attempt);
 
         void TurnEnded(Turn turn);
@@ -71,6 +75,8 @@ namespace Core.Combat
         public virtual void ConditionChanged(Actor actor, Condition condition, bool applied) { }
 
         public virtual void Downed(Actor actor) { }
+
+        public virtual void Away(Actor actor, bool away) { }
 
         public virtual void DeathSaved(Actor actor, Attempt attempt) { }
 
@@ -136,6 +142,8 @@ namespace Core.Combat
 
         public void Downed(Actor actor) => Each(w => w.Downed(actor));
 
+        public void Away(Actor actor, bool away) => Each(w => w.Away(actor, away));
+
         public void DeathSaved(Actor actor, Attempt attempt) => Each(w => w.DeathSaved(actor, attempt));
 
         public void TurnEnded(Turn turn) => Each(w => w.TurnEnded(turn));
@@ -174,6 +182,9 @@ namespace Core.Combat
             _lines.Add($"{actor.Id} is {(applied ? "now" : "no longer")} {condition.Id()}");
 
         public override void Downed(Actor actor) => _lines.Add($"{actor.Id} goes down");
+
+        public override void Away(Actor actor, bool away) =>
+            _lines.Add($"{actor.Id} {(away ? "is taken off the board" : "comes back")}");
 
         public override void DeathSaved(Actor actor, Attempt attempt) =>
             _lines.Add($"{actor.Id} death save {attempt.Total}: " +

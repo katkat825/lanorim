@@ -59,7 +59,7 @@
       "heals": "2d4+2"
     },
     {
-      "id": "greater_potion_of_healing", "kind": "consumable", "cost": 150, "stackable": true,
+      "id": "greater_potion_of_healing", "kind": "consumable", "cost": 200, "stackable": true,
       "minimum_level": 5, "heals": "4d4+4"
     },
     {
@@ -77,7 +77,7 @@
       "id": "rope", "kind": "tool", "cost": 1, "stackable": true
     },
     {
-      "id": "thieves_tools", "kind": "tool", "cost": 25, "classes": ["rogue"]
+      "id": "thieves_tools", "kind": "tool", "cost": 25
     },
     {
       "id": "holy_symbol", "kind": "trinket", "cost": 5, "slot": "trinket",
@@ -92,7 +92,7 @@
       "classes": ["mage"]
     },
     {
-      "id": "ring_of_protection", "kind": "trinket", "cost": 2000, "slot": "trinket",
+      "id": "ring_of_protection", "kind": "trinket", "cost": 4000, "slot": "trinket",
       "minimum_level": 5,
       "boons": [
         { "id": "ring_of_protection", "touches": "saves|armor_class", "flat": 1,

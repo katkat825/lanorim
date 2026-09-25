@@ -157,7 +157,8 @@ namespace Content.Tests
 
             SameSheet(fighter, back);
 
-            Assert.Equal(1, back.UsesLeft(FeatureOf(back, "second_wind")));
+            // three uses at level 5 (SRD 5.2.1 p.47), one spent
+            Assert.Equal(2, back.UsesLeft(FeatureOf(back, "second_wind")));
             Assert.Equal(0, back.Budget.ExtraActionsLeft);
             Assert.Equal("scale_mail", back.Equipment.In(Slot.Body).Id);
         }

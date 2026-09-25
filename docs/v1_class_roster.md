@@ -61,7 +61,9 @@ armored-smite / protection growth route covers most of Paladin without a sixth c
 **Paladin** — *Oath of Devotion*. STR + CHA, d10. Holy knight — armored melee, burst smite, protective conviction.
 Keep Lay on Hands, Spellcasting (the paladin list is already inside the v1 spell set), Channel Divinity,
 Weapon Mastery, Divine Smite.
-Adapt: **Extra Attack → +1 action** (3 actions at the Extra-Attack level); Divine Smite is a damage rider; auras → a
+Adapt: **Extra Attack → +1 action** (3 actions at the Extra-Attack level); Divine Smite is a damage rider *(2026-09-25,
+Kathleen's Q11: now SRD 5.2.1's Paladin's Smite. Divine Smite is a spell, always prepared, with one free cast a
+long rest, cast as a bonus action right after a hit. Radiant Strikes replaces Improved Divine Smite.)*; auras → a
 self-centered defensive stance, not a party buff; Faithful Steed → authored travel access, not a
 controlled actor. As a Cleric + Fighter hybrid it reuses both classes' systems; only the aura stance is new.
 *Companion: shares Cleric's saint's fragment (no new lane).*
@@ -115,3 +117,29 @@ Licence: Quaternius Asset License (commercial use, no credit required, no resell
 - **ASI levels:** feats are deferred, so each SRD "ASI or feat" level is a straight **+2 to spend**.
 - **"Channeling" is retired** — Cleric/Paladin use Channel Divinity (SRD); casters use the known/equipped
   model above.
+
+## SRD 5.2.1 check (2026-09-25)
+
+Every class and subclass was checked against the SRD 5.2.1 text, feature by feature, levels 1 to 20
+(`_design_docs/SRD_CHECK_2026-09-25.md` §5: 105 rows, 90 fixed, 15 kept by a decision). What changed:
+
+- **Resources follow the SRD tables.** Rage 2 to 6 uses, Second Wind, Channel Divinity, Wild Shape and
+  Indomitable all scale by level. Each feature recharges as the SRD says: all on a short rest, one on a short
+  rest, or long rest only. Sneak Attack, Divine Strike, Primal Strike, Frenzy, Brutal Strike, Radiant Strikes
+  and Elemental Fury fire once per turn.
+- **Proficiency where the SRD gives it, and advantage where it gives advantage.** Danger Sense, Remarkable
+  Athlete and Aura of Courage are advantages or immunities, not proficiencies. Classes carry weapon training
+  (simple, martial, and the Rogue's finesse-or-light), tools, the SRD starting kit (option A) and starting
+  gold.
+- **Casters:** cantrips and prepared spells follow the SRD columns. The half-caster table gives a level-1
+  Paladin 2 slots. Domain, Oath and Circle spells (and the Druid's Speak with Animals) are always prepared.
+- **Paladin:** the 5.2.1 Paladin, per Kathleen's Q11 (see above). Its Fighting Style is Defense.
+- **Circle of the Land:** Land's Stride removed (not in 5.2.1, p.46). The land is fixed at Tropical for its spells.
+- **Kept on purpose:** Action Surge is +1 action (§1). The Bard's spells stay on the Mage list and Hunter's Mark on
+  the Druid's (the route-covered classes above). There's no spellbook (Mage above). Stroke of Luck, Overchannel,
+  Turn Undead, Natural Recovery and Archdruid stay narrate-only, and their wrong mechanics are gone.
+- **Still open:** Weapon Mastery (Q13). The four `*_weapon_mastery` features are narrate.
+- **For Kathleen, a flag, not a change:** the Barbarian line above says "Rage's per-day use table → one bounded
+  stance (cost/cooldown)". The build now follows the SRD table (2/3/4/5/6 uses, one back on a short rest), as the
+  SRD-check task asked. It's still a single stance you switch on. If "cost/cooldown" meant something other than
+  per-rest uses, say so.

@@ -22,7 +22,7 @@ namespace Content.Monsters
                        IReadOnlyList<Attack> attacks = null,
                        ArmorWeight armorWeight = ArmorWeight.None,
                        int speed = 30, double challenge = 0,
-                       int multiattack = 1,
+                       Multiattack multiattack = null,
                        Instinct instinct = Instinct.None,
                        IReadOnlyDictionary<DamageType, Defense> defenses = null,
                        IReadOnlyList<Ability> saves = null,
@@ -38,7 +38,7 @@ namespace Content.Monsters
             Attacks = attacks ?? Array.Empty<Attack>();
             Speed = Math.Max(0, speed);
             Challenge = challenge;
-            Multiattack = Math.Clamp(multiattack, 1, ActionBudget.BaseActions);
+            Multiattack = multiattack != null && multiattack.Count > 1 ? multiattack : null;
             Instinct = instinct;
             Defenses = defenses ?? new Dictionary<DamageType, Defense>();
             Saves = saves ?? Array.Empty<Ability>();
@@ -65,9 +65,25 @@ namespace Content.Monsters
         // SRD's challenge rating. v1 uses it to size an encounter, not to grant anything
         public double Challenge { get; }
 
-        // how many of its two actions it spends attacking. the multiattack primitive: a monster
-        // with 2 here swings twice, which is what SRD's Multiattack line usually amounts to
-        public int Multiattack { get; }
+        // SRD 5.2.1 Multiattack: the attacks its one Attack action makes, exactly as the statblock
+        // lists them - "one Bite attack and one Claw attack", "three Arcane Burst attacks". null
+        // for a monster without one: its Attack action is a single attack. a monster does NOT get
+        // the hero's two actions (decisions_checklist.md section 1, 2026-09-25)
+        public Multiattack Multiattack { get; }
+
+        public int AttacksPerTurn => Multiattack?.Count ?? 1;
+
+        // a bonus action its statblock gives it that is a Dash, Disengage or Hide - the goblin's
+        // Nimble Escape is Disengage or Hide
+        public Manoeuvre BonusManoeuvres { get; init; }
+
+        // the turn it plays: one action, and a bonus action only if the statblock has one - a
+        // manoeuvre, or a spell it casts as a bonus action (a mage's Misty Step)
+        public ActionBudget Budget(Caster caster = null) =>
+            ActionBudget.Statblock(Multiattack,
+                                   BonusManoeuvres != Manoeuvre.None ||
+                                   caster != null &&
+                                   caster.Known.Any(s => s.CastingTime == CastingTime.BonusAction));
 
         public Instinct Instinct { get; }
 
@@ -76,6 +92,8 @@ namespace Content.Monsters
         public IReadOnlyList<Ability> Saves { get; }
 
         public IReadOnlyList<Skill> Skills { get; }
+
+        public IReadOnlyList<Skill> Expertise { get; init; } = Array.Empty<Skill>();
 
         // which model stands for it. v1_minis_map.md stretches a handful of Quaternius minis
         // across many statblocks, so several monsters share one
@@ -156,10 +174,10 @@ namespace Content.Monsters
 
         // a fresh one, ready to be put on the board. every call makes a new Actor, because two
         // goblins in the same fight are two goblins
-        public Actor Spawn(string id = null)
+        public Actor Spawn(string id = null, Allegiance side = Allegiance.Enemy)
         {
             var actor = new Actor(id ?? Id, Math.Max(1, (int)Math.Ceiling(Challenge)),
-                                  Scores.Copy(), Allegiance.Enemy);
+                                  Scores.Copy(), side);
 
             actor.SetHealth(new Health(HitPoints, HitDie,
                                        Math.Max(1, (int)Math.Ceiling(Challenge))));
@@ -176,12 +194,17 @@ namespace Content.Monsters
 
             foreach (Skill skill in Skills) actor.Train(skill);
 
+            // a statblock's doubled skill: the goblin's Stealth +6, the wolf's Perception +5
+            foreach (Skill skill in Expertise) actor.Train(skill, Training.Expert);
+
             // what kind of creature it is, for the spells that care (Hold Person, Divine Smite)
             foreach (string tag in Tags) actor.Tag(tag);
 
             actor.Size = Size;
 
             foreach (Condition immune in ConditionImmunities) actor.MakeImmune(immune);
+
+            actor.QuickOnBonus = BonusManoeuvres;
 
             return actor;
         }
@@ -204,7 +227,7 @@ namespace Content.Monsters
         public override string ToString() =>
             $"{Id} cr {Challenge}: {HitPoints} hp, ac {ArmorClass}, " +
             $"{Attacks.Count} attacks" +
-            (Multiattack > 1 ? $" x{Multiattack}" : "") +
+            (Multiattack != null ? $" multiattack {Multiattack}" : "") +
             (Instinct == Instinct.None ? "" : $", {Instinct}") +
             (Mini.Length > 0 ? $", mini {Mini}" : "");
     }
@@ -307,7 +330,12 @@ namespace Content.Monsters
                         Save = hit.Ability("save", problems, id),
                         Dc = hit.Number("dc"),
                         MaxSize = maxSize,
+                        ExceptTags = hit.Strings("except_tags"),
+                        UntilTargetsNextTurn = hit.Flag("until_next_turn"),
                     };
+
+                    if (rider.UntilTargetsNextTurn && rider.Condition == Condition.None)
+                        problems.Add($"{id}/{name}: 'until_next_turn' needs a condition to end");
 
                     if (rider.Save.HasValue && rider.Dc <= 0)
                         problems.Add($"{id}/{name}: an on-hit save with no 'dc'");
@@ -328,9 +356,13 @@ namespace Content.Monsters
                                        raw.Flag("held") ? Hand.Main : Hand.None,
                                        raw.Flag("finesse"),
                                        raw.Number("attack_bonus"),
-                                       raw.Number("damage_bonus"))
+                                       raw.Number("damage_bonus"),
+                                       // a flat roll, like a priest's Radiant Flame: 11 (2d10)
+                                       raw.Flag("adds_ability", true))
                             {
                                 OnHit = riders,
+                                // "Melee or Ranged Attack Roll": melee within reach, thrown past it
+                                Thrown = raw.Flag("thrown"),
                             });
             }
 
@@ -422,6 +454,14 @@ namespace Content.Monsters
                 else problems.Add($"{id}: '{skill}' is not a skill");
             }
 
+            var expertise = new List<Skill>();
+
+            foreach (string skill in entry.Strings("expertise"))
+            {
+                if (Core.Characters.Skills.TryParse(skill, out Skill read)) expertise.Add(read);
+                else problems.Add($"{id}: '{skill}' is not a skill");
+            }
+
             Instinct instinct = Instinct.None;
 
             foreach (string tag in entry.Strings("instincts"))
@@ -451,11 +491,22 @@ namespace Content.Monsters
                 else problems.Add($"{id}: '{word}' in 'condition_immunities' is not a condition");
             }
 
-            int multiattack = entry.Number("multiattack", 1);
+            Multiattack multiattack = ReadMultiattack(entry, id, attacks, problems);
 
-            if (multiattack > ActionBudget.BaseActions)
-                problems.Add($"{id}: multiattack {multiattack} - a monster has " +
-                             $"{ActionBudget.BaseActions} actions like everybody else");
+            Manoeuvre bonus = Manoeuvre.None;
+
+            foreach (string word in entry.Strings("bonus_action"))
+            {
+                switch (word.ToLowerInvariant())
+                {
+                    case "dash": bonus |= Manoeuvre.Dash; break;
+                    case "disengage": bonus |= Manoeuvre.Disengage; break;
+                    case "hide": bonus |= Manoeuvre.Hide; break;
+                    default:
+                        problems.Add($"{id}: '{word}' in 'bonus_action' is not dash, disengage or hide");
+                        break;
+                }
+            }
 
             return new Monster(id,
                                entry.Number("hit_points", 1),
@@ -475,7 +526,56 @@ namespace Content.Monsters
                 ConditionImmunities = immunities,
                 Actions = actions,
                 Spellcasting = casting,
+                BonusManoeuvres = bonus,
+                Expertise = expertise,
             };
+        }
+
+        // "multiattack": 2 is two attacks with whatever it has ("using Scimitar or Shortbow in any
+        // combination"). a list names each attack: ["bear_bite", "bear_claw"] is one Bite and one
+        // Claw, and "claw|werewolf_bite" is a slot either may fill. no cap: a mage makes three
+        static Multiattack ReadMultiattack(JsonElement entry, string id, IReadOnlyList<Attack> attacks,
+                                           List<string> problems)
+        {
+            if (!entry.Has("multiattack")) return null;
+
+            JsonElement raw = entry.GetProperty("multiattack");
+
+            if (raw.ValueKind == JsonValueKind.Number)
+            {
+                if (!raw.TryGetInt32(out int count) || count < 1)
+                {
+                    problems.Add($"{id}: multiattack {raw} - a count of attacks, 1 or more");
+                    return null;
+                }
+
+                return count > 1 ? Multiattack.Any(count) : null;
+            }
+
+            if (raw.ValueKind != JsonValueKind.Array)
+            {
+                problems.Add($"{id}: 'multiattack' is a count or a list of attacks");
+                return null;
+            }
+
+            var slots = new List<string[]>();
+
+            foreach (JsonElement slot in raw.EnumerateArray())
+            {
+                string[] ids = (slot.ValueKind == JsonValueKind.String ? slot.GetString() : "")
+                               .Split('|', StringSplitOptions.TrimEntries |
+                                           StringSplitOptions.RemoveEmptyEntries);
+
+                if (ids.Length == 0) problems.Add($"{id}: an empty attack in 'multiattack'");
+
+                foreach (string attack in ids)
+                    if (!attacks.Any(a => a.Id == attack))
+                        problems.Add($"{id}: multiattack names '{attack}', which is not one of its attacks");
+
+                slots.Add(ids);
+            }
+
+            return slots.Count > 1 ? new Multiattack(slots) : null;
         }
     }
 

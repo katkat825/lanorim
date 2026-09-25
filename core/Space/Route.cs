@@ -14,7 +14,8 @@ namespace Core.Space
         };
 
         // occupied is required, not defaulted - a route through an occupant looks right with one piece and breaks with two
-        public static IReadOnlyList<Cell> Between(MapLayout map, Cell from, Cell to, Func<Cell, bool> occupied)
+        public static IReadOnlyList<Cell> Between(MapLayout map, Cell from, Cell to, Func<Cell, bool> occupied,
+                                                  bool flying = false)
         {
             if (map == null || occupied == null) return null;
 
@@ -42,7 +43,7 @@ namespace Core.Space
 
                     if (!CanStep(map, here, next, dx, dy, occupied)) continue;
 
-                    int through = cost + map.At(next).MoveCost();
+                    int through = cost + (flying ? 1 : map.At(next).MoveCost());
 
                     if (best.TryGetValue(next, out int already) && already <= through) continue;
 

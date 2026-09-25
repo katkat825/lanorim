@@ -63,3 +63,11 @@
     - equipped items can be included in a bulk sale, but each equipped item still requires explicit confirmation before the transaction can complete.
     
 
+- deferred spells (Kathleen, 2026-09-25). SRD 5.2.1 spells taken out of the functioning v1 set. They're not learnable, not castable and not on any class list. The work isn't lost: each one's data is in `content/deferred/spells/deferred.json`, which the loader doesn't ship. Their English was taken out of the locale; each entry's `note` says what the spell did. Like any unbuilt SRD spell, each can still appear as a reference card under its SRD name.
+    - Feather Fall (level 1): v1 has no falling or altitude, so its reaction has nothing to answer.
+    - Heat Metal (level 2): items and statblocks don't say what is metal.
+    - Plane Shift (level 7): v1 travels only to campaign-authored places and has no other planes.
+    - Reverse Gravity (level 7): no altitude or falling damage.
+    - Antimagic Field (level 8): suppressing every spell and magic item inside it is a large engine change.
+    - Earthquake (level 8): no fissures, collapsing structures or physics sandbox.
+    - True Polymorph (level 9): curated forms and authored hooks only, not free transformation.

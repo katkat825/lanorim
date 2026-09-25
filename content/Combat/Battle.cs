@@ -42,7 +42,38 @@ namespace Content.Combat
         public ITactics BrainOf(Actor actor) =>
             actor != null && _brains.TryGetValue(actor, out ITactics brain) ? brain : null;
 
-        public IEnumerable<Actor> Monsters => _statblocks.Keys;
+        public IEnumerable<Actor> Monsters => _statblocks.Keys.Where(a => !_allies.Contains(a));
+
+        // statblocks fighting on the hero's side: Finger of Death's risen Zombie
+        readonly HashSet<Actor> _allies = new HashSet<Actor>();
+
+        public IEnumerable<Actor> Allies => _allies;
+
+        Library _library;
+
+        // SRD 5.2.1 Finger of Death: "A Humanoid killed by this spell rises at the start of your next
+        // turn as a Zombie that follows your verbal orders." it takes the corpse's square, joins the
+        // order after its master, and fights the master's enemies
+        void Rise(Actor corpse, string statblock, Actor master)
+        {
+            Monster monster = _library?.Bestiary.Find(statblock);
+
+            if (monster == null || !(Fight.Field.Where(corpse) is Cell at)) return;
+
+            Fight.Field.Remove(corpse);
+
+            Actor risen = monster.Spawn($"{statblock}_risen_{_allies.Count + 1}", master.Side);
+
+            if (!Fight.Join(risen, at, monster.Budget(), master)) return;
+
+            _statblocks[risen] = monster;
+            _allies.Add(risen);
+            _brains[risen] = monster.Brain(null, Magic);
+
+            if (monster.Opportunity != null) Fight.ArmOpportunity(risen, monster.Opportunity);
+
+            Fight.ChooseReactionsWith(risen, ReactionChoosers.WhenItHelps);
+        }
 
         // what Day needs to know a boss when it sees one fall: its challenge, and whether its
         // statblock is tagged "boss"
@@ -85,10 +116,19 @@ namespace Content.Combat
             foreach (string tag in setting ?? Enumerable.Empty<string>()) fight.Setting.Add(tag);
 
             var magic = new Incantation(fight.Resolver);
-            var battle = new Battle(fight, magic, hero);
+            var battle = new Battle(fight, magic, hero) { _library = library };
+
+            fight.Rising += battle.Rise;
 
             fight.Enlist(hero.Actor, map.Start, hero.Budget);
             hero.ReadyFor(fight, magic);
+
+            // the Orc's Relentless Endurance, the Barbarian's Relentless Rage: dropped to 0, stay up
+            fight.Damaged += (attacker, target, amount) =>
+            {
+                if (ReferenceEquals(target, hero.Actor) && target.IsDown && !target.IsDead)
+                    hero.Intercept(fight.Resolver);
+            };
 
             if (heroChooser != null) fight.ChooseReactionsWith(hero.Actor, heroChooser);
 
@@ -102,14 +142,16 @@ namespace Content.Combat
                 Actor actor = foe.Monster.Spawn($"{foe.Monster.Id}_{++n}");
                 Cell at = Free(fight.Field, foe.At, used);
 
-                fight.Enlist(actor, at);
+                Caster caster = foe.Monster.CasterFor(actor, library?.Spells);
+
+                // the statblock's turn, not the hero's: one action, its Multiattack, a bonus
+                // action only if it has one
+                fight.Enlist(actor, at, foe.Monster.Budget(caster));
                 used.Add(at);
 
                 battle._statblocks[actor] = foe.Monster;
 
                 if (foe.Monster.Opportunity != null) fight.ArmOpportunity(actor, foe.Monster.Opportunity);
-
-                Caster caster = foe.Monster.CasterFor(actor, library?.Spells);
 
                 // a statblock's Shield and Counterspell answer like a hero's do
                 if (caster != null)

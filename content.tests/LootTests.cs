@@ -350,19 +350,21 @@ namespace Content.Tests
         {
             LootRoll roll = new GmScreen(new ScriptedRng(1)).Open(Shrine, null, Shelf, "fighter", 1);
 
-            Assert.Equal("d1", roll.PickRoll.Dice);
-            Assert.Equal("torches", roll.Entry.Id);
-            Assert.Equal(new[] { "symbol", "picks", "potion" }, roll.WeightedOut);
+            // thieves' tools are anyone's to use (SRD 5.2.1 p.93) - the symbol is a cleric's or
+            // a paladin's focus, and the greater potion waits for 5th level
+            Assert.Equal("d2", roll.PickRoll.Dice);
+            Assert.Equal("picks", roll.Entry.Id);
+            Assert.Equal(new[] { "symbol", "potion" }, roll.WeightedOut);
         }
 
         [Fact]
         public void AClericAtFiveHasTheSymbolAndThePotionInTheDraw()
         {
-            LootRoll roll = new GmScreen(new ScriptedRng(2)).Open(Shrine, null, Shelf, "cleric", 5);
+            LootRoll roll = new GmScreen(new ScriptedRng(3)).Open(Shrine, null, Shelf, "cleric", 5);
 
-            Assert.Equal("d3", roll.PickRoll.Dice);
+            Assert.Equal("d4", roll.PickRoll.Dice);
             Assert.Equal("potion", roll.Entry.Id);
-            Assert.Equal(new[] { "picks" }, roll.WeightedOut);
+            Assert.Empty(roll.WeightedOut);
         }
 
         // the merchant's promise, held for loot too: whatever the dice do, nothing unusable surfaces

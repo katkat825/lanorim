@@ -9,6 +9,15 @@ can tell when v1 is *done*. Written 2026-09-21.
 **Legend:** `[ ]` to build · `[~]` in progress · `[x]` done · `[HARVEST]` reuse/adapt old game code ·
 `[DEFER]` explicitly post-v1.
 
+## Progress snapshot — 2026-09-25, after the SRD check
+
+*`dotnet test` green: **949** (core 284 + content 665). Everything the data calls SRD was checked field by field
+against the SRD 5.2.1 text: spells, conditions, classes, species, monsters, items, backgrounds and core rules.
+Mismatches were fixed unless a written decision covers them. 442 rows: 317 fixed, 50 kept by a decision, 72
+questions for Kathleen (`_design_docs/SRD_CHECK_2026-09-25.md`). Kathleen's spell-name decisions are applied:
+**123 functioning spells**. The sample campaign still plays end to end (`check-play.ps1`). The run log and its
+questions: `_design_docs/RUN_LOG_2026-09-25.md`.*
+
 ## Progress snapshot — 2026-09-24, after the unattended run
 
 *`dotnet test` green: **826** (core 258 + content 568). The whole game plays: launch → the campaign book →
@@ -84,15 +93,15 @@ done.**
   utility-narrative — the composition engine (the #1 cost; see `v1_spell_list.md`).
 - `[x]` **Spell resource — two modes, chosen at creation** — **(A) spell slots** (full/half tables) and **(B) spell points** (fixed cost per level + 6th+-once-per-rest cap); cantrips at-will in both; refill on rest; one `ISpellResource` abstraction over the shared cast-at-level engine. *(2026-09-23: was mana-only. Built + unit-tested 2026-09-24 — slots + points + 6th+ cap; the choose-at-creation UI is §10.)*
 - `[x]` **Concentration** — binary (held until ended or downed); dropping it lifts its conditions and zones.
-- `[x]` **131 functioning spells** composed from primitives. *All 131 built (2026-09-24). Dissonant Whispers and Dragon's Breath are not in SRD 5.2.1 and ship as working spells under original names (Murmur of Dread, Wyrmbreath Boon). **20 approximations remain and ship renamed** (8 MUST, 12 SHOULD — down from 65), nearly all against decided constraints; 109 are the SRD spell under its SRD name. Both halves of the naming rule are tests. Review: `_design_docs/REVIEW_spell_names.md`.*
+- `[x]` **123 functioning spells** composed from primitives. *(2026-09-25: was 131. Kathleen deferred 7 and cut Suggestion; see `deferred.md`. **Dissonant Whispers and Dragon's Breath are in SRD 5.2.1** (p.124, p.126). The 09-24 note saying they weren't was wrong. Both were rebuilt from the SRD text and ship under their SRD names. 113 are the SRD spell under its SRD name. 8 keep their SRD names as approximations Kathleen approved (the allow-list under the HARD RULE). 2 ship renamed (Cube of Force, Waypoint). Every spell was checked field by field against the SRD text (`_design_docs/SRD_CHECK_2026-09-25.md`). Both halves of the naming rule are tests. Review: `_design_docs/REVIEW_spell_names.md`.)*
 - `[~]` **Spell cards UI** — text cards; full ~339 SRD list as reference cards. *(Card logic built — `SpellCard.cs`; the Godot card is not.)*
 
 ## 4. Classes, species, progression
 
-- `[~]` **7 classes + core features** — Barbarian, Fighter, Rogue, Mage (merged), Cleric, Paladin, Druid (`v1_class_roster.md`); one subclass each. *(2026-09-24: every SRD 5.2.1 feature to level 20, subclass included, is in the data (74 added); ones the engine plays have their trait, the rest are `narrate` with a note saying what's missing — weapon mastery above all. The Fighter's ASIs at 6 and 14 and the Rogue's at 10 are class data. Paladin still plays the 2014 Divine Smite rider and Druid keeps 2014's Land's Stride — flagged, not changed.)*
+- `[~]` **7 classes + core features** — Barbarian, Fighter, Rogue, Mage (merged), Cleric, Paladin, Druid (`v1_class_roster.md`); one subclass each. *(2026-09-24: every SRD 5.2.1 feature to level 20, subclass included, is in the data (74 added); ones the engine plays have their trait, the rest are `narrate` with a note saying what's missing — weapon mastery above all. The Fighter's ASIs at 6 and 14 and the Rogue's at 10 are class data. Paladin still plays the 2014 Divine Smite rider and Druid keeps 2014's Land's Stride — flagged, not changed.)* *(2026-09-25: every class and subclass checked against SRD 5.2.1. 90 of 105 audit rows were fixed and 15 kept by a decision. The Paladin is the 5.2.1 Paladin: Paladin's Smite makes Divine Smite a spell, always prepared, with a free cast, and Radiant Strikes replaces Improved Divine Smite. Land's Stride is gone. Resources scale by level, recharge per the SRD and fire once per turn where the SRD says so. Classes carry weapon training, tools, SRD kits and gold. Weapon Mastery is still open, Q13.)*
 - `[~]` **Druid Wild Shape** — 3–5 curated form cards (highest-cost feature). *(Logic + 4 cards built: cat, riding horse, black bear, spider — one per role: scout, travel, combat, utility. Form models are yours.)*
-- `[~]` **7 species + traits** — Human, Elf, Dragonborn, Tiefling, Dwarf, Halfling, Orc (`v1_species_roster.md`).
-- `[~]` **Backgrounds** — SRD, light (skills/flavor). *(9 in data. ⚠ Verify against SRD 5.2.1 before release — see build notes.)*
+- `[~]` **7 species + traits** — Human, Elf, Dragonborn, Tiefling, Dwarf, Halfling, Orc (`v1_species_roster.md`). *(2026-09-25: checked against SRD p.84-86. Lineage spells are prepared by level, each with a free cast a day. The Dragonborn's breath is a real 15-ft cone or 30-ft line with a Con-based DC and uses equal to the proficiency bonus, and its ancestry is five lineages by damage type. Wood Elf speed is 35, not 40. Advantage against Charmed, Frightened and Poisoned where the SRD gives it. Dwarven Toughness adds 1 HP a level. Adrenaline Rush is the SRD bonus-action Dash with temporary HP. Open: Resourceful, species skill picks, size.)*
+- `[~]` **Backgrounds** — SRD, light (skills/flavor). *(9 in data. ⚠ Verify against SRD 5.2.1 before release — see build notes.)* *(2026-09-25: verified. Only Acolyte, Criminal, Sage and Soldier are SRD (p.83), and they match apart from feats and tools. The Criminal now gets 2 daggers. The removals are `cc_task_review-naming-and-backgrounds.md`'s.)*
 - `[x]` **Starting gear + loot tables** — per class. *(Loot tables built + tested: weighted, nested, hidden rolls, never draws what the hero can't use, overflow into the discard flow.)*
 
 ## 5. Character sheet & inventory
@@ -108,7 +117,7 @@ done.**
 - `[x]` **Reaction / interrupt system** — a creature spends its 1 reaction to interrupt: opportunity attacks *plus* reaction spells (Shield resolves before the hit lands, Counterspell on an enemy cast). *(2026-09-23: promoted from "opportunity attacks only". Built + tested 2026-09-24: Hit / Cast / LeaveReach / Damaged windows; Shield and Counterspell faithful. Open: how the player is asked — see combat UX.)*
 - `[~]` **Combat interaction UX** — how the player issues an action (menu/targeting feel). *(Designed 2026-09-24 — `docs/combat_ux.md`, player-facing `how_to_play_combat.md` — and built on `CombatSession`: HUD, hotkeys, greyed reasons, previews, reach and templates, the Ask card, paced enemy turns. Needs Kathleen's eyes and hands.)*
 - `[~]` **Enemy AI** — basic approach + attack with tags.
-- `[~]` **Monster statblocks + ability primitives** — multiattack, save-or-condition, recharge, resistance; spellcaster monsters reuse the spell system; skip legendary/lair.
+- `[~]` **Monster statblocks + ability primitives** — multiattack, save-or-condition, recharge, resistance; spellcaster monsters reuse the spell system; skip legendary/lair. *(2026-09-25: a monster plays its SRD statblock's turn (one action, a bonus action only if the statblock has one), and its Multiattack makes exactly the attacks the statblock lists, 3 or more with no cap. Every Multiattack is checked against SRD 5.2.1. `death_knight` is not an SRD statblock.)* *(Later on 2026-09-25: every statblock was checked against the SRD text. HP, AC, scores, attacks, tags, saves and skills are corrected, and a new `expertise` field covers doubled skills. "Melee or Ranged" attacks are thrown attacks. The Ghoul's Paralyzed ends with the target's next turn and spares elves and Undead. Traits such as Pack Tactics, senses and other speeds are open questions.)*
 - `[x]` **Fleeing combat** — whichever is more expected + easier. *(Built: step off an open edge of the map; provokes opportunity attacks unless you Disengage; a closed map can't be fled.)*
 
 ## 7. The table & presentation
@@ -156,7 +165,7 @@ done.**
 
 ## 12. Content to author (the actual v1 game)
 
-- `[~]` **SRD data entry** — the 7 classes, 7 species, 131 spells, monster set, items as structured data (AI-assistable, but real volume).
+- `[~]` **SRD data entry** — the 7 classes, 7 species, 123 spells, monster set, items as structured data (AI-assistable, but real volume).
 - `[ ]` **3 tutorial campaigns** — beginner / intermediate / advanced, replayable.
 - `[ ]` **A handful of one-shots** — self-contained short adventures.
 - `[ ]` **A couple of level-block campaigns** — mid-length arcs over a level range.

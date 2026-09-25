@@ -10,7 +10,10 @@ namespace Core.Tests
         [Fact]
         public void AdvantageAndDisadvantageCancel()
         {
-            Assert.Equal(Advantage.Flat, Advantages.Of(true, true));
+            // one of each is a flat roll - one die - and stays one whatever joins it (SRD p.8)
+            Assert.Equal(Advantage.Cancelled, Advantages.Of(true, true));
+            Assert.True(Advantages.Of(true, true).IsFlat());
+            Assert.Equal(1, Advantages.Of(true, true).Dice());
             Assert.Equal(Advantage.Advantage, Advantages.Of(true, false));
             Assert.Equal(Advantage.Disadvantage, Advantages.Of(false, true));
             Assert.Equal(Advantage.Flat, Advantages.Of(false, false));
@@ -26,8 +29,25 @@ namespace Core.Tests
         }
 
         [Fact]
-        public void OneOnEachSideIsAFlatRoll() =>
-            Assert.Equal(Advantage.Flat, Advantage.Advantage.And(Advantage.Disadvantage));
+        public void OneOnEachSideIsAFlatRoll()
+        {
+            Advantage both = Advantage.Advantage.And(Advantage.Disadvantage);
+
+            Assert.True(both.IsFlat());
+            Assert.Equal(1, both.Dice());
+        }
+
+        [Fact]
+        public void OnceBothAreInAThirdSourceCannotTipIt()
+        {
+            // the 2026-09-25 fix: an advantage and a disadvantage already cancelled, and then a
+            // Guidance-style advantage on top - still one die, not two (SRD 5.2.1 p.8)
+            Advantage cancelled = Advantages.Of(true, true);
+
+            Assert.True(cancelled.And(Advantage.Advantage).IsFlat());
+            Assert.True(Advantage.Advantage.And(cancelled).IsFlat());
+            Assert.Equal(1, cancelled.And(Advantage.Disadvantage).Dice());
+        }
 
         [Fact]
         public void FlatIsTheIdentity()

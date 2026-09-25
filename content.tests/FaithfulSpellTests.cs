@@ -167,7 +167,8 @@ namespace Content.Tests
             Actor target = Goblin();
             target.Apply(Condition.Restrained);
 
-            Assert.Equal(Advantage.Flat, Strike.Lean(attacker, target));
+            Assert.True(Strike.Lean(attacker, target).IsFlat());
+            Assert.Equal(1, Strike.Lean(attacker, target).Dice());
         }
 
         [Fact]
@@ -884,9 +885,8 @@ namespace Content.Tests
 
             // neither sees the other, so the two leans cancel: SRD's fog-fight
             Assert.False(fight.Sees(me, goblin));
-            Assert.Equal(Advantage.Flat,
-                         Strike.Lean(me, goblin, false, fight.Sees(me, goblin),
-                                     fight.Sees(goblin, me)));
+            Assert.True(Strike.Lean(me, goblin, false, fight.Sees(me, goblin),
+                                    fight.Sees(goblin, me)).IsFlat());
 
             me.Boons.Add(new Boon("true_seeing", duration: Duration.Rest) { Truesight = true });
             Assert.True(fight.Sees(me, goblin));
@@ -1517,14 +1517,14 @@ namespace Content.Tests
         }
 
 
-        // --- the two v1 spells that are not in SRD 5.2.1, working under original names --------
+        // --- Dissonant Whispers and Dragon's Breath: in SRD 5.2.1 after all (2026-09-25) ---------
 
         [Fact]
-        public void MurmurOfDreadSendsAFailedSaveRunningOnItsReaction()
+        public void DissonantWhispersSendsAFailedSaveRunningOnItsReaction()
         {
+            // SRD p.124
             Spell murmur = Book.Find("dissonant_whispers");
-            Assert.True(murmur.NotInSrd);
-            Assert.True(murmur.Renamed);
+            Assert.False(murmur.Renamed);
 
             Encounter fight = Duel(Script(20, 1), out Caster wizard, out Actor me, out Actor goblin);
             var cast = new Incantation(fight.Resolver);
@@ -1538,10 +1538,12 @@ namespace Content.Tests
         }
 
         [Fact]
-        public void WyrmbreathBoonBreathesTheChosenElementOnLaterActions()
+        public void DragonsBreathBreathesTheChosenElementOnLaterActions()
         {
+            // SRD p.126: a bonus action to cast, then a Magic action to exhale each time
             Spell breath = Book.Find("dragons_breath");
-            Assert.True(breath.NotInSrd);
+            Assert.False(breath.Renamed);
+            Assert.Equal(CastingTime.BonusAction, breath.CastingTime);
 
             Encounter fight = Duel(Script(20, 1), out Caster wizard, out _, out Actor goblin);
             goblin.SetDefense(DamageType.Cold, Defense.Immune);

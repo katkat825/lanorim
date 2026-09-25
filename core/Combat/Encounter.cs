@@ -117,6 +117,9 @@ namespace Core.Combat
                 Actor actor = _order[_next].Actor;
                 _next++;
 
+                // sent away for good (Banishment held for its full minute): no more turns
+                if (_gone.Contains(actor)) continue;
+
                 if (actor.IsDown)
                 {
                     // the hero gets the single d20 >= 10; a monster at 0 is simply out
@@ -154,15 +157,18 @@ namespace Core.Combat
 
                 PulseWhereItStands(actor, Pulse.StartTurn);
 
-                if (actor.IsDown)
+                // sent away for good as its turn began (Banishment's full minute)
+                if (actor.IsDown || _gone.Contains(actor))
                 {
                     Current.End();
+                    Lapsing(actor);
                     continue;
                 }
 
                 // a turn a spell decided for it and has already spent - Command's Grovel or Halt
                 if (Current.Ended)
                 {
+                    Lapsing(actor);
                     Observer.TurnBegan(Current);
                     Observer.TurnEnded(Current);
                     continue;
@@ -223,12 +229,51 @@ namespace Core.Combat
             Observer.Moved(actor, new[] { from, to });
             Moved?.Invoke(actor);
 
+            LetGo();
+
             return true;
+        }
+
+        // a statblock's condition that lasts "until the end of its next turn": the Ghoul's
+        // Paralyzed (SRD 5.2.1 p.288). one put on during the creature's own turn waits a turn more
+        sealed class Lapse
+        {
+            public Lapse(Actor target, Condition condition, bool waiting)
+            {
+                Target = target;
+                Condition = condition;
+                Waiting = waiting;
+            }
+
+            public Actor Target { get; }
+
+            public Condition Condition { get; }
+
+            public bool Waiting { get; set; }
+        }
+
+        readonly List<Lapse> _untilNextTurn = new List<Lapse>();
+
+        void Lapsing(Actor actor)
+        {
+            foreach (Lapse lapse in _untilNextTurn.Where(l => ReferenceEquals(l.Target, actor)).ToList())
+            {
+                if (lapse.Waiting)
+                {
+                    lapse.Waiting = false;
+                    continue;
+                }
+
+                _untilNextTurn.Remove(lapse);
+                actor.Remove(lapse.Condition);
+            }
         }
 
         void Close(Turn turn)
         {
             turn.End();
+
+            Lapsing(turn.Actor);
 
             PulseWhereItStands(turn.Actor, Pulse.EndTurn);
 
@@ -270,12 +315,24 @@ namespace Core.Combat
             {
                 // difficult terrain is double, whether the map made it or a spell did, and the two
                 // do not stack - SRD's difficult terrain is a yes or a no
-                bool rough = Field.Map.At(route[i]).MoveCost() > 1 || IsRough(route[i], turn.Actor);
-                int cost = (rough ? 2 : 1) * Turn.FeetPerSquare;
+                bool rough = !turn.Actor.IsFlying && Field.Map.At(route[i]).MoveCost() > 1 ||
+                             IsRough(route[i], turn.Actor);
 
-                if (!turn.Take(Spend.Movement, cost)) break;
+                // crawling: one extra square (SRD 5.2.1 Prone). dragging a grappled creature: one
+                // extra, unless it is Tiny or two sizes smaller (Grappled)
+                bool crawling = turn.Actor.Has(Condition.Prone) && !turn.Actor.IsFlying;
+                List<Actor> dragged = Held(turn.Actor);
+                bool dragging = dragged.Any(h => h.CurrentSize != Size.Tiny &&
+                                                 (int)h.CurrentSize > (int)turn.Actor.CurrentSize - 2);
+
+                int cost = ((rough ? 2 : 1) + (crawling ? 1 : 0) + (dragging ? 1 : 0)) * Turn.FeetPerSquare;
 
                 Cell from = walked[walked.Count - 1];
+
+                // Frightened: not one step closer to what it fears
+                if (Field.CloserToFear(turn.Actor, from, route[i])) break;
+
+                if (!turn.Take(Spend.Movement, cost)) break;
 
                 // opportunity attacks resolve against the square being left, before the step, so a
                 // hit that drops the mover stops it where it stood. a Disengage means nobody is
@@ -286,8 +343,14 @@ namespace Core.Combat
 
                 IReadOnlyDictionary<IZone, List<Actor>> carried = CaughtByZonesOf(turn.Actor);
 
+                int speedBefore = turn.Actor.Moves;
+
                 Field.Place(turn.Actor, route[i]);
                 walked.Add(route[i]);
+
+                // the grappled come along, into the square it left
+                foreach (Actor held in dragged)
+                    if (Field.Distance(turn.Actor, held) > 1) Shove(held, from);
 
                 // walking past a dropped weapon picks it up on the way
                 PickUp(turn.Actor);
@@ -297,6 +360,12 @@ namespace Core.Combat
                 PulseStep(turn.Actor, from, route[i]);
                 PulseCarried(carried);
 
+                // an aura that changes speed (Spirit Guardians' halving) is asked after every step,
+                // and SRD's rule for a speed that changes mid-move applies: what is left is the new
+                // speed less what has been used
+                Stepped?.Invoke(turn.Actor);
+                turn.SpeedChanged(speedBefore, turn.Actor.Moves);
+
                 if (turn.Actor.IsDown) break;
             }
 
@@ -305,6 +374,8 @@ namespace Core.Combat
                 Observer.Moved(turn.Actor, walked);
                 Moved?.Invoke(turn.Actor);
             }
+
+            LetGo();
 
             return walked;
         }
@@ -329,7 +400,7 @@ namespace Core.Combat
         readonly List<Placed> _zones = new();
 
         // who a zone has already done its once-a-turn thing to this turn
-        readonly HashSet<(IZone, Actor)> _pulsedThisTurn = new();
+        readonly HashSet<(IZone, Actor, Pulse?)> _pulsedThisTurn = new();
 
         public IReadOnlyList<IZone> Zones => _zones.Select(p => p.Zone).ToList();
 
@@ -373,6 +444,7 @@ namespace Core.Combat
 
         public bool Affects(IZone zone, Actor creature) =>
             creature != null && !creature.IsDown &&
+            !(zone.Ground && creature.IsFlying) &&
             !(zone.SparesAllies && zone.Owner != null && creature.Side == zone.Owner.Side) &&
             !(zone.AlliesOnly && zone.Owner != null && creature.Side != zone.Owner.Side);
 
@@ -396,10 +468,12 @@ namespace Core.Combat
         }
 
         // SRD's "only once per turn": Appear, Enter, StartTurn and EndTurn share it. EachSquare
-        // does not, because Spike Growth's whole point is that every step hurts
+        // does not, because Spike Growth's whole point is that every step hurts. a zone that acts
+        // EachTime counts each kind of moment once a turn instead - Wall of Fire's "enters it for
+        // the first time on a turn or ends its turn there" is two burns, not one and not three
         void Once(IZone zone, Actor creature, Pulse pulse)
         {
-            if (!_pulsedThisTurn.Add((zone, creature)) && !zone.EachTime) return;
+            if (!_pulsedThisTurn.Add((zone, creature, zone.EachTime ? pulse : (Pulse?)null))) return;
 
             zone.Act(this, creature, pulse);
         }
@@ -530,7 +604,7 @@ namespace Core.Combat
                 // SRD 5.2.1's smites are bonus actions taken in answer to a moment rather than
                 // reactions: they are paid from the reactor's own turn, and only on it
                 List<IReaction> options = ReactionsOf(reactor)
-                    .Where(r => r.Trigger == moment.Trigger && CanPay(reactor, r) &&
+                    .Where(r => (r.Trigger == moment.Trigger || r.AlsoAnswers(moment)) && CanPay(reactor, r) &&
                                 r.CanAnswer(this, reactor, moment))
                     .ToList();
 
@@ -553,7 +627,8 @@ namespace Core.Combat
         // one, an actor simply doesn't take opportunity attacks
         public void ArmOpportunity(Actor actor, Attack attack)
         {
-            if (actor == null || attack == null) return;
+            // SRD 5.2.1: one melee attack - a bow is no opportunity attack
+            if (actor == null || attack == null || attack.IsRanged) return;
 
             Arm(actor, new OpportunityAttack(attack));
         }
@@ -599,8 +674,11 @@ namespace Core.Combat
             // SRD 5.2.1 Charmed: it can't attack the charmer
             if (turn.Actor.HasFrom(Condition.Charmed, target)) return null;
 
+            // Gaseous Form: a misty cloud can't attack
+            if (turn.Actor.Boons.NoAttacks) return null;
+
             // Slow's "only one attack", and Haste's extra action buying a single weapon attack
-            if (!turn.TakeAttack(spend)) return null;
+            if (!turn.TakeAttack(spend, attack)) return null;
 
             // attacking gives away where you were hiding - Strike.Roll spends the hidden boon after
             // its advantage has been read, not before
@@ -612,14 +690,33 @@ namespace Core.Combat
         // (the only range band v1 keeps), and so is a shot with an enemy beside you
         public Advantage Band(Actor attacker, Actor target, Attack attack)
         {
-            if (attack == null || !attack.IsRanged) return Advantage.Flat;
+            if (attack == null) return Advantage.Flat;
+
+            bool thrownFar = attack.Thrown && Field.Distance(attacker, target) > attack.Reach;
+
+            if (!attack.IsRanged && !thrownFar) return Advantage.Flat;
 
             bool far = Field.Distance(attacker, target) > attack.Range;
 
-            bool crowded = Field.Where(attacker) is Cell here &&
-                           Field.Adjacent(here).Any(a => a.Side != attacker.Side && !a.IsDown);
+            return far || Crowded(attacker) ? Advantage.Disadvantage : Advantage.Flat;
+        }
 
-            return far || crowded ? Advantage.Disadvantage : Advantage.Flat;
+        // SRD 5.2.1 Ranged Attacks in Close Combat: "within 5 feet of an enemy who can see you and
+        // who doesn't have the Incapacitated condition" - weapons and spells alike
+        public bool Crowded(Actor attacker) =>
+            Field.Where(attacker) is Cell here &&
+            Field.Adjacent(here).Any(a => a.Side != attacker.Side && !a.IsDown && !a.IsIncapacitated &&
+                                          Sees(a, attacker));
+
+        // SRD 5.2.1 Frightened: the disadvantage holds while the source is in line of sight. a fear
+        // with no source on record is taken to be in sight
+        public bool FearInSight(Actor actor)
+        {
+            if (actor == null || !actor.Has(Condition.Frightened)) return false;
+
+            IReadOnlyList<Actor> sources = actor.SourcesOf(Condition.Frightened);
+
+            return sources.Count == 0 || sources.Any(s => !s.IsDown && Sees(actor, s));
         }
 
         // one attack, start to finish, with both reaction windows in it: the target may answer the
@@ -632,7 +729,12 @@ namespace Core.Combat
             int cover = Cover(attacker, target);
 
             Attempt attempt = Strike.Roll(_resolver, attacker, target, attack, extra, close,
-                                          Sees(attacker, target), Sees(target, attacker), cover);
+                                          Sees(attacker, target), Sees(target, attacker), cover,
+                                          FearInSight(attacker));
+
+            // an attack roll gives an Invisibility away (SRD 5.2.1), and a hidden creature too
+            AttackRolled?.Invoke(attacker);
+            Reveal(attacker);
 
             if (attempt.Succeeded)
             {
@@ -648,7 +750,16 @@ namespace Core.Combat
             if (attack.OnHit.Count > 0)
                 riders = (riders ?? Array.Empty<Rider>()).Concat(attack.OnHit).ToList();
 
+            // conditions the target already had are not the rider's to end
+            List<Condition> had = attack.OnHit.Where(r => r.UntilTargetsNextTurn && target.Has(r.Condition))
+                                              .Select(r => r.Condition).ToList();
+
             Blow blow = Strike.Land(_resolver, attacker, target, attack, attempt, riders);
+
+            foreach (Rider timed in attack.OnHit.Where(r => r.UntilTargetsNextTurn && !had.Contains(r.Condition) &&
+                                                            target.Has(r.Condition)))
+                _untilNextTurn.Add(new Lapse(target, timed.Condition,
+                                             ReferenceEquals(Current?.Actor, target)));
 
             Observer.Struck(blow);
 
@@ -669,6 +780,9 @@ namespace Core.Combat
         {
             if (target == null || suffered <= 0) return;
 
+            // SRD 5.2.1 Unconscious: it drops whatever it's holding
+            if (target.Has(Condition.Unconscious)) Drop(target);
+
             Damaged?.Invoke(attacker, target, suffered);
 
             if (!target.IsDown) Offer(Moment.Damaged(attacker, target, suffered), target);
@@ -678,12 +792,60 @@ namespace Core.Combat
         // hand on it, a fall
         public event Action<Actor, Actor, int> Damaged;
 
+        // somebody just made an attack roll
+        public event Action<Actor> AttackRolled;
+
+        // somebody took one step of a walk
+        public event Action<Actor> Stepped;
+
+        // a corpse is rising as a statblock on its master's side: Finger of Death's Zombie. the
+        // content layer knows statblocks, so it answers with Join
+        public event Action<Actor, string, Actor> Rising;
+
+        public void Raise(Actor corpse, string statblock, Actor master) =>
+            Rising?.Invoke(corpse, statblock, master);
+
+        // A CREATURE JOINING A FIGHT ALREADY UNDER WAY: it rolls initiative and takes its place in
+        // the order - after the creature it belongs to, when it belongs to one
+        public bool Join(Actor actor, Cell cell, ActionBudget budget = null, Actor after = null)
+        {
+            if (actor == null || !Field.Place(actor, cell)) return false;
+
+            _budgets[actor] = budget ?? new ActionBudget();
+            _reactions[actor] = _budgets[actor].ReactionsFor(Round);
+
+            InitiativeRoll roll = Initiative.Roll(_resolver, new[] { actor }).First();
+
+            int at = after != null ? _order.FindIndex(r => ReferenceEquals(r.Actor, after)) + 1 : _order.Count;
+
+            if (at <= 0) at = _order.Count;
+
+            _order.Insert(at, roll);
+
+            if (at < _next) _next++;
+
+            Observer.Moved(actor, new[] { cell });
+            return true;
+        }
+
         // somebody at 0 hit points, and not dead, is made Stable
         public bool Stabilize(Actor creature) => creature != null && creature.Stabilize();
 
         // a creature's condition changed outside a turn's own actions - a spell's expiry, a save
-        public void Changed(Actor creature, Condition condition, bool gained) =>
+        public void Changed(Actor creature, Condition condition, bool gained)
+        {
+            if (gained && condition == Condition.Unconscious) Drop(creature);
+
+            // a grappler that can't act lets go
+            if (gained && condition.Incapacitates()) LetGo();
+
             Observer.ConditionChanged(creature, condition, gained);
+        }
+
+        void Drop(Actor creature)
+        {
+            if (creature != null && !creature.Disarmed) creature.Disarm(Field.Where(creature));
+        }
 
 
         // --- sight ------------------------------------------------------------------------------
@@ -776,24 +938,45 @@ namespace Core.Combat
 
         public const string Hidden = "hidden";
 
-        // SRD 5.2.1 Hide: a DC 15 Dexterity (Stealth) check. on a success you are unseen, which
-        // v1 reads as the Invisible condition's two halves - advantage on your attacks, and
-        // disadvantage on attacks against you - until you attack or the fight ends. v1 has no
-        // Invisible condition (the six-condition subset), so it rides on a boon the fight lifts.
-        // being seen by a searcher is campaign narration; the fight does not model searching.
+        // SRD 5.2.1 Hide (p.183): a DC 15 Dexterity (Stealth) check, only while no enemy sees you
+        // (CanHide). on a success you have the Invisible condition until you attack, cast or are
+        // found (Reveal). being found by a searcher is campaign narration; the fight does not
+        // model searching.
         public Attempt Hide(Turn turn, Spend spend = Spend.Action)
         {
+            if (turn == null || !CanHide(turn.Actor)) return null;
+
             if (!CanSpendOn(turn, spend, Manoeuvre.Hide)) return null;
 
             Attempt attempt = Checks.Check(_resolver, turn.Actor, Skill.Stealth, HideDc);
 
-            if (attempt.Succeeded)
-                turn.Actor.Boons.Add(new Boon(Hidden, Hidden, Duration.Encounter,
-                                              advantageOnAttacks: true,
-                                              disadvantageAgainst: true)
-                                     { EndsOnAttack = true });
+            // SRD 5.2.1 Hide: on a success, the Invisible condition - until it attacks, casts or
+            // is found (finding is the narrator's)
+            if (attempt.Succeeded && turn.Actor.Apply(Condition.Invisible))
+            {
+                _hidden.Add(turn.Actor);
+                Changed(turn.Actor, Condition.Invisible, true);
+            }
 
             return attempt;
+        }
+
+        // SRD 5.2.1: "Heavily Obscured or behind Three-Quarters Cover or Total Cover, and ... out
+        // of any enemy's line of sight"
+        public bool CanHide(Actor actor) =>
+            actor != null &&
+            Actors.Where(e => e.Side != actor.Side && !e.IsDown && Field.Where(e).HasValue)
+                  .All(e => !Sees(e, actor) || Cover(e, actor) >= 5);
+
+        readonly HashSet<Actor> _hidden = new();
+
+        // a hidden creature attacking or casting is hidden no more
+        public void Reveal(Actor actor)
+        {
+            if (actor == null || !_hidden.Remove(actor)) return;
+
+            actor.Remove(Condition.Invisible);
+            Changed(actor, Condition.Invisible, false);
         }
 
         public const int HideDc = 15;
@@ -858,6 +1041,189 @@ namespace Core.Combat
         }
 
 
+        // --- Grapple and Shove (SRD 5.2.1 Unarmed Strike, p.190) --------------------------------
+
+        // who holds whom, and the escape DC it was made at
+        readonly Dictionary<Actor, (Actor By, int Dc)> _grapples = new();
+
+        public bool IsGrappledBy(Actor target, Actor grappler) =>
+            target != null && _grapples.TryGetValue(target, out var g) && ReferenceEquals(g.By, grappler);
+
+        public bool IsHeldByGrapple(Actor target) => target != null && _grapples.ContainsKey(target);
+
+        List<Actor> Held(Actor grappler) =>
+            _grapples.Where(g => ReferenceEquals(g.Value.By, grappler)).Select(g => g.Key).ToList();
+
+        // DC 8 + Strength modifier + Proficiency Bonus
+        public static int UnarmedDc(Actor attacker) =>
+            8 + attacker.AbilityModifier(Ability.Strength) + attacker.ProficiencyBonus;
+
+        // the Unarmed Strike's other two options, each one attack: the target is within 5 feet and
+        // no more than one size larger, and makes a Strength or Dexterity save (its choice - the
+        // better) against the DC
+        Attempt Unarmed(Turn turn, Actor target, Attack strike)
+        {
+            if (turn == null || turn.Ended || target == null || Over) return null;
+
+            Actor me = turn.Actor;
+
+            if (Field.Distance(me, target) > 1) return null;
+
+            if ((int)target.CurrentSize > (int)me.CurrentSize + 1) return null;
+
+            if (me.HasFrom(Condition.Charmed, target)) return null;
+
+            if (!turn.TakeAttack(Spend.Action, strike)) return null;
+
+            AttackRolled?.Invoke(me);
+            Reveal(me);
+
+            Ability best = target.SaveModifier(Ability.Strength) >= target.SaveModifier(Ability.Dexterity)
+                ? Ability.Strength
+                : Ability.Dexterity;
+
+            return Checks.Save(_resolver, target, best, UnarmedDc(me));
+        }
+
+        public Attempt Grapple(Turn turn, Actor target, Attack strike = null)
+        {
+            Attempt save = Unarmed(turn, target, strike);
+
+            if (save == null || save.Succeeded) return save;
+
+            if (target.Apply(Condition.Grappled, turn.Actor))
+            {
+                _grapples[target] = (turn.Actor, UnarmedDc(turn.Actor));
+                Changed(target, Condition.Grappled, true);
+            }
+
+            return save;
+        }
+
+        // pushed 5 feet straight away, or knocked Prone
+        public Attempt ShoveAway(Turn turn, Actor target, bool prone, Attack strike = null)
+        {
+            Attempt save = Unarmed(turn, target, strike);
+
+            if (save == null || save.Succeeded) return save;
+
+            if (prone)
+            {
+                if (target.Apply(Condition.Prone, turn.Actor)) Changed(target, Condition.Prone, true);
+            }
+            else if (Field.Where(turn.Actor) is Cell me && Field.Where(target) is Cell at)
+            {
+                var away = new Cell(at.X + Math.Sign(at.X - me.X), at.Y + Math.Sign(at.Y - me.Y));
+
+                if (Field.Map.CanCross(at, away)) Shove(target, away);
+            }
+
+            return save;
+        }
+
+        // an action, and a Strength (Athletics) or Dexterity (Acrobatics) check - its choice, the
+        // better - against the grapple's DC
+        public Attempt EscapeGrapple(Turn turn)
+        {
+            if (turn == null || turn.Ended || !_grapples.TryGetValue(turn.Actor, out var held))
+                return null;
+
+            if (!turn.Take(Spend.Action)) return null;
+
+            Skill skill = turn.Actor.CheckModifier(Skill.Athletics) >= turn.Actor.CheckModifier(Skill.Acrobatics)
+                ? Skill.Athletics
+                : Skill.Acrobatics;
+
+            Attempt check = Checks.Check(_resolver, turn.Actor, skill, held.Dc);
+
+            if (check.Succeeded) Release(turn.Actor);
+
+            return check;
+        }
+
+        void Release(Actor target)
+        {
+            if (!_grapples.Remove(target)) return;
+
+            target.Remove(Condition.Grappled);
+            Changed(target, Condition.Grappled, false);
+        }
+
+        // SRD 5.2.1 Grappled: it ends when the grappler is Incapacitated or the two are no longer
+        // within reach of each other
+        void LetGo()
+        {
+            foreach (var g in _grapples.ToList())
+                if (g.Value.By.IsDown || !g.Value.By.CanAct || g.Key.IsDown ||
+                    Field.Distance(g.Value.By, g.Key) > 1)
+                    Release(g.Key);
+        }
+
+
+        // --- off the board: Banishment, Maze ---------------------------------------------------
+
+        // SRD 5.2.1 Banishment and Maze send a creature to a demiplane. v1 takes it off the board
+        // for the duration (the table stands its mini beside the map) and puts it back where it
+        // left, or on the nearest free square, when the spell ends
+        readonly Dictionary<Actor, (Cell From, string Source)> _away = new();
+        readonly HashSet<Actor> _gone = new();
+
+        public bool IsAway(Actor actor) => actor != null && _away.ContainsKey(actor);
+
+        // gone for good - Banishment on a creature of another plane, held for the full minute
+        public bool IsGone(Actor actor) => actor != null && _gone.Contains(actor);
+
+        public IEnumerable<Actor> Away => _away.Keys;
+
+        public bool Banish(Actor actor, string source)
+        {
+            if (actor == null || IsAway(actor) || !(Field.Where(actor) is Cell from)) return false;
+
+            Field.Remove(actor);
+            _away[actor] = (from, source ?? "");
+            Observer.Away(actor, true);
+            return true;
+        }
+
+        // back from wherever it was sent. a source narrows it to the spell that sent it
+        public bool Recall(Actor actor, string source = null)
+        {
+            if (actor == null || !_away.TryGetValue(actor, out (Cell From, string Source) was)) return false;
+
+            if (source != null && was.Source != source) return false;
+
+            Cell? to = Free(was.From, actor);
+
+            _away.Remove(actor);
+
+            if (!to.HasValue) return false;
+
+            Field.Place(actor, to.Value);
+            Observer.Away(actor, false);
+            Observer.Moved(actor, new[] { to.Value });
+            return true;
+        }
+
+        // it doesn't come back
+        public void Dismiss(Actor actor)
+        {
+            if (actor == null) return;
+
+            _away.Remove(actor);
+            Field.Remove(actor);
+            _gone.Add(actor);
+            Judge();
+        }
+
+        // the square it left, or the nearest one it can stand in
+        Cell? Free(Cell from, Actor actor) =>
+            Field.Map.Cells.Where(c => Field.Map.IsPassable(c) && !Field.Occupies(c, actor))
+                 .OrderBy(c => Battlefield.Distance(from, c))
+                 .ThenBy(c => c.Y).ThenBy(c => c.X)
+                 .Select(c => (Cell?)c)
+                 .FirstOrDefault();
+
+
         // --- who won ----------------------------------------------------------------------------
 
         public Outcome Judge()
@@ -867,8 +1233,10 @@ namespace Core.Combat
             // a hero on the floor has not lost yet - the death save is still to come, and judging
             // the fight before that die lands would skip the whole mechanic
             bool heroesStanding = _order.Any(r => r.Actor.Side == Allegiance.Hero && !r.Actor.IsDead &&
-                                                  !(r.Actor.IsDown && r.Actor.Stable));
-            bool enemiesStanding = _order.Any(r => r.Actor.Side == Allegiance.Enemy && !r.Actor.IsDown);
+                                                  !(r.Actor.IsDown && r.Actor.Stable) &&
+                                                  !_gone.Contains(r.Actor));
+            bool enemiesStanding = _order.Any(r => r.Actor.Side == Allegiance.Enemy && !r.Actor.IsDown &&
+                                                   !_gone.Contains(r.Actor));
 
             if (!heroesStanding) Outcome = Outcome.HeroesLost;
             else if (!enemiesStanding) Outcome = Outcome.HeroesWon;

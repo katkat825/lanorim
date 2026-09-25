@@ -214,6 +214,39 @@ namespace Core.Characters
         // an attack-and-damage rewrite for the named weapons: Shillelagh's club or quarterstaff
         public WeaponRewrite Rewrite { get; init; }
 
+        // FLYING (2026-09-25): a Fly Speed in feet, which is the bearer's speed while it lasts -
+        // Fly's 60, Gaseous Form's 10. a flyer ignores difficult ground and zones on the ground.
+        // v1 has no altitude, so it hovers and never falls
+        public int FlySpeed { get; init; }
+
+        // it can't attack: Gaseous Form
+        public bool NoAttacks { get; init; }
+
+        // it can't cast spells: Gaseous Form
+        public bool NoCasting { get; init; }
+
+        // conditions it can't have while this lasts: Gaseous Form's Prone
+        public IReadOnlyList<Condition> ImmuneTo { get; init; } = Array.Empty<Condition>();
+
+        // a named spell's damage is turned away while it lasts: Shield and Magic Missile
+        public string WardsSpell { get; init; } = "";
+
+        // its advantage-against counts only for an attacker that can see the bearer: Faerie Fire
+        public bool IfSeen { get; init; }
+
+        // its disadvantage-against doesn't hold for an attacker with Truesight: Blur
+        public bool NotVsTruesight { get; init; }
+
+        // it can't shape-shift: Moonbeam's reverted creature, while it is still in the beam
+        public bool NoShifting { get; init; }
+
+        // its damage and its advantage on attacks count only for an attack made with Strength:
+        // Rage's damage, Reckless Attack's advantage (SRD 5.2.1 p.29)
+        public bool StrengthOnly { get; init; }
+
+        // the next hit on the bearer does half damage, and the boon is spent: Uncanny Dodge
+        public bool HalvesNextHit { get; init; }
+
         // the fight has seen the start of the owner's next turn, so the owner's next turn end
         // is the one that counts
         internal bool Armed { get; set; }
@@ -300,7 +333,28 @@ namespace Core.Characters
 
         public int FlatOnAttacks => _boons.Where(b => b.Attacks).Sum(b => b.Flat);
 
-        public int FlatOnDamage => _boons.Where(b => b.Damage).Sum(b => b.Flat);
+        public int FlatOnDamage => _boons.Where(b => b.Damage && !b.StrengthOnly).Sum(b => b.Flat);
+
+        // the same, for an attack made with this ability: Rage's bonus is a Strength attack's
+        public int FlatOnDamageFor(Ability used) =>
+            _boons.Where(b => b.Damage && (!b.StrengthOnly || used == Ability.Strength)).Sum(b => b.Flat);
+
+        // advantage on an attack made with this ability, less the boon it is forgoing: Brutal
+        // Strike gives up Reckless Attack's advantage for one attack
+        public bool AdvantageOnAttackWith(Ability? used, string forgoing) =>
+            _boons.Any(b => b.AdvantageOnAttacks && b.Id != forgoing &&
+                            (!b.StrengthOnly || used == Ability.Strength));
+
+        // Uncanny Dodge, spent on the hit it answers
+        public bool TakeHalving()
+        {
+            Boon halving = _boons.FirstOrDefault(b => b.HalvesNextHit);
+
+            if (halving == null) return false;
+
+            _boons.Remove(halving);
+            return true;
+        }
 
         public int ArmorClass => _boons.Sum(b => b.ArmorClass);
 
@@ -328,6 +382,20 @@ namespace Core.Characters
         public bool AnyDisadvantageOnAttacks => _boons.Any(b => b.DisadvantageOnAttacks);
 
         public bool AnyAdvantageAgainst => _boons.Any(b => b.AdvantageAgainst);
+
+        // the same, for one attacker: a Faerie Fire outline helps only an attacker that sees it,
+        // and a Blur doesn't fool one with Truesight
+        public bool AdvantageAgainstFrom(bool attackerSees) =>
+            _boons.Any(b => b.AdvantageAgainst && (!b.IfSeen || attackerSees));
+
+        public bool DisadvantageAgainstFrom(Actor attacker) =>
+            _boons.Any(b => b.DisadvantageAgainst &&
+                            !(b.NotVsTruesight && attacker != null && attacker.Boons.Truesight));
+
+        public bool Wards(string spell) =>
+            !string.IsNullOrEmpty(spell) && _boons.Any(b => b.WardsSpell == spell);
+
+        public bool NoShifting => _boons.Any(b => b.NoShifting);
 
         public bool AnyDisadvantageAgainst => _boons.Any(b => b.DisadvantageAgainst);
 
@@ -368,6 +436,17 @@ namespace Core.Characters
         public bool NoActions => _boons.Any(b => b.NoActions);
 
         public bool LimitedAction => _boons.Any(b => b.LimitedAction);
+
+        // the slowest Fly Speed wins: Gaseous Form's 10 is the target's only way of moving, so a
+        // Fly on top of it does not lift it to 60. 0 is not flying
+        public int FlySpeed => _boons.Where(b => b.FlySpeed > 0).Select(b => b.FlySpeed)
+                                     .DefaultIfEmpty(0).Min();
+
+        public bool NoAttacks => _boons.Any(b => b.NoAttacks);
+
+        public bool NoCasting => _boons.Any(b => b.NoCasting);
+
+        public bool Immune(Condition condition) => _boons.Any(b => b.ImmuneTo.Contains(condition));
 
         public IEnumerable<Boon> WeaponDice => _boons.Where(b => !b.WeaponDice.IsNothing);
 

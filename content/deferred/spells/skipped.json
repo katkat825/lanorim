@@ -1,0 +1,27 @@
+{
+  "_": "SKIPPED COMPLETELY (Kathleen, 2026-09-25): Suggestion's 25-word course of action is free text a fight can't play. Not in docs/deferred.md on purpose. Kept here only so the work isn't lost; nothing reads this folder.",
+
+  "spells": [
+    {
+      "id": "suggestion",
+      "level": 2,
+      "school": "enchantment",
+      "range": 6,
+      "concentration": true,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "narrate",
+          "reach": "creature",
+          "save": "wis",
+          "on_save": "negates",
+          "duration": "concentration",
+          "note": "SRD 5.2.1: on a failed Wisdom save the target has the Charmed condition for up to 8 hours and pursues a suggested course of action (25 words or fewer), ending early if the caster or an ally damages it. v1 has the Charmed condition now but cannot drive a creature's turns toward a free-text course of action, so the narrator plays the suggestion; the charm's no-attacking-the-caster and the end-on-damage are not enforced in fights (RUN_LOG question 1)"
+        }
+      ],
+      "english_name": "Honeyed Word",
+      "english_description": "Level 2. Its effect is told by the narrator, wis save to avoid it. Requires concentration. (v1 ships a bounded version of this spell.)"
+    }
+  ]
+}

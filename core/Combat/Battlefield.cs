@@ -77,10 +77,26 @@ namespace Core.Combat
 
             if (!from.HasValue) return null;
 
-            return Route.Between(Map, from.Value, to, c => Occupies(c, actor));
+            return Route.Between(Map, from.Value, to, c => Occupies(c, actor), actor.IsFlying);
         }
 
         public int CostOf(IReadOnlyList<Cell> route) => Route.Cost(Map, route);
+
+        // a flyer's route costs a square a square, difficult ground or not; a prone creature
+        // crawls, one extra square for each (SRD 5.2.1 Crawling)
+        public int CostOf(IReadOnlyList<Cell> route, Actor mover)
+        {
+            int steps = Math.Max(0, (route?.Count ?? 1) - 1);
+            int cost = mover != null && mover.IsFlying ? steps : CostOf(route);
+
+            return mover != null && mover.Has(Condition.Prone) && !mover.IsFlying ? cost + steps : cost;
+        }
+
+        // SRD 5.2.1 Frightened: "can't willingly move closer to the source of its fear"
+        public bool CloserToFear(Actor mover, Cell from, Cell to) =>
+            mover != null && mover.Has(Condition.Frightened) &&
+            mover.SourcesOf(Condition.Frightened)
+                 .Any(s => !s.IsDown && Where(s) is Cell at && Distance(to, at) < Distance(from, at));
 
         // every square the actor can reach this turn, with what it costs to get there. used by the
         // UI to light the board up and by the AI to pick where to stand.
@@ -96,11 +112,13 @@ namespace Core.Combat
             {
                 if (cell == from.Value || Occupies(cell, actor) || !Map.IsPassable(cell)) continue;
 
+                if (CloserToFear(actor, from.Value, cell)) continue;
+
                 IReadOnlyList<Cell> route = RouteFor(actor, cell);
 
                 if (route == null) continue;
 
-                int cost = CostOf(route);
+                int cost = CostOf(route, actor);
 
                 if (cost <= budgetSquares) reached[cell] = cost;
             }

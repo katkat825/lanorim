@@ -28,17 +28,80 @@ namespace Content.Tests
             Monster goblin = Srd.Bestiary.Find("goblin");
 
             Assert.NotNull(goblin);
-            Assert.Equal(7, goblin.HitPoints);
+            // SRD 5.2.1 Goblin Warrior, p.290: HP 10 (3d6)
+            Assert.Equal(10, goblin.HitPoints);
             Assert.Equal(15, goblin.ArmorClass);
             Assert.Equal(0.2, goblin.Challenge);
         }
 
         [Fact]
-        public void NoMonsterAttacksMoreThanTwiceATurn()
+        public void EachMultiattackIsTheSrdStatblocks()
         {
-            // the action economy is two actions for everybody, monsters included
+            // SRD 5.2.1, checked 2026-09-25. a monster not listed here has no Multiattack, and
+            // attacks once a turn (decisions_checklist.md section 1: the two actions are the hero's)
+            var srd = new Dictionary<string, string>
+            {
+                ["goblin_boss"] = "any + any",
+                ["werewolf"] = "claw|longbow + claw|longbow|werewolf_bite",
+                ["ghoul"] = "ghoul_bite + ghoul_bite",
+                ["brown_bear"] = "bear_bite + bear_claw",
+                ["owlbear"] = "owlbear_rend + owlbear_rend",
+                ["priest"] = "priest_mace|radiant_flame + priest_mace|radiant_flame",
+                ["mage"] = "any + any + any",
+                // not an SRD 5.2.1 statblock at all - see the 2026-09-25 run log
+                ["death_knight"] = "any + any",
+            };
+
             foreach (Monster monster in Srd.Bestiary.All)
-                Assert.InRange(monster.Multiattack, 1, ActionBudget.BaseActions);
+            {
+                if (srd.TryGetValue(monster.Id, out string listed))
+                    Assert.Equal(listed, monster.Multiattack?.ToString());
+                else
+                    Assert.True(monster.Multiattack == null, $"{monster.Id} has a Multiattack");
+            }
+        }
+
+        [Fact]
+        public void AMultiattackOfThreeLoads()
+        {
+            Monster mage = Srd.Bestiary.Find("mage");
+
+            Assert.Equal(3, mage.AttacksPerTurn);
+            Assert.Equal(1, mage.Budget().ActionsFor(2));
+        }
+
+        [Fact]
+        public void AMultiattackHasNoCapAndNamesOnlyItsOwnAttacks()
+        {
+            const string four = @"{""monsters"": [{""id"": ""hydra_ish"", ""multiattack"": 4,
+                ""attacks"": [{""id"": ""bite"", ""damage"": ""1d10"", ""damage_type"": ""piercing""}]}]}";
+
+            Assert.True(MonsterReader.TryRead(four, out IReadOnlyList<Monster> read, out var problems),
+                        string.Join("\n", problems));
+            Assert.Equal(4, read[0].AttacksPerTurn);
+
+            const string wrong = @"{""monsters"": [{""id"": ""bear_ish"", ""multiattack"": [""bite"", ""tail""],
+                ""attacks"": [{""id"": ""bite"", ""damage"": ""1d10"", ""damage_type"": ""piercing""}]}]}";
+
+            Assert.False(MonsterReader.TryRead(wrong, out _, out problems));
+            Assert.Contains(problems, p => p.Contains("tail"));
+        }
+
+        [Fact]
+        public void AMonsterHasABonusActionOnlyIfItsStatblockDoes()
+        {
+            // the goblin's Nimble Escape; a wolf has none
+            Monster goblin = Srd.Bestiary.Find("goblin");
+
+            Assert.Equal(Manoeuvre.Disengage | Manoeuvre.Hide, goblin.BonusManoeuvres);
+            Assert.Equal(1, goblin.Budget().BonusActionsFor(2));
+            Assert.Equal(Manoeuvre.Disengage | Manoeuvre.Hide, goblin.Spawn().QuickOnBonus);
+
+            Assert.Equal(0, Srd.Bestiary.Find("wolf").Budget().BonusActionsFor(2));
+
+            // the mage's Misty Step is a bonus-action spell
+            Monster mage = Srd.Bestiary.Find("mage");
+            Assert.Equal(1, mage.Budget(mage.CasterFor(mage.Spawn(), Srd.Spells)).BonusActionsFor(2));
         }
 
         [Fact]
@@ -63,10 +126,12 @@ namespace Content.Tests
         {
             Actor goblin = Srd.Bestiary.Find("goblin").Spawn();
 
-            Assert.Equal(7, goblin.Health.Maximum);
+            Assert.Equal(10, goblin.Health.Maximum);
             Assert.Equal(15, goblin.ArmorClass);
             Assert.Equal(Allegiance.Enemy, goblin.Side);
-            Assert.Equal(Training.Proficient, goblin.TrainingIn(Skill.Stealth));
+
+            // Stealth +6: Expertise (SRD 5.2.1 p.290)
+            Assert.Equal(Training.Expert, goblin.TrainingIn(Skill.Stealth));
         }
 
         [Fact]
@@ -79,7 +144,7 @@ namespace Content.Tests
 
             one.Suffer(5, DamageType.Slashing);
 
-            Assert.Equal(7, two.Health.Current);
+            Assert.Equal(10, two.Health.Current);
         }
 
         [Fact]
@@ -96,12 +161,14 @@ namespace Content.Tests
         }
 
         [Fact]
-        public void AWerewolfHalvesOrdinarySteel()
+        public void TheSrd521WerewolfHasNoResistanceToSteel()
         {
+            // SRD 5.2.1 p.339 prints no Resistances line for the werewolf (the older SRD's
+            // nonmagical-weapon resistance is gone)
             Actor werewolf = Srd.Bestiary.Find("werewolf").Spawn();
 
-            Assert.Equal(5, werewolf.Suffer(10, DamageType.Slashing));
-            Assert.Equal(10, werewolf.Suffer(10, DamageType.Radiant));
+            Assert.Equal(10, werewolf.Suffer(10, DamageType.Slashing));
+            Assert.Equal(71, Srd.Bestiary.Find("werewolf").HitPoints);
         }
 
         [Fact]

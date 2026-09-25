@@ -39,3 +39,35 @@ the mechanics ship regardless.
   pipeline; then adding a species is mostly cosmetic + trait data.
 - Species that grant spells (Elf lineages, Tiefling legacies, Gnome) are only "free" once those specific
   spells are in the v1 spell catalog — check `v1_spell_list.md` before promising a lineage.
+
+## SRD 5.2.1 check (2026-09-25)
+
+Every species was checked against SRD p.84-86 (`_design_docs/SRD_CHECK_2026-09-25.md` §6: 32 rows, 21 fixed,
+5 kept by a decision, 6 questions). What the data does now:
+
+- **Human:** Resourceful is narrate for now. The old +1 to Wisdom saves wasn't the SRD's Heroic Inspiration or
+  this roster's "one reroll/day". Skillful and Versatile are one trained skill each (Insight and Perception).
+- **Elf:** Fey Ancestry is Advantage on saves against Charmed (not a Charisma bonus). The lineages' spells arrive
+  at levels 1, 3 and 5, always prepared, each leveled one with a free cast per long rest. Drow: Faerie Fire and
+  Darkness (Darkvision 120). High Elf: Prestidigitation, Detect Magic and Misty Step. Wood Elf: speed 35 (a bug
+  had made it 40) and Pass without Trace. For a hero whose class casts nothing, the spells use the best of Int,
+  Wis and Cha.
+- **Dragonborn:** "one breath template + a damage-type parameter" is built as five lineages (acid, cold, fire,
+  lightning, poison). Each has the same breath spell and the matching resistance, and the dragon's colour stays
+  cosmetic. The breath is a 15-ft cone or a 30-ft line, Dex save against 8 + Con + proficiency, 1d10 rising at
+  5/11/17, with uses equal to the proficiency bonus per long rest. It costs an action; the SRD has it replace one
+  attack of the Attack action. Draconic Flight stays narrate as decided.
+- **Tiefling (Infernal):** fire resistance, Fire Bolt, Hellish Rebuke at 3 and Darkness at 5. Otherworldly
+  Presence is the Thaumaturgy cantrip (it had been Intimidation).
+- **Dwarf:** Advantage on saves against Poisoned, and +1 hit point per level (not a Constitution bonus).
+- **Halfling:** Brave is Advantage on saves against Frightened. Nimbleness and Naturally Stealthy are narrate
+  (the board has no creature sizes). Luck keeps its redesign.
+- **Orc:** Adrenaline Rush is a bonus-action Dash with temporary hit points equal to the proficiency bonus,
+  proficiency-bonus uses, back on a short rest. Relentless Endurance comes back on a long rest only.
+- **Heroes carry their species as a tag** ("elf", "dwarf", ...) beside "humanoid". The Ghoul's claw reads it.
+
+**For Kathleen:**
+- The Wood Elf ships with only one of its three spells: Druidcraft and Longstrider aren't in the catalogue. The
+  line above says a lineage ships "if their granted spells are in the v1 catalog". Keep it, or add the two spells?
+- Also open: Resourceful, species skill choices (Skillful, Keen Senses), letting the player choose a lineage's
+  spellcasting ability, size, and whether Darkvision's "narrative only" should be written here.

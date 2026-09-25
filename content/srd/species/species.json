@@ -1,14 +1,15 @@
 {
-  "_": "The seven v1 species (docs/v1_species_roster.md), from SRD 5.2.1 (CC-BY-4.0). SRD 5.2.1 puts ability increases on the background, not the species, so none of these carry bumps. Darkvision is a narrative trait in v1: the map layer has no light model yet.",
+  "_": "The seven v1 species (docs/v1_species_roster.md), from SRD 5.2.1 p.84-86 (CC-BY-4.0). SRD 5.2.1 puts ability increases on the background, not the species, so none of these carry bumps. Darkvision is a narrative trait in v1: the map layer has no light model yet. A species' spells use the best of Intelligence, Wisdom and Charisma for a hero whose class casts nothing; a caster casts them with its class's ability for now (a question for Kathleen). The Dragonborn's ancestry is a lineage by damage type: the colour itself is cosmetic.",
 
   "species": [
     {
       "id": "human",
       "speed": 30,
       "features": [
-        { "id": "resourceful", "trait": "training", "level": 1, "saves": ["wis"], "flat": 1,
-          "note": "SRD grants Heroic Inspiration on a long rest; v1 spends it as a small standing bonus until the inspiration economy exists" },
-        { "id": "skillful", "trait": "training", "level": 1, "skills": ["insight"] },
+        { "id": "resourceful", "trait": "narrate", "level": 1,
+          "note": "SRD 5.2.1 p.86: Heroic Inspiration on every Long Rest. v1 has no inspiration economy yet; the roster asks for one reroll a day or a small camp benefit - a question for Kathleen" },
+        { "id": "skillful", "trait": "training", "level": 1, "skills": ["insight"],
+          "note": "SRD: one skill of the player's choice. Creation has no species skill pick yet, so Insight stands in" },
         { "id": "versatile", "trait": "training", "level": 1, "skills": ["perception"],
           "note": "SRD grants an Origin feat. feats are deferred (decisions_checklist.md), so this is the one extra trained skill v1_species_roster.md asks for" }
       ]
@@ -20,46 +21,135 @@
       "lineages": ["elf_drow", "elf_high", "elf_wood"],
       "features": [
         { "id": "elf_darkvision", "trait": "narrate", "level": 1,
-          "note": "no light model on the map in v1; authored dark places can ask for it" },
-        { "id": "fey_ancestry", "trait": "training", "level": 1, "saves": ["cha"], "flat": 2 },
-        { "id": "keen_senses", "trait": "training", "level": 1, "skills": ["perception"] },
+          "note": "Darkvision 60 feet (120 for a Drow). no light model on the map in v1; authored dark places can ask for it" },
+        { "id": "fey_ancestry", "trait": "narrate", "level": 1, "advantage_on": ["save_vs:charmed"] },
+        { "id": "keen_senses", "trait": "training", "level": 1, "skills": ["perception"],
+          "note": "SRD: Insight, Perception or Survival, the player's choice. Creation has no species skill pick yet" },
         { "id": "trance", "trait": "narrate", "level": 1, "tags": ["sleepless"],
-          "note": "camp flavour and a small rest benefit, not a time simulation" }
+          "note": "no sleep, and magic can't put it to sleep; camp flavour and a small rest benefit, not a time simulation" }
       ]
     },
     {
       "id": "elf_drow", "lineage_of": "elf", "speed": 30,
       "features": [
         { "id": "drow_magic", "trait": "narrate", "level": 1,
-          "note": "grants dancing_lights, faerie_fire and darkness once those are in the catalogue; only faerie_fire's shape exists in the MUST set" }
+          "spells": {"3": ["faerie_fire"], "5": ["darkness"]}, "free_casts": {"faerie_fire": 1, "darkness": 1},
+          "spell_abilities": ["int", "wis", "cha"],
+          "note": "Dancing Lights, the level 1 cantrip, is not in the catalogue" }
       ]
     },
     {
       "id": "elf_high", "lineage_of": "elf", "speed": 30,
       "features": [
-        { "id": "high_elf_cantrip", "trait": "narrate", "level": 1,
-          "note": "one wizard cantrip from the catalogue, chosen at creation" }
+        { "id": "high_elf_magic", "trait": "narrate", "level": 1,
+          "spells": {"1": ["prestidigitation"], "3": ["detect_magic"], "5": ["misty_step"]},
+          "free_casts": {"detect_magic": 1, "misty_step": 1}, "spell_abilities": ["int", "wis", "cha"],
+          "note": "SRD lets Prestidigitation be swapped for another Wizard cantrip on a Long Rest; v1 keeps Prestidigitation" }
       ]
     },
     {
       "id": "elf_wood", "lineage_of": "elf", "speed": 35,
       "features": [
-        { "id": "fleet_of_foot", "trait": "speed", "level": 1, "flat": 5 }
+        { "id": "wood_elf_magic", "trait": "narrate", "level": 1,
+          "spells": {"5": ["pass_without_trace"]}, "free_casts": {"pass_without_trace": 1},
+          "spell_abilities": ["int", "wis", "cha"],
+          "note": "Druidcraft (level 1) and Longstrider (level 3) are not in the catalogue. the speed of 35 is the lineage's own" }
       ]
     },
 
     {
       "id": "dragonborn",
       "speed": 30,
+      "lineages": ["dragonborn_acid", "dragonborn_cold", "dragonborn_fire", "dragonborn_lightning", "dragonborn_poison"],
       "features": [
-        { "id": "breath_weapon", "trait": "rider", "level": 1, "amount": "1d10",
-          "per_level": "1d10", "per_levels": 5, "damage_type": "fire",
-          "note": "one breath template with the damage type as an ancestry parameter; ancestry is otherwise cosmetic (v1_species_roster.md)" },
-        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "fire",
-          "defense": "resistant" },
-        { "id": "dragonborn_darkvision", "trait": "narrate", "level": 1 },
+        { "id": "dragonborn_darkvision", "trait": "narrate", "level": 1, "note": "Darkvision 60 feet" },
         { "id": "draconic_flight", "trait": "narrate", "level": 5,
-          "note": "a short ignore-terrain state on authored maps, not general 3D flight" }
+          "note": "a short ignore-terrain state on authored maps, not general 3D flight (v1_species_roster.md)" }
+      ]
+    },
+    {
+      "id": "dragonborn_acid", "lineage_of": "dragonborn", "speed": 30,
+      "features": [
+        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long",
+          "note": "SRD 5.2.1 p.84: replaces one attack of the Attack action; v1 spends the action on it",
+          "spell": { "id": "breath_weapon_acid", "level": 0, "school": "evocation", "range": 0, "classes": [],
+                     "dc_ability": "con",
+                     "effects": [
+                       { "primitive": "damage", "reach": "cone", "length": 3, "amount": "1d10", "cantrip_scaling": true,
+                         "damage_type": "acid", "save": "dex", "on_save": "half", "mode": "cone" },
+                       { "primitive": "damage", "reach": "line", "length": 6, "width": 1, "amount": "1d10",
+                         "cantrip_scaling": true, "damage_type": "acid", "save": "dex", "on_save": "half", "mode": "line" }
+                     ] } },
+        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "acid",
+          "defense": "resistant" }
+      ]
+    },
+    {
+      "id": "dragonborn_cold", "lineage_of": "dragonborn", "speed": 30,
+      "features": [
+        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long",
+          "note": "SRD 5.2.1 p.84: replaces one attack of the Attack action; v1 spends the action on it",
+          "spell": { "id": "breath_weapon_cold", "level": 0, "school": "evocation", "range": 0, "classes": [],
+                     "dc_ability": "con",
+                     "effects": [
+                       { "primitive": "damage", "reach": "cone", "length": 3, "amount": "1d10", "cantrip_scaling": true,
+                         "damage_type": "cold", "save": "dex", "on_save": "half", "mode": "cone" },
+                       { "primitive": "damage", "reach": "line", "length": 6, "width": 1, "amount": "1d10",
+                         "cantrip_scaling": true, "damage_type": "cold", "save": "dex", "on_save": "half", "mode": "line" }
+                     ] } },
+        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "cold",
+          "defense": "resistant" }
+      ]
+    },
+    {
+      "id": "dragonborn_fire", "lineage_of": "dragonborn", "speed": 30,
+      "features": [
+        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long",
+          "note": "SRD 5.2.1 p.84: replaces one attack of the Attack action; v1 spends the action on it",
+          "spell": { "id": "breath_weapon_fire", "level": 0, "school": "evocation", "range": 0, "classes": [],
+                     "dc_ability": "con",
+                     "effects": [
+                       { "primitive": "damage", "reach": "cone", "length": 3, "amount": "1d10", "cantrip_scaling": true,
+                         "damage_type": "fire", "save": "dex", "on_save": "half", "mode": "cone" },
+                       { "primitive": "damage", "reach": "line", "length": 6, "width": 1, "amount": "1d10",
+                         "cantrip_scaling": true, "damage_type": "fire", "save": "dex", "on_save": "half", "mode": "line" }
+                     ] } },
+        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "fire",
+          "defense": "resistant" }
+      ]
+    },
+    {
+      "id": "dragonborn_lightning", "lineage_of": "dragonborn", "speed": 30,
+      "features": [
+        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long",
+          "note": "SRD 5.2.1 p.84: replaces one attack of the Attack action; v1 spends the action on it",
+          "spell": { "id": "breath_weapon_lightning", "level": 0, "school": "evocation", "range": 0, "classes": [],
+                     "dc_ability": "con",
+                     "effects": [
+                       { "primitive": "damage", "reach": "cone", "length": 3, "amount": "1d10", "cantrip_scaling": true,
+                         "damage_type": "lightning", "save": "dex", "on_save": "half", "mode": "cone" },
+                       { "primitive": "damage", "reach": "line", "length": 6, "width": 1, "amount": "1d10",
+                         "cantrip_scaling": true, "damage_type": "lightning", "save": "dex", "on_save": "half", "mode": "line" }
+                     ] } },
+        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "lightning",
+          "defense": "resistant" }
+      ]
+    },
+    {
+      "id": "dragonborn_poison", "lineage_of": "dragonborn", "speed": 30,
+      "features": [
+        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long",
+          "note": "SRD 5.2.1 p.84: replaces one attack of the Attack action; v1 spends the action on it",
+          "spell": { "id": "breath_weapon_poison", "level": 0, "school": "evocation", "range": 0, "classes": [],
+                     "dc_ability": "con",
+                     "effects": [
+                       { "primitive": "damage", "reach": "cone", "length": 3, "amount": "1d10", "cantrip_scaling": true,
+                         "damage_type": "poison", "save": "dex", "on_save": "half", "mode": "cone" },
+                       { "primitive": "damage", "reach": "line", "length": 6, "width": 1, "amount": "1d10",
+                         "cantrip_scaling": true, "damage_type": "poison", "save": "dex", "on_save": "half", "mode": "line" }
+                     ] } },
+        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "poison",
+          "defense": "resistant" }
       ]
     },
 
@@ -69,10 +159,11 @@
       "features": [
         { "id": "infernal_legacy", "trait": "resistance", "level": 1, "damage_type": "fire",
           "defense": "resistant",
-          "note": "Infernal is the launch legacy; the other two are data once their spells are in the catalogue" },
-        { "id": "tiefling_darkvision", "trait": "narrate", "level": 1 },
-        { "id": "otherworldly_presence", "trait": "training", "level": 1,
-          "skills": ["intimidation"] }
+          "spells": {"1": ["fire_bolt"], "3": ["hellish_rebuke"], "5": ["darkness"]},
+          "free_casts": {"hellish_rebuke": 1, "darkness": 1}, "spell_abilities": ["int", "wis", "cha"],
+          "note": "Infernal is the launch legacy; Abyssal and Chthonic wait on Poison Spray, Chill Touch, Ray of Sickness, False Life, Hold Person and Ray of Enfeeblement" },
+        { "id": "tiefling_darkvision", "trait": "narrate", "level": 1, "note": "Darkvision 60 feet" },
+        { "id": "otherworldly_presence", "trait": "narrate", "level": 1, "spells": {"1": ["thaumaturgy"]} }
       ]
     },
 
@@ -81,12 +172,11 @@
       "speed": 30,
       "features": [
         { "id": "dwarven_resilience", "trait": "resistance", "level": 1, "damage_type": "poison",
-          "defense": "resistant" },
-        { "id": "dwarven_toughness", "trait": "training", "level": 1, "saves": ["con"],
-          "flat": 1 },
-        { "id": "dwarf_darkvision", "trait": "narrate", "level": 1 },
+          "defense": "resistant", "advantage_on": ["save_vs:poisoned"] },
+        { "id": "dwarven_toughness", "trait": "narrate", "level": 1, "max_hp_per_level": 1 },
+        { "id": "dwarf_darkvision", "trait": "narrate", "level": 1, "note": "Darkvision 120 feet" },
         { "id": "stonecunning", "trait": "narrate", "level": 1,
-          "note": "a step up on authored stone secrets and hazards, not a tremorsense simulation" }
+          "note": "a step up on authored stone secrets and hazards, not a tremorsense simulation (v1_species_roster.md)" }
       ]
     },
 
@@ -94,11 +184,13 @@
       "id": "halfling",
       "speed": 30,
       "features": [
-        { "id": "brave", "trait": "training", "level": 1, "saves": ["wis"], "flat": 2 },
-        { "id": "halfling_nimbleness", "trait": "training", "level": 1, "skills": ["acrobatics"] },
+        { "id": "brave", "trait": "narrate", "level": 1, "advantage_on": ["save_vs:frightened"] },
+        { "id": "halfling_nimbleness", "trait": "narrate", "level": 1,
+          "note": "SRD: move through the space of a creature a size larger, but not stop there. v1's board does not model size yet" },
         { "id": "halfling_luck", "trait": "narrate", "level": 1, "uses": 1,
           "note": "REDESIGNED so it does not erase the nat-1 loop: once per rest, reroll a die showing a 1 OR downgrade a consequence to a cosmetic one (v1_species_roster.md)" },
-        { "id": "naturally_stealthy", "trait": "training", "level": 1, "skills": ["stealth"] }
+        { "id": "naturally_stealthy", "trait": "narrate", "level": 1,
+          "note": "SRD: Hide when obscured only by a creature at least one size larger. v1's board does not model size yet" }
       ]
     },
 
@@ -106,10 +198,11 @@
       "id": "orc",
       "speed": 30,
       "features": [
-        { "id": "adrenaline_rush", "trait": "action_grant", "level": 1, "count": 1, "uses": 1 },
-        { "id": "orc_darkvision", "trait": "narrate", "level": 1 },
+        { "id": "adrenaline_rush", "trait": "boost", "level": 1, "cost": "bonus",
+          "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "short" },
+        { "id": "orc_darkvision", "trait": "narrate", "level": 1, "note": "Darkvision 120 feet" },
         { "id": "relentless_endurance", "trait": "death_intercept", "level": 1, "flat": 1,
-          "uses": 1,
+          "uses": 1, "recharge": "long",
           "note": "at 0 hit points, spend the use to stay up on 1 instead. the reusable death-intercept this validates is what the Barbarian's Relentless Rage reuses" }
       ]
     }

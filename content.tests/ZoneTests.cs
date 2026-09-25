@@ -64,14 +64,23 @@ namespace Content.Tests
 
         // --- Spirit Guardians --------------------------------------------------------------------
 
+        // SRD 5.2.1: radiant for a good or neutral caster, necrotic for an evil one - picked at the
+        // cast in v1
+        static readonly Aim Radiant = Aim.Nothing.Choosing(DamageType.Radiant);
+
         [Fact]
         public void SpiritGuardiansIsFaithfulNow()
         {
             Spell guardians = Book.Find("spirit_guardians");
 
             Assert.False(guardians.Approximated);
-            Assert.Contains(guardians.Effects, e => e.Kind == Primitive.Zone && e.Rough &&
+            Assert.Contains(guardians.Effects, e => e.Kind == Primitive.Zone &&
                                                     e.SparesAllies && e.Reach == Reach.Around);
+            // "any other creature's Speed is halved in the Emanation" (SRD p.164) - an aura, not
+            // difficult terrain
+            Assert.Contains(guardians.Effects, e => e.WhileInside && e.SpeedChange == SpeedChange.Half);
+            Assert.Contains(guardians.Effects, e => e.ChosenDamageType &&
+                                                    e.DamageChoices.Contains(DamageType.Necrotic));
             Assert.Contains(guardians.Effects, e => e.Reach == Reach.Zone &&
                                                     e.Pulses == (Pulses.Enter | Pulses.EndTurn));
         }
@@ -92,7 +101,7 @@ namespace Content.Tests
             var cast = new Incantation(fight.Resolver);
 
             Turn mine = fight.Next();
-            Casting result = cast.Cast(cleric, Book.Find("spirit_guardians"), Aim.Nothing,
+            Casting result = cast.Cast(cleric, Book.Find("spirit_guardians"), Radiant,
                                        turn: mine, fight: fight);
 
             Assert.True(result.Cast, result.Refusal);
@@ -125,7 +134,7 @@ namespace Content.Tests
             var cast = new Incantation(fight.Resolver);
             Turn mine = fight.Next();
 
-            cast.Cast(cleric, Book.Find("spirit_guardians"), Aim.Nothing, turn: mine, fight: fight);
+            cast.Cast(cleric, Book.Find("spirit_guardians"), Radiant, turn: mine, fight: fight);
 
             // five squares east brings the goblin inside three squares of the cleric
             fight.Walk(mine, new Cell(5, 2));
@@ -152,17 +161,17 @@ namespace Content.Tests
             fight.Begin();
 
             var cast = new Incantation(fight.Resolver);
-            cast.Cast(cleric, Book.Find("spirit_guardians"), Aim.Nothing, turn: fight.Next(),
+            cast.Cast(cleric, Book.Find("spirit_guardians"), Radiant, turn: fight.Next(),
                       fight: fight);
 
             IZone zone = fight.Zones.Single();
 
             Assert.DoesNotContain(friend, fight.CaughtIn(zone));
-            Assert.False(fight.IsRough(new Cell(4, 2), friend));
+            Assert.Equal(30, friend.Moves);
         }
 
         [Fact]
-        public void WalkingIntoSpiritGuardiansIsDifficultTerrain()
+        public void WalkingIntoSpiritGuardiansHalvesTheRestOfTheMove()
         {
             Encounter fight = Field(new ScriptedRng(20, 1, 20));
             Caster cleric = Cleric(out Actor me);
@@ -173,19 +182,41 @@ namespace Content.Tests
             fight.Begin();
 
             var cast = new Incantation(fight.Resolver);
-            cast.Cast(cleric, Book.Find("spirit_guardians"), Aim.Nothing, turn: fight.Next(),
+            cast.Cast(cleric, Book.Find("spirit_guardians"), Radiant, turn: fight.Next(),
                       fight: fight);
             fight.EndTurn();
 
             Turn theirs = fight.Next();
             Assert.Same(goblin, theirs.Actor);
 
-            // from (8,0) toward (2,0): squares 7 to 4 are outside the 3-square emanation (20 feet),
-            // square 3 is inside and costs 10, and that is the goblin's 30 feet gone
+            // from (8,0) toward (2,0): squares 7 to 4 are outside the 3-square emanation (20 feet
+            // used), square 3 is inside (25 used) and the speed halves to 15 - SRD's rule for a
+            // speed changing mid-move leaves 15 less 25 used, which is nothing
             fight.Walk(theirs, new Cell(2, 0));
 
             Assert.Equal(new Cell(3, 0), fight.Field.Where(goblin));
             Assert.Equal(0, theirs.Movement);
+        }
+
+        [Fact]
+        public void ACreatureStartingItsTurnInSpiritGuardiansHasHalfItsSpeed()
+        {
+            Encounter fight = Field(new ScriptedRng(20, 1, 20));
+            Caster cleric = Cleric(out Actor me);
+            Actor goblin = Goblin("goblin");
+
+            fight.Enlist(me, new Cell(0, 0));
+            fight.Enlist(goblin, new Cell(2, 0));
+            fight.Begin();
+
+            var cast = new Incantation(fight.Resolver);
+            cast.Cast(cleric, Book.Find("spirit_guardians"), Radiant, turn: fight.Next(),
+                      fight: fight);
+            fight.EndTurn();
+
+            Turn theirs = fight.Next();
+            Assert.Same(goblin, theirs.Actor);
+            Assert.Equal(15, theirs.Movement);
         }
 
         [Fact]
@@ -199,7 +230,7 @@ namespace Content.Tests
             fight.Begin();
 
             var cast = new Incantation(fight.Resolver);
-            cast.Cast(cleric, Book.Find("spirit_guardians"), Aim.Nothing, turn: fight.Next(),
+            cast.Cast(cleric, Book.Find("spirit_guardians"), Radiant, turn: fight.Next(),
                       fight: fight);
 
             Assert.Single(fight.Zones);

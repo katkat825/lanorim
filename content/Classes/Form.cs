@@ -66,8 +66,9 @@ namespace Content.Classes
 
         public int Constitution { get; }
 
-        // what the druid swings with while it wears this. a bear has two actions like everybody
-        // else, so the statblock's Multiattack is what the action economy already gives it
+        // what the druid swings with while it wears this. the druid keeps the HERO'S turn - the
+        // two base actions stand in for the beast statblock's Multiattack, which a form does not
+        // carry (a monster's own turn is ActionBudget.Statblock)
         public IReadOnlyList<Attack> Attacks { get; }
 
         // feet, like Actor.Speed

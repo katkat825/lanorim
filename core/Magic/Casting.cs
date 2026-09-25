@@ -222,6 +222,9 @@ namespace Core.Magic
             if (caster.Actor.IsShifted)
                 return Casting.Refused(spell, caster.Actor, castAt, "in a borrowed shape");
 
+            if (caster.Actor.Boons.NoCasting)
+                return Casting.Refused(spell, caster.Actor, castAt, "can't cast in this form");
+
             // THE ONLY QUESTION ASKED OF THE RESOURCE, and it does not say which mode answered
             // it. A slots caster with no 3rd-level slot and a points caster who has already
             // cast their one 6th today are refused by the same line.
@@ -261,6 +264,14 @@ namespace Core.Magic
             if (spell.Effects.Any(e => e.ChosenAbility) && !aim.Ability.HasValue)
                 return Casting.Refused(spell, caster.Actor, castAt, "choose an ability for it");
 
+            if (spell.Effects.Any(e => e.ChosenAbility && e.AbilityChoices.Count > 0 &&
+                                       !e.AbilityChoices.Contains(aim.Ability.Value)))
+                return Casting.Refused(spell, caster.Actor, castAt, "not an ability it can choose");
+
+            // a minute's casting or an hour's is not a fight's (Identify, Raise Dead, Foresight)
+            if (fight != null && spell.OutOfCombat)
+                return Casting.Refused(spell, caster.Actor, castAt, "takes too long to cast in a fight");
+
             if (spell.Strikes && aim.Weapon == null)
                 return Casting.Refused(spell, caster.Actor, castAt, "choose the weapon it strikes with");
 
@@ -281,9 +292,12 @@ namespace Core.Magic
                     return Casting.Refused(spell, caster.Actor, castAt,
                                            "choose a damage type for it");
 
-            // SRD 5.2.1 Charmed: no damaging or magical effect aimed at the charmer
+            // SRD 5.2.1 Charmed: no damaging or magical effect aimed at the charmer. v1 reads it
+            // as "nothing hostile": a heal or a blessing still may, a curse with no save may not
             if (aim.Creatures.Any(t => caster.Actor.HasFrom(Condition.Charmed, t)) &&
-                spell.Effects.Any(e => e.Kind == Primitive.Damage || e.Kind == Primitive.Afflict))
+                spell.Effects.Any(e => !(e.Kind == Primitive.Heal || e.Kind == Primitive.Ward ||
+                                         e.Kind == Primitive.Relieve || e.Kind == Primitive.Stabilize ||
+                                         e.Kind == Primitive.Sway && !e.Save.HasValue && Kindly(e))))
                 return Casting.Refused(spell, caster.Actor, castAt, "charmed by the target");
 
             bool bonus = spell.CastingTime == CastingTime.BonusAction;
@@ -308,21 +322,60 @@ namespace Core.Magic
                                   spell.Effects.Any(e => e.Reach == Reach.Creature ||
                                                          e.Reach == Reach.Creatures);
 
-            if (picksCreatures)
+            // Spiritual Weapon: the attack comes from the force, at a creature beside it
+            SpellEffect near = spell.Effects.FirstOrDefault(e => e.NearZone > 0);
+            // Dimension Door: the one creature it takes along stands beside the caster
+            bool passenger = spell.Effects.Any(e => e.Passenger);
+
+            if (picksCreatures && near == null && !passenger)
                 foreach (Actor target in aim.Creatures.Where(a => !ReferenceEquals(a, caster.Actor)))
                     if (!fight.Field.InRange(caster.Actor, target, reach) ||
                         !fight.Sees(caster.Actor, target))
                         return $"{target.Id} is out of range or out of sight";
 
+            if (near != null && aim.Square.HasValue)
+                foreach (Actor target in aim.Creatures)
+                    if (!(fight.Field.Where(target) is Cell at) ||
+                        Battlefield.Distance(at, aim.Square.Value) > near.NearZone)
+                        return $"{target.Id} is not beside it";
+
+            if (passenger)
+                foreach (Actor target in aim.Creatures.Where(a => !ReferenceEquals(a, caster.Actor)))
+                    if (fight.Field.Distance(caster.Actor, target) > 1)
+                        return $"{target.Id} has to be beside you to come along";
+
+            // Chain Lightning: the bolts leap from the first target to others within 30 feet of
+            // it, and no creature is struck by two
+            SpellEffect leap = spell.Effects.FirstOrDefault(e => e.NearFirst > 0);
+
+            if (leap != null && aim.Creatures.Count > 1)
+            {
+                if (aim.Creatures.Distinct().Count() != aim.Creatures.Count)
+                    return "a creature can be struck by only one of the bolts";
+
+                Actor first = aim.Creatures[0];
+
+                foreach (Actor other in aim.Creatures.Skip(1))
+                    if (fight.Field.Distance(first, other) > leap.NearFirst)
+                        return $"{other.Id} is too far from the first target";
+            }
+
             bool picksSquares = spell.Effects.Any(e => e.Reach == Reach.Burst ||
                                                        e.Reach == Reach.Place ||
                                                        e.Reach == Reach.Wall);
 
+            // Dimension Door: a place you can visualize or describe, not only one you can see
+            bool unseen = spell.Effects.Any(e => e.Unseen);
+
             if (picksSquares)
                 foreach (Cell square in aim.Squares)
                     if (Battlefield.Distance(here.Value, square) > reach ||
-                        !fight.Field.CanSee(here.Value, square))
+                        !unseen && !fight.Field.CanSee(here.Value, square))
                         return $"{square} is out of range or out of sight";
+
+            if (unseen && aim.Square.HasValue &&
+                Battlefield.Distance(here.Value, aim.Square.Value) > reach)
+                return $"{aim.Square.Value} is out of range";
 
             return null;
         }
@@ -338,7 +391,10 @@ namespace Core.Magic
             if (spell == null || moment == null)
                 return Casting.Refused(spell, caster.Actor, 0, "nothing to answer");
 
-            if (!spell.Answers || spell.Trigger != moment.Trigger)
+            bool targeted = moment.Trigger == Trigger.Targeted && spell.AnswersSpell.Length > 0 &&
+                            moment.Spell == spell.AnswersSpell;
+
+            if (!spell.Answers || spell.Trigger != moment.Trigger && !targeted)
                 return Casting.Refused(spell, caster.Actor, spell.Level,
                                        "that spell does not answer that moment");
 
@@ -346,7 +402,7 @@ namespace Core.Magic
                 return Casting.Refused(spell, caster.Actor, spell.Level, "not on the sheet");
 
             // a Shield is still a spell, and a bear does not cast it
-            if (caster.Actor.IsShifted)
+            if (caster.Actor.IsShifted || caster.Actor.Boons.NoCasting)
                 return Casting.Refused(spell, caster.Actor, spell.Level, "in a borrowed shape");
 
             if (!caster.CanCast(spell, spell.Level))
@@ -383,11 +439,27 @@ namespace Core.Magic
                 return Casting.Refused(spell, caster.Actor, castAt,
                                        "the spell resource would not pay");
 
-            // casting gives an unseen caster away (SRD's Invisible)
+            // casting gives an unseen caster away (SRD's Invisible) - an Invisibility ends here
             caster.Actor.Boons.Cast();
+            Unveil(caster.Actor, fight);
+
+            // Foresight: casting it again ends the one already cast
+            if (spell.EndsPrevious)
+                foreach (Actor was in _placed.Where(p => p.Spell == spell.Id && p.Caster != null &&
+                                                         ReferenceEquals(p.Caster.Actor, caster.Actor))
+                                             .Select(p => p.Target).Distinct().ToList())
+                    Lift(was, spell.Id, fight);
+
+            _offered.Clear();
+            _empoweredThisCast = false;
+            _blessedThisCast = false;
+
+            // Major Image at 4+: no concentration at all
+            bool holds = spell.Concentration &&
+                         !(spell.ConcentrationBelow > 0 && castAt >= spell.ConcentrationBelow);
 
             // taking up a new concentration drops whatever was being held, and its boons with it
-            if (spell.Concentration)
+            if (holds)
             {
                 Hold(caster.Actor, spell.Id);
                 _heldAt[caster.Actor] = castAt;
@@ -457,6 +529,10 @@ namespace Core.Magic
             if (caster.Actor.Concentrating != spell.Id && !_lasting.Contains((caster.Actor, spell.Id)))
                 return Casting.Refused(spell, caster.Actor, spell.Level,
                                        "not holding that spell any more");
+
+            if (spell.MovesWhenDown && MarkStillStanding(caster, spell))
+                return Casting.Refused(spell, caster.Actor, spell.Level,
+                                       "it moves only once the creature it is on drops to 0 hit points");
 
             aim ??= Aim.Nothing;
 
@@ -542,6 +618,16 @@ namespace Core.Magic
                 fight.ZoneMoved(zone, wereIn);
             }
 
+            // an aura on the moved zone, and Moonbeam's hold on a creature it turned back, follow it
+            if (fight != null) Refresh(fight);
+
+            // Hex, Hunter's Mark: the mark leaves the fallen creature for the new one
+            if (spell.MovesWhenDown)
+                foreach (Actor was in _placed.Where(p => p.Spell == spell.Id && p.Caster != null &&
+                                                         ReferenceEquals(p.Caster.Actor, caster.Actor))
+                                             .Select(p => p.Target).Distinct().ToList())
+                    Lift(was, spell.Id, fight);
+
             // Telekinesis: one target at a time - a new one ends the spell on whoever it was on
             if (spell.Effects.Any(e => e.Repeats && e.Switches))
                 foreach (Actor was in _placed.Where(p => p.Spell == spell.Id &&
@@ -562,10 +648,23 @@ namespace Core.Magic
 
         readonly Dictionary<Actor, int> _heldAt = new();
 
-        // whether a repeating spell can be done again now: held in concentration, or lasting
+        // whether a repeating spell can be done again now: held in concentration, or lasting -
+        // and for a mark, only once the creature it was on has dropped
         public bool CanRepeat(Caster caster, Spell spell) =>
             caster != null && spell != null && spell.Repeat.HasValue &&
-            (caster.Actor.Concentrating == spell.Id || _lasting.Contains((caster.Actor, spell.Id)));
+            (caster.Actor.Concentrating == spell.Id || _lasting.Contains((caster.Actor, spell.Id))) &&
+            !(spell.MovesWhenDown && MarkStillStanding(caster, spell));
+
+        bool MarkStillStanding(Caster caster, Spell spell) =>
+            _placed.Any(p => p.Spell == spell.Id && p.Caster != null &&
+                             ReferenceEquals(p.Caster.Actor, caster.Actor) && !p.Target.IsDown);
+
+        // who has already been offered the chance to answer being targeted by this cast
+        readonly HashSet<Actor> _offered = new();
+
+        // once a casting: Empowered Evocation's one damage roll, Blessed Healer's one heal
+        bool _empoweredThisCast;
+        bool _blessedThisCast;
 
         // spells that repeat without being held: who cast them, and which
         readonly HashSet<(Actor, string)> _lasting = new();
@@ -612,6 +711,44 @@ namespace Core.Magic
             // "creatures of your choice": an area that leaves the caster's own side alone
             if (effect.SparesAllies && effect.Kind != Primitive.Zone)
                 targets = targets.Where(t => t.Side != caster.Actor.Side).ToList();
+
+            // Entangle: "each creature (other than you)"
+            if (effect.SparesCaster)
+                targets = targets.Where(t => !ReferenceEquals(t, caster.Actor)).ToList();
+
+            // Hypnotic Pattern: only a creature that can see the pattern - some square of it, not
+            // past a wall or through a heavily obscured square (its own included) - and not Blinded
+            if (effect.NeedsSight && fight != null && covered.Count > 0)
+            {
+                List<Cell> pattern = covered.Distinct().ToList();
+
+                targets = targets.Where(t => fight.Field.Where(t) is Cell at &&
+                                             pattern.Any(c => fight.Field.CanSee(at, c) &&
+                                                              !fight.Obscured(at, c, t))).ToList();
+            }
+
+            // Shield: a creature a spell has picked out may answer it, once a cast, before it lands
+            if (fight != null && (effect.Reach == Reach.Creature || effect.Reach == Reach.Creatures))
+                foreach (Actor picked in targets.Where(t => !ReferenceEquals(t, caster.Actor)).Distinct().ToList())
+                    if (_offered.Add(picked))
+                        fight.Offer(Moment.Targeted(caster.Actor, picked, spell.Id), picked);
+
+            // Dispel Magic on an effect, Disintegrate on a creation of force: whatever spell holds
+            // the aimed square
+            if (effect.Kind == Primitive.Dispel && effect.Reach == Reach.Place && fight != null &&
+                aim.Square.HasValue)
+            {
+                int ended = DispelAt(caster, aim.Square.Value, castAt, fight, effect.EndsForce);
+                landings.Add(new Landing(effect, null, ended > 0, ended));
+                return;
+            }
+
+            // Slow's "up to six creatures of your choice": the caster's foes first, then by id, so
+            // the same cast picks the same six
+            if (effect.UpTo > 0 && targets.Count > effect.UpTo)
+                targets = targets.OrderBy(t => t.Side == caster.Actor.Side ? 1 : 0)
+                                 .ThenBy(t => t.Id, StringComparer.Ordinal)
+                                 .Take(effect.UpTo).ToList();
 
             // Sunburst: magical darkness in the area is dispelled
             if (effect.DispelsDarkness && fight != null) Brighten(fight, effect, aim, covered);
@@ -767,7 +904,30 @@ namespace Core.Magic
                               .ToList();
 
                 default:
+                {
+                    // Spiritual Weapon: the creature beside the force - the one named, or the
+                    // nearest foe beside it when the aim named only the square
+                    if (effect.NearZone > 0 && fight != null)
+                    {
+                        Cell? force = aim.Square ??
+                                      ZonesOf(caster.Actor).FirstOrDefault(z => z.Source == spell.Id)?.Centre;
+
+                        if (!force.HasValue) return Array.Empty<Actor>();
+
+                        IEnumerable<Actor> beside = fight.Field.Pieces
+                            .Where(a => !a.IsDown && fight.Field.Where(a) is Cell at &&
+                                        Battlefield.Distance(at, force.Value) <= effect.NearZone);
+
+                        return aim.Creatures.Count > 0
+                            ? aim.Creatures.Where(beside.Contains).Take(1).ToList()
+                            : beside.Where(a => a.Side != caster.Actor.Side)
+                                    .OrderBy(a => a.Health.Current)
+                                    .ThenBy(a => a.Id, StringComparer.Ordinal)
+                                    .Take(1).ToList();
+                    }
+
                     return aim.Creatures.Take(1).ToList();
+                }
             }
         }
 
@@ -838,11 +998,20 @@ namespace Core.Magic
 
             if (effect.AttackRoll)
             {
-                bool close = fight == null || fight.Field.Distance(caster.Actor, target) <= 1;
+                bool close = fight == null || fight.Field.Distance(caster.Actor, target) <= 1 ||
+                             effect.NearZone > 0;
+
+                // a ranged spell attack beside an enemy that can see you is at disadvantage, the same
+                // as a bow (SRD 5.2.1 Ranged Attacks in Close Combat)
+                bool ranged = spell.Range > 1 && effect.NearZone == 0;
 
                 Advantage lean = Strike.Lean(caster.Actor, target, close,
                                              fight?.Sees(caster.Actor, target),
-                                             fight?.Sees(target, caster.Actor));
+                                             fight?.Sees(target, caster.Actor),
+                                             ranged && fight != null && fight.Crowded(caster.Actor)
+                                                 ? Advantage.Disadvantage
+                                                 : Advantage.Flat,
+                                             fight?.FearInSight(caster.Actor));
 
                 int cover = fight?.Cover(caster.Actor, target) ?? 0;
 
@@ -851,6 +1020,7 @@ namespace Core.Magic
 
                 caster.Actor.Boons.Attacked();
                 target.Boons.AttackedAt();
+                Unveil(caster.Actor, fight);
 
                 attempt = Strike.Closing(attempt, target, close);
 
@@ -878,6 +1048,17 @@ namespace Core.Magic
                 // Flesh to Stone's Construct: a save it makes without rolling
                 bool automatic = effect.AutoSaveTags.Any(target.Is);
 
+                // Blight's Plant: a save it fails without rolling
+                bool fails = effect.AutoFailTags.Any(target.Is);
+
+                // Shatter's Construct: the save at disadvantage
+                if (effect.DisadvantageTags.Any(target.Is))
+                    extra = Advantages.Of(extra == Advantage.Advantage, true);
+
+                // Fey Ancestry, Brave, Dwarven Resilience: advantage on a save against the condition
+                if (effect.Kind == Primitive.Afflict && target.HasAdvantage("save_vs:" + effect.Condition.Id()))
+                    extra = extra.And(Advantage.Advantage);
+
                 // SRD cover adds to Dexterity saves against what comes from the far side of it
                 int cover = effect.Save == Ability.Dexterity && fight != null
                     ? fight.Cover(caster.Actor, target)
@@ -887,8 +1068,10 @@ namespace Core.Magic
                     ? earlier
                     : automatic
                         ? new Attempt(RollKind.Save, D20Roll.Fixed(20, 0), int.MinValue)
-                        : Checks.Save(_resolver, target, effect.Save.Value, caster.SaveDc - cover,
-                                      extra);
+                        : fails
+                            ? new Attempt(RollKind.Save, D20Roll.Fixed(1, 0), int.MaxValue)
+                            : Checks.Save(_resolver, target, effect.Save.Value, DcFor(caster, spell) - cover,
+                                          extra);
 
                 saves[target] = attempt;
 
@@ -905,10 +1088,19 @@ namespace Core.Magic
                 {
                     // a missed attack roll deals nothing, the same as a negating save. this used to
                     // check only the save, so a Fire Bolt that missed still burned for full damage
-                    if (!landed && (effect.AttackRoll || effect.OnSave == OnSave.Negates))
+                    // SRD 5.2.1 Potent Cantrip (p.82): a damaging cantrip that misses, or is saved
+                    // against, still does half its damage and nothing else
+                    bool potent = !landed && spell.IsCantrip && caster.Actor.Is("potent_cantrip") &&
+                                  (effect.AttackRoll || effect.OnSave == OnSave.Negates);
+
+                    if (!landed && !potent && (effect.AttackRoll || effect.OnSave == OnSave.Negates))
                         return new Landing(effect, target, false, 0, attempt);
 
                     DamageType type = effect.ChosenDamageType ? aim.DamageType : effect.DamageType;
+
+                    // Shield: "you take no damage from Magic Missile"
+                    if (target.Boons.Wards(spell.Id))
+                        return new Landing(effect, target, false, 0, attempt);
 
                     // Power Word Kill: at or below the line, no damage roll - it simply dies. a
                     // Death Ward stops it, and is spent doing so
@@ -938,7 +1130,7 @@ namespace Core.Magic
                         Place(new Placement
                         {
                             Target = target, Caster = caster, Spell = spell.Id, Level = castAt,
-                            Dc = caster.SaveDc, Duration = effect.Delayed ? Duration.NextTurnEnd
+                            Dc = DcFor(caster, spell), Duration = effect.Delayed ? Duration.NextTurnEnd
                                                                          : effect.Duration,
                             Burns = effect.Recurs ? amount : default,
                             Later = effect.Delayed ? amount : default,
@@ -973,7 +1165,24 @@ namespace Core.Magic
                         rolled += Math.Max(0, _resolver.Roll(extraDice, caster.Actor));
                     }
 
-                    if (!landed && effect.OnSave == OnSave.Half) rolled /= 2;
+                    // SRD 5.2.1 Empowered Evocation (p.82): the Intelligence modifier on one damage
+                    // roll of an Evocation spell - the first it rolls
+                    if (spell.School == School.Evocation && caster.Actor.Is("empowered_evocation") &&
+                        !_empoweredThisCast)
+                    {
+                        rolled += Math.Max(0, caster.Actor.AbilityModifier(caster.Ability));
+                        _empoweredThisCast = true;
+                    }
+
+                    // SRD 5.2.1 Evasion (p.63): a Dexterity save for half is none on a success and
+                    // half on a failure - while the creature can act
+                    bool evades = effect.Save == Ability.Dexterity && effect.OnSave == OnSave.Half &&
+                                  target.Is("evasion") && !target.IsIncapacitated;
+
+                    if (evades) rolled = landed ? rolled / 2 : 0;
+                    else if (!landed && effect.OnSave == OnSave.Half) rolled /= 2;
+
+                    if (potent) rolled /= 2;
 
                     int suffered = target.Suffer(rolled, type);
 
@@ -989,6 +1198,33 @@ namespace Core.Magic
                         }
 
                     if (fight != null && suffered > 0) fight.Hurt(caster.Actor, target, suffered);
+
+                    // Disintegrate: brought to 0 by it, the creature is gray dust
+                    if (effect.Dust && suffered > 0 && target.Health.Current <= 0)
+                    {
+                        target.TurnToDust();
+                        if (target.Side == Allegiance.Hero) target.Perish();
+                    }
+
+                    // Moonbeam: a failed save turns a shape-shifted creature back, and it can't
+                    // shift again until it is out of the beam
+                    if (effect.RevertsShape && attempt != null && attempt.Failed && target.IsShifted)
+                    {
+                        target.Revert();
+                        target.Boons.Add(new Boon(RevertedId(spell.Id), spell.Id, Duration.Concentration)
+                                         { NoShifting = true });
+                    }
+
+                    // Finger of Death: a Humanoid it kills rises at the start of the caster's next
+                    // turn, on the caster's side
+                    if (effect.RaisesAs.Length > 0 && fight != null && suffered > 0 &&
+                        (effect.RaisesTag.Length == 0 || target.Is(effect.RaisesTag)) &&
+                        (target.IsDead || target.IsDown && target.Side != Allegiance.Hero))
+                        Place(new Placement
+                        {
+                            Target = target, Caster = caster, Spell = spell.Id, Level = castAt,
+                            Duration = Duration.Encounter, RaisesAs = effect.RaisesAs,
+                        }, fight);
 
                     // Murmur of Dread: a failed save sends it running on its own reaction
                     if (effect.ReactionFlee && attempt != null && attempt.Failed && fight != null &&
@@ -1009,6 +1245,10 @@ namespace Core.Magic
                 case Primitive.Heal:
                 {
                     // Raise Dead: the dead come back with the amount, and nothing else heals them
+                    // Disintegrate's dust is past Raise Dead (only True Resurrection or Wish)
+                    if (effect.Revives && target.Dust)
+                        return new Landing(effect, target, false);
+
                     if (effect.Revives && target.IsDead)
                     {
                         int at = Math.Max(1, _resolver.Roll(amount, caster.Actor) + modifier);
@@ -1018,7 +1258,23 @@ namespace Core.Magic
                         return new Landing(effect, target, true, target.Health.Current);
                     }
 
-                    int healed = target.Mend(Math.Max(0, _resolver.Roll(amount, caster.Actor) + modifier));
+                    // SRD 5.2.1 Supreme Healing (p.40): the healing dice at their highest
+                    int dice = caster.Actor.Is("supreme_healing")
+                        ? amount.Maximum
+                        : _resolver.Roll(amount, caster.Actor);
+
+                    // Disciple of Life (p.40): a spell slot's healing restores 2 + the slot's level more
+                    int disciple = castAt >= 1 && caster.Actor.Is("disciple_of_life") ? 2 + castAt : 0;
+
+                    int healed = target.Mend(Math.Max(0, dice + modifier + disciple));
+
+                    // Blessed Healer (p.40): healing someone else with a slot heals you 2 + its level
+                    if (healed > 0 && castAt >= 1 && !ReferenceEquals(target, caster.Actor) &&
+                        caster.Actor.Is("blessed_healer") && !_blessedThisCast)
+                    {
+                        caster.Actor.Mend(2 + castAt);
+                        _blessedThisCast = true;
+                    }
 
                     return new Landing(effect, target, healed > 0, healed);
                 }
@@ -1048,7 +1304,7 @@ namespace Core.Magic
                     Place(new Placement
                     {
                         Target = target, Caster = caster, Spell = spell.Id, Level = castAt,
-                        Dc = caster.SaveDc, Duration = Duration.NextTurnEnd, Owner = target,
+                        Dc = DcFor(caster, spell), Duration = Duration.NextTurnEnd, Owner = target,
                         Command = effect.Command,
                     }, fight);
 
@@ -1087,12 +1343,47 @@ namespace Core.Magic
 
                     Cell to = aim.Square.Value;
 
-                    // a seen, empty square within the spell's range
+                    // a seen, empty square within the spell's range - or, for Dimension Door, one
+                    // it can visualize or describe
                     bool reachable = fight.Field.Where(target) is Cell from &&
                                      Battlefield.Distance(from, to) <= spell.RangeAt(caster.Actor.Level) &&
-                                     fight.Field.CanSee(from, to);
+                                     (effect.Unseen || fight.Field.CanSee(from, to));
 
-                    if (!reachable || fight.Field.Occupies(to, target) || !fight.Field.Map.IsPassable(to))
+                    // SRD 5.2.1 Dimension Door: the one willing creature beside you, to a space
+                    // within 5 feet of where you arrive
+                    Actor rider = effect.Passenger
+                        ? aim.Creatures.FirstOrDefault(a => !ReferenceEquals(a, target) &&
+                                                            fight.Field.Distance(target, a) <= 1)
+                        : null;
+
+                    Cell? riderTo = rider == null
+                        ? null
+                        : fight.Field.Map.Cells.Where(c => fight.Field.Map.IsPassable(c) && c != to &&
+                                                           Battlefield.Distance(c, to) <= 1 &&
+                                                           !fight.Field.Occupies(c, rider))
+                                   .OrderBy(c => c.Y).ThenBy(c => c.X)
+                                   .Select(c => (Cell?)c).FirstOrDefault();
+
+                    // arriving in an occupied space: 4d6 force to each traveller, and it fails
+                    bool blocked = fight.Field.Occupies(to, target) || !fight.Field.Map.IsPassable(to) ||
+                                   rider != null && !riderTo.HasValue;
+
+                    if (reachable && effect.Unseen && blocked)
+                    {
+                        int hurt = 0;
+
+                        foreach (Actor traveller in new[] { target, rider }.Where(a => a != null))
+                        {
+                            int took = traveller.Suffer(Math.Max(0, _resolver.Roll(DiceRoll.Parse("4d6"), caster.Actor)),
+                                                        DamageType.Force);
+                            fight.Hurt(caster.Actor, traveller, took);
+                            hurt += took;
+                        }
+
+                        return new Landing(effect, target, false, hurt);
+                    }
+
+                    if (!reachable || blocked)
                         return new Landing(effect, target, false);
 
                     // Forcecage: magical travel out of it needs a Charisma save
@@ -1107,6 +1398,9 @@ namespace Core.Magic
                     if (!fight.Field.Place(target, to)) return new Landing(effect, target, false);
 
                     fight.Observer.Moved(target, new[] { to });
+
+                    if (rider != null && riderTo.HasValue && fight.Field.Place(rider, riderTo.Value))
+                        fight.Observer.Moved(rider, new[] { riderTo.Value });
 
                     return new Landing(effect, target, true);
                 }
@@ -1191,8 +1485,13 @@ namespace Core.Magic
                         Place(new Placement
                         {
                             Target = target, Caster = caster, Spell = spell.Id, Level = castAt,
-                            Condition = effect.Condition, Dc = caster.SaveDc,
-                            Escape = effect.Escape,
+                            Condition = effect.Condition, Dc = DcFor(caster, spell),
+                            Escape = effect.Escape, EscapeSkill = effect.EscapeSkill,
+                            EscapeDc = effect.EscapeDc,
+                            EndsOnAct = effect.EndsOnAct,
+                            WhileInZone = effect.WhileInZone,
+                            PermanentAfterRounds = effect.PermanentAfterRounds,
+                            Since = fight?.Round ?? 0,
                             RepeatSave = effect.RepeatSave ? effect.Save : effect.EndSave,
                             Duration = effect.Duration,
                             Owner = effect.Until == Until.Caster ? caster.Actor : target,
@@ -1256,9 +1555,19 @@ namespace Core.Magic
                     Place(new Placement
                     {
                         Target = target, Caster = caster, Spell = spell.Id, Level = castAt,
-                        Dc = caster.SaveDc, Duration = effect.Duration,
+                        Dc = DcFor(caster, spell), Duration = effect.Duration,
                         Owner = effect.Until == Until.Caster ? caster.Actor : target,
+                        // Slow: a save at the end of each of its turns ends it
+                        RepeatSave = effect.RepeatSave ? effect.Save : effect.EndSave,
+                        Escape = effect.Escape, EscapeSkill = effect.EscapeSkill,
+                        EscapeDc = effect.EscapeDc,
+                        GoneAfterRounds = effect.GoneAfterRounds, GoneTags = effect.GoneTags,
+                        EndsAtZero = effect.EndsAtZero,
+                        Since = fight?.Round ?? 0,
                     }, fight);
+
+                    // Banishment, Maze: off the board until the spell ends on it
+                    if (effect.Banishes) fight?.Banish(target, spell.Id);
 
                     return new Landing(effect, target, true, raise > 0 ? raise : effect.Sway, attempt);
                 }
@@ -1398,6 +1707,13 @@ namespace Core.Magic
                 EasesPerLongRest = effect.EasesPerLongRest,
                 SizeStep = effect.SizeStep,
                 Rewrite = Rewrite(effect, caster),
+                FlySpeed = effect.FlySpeed,
+                NoAttacks = effect.NoAttacks,
+                NoCasting = effect.NoCasting,
+                ImmuneTo = effect.Immune,
+                WardsSpell = effect.WardsSpell,
+                IfSeen = effect.IfSeen,
+                NotVsTruesight = effect.NotVsTruesight,
             };
 
         // Shillelagh: the weapons it names swing with the caster's spellcasting ability and roll
@@ -1436,7 +1752,19 @@ namespace Core.Magic
             // what it takes to shake it: the caster's DC, and the check or the save
             public int Dc;
             public Ability? Escape;
+            public Skill EscapeSkill;
+            public int EscapeDc;
             public Ability? RepeatSave;
+
+            // Banishment's full minute, counted from the round it landed
+            public int GoneAfterRounds;
+            public bool EndsAtZero;
+            public bool EndsOnAct;
+            public bool WhileInZone;
+            public int PermanentAfterRounds;
+            public string RaisesAs = "";
+            public IReadOnlyList<string> GoneTags = Array.Empty<string>();
+            public int Since;
 
             // how long, and whose turn counts it
             public Duration Duration;
@@ -1475,6 +1803,8 @@ namespace Core.Magic
 
             public bool NeedsWatching =>
                 Timed || RepeatSave.HasValue || EndSave.HasValue || Command != Command.None ||
+                GoneAfterRounds > 0 || EndsAtZero || EndsOnAct || WhileInZone ||
+                PermanentAfterRounds > 0 || RaisesAs.Length > 0 ||
                 Flees ||
                 EndsOnDamage != DamageEnds.None || SaveOnDamage || !Burns.IsNothing ||
                 !Later.IsNothing;
@@ -1488,6 +1818,71 @@ namespace Core.Magic
             _placed.Add(placement);
 
             if (fight != null && placement.NeedsWatching) Watch(fight);
+        }
+
+        // SRD 5.2.1 Invisibility: it ends "immediately after the target makes an attack roll, deals
+        // damage, or casts a spell"
+        void Unveil(Actor actor, Encounter fight)
+        {
+            if (actor == null) return;
+
+            fight?.Reveal(actor);
+
+            foreach (string spell in _placed.Where(p => ReferenceEquals(p.Target, actor) && p.EndsOnAct)
+                                            .Select(p => p.Spell).Distinct().ToList())
+                Lift(actor, spell, fight);
+        }
+
+        static string RevertedId(string spell) => spell + ".reverted";
+
+        // a sway that only helps its bearer: no penalty, no mark, nothing leaning against it
+        static bool Kindly(SpellEffect effect) =>
+            effect.Sway >= 0 && effect.Mark.IsNothing &&
+            (effect.Leans & (Leans.DisadvantageOnAttacks | Leans.AdvantageAgainst |
+                             Leans.DisadvantageOnChecks | Leans.DisadvantageOnSaves)) == 0;
+
+        // the DC: the caster's, or 8 + proficiency + the ability the spell names (a Dragonborn's
+        // breath is Constitution's, SRD 5.2.1 p.84)
+        static int DcFor(Caster caster, Spell spell) =>
+            spell?.DcAbility is Ability own
+                ? 8 + caster.Actor.ProficiencyBonus + caster.Actor.AbilityModifier(own)
+                : caster.SaveDc;
+
+        // a concentration thread let go of without ending what it did: Flesh to Stone's stone
+        void Forget(Actor caster, Actor target, string spell)
+        {
+            if (_held.TryGetValue(caster, out List<Thread> threads))
+                threads.RemoveAll(t => ReferenceEquals(t.Target, target) && t.SpellId == spell);
+        }
+
+        // SRD 5.2.1 Dispel Magic on "a magical effect", and Disintegrate on "a creation of magical
+        // force": every spell with a zone on the square ends - Dispel Magic's at or below the slot,
+        // or on a spellcasting check against 10 + its level
+        int DispelAt(Caster caster, Cell square, int castAt, Encounter fight, bool forceOnly)
+        {
+            int ended = 0;
+
+            foreach (SpellZone zone in _zones.Where(z => z.fight == fight && z.zone.Covers(fight.Field, square))
+                                             .Select(z => z.zone).ToList())
+            {
+                if (forceOnly && !zone.Spell.ForceCreation) continue;
+
+                int level = zone.CastAt;
+
+                bool ends = forceOnly || level <= castAt ||
+                            Checks.Check(_resolver, caster.Actor, caster.Ability, 10 + level).Succeeded;
+
+                if (!ends) continue;
+
+                Actor owner = zone.Caster.Actor;
+
+                if (owner.Concentrating == zone.Source) Release(owner);
+                else EndZones(owner, zone.Source);
+
+                ended++;
+            }
+
+            return ended;
         }
 
         // ending a spell on one creature: its boons, the conditions it put there, its books - and
@@ -1507,7 +1902,8 @@ namespace Core.Magic
 
             _placed.RemoveAll(p => ReferenceEquals(p.Target, target) && p.Spell == spell);
 
-            Ending(going.Select(p => p.Caster).FirstOrDefault(c => c != null), spell, target, fight);
+            Ending(going.Select(p => p.Caster).FirstOrDefault(c => c != null), spell, target,
+                   fight ?? going.Select(p => p.Fight).FirstOrDefault(f => f != null));
         }
 
         // one placement over - a timed blinding, a sleep shaken off - without touching the rest
@@ -1531,6 +1927,9 @@ namespace Core.Magic
         // the effects a spell has for the moment it ends on a creature
         void Ending(Caster caster, string spellId, Actor target, Encounter fight)
         {
+            // Banishment, Maze: it reappears where it left, or on the nearest free square
+            if (target != null) fight?.Recall(target, spellId);
+
             if (caster == null || target == null) return;
 
             Spell spell = caster.Find(spellId);
@@ -1561,18 +1960,54 @@ namespace Core.Magic
                                                          p.Condition == condition &&
                                                          p.Escape.HasValue);
 
+            return Escape(fight, turn, hold);
+        }
+
+        // SRD 5.2.1 Maze: a Study action and a DC 20 Intelligence (Investigation) check; a success
+        // escapes, and the spell ends. null when nothing it is under can be escaped this way
+        public Attempt Study(Encounter fight, Turn turn)
+        {
+            if (turn == null || turn.Ended) return null;
+
+            Placement hold = _placed.FirstOrDefault(p => ReferenceEquals(p.Target, turn.Actor) &&
+                                                         p.Condition == Condition.None &&
+                                                         p.Escape.HasValue);
+
+            return Escape(fight, turn, hold);
+        }
+
+        public bool CanStudy(Actor creature) =>
+            _placed.Any(p => ReferenceEquals(p.Target, creature) && p.Condition == Condition.None &&
+                             p.Escape.HasValue);
+
+        Attempt Escape(Encounter fight, Turn turn, Placement hold)
+        {
             if (hold == null || !turn.Take(Spend.Action)) return null;
 
-            Skill skill = hold.Escape == Ability.Dexterity ? Skill.Acrobatics : Skill.Athletics;
+            Skill skill = hold.EscapeSkill != Skill.None
+                ? hold.EscapeSkill
+                : hold.Escape == Ability.Dexterity ? Skill.Acrobatics : Skill.Athletics;
 
-            Attempt attempt = Checks.Check(_resolver, turn.Actor, skill, hold.Dc);
+            Attempt attempt = Checks.Check(_resolver, turn.Actor, skill,
+                                           hold.EscapeDc > 0 ? hold.EscapeDc : hold.Dc);
 
-            if (attempt.Succeeded)
+            if (!attempt.Succeeded) return attempt;
+
+            if (hold.Condition == Condition.None)
             {
-                turn.Actor.Remove(condition);
+                // out of the maze: the spell ends on it, and it comes back
+                Lift(turn.Actor, hold.Spell, fight);
+
+                if (hold.Caster != null && hold.Caster.Actor.Concentrating == hold.Spell &&
+                    !_placed.Any(p => p.Spell == hold.Spell && ReferenceEquals(p.Caster, hold.Caster)))
+                    Release(hold.Caster.Actor);
+            }
+            else
+            {
+                turn.Actor.Remove(hold.Condition);
                 _placed.Remove(hold);
 
-                fight?.Observer.ConditionChanged(turn.Actor, condition, false);
+                fight?.Observer.ConditionChanged(turn.Actor, hold.Condition, false);
             }
 
             return attempt;
@@ -1610,7 +2045,10 @@ namespace Core.Magic
             fight.TurnStarting += turn => TurnStarts(fight, turn);
             fight.TurnEnding += turn => TurnEnds(fight, turn.Actor);
             fight.Damaged += (attacker, target, amount) => Hurt(fight, attacker, target);
+            fight.Damaged += (attacker, target, amount) => Unveil(attacker, fight);
+            fight.AttackRolled += attacker => Unveil(attacker, fight);
             fight.Moved += _ => Refresh(fight);
+            fight.Stepped += _ => Refresh(fight);
         }
 
         // somebody's turn is starting: a thing that lasted until then ends; a thing that lasts
@@ -1638,6 +2076,55 @@ namespace Core.Magic
                     placed.Caster != null)
                 {
                     if (fight.Dash(turn)) RunFrom(fight, turn, placed.Caster.Actor);
+                }
+
+                // SRD 5.2.1 Banishment: held for the full minute, a creature of another plane
+                // doesn't come back, and one of this plane does - the spell is over either way
+                if (placed.GoneAfterRounds > 0 && ReferenceEquals(placed.Target, whose) &&
+                    fight.Round - placed.Since >= placed.GoneAfterRounds)
+                {
+                    if (placed.GoneTags.Any(whose.Is))
+                    {
+                        _placed.RemoveAll(p => ReferenceEquals(p.Target, whose) && p.Spell == placed.Spell);
+                        whose.Boons.EndFrom(placed.Spell);
+                        fight.Dismiss(whose);
+                    }
+                    else
+                    {
+                        Lift(whose, placed.Spell, fight);
+                    }
+
+                    if (placed.Caster != null && placed.Caster.Actor.Concentrating == placed.Spell &&
+                        !_placed.Any(p => p.Spell == placed.Spell && ReferenceEquals(p.Caster, placed.Caster)))
+                        Release(placed.Caster.Actor);
+
+                    continue;
+                }
+
+                // SRD 5.2.1 Flesh to Stone: held the full minute, the Petrified stays until Greater
+                // Restoration ends it - the spell is over and dropping it no longer lifts it
+                if (placed.PermanentAfterRounds > 0 && placed.Caster != null &&
+                    ReferenceEquals(placed.Caster.Actor, whose) &&
+                    fight.Round - placed.Since >= placed.PermanentAfterRounds &&
+                    placed.Condition == Condition.Petrified && placed.Target.Has(Condition.Petrified))
+                {
+                    Actor stone = placed.Target;
+
+                    _placed.RemoveAll(p => ReferenceEquals(p.Target, stone) && p.Spell == placed.Spell);
+                    Forget(placed.Caster.Actor, stone, placed.Spell);
+
+                    if (placed.Caster.Actor.Concentrating == placed.Spell) Release(placed.Caster.Actor);
+
+                    continue;
+                }
+
+                // Finger of Death: the start of the caster's next turn, and the dead rise
+                if (placed.RaisesAs.Length > 0 && placed.Caster != null &&
+                    ReferenceEquals(placed.Caster.Actor, whose))
+                {
+                    _placed.Remove(placed);
+                    fight.Raise(placed.Target, placed.RaisesAs, whose);
+                    continue;
                 }
 
                 bool mine = ReferenceEquals(placed.Owner ?? placed.Target, whose);
@@ -1793,7 +2280,9 @@ namespace Core.Magic
 
                 bool ends = placed.EndsOnDamage == DamageEnds.Any ||
                             placed.EndsOnDamage == DamageEnds.CasterSide && attacker != null &&
-                            placed.Caster != null && attacker.Side == placed.Caster.Actor.Side;
+                            placed.Caster != null && attacker.Side == placed.Caster.Actor.Side ||
+                            // Gaseous Form: it ends on a target that drops to 0 hit points
+                            placed.EndsAtZero && target.IsDown;
 
                 if (ends)
                 {
@@ -1828,6 +2317,10 @@ namespace Core.Magic
         void SaveOnce(Encounter fight, Placement hold, Advantage extra)
         {
             Actor creature = hold.Target;
+
+            // the same advantage on a save to end it
+            if (hold.Condition != Condition.None && creature.HasAdvantage("save_vs:" + hold.Condition.Id()))
+                extra = extra.And(Advantage.Advantage);
 
             Attempt save = Checks.Save(_resolver, creature, hold.RepeatSave.Value, hold.Dc, extra);
 
@@ -1961,6 +2454,29 @@ namespace Core.Magic
         // whoever stepped out
         void Refresh(Encounter fight)
         {
+            // SRD 5.2.1 Web: "Restrained ... while in the webs"
+            foreach (Placement held in _placed.Where(p => p.WhileInZone).ToList())
+            {
+                SpellZone zone = _zones.Where(z => z.fight == fight && z.zone.Source == held.Spell)
+                                       .Select(z => z.zone).FirstOrDefault();
+
+                if (zone == null || !(fight.Field.Where(held.Target) is Cell at) ||
+                    !zone.Covers(fight.Field, at))
+                    Drop(held, fight);
+            }
+
+            // Moonbeam: out of the beam, it can shape-shift again
+            foreach ((Encounter where, SpellZone zone) in _zones.Where(z => z.fight == fight).ToList())
+            {
+                if (!zone.Acts.Any(e => e.RevertsShape)) continue;
+
+                string reverted = RevertedId(zone.Source);
+
+                foreach (Actor actor in fight.Actors.Where(a => a.Boons.All.Any(b => b.Id == reverted)))
+                    if (!(fight.Field.Where(actor) is Cell at) || !zone.Covers(fight.Field, at))
+                        actor.Boons.EndId(reverted);
+            }
+
             foreach ((Encounter where, SpellZone zone) in _zones.Where(z => z.fight == fight).ToList())
             {
                 List<SpellEffect> auras = zone.Auras.ToList();
@@ -2034,6 +2550,10 @@ namespace Core.Magic
             var landings = new List<Landing>();
             var saves = new Dictionary<Actor, Attempt>();
             Aim aim = Aim.At(creature);
+
+            // Spirit Guardians: radiant or necrotic, as picked at the cast
+            if (_chosenType.TryGetValue((zone.Caster.Actor, zone.Spell.Id), out DamageType picked))
+                aim = aim.Choosing(picked);
 
             bool previousLanded = true;
 
@@ -2164,6 +2684,8 @@ namespace Core.Magic
                 if (any?.Caster != null &&
                     !ending.Any(e => ReferenceEquals(e.target, thread.Target)))
                     ending.Add((any.Caster, thread.Target, any.Fight));
+                else if (any?.Caster == null)
+                    any?.Fight?.Recall(thread.Target, spellId);
 
                 thread.Target.Boons.EndFrom(spellId);
 

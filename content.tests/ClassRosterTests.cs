@@ -17,7 +17,7 @@ namespace Content.Tests
         [InlineData("rogue", "expertise", "sneak_attack", "cunning_action", "uncanny_dodge", "evasion", "thieves_cant")]
         [InlineData("mage", "arcane_spellcasting", "ritual_adept")]
         [InlineData("cleric", "divine_spellcasting", "channel_divinity", "turn_undead", "preserve_life", "divine_strike")]
-        [InlineData("paladin", "lay_on_hands", "oath_spellcasting", "paladin_channel_divinity", "paladin_weapon_mastery", "divine_smite")]
+        [InlineData("paladin", "lay_on_hands", "oath_spellcasting", "paladin_channel_divinity", "paladin_weapon_mastery", "paladins_smite")]
         [InlineData("druid", "primal_spellcasting", "wild_shape")]
         public void EveryFeatureTheRosterKeepsIsThere(string cls, params string[] features)
         {

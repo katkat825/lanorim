@@ -30,7 +30,14 @@
         {
           "primitive": "dispel",
           "reach": "creature",
-          "note": "SRD 5.2.1: spells of the dispel's level or lower end; higher ones need a spellcasting ability check against 10 + their level"
+          "mode": "creature",
+          "note": "SRD 5.2.1: one creature, object or magical effect within range. Every spell of level 3 or lower on it ends; a higher one ends on a spellcasting check against 10 + its level. Cast with a slot of 4+, a spell of that level or lower ends outright"
+        },
+        {
+          "primitive": "dispel",
+          "reach": "place",
+          "mode": "effect",
+          "note": "or a magical effect on the board: every spell holding the aimed square"
         }
       ]
     },
@@ -63,12 +70,11 @@
       "approximated": true,
       "effects": [
         {
-          "primitive": "shift",
-          "reach": "creatures",
-          "targets": 1,
-          "extra_targets_per_level": 1,
+          "primitive": "sway",
+          "reach": "creature",
+          "fly_speed": 60,
           "duration": "concentration",
-          "note": "a terrain-ignoring state on authored maps, not general 3D flight (v1_species_roster.md takes the same line with Draconic Flight)"
+          "note": "SRD 5.2.1 (SRD p.133): a willing creature you touch gains a Fly Speed of 60 feet and can hover, concentration up to 10 minutes. v1 has no altitude: flying is its speed of 60 for the duration, and it passes over difficult ground and zones on the ground. It never falls. Kept under the SRD name by Kathleen (2026-09-25) without the extra creature per slot level above 3"
         }
       ]
     },
@@ -129,14 +135,21 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "burst",
-          "radius": 4,
-          "sway": -2,
-          "touches": "attacks|armor_class",
+          "reach": "square",
+          "length": 8,
+          "up_to": 6,
+          "spares_allies": true,
           "save": "wis",
           "on_save": "negates",
+          "repeat_save": true,
+          "sway": -2,
+          "touches": "saves|armor_class",
+          "leans_on": "dex",
+          "speed_change": "half",
+          "no_reactions": true,
+          "action_or_bonus": true,
           "duration": "concentration",
-          "note": "SRD halves speed, takes -2 AC and Dex saves, removes reactions, limits the turn, and allows a repeat save. v1 keeps only a penalty"
+          "note": "SRD 5.2.1 (SRD p.163): up to six creatures of your choice in a 40-foot Cube within 120 feet, Wis save. An affected target's Speed is halved, it takes -2 to AC and Dex saves, can't take Reactions, takes an action or a Bonus Action but not both, and makes only one attack with the Attack action; it repeats the save at the end of each of its turns. Not carried: the 25 percent chance a spell with a Somatic component fails - v1 doesn't track components (Kathleen, 2026-09-25)"
         }
       ]
     },
@@ -146,16 +159,15 @@
       "school": "conjuration",
       "range": 0,
       "concentration": true,
-      "classes": ["cleric", "paladin"],
+      "classes": ["cleric"],
       "effects": [
         {
           "primitive": "zone",
           "reach": "around",
           "radius": 3,
-          "rough": true,
           "spares_allies": true,
           "duration": "concentration",
-          "note": "SRD 5.2.1: a 15-foot emanation that moves with you; a creature you did not spare has its speed halved in it, which on the grid is difficult terrain"
+          "note": "SRD 5.2.1: a 15-foot emanation that moves with you; the creatures you choose (your side) are spared"
         },
         {
           "primitive": "damage",
@@ -163,10 +175,19 @@
           "pulses": "enter|end_turn",
           "amount": "3d8",
           "per_extra_level": "1d8",
-          "damage_type": "radiant",
+          "damage_type": "chosen",
           "save": "wis",
           "on_save": "half",
-          "note": "SRD 5.2.1: when the emanation reaches a creature, or it enters or ends its turn there - once per turn. an evil caster's spirits deal necrotic instead; v1 reads it as radiant for everyone, flagged in the build notes"
+          "note": "SRD 5.2.1: when the emanation reaches a creature, or it enters or ends its turn there - once per turn: Wis save, 3d8 Radiant (good or neutral caster) or Necrotic (evil), half on a success. v1 has no alignment rule for it, so the caster picks at the cast",
+          "damage_choices": ["radiant", "necrotic"]
+        },
+        {
+          "primitive": "sway",
+          "reach": "zone",
+          "while_inside": true,
+          "speed_change": "half",
+          "duration": "concentration",
+          "note": "SRD 5.2.1: any other creature's Speed is halved in the Emanation"
         }
       ]
     }

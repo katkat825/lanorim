@@ -45,6 +45,9 @@ namespace Content.Sheet
 
             if (!Actor.CanAct) return "cannot act";
 
+            // Moonbeam: a creature it turned back can't shift again until it leaves the beam
+            if (Actor.Boons.NoShifting) return "held in its true form";
+
             if (turn != null && !turn.Can(Spend.Bonus)) return "no bonus action left";
 
             return null;
@@ -116,15 +119,23 @@ namespace Content.Sheet
 
         // everything per-rest comes back on a short rest except Wild Shape, which SRD 5.2.1
         // returns one use at a time - the rest wait for a long rest
+        // SRD 5.2.1: what a short rest gives back - every use, one use (Rage, Second Wind,
+        // Channel Divinity, Wild Shape), or nothing (Lay on Hands, Indomitable)
         void RestoreAfterShortRest()
         {
-            Feature shape = WildShape;
+            foreach (string id in _spent.Keys.ToList())
+            {
+                Feature feature = Features.FirstOrDefault(f => f.Id == id);
 
-            int shapes = shape != null && _spent.TryGetValue(shape.Id, out int used) ? used : 0;
+                Recharge recharge = feature?.Recharge ?? Recharge.Short;
 
-            _spent.Clear();
-
-            if (shapes > 1) _spent[shape.Id] = shapes - 1;
+                if (recharge == Recharge.Short) _spent.Remove(id);
+                else if (recharge == Recharge.ShortOne)
+                {
+                    if (_spent[id] > 1) _spent[id]--;
+                    else _spent.Remove(id);
+                }
+            }
         }
     }
 }

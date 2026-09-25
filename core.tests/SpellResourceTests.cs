@@ -94,12 +94,13 @@ namespace Core.Tests
 
         // the half caster's two defining facts, both from the table rather than from code
         [Fact]
-        public void AHalfCasterHasNothingAtFirstLevel()
+        public void AHalfCasterHasTwoFirstLevelSlotsAtFirstLevel()
         {
+            // SRD 5.2.1 (p.53): a Paladin casts from level 1, with two level 1 slots
             var slots = SpellSlots.For(CasterProgression.Half, 1);
 
-            Assert.Equal(0, slots.Highest);
-            Assert.False(slots.CanPay(1));
+            Assert.Equal(1, slots.Highest);
+            Assert.Equal(2, slots.Maximum(1));
         }
 
         [Fact]
@@ -221,9 +222,12 @@ namespace Core.Tests
         }
 
         [Fact]
-        public void AHalfCasterGetsASmallerPoolAndNoneAtAllAtFirstLevel()
+        public void AHalfCasterGetsASmallerPoolRoundingItsLevelUp()
         {
-            Assert.Equal(0, SpellPoints.PoolFor(CasterProgression.Half, 1));
+            // half its levels, rounded up (SRD 5.2.1 p.25): a level 1 Paladin pools like a level 1
+            // full caster
+            Assert.Equal(SpellPoints.PoolFor(CasterProgression.Full, 1),
+                         SpellPoints.PoolFor(CasterProgression.Half, 1));
 
             Assert.True(SpellPoints.PoolFor(CasterProgression.Half, 10) <
                         SpellPoints.PoolFor(CasterProgression.Full, 10));

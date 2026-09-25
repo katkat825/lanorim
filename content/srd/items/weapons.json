@@ -1,121 +1,181 @@
 {
-  "_": "SRD 5.2.1 weapons, CC-BY-4.0. Ranges are in squares: one square is five feet.",
+  "_": "SRD 5.2.1 weapons (p.91), CC-BY-4.0. Ranges are in squares: one square is five feet. category is simple or martial (class training reads it); the properties are SRD's (p.89-90): light, heavy, thrown (a melee weapon that can be thrown), versatile (the two-handed damage), finesse and reach. Ammunition and Loading are not tracked - a bow fires freely - and Weapon Mastery is still an open question. Costs are in gold, silver rounded up to 1 (the gold-only decision). The Musket and Pistol are left out for now (a tone call).",
 
   "items": [
     {
       "id": "club", "kind": "weapon", "cost": 1, "slot": "main_hand",
-      "weapon": { "damage": "1d4", "damage_type": "bludgeoning" }
+      "weapon": { "damage": "1d4", "damage_type": "bludgeoning", "category": "simple",
+                  "light": true }
     },
     {
       "id": "dagger", "kind": "weapon", "cost": 2, "slot": "main_hand",
-      "weapon": { "damage": "1d4", "damage_type": "piercing", "finesse": true,
-                  "ability": "dex", "range": 4, "long_range": 12 }
+      "weapon": { "damage": "1d4", "damage_type": "piercing", "category": "simple",
+                  "finesse": true, "ability": "dex", "light": true, "thrown": true, "range": 4,
+                  "long_range": 12 }
     },
     {
       "id": "greatclub", "kind": "weapon", "cost": 1, "slot": "two_hand",
-      "weapon": { "damage": "1d8", "damage_type": "bludgeoning" }
+      "weapon": { "damage": "1d8", "damage_type": "bludgeoning", "category": "simple" }
     },
     {
       "id": "handaxe", "kind": "weapon", "cost": 5, "slot": "main_hand",
-      "weapon": { "damage": "1d6", "damage_type": "slashing", "range": 4, "long_range": 12 }
+      "weapon": { "damage": "1d6", "damage_type": "slashing", "category": "simple", "light": true,
+                  "thrown": true, "range": 4, "long_range": 12 }
     },
     {
       "id": "javelin", "kind": "weapon", "cost": 1, "slot": "main_hand",
-      "weapon": { "damage": "1d6", "damage_type": "piercing", "range": 6, "long_range": 24 }
+      "weapon": { "damage": "1d6", "damage_type": "piercing", "category": "simple", "thrown": true,
+                  "range": 6, "long_range": 24 }
+    },
+    {
+      "id": "light_hammer", "kind": "weapon", "cost": 2, "slot": "main_hand",
+      "weapon": { "damage": "1d4", "damage_type": "bludgeoning", "category": "simple",
+                  "light": true, "thrown": true, "range": 4, "long_range": 12 }
     },
     {
       "id": "mace", "kind": "weapon", "cost": 5, "slot": "main_hand",
-      "weapon": { "damage": "1d6", "damage_type": "bludgeoning" }
+      "weapon": { "damage": "1d6", "damage_type": "bludgeoning", "category": "simple" }
     },
     {
       "id": "quarterstaff", "kind": "weapon", "cost": 1, "slot": "main_hand",
-      "weapon": { "damage": "1d6", "damage_type": "bludgeoning" }
+      "weapon": { "damage": "1d6", "damage_type": "bludgeoning", "category": "simple",
+                  "versatile": "1d8" }
     },
     {
       "id": "sickle", "kind": "weapon", "cost": 1, "slot": "main_hand",
-      "weapon": { "damage": "1d4", "damage_type": "slashing" }
+      "weapon": { "damage": "1d4", "damage_type": "slashing", "category": "simple", "light": true }
     },
     {
       "id": "spear", "kind": "weapon", "cost": 1, "slot": "main_hand",
-      "weapon": { "damage": "1d6", "damage_type": "piercing", "range": 4, "long_range": 12 }
+      "weapon": { "damage": "1d6", "damage_type": "piercing", "category": "simple", "thrown": true,
+                  "range": 4, "long_range": 12, "versatile": "1d8" }
+    },
+    {
+      "id": "dart", "kind": "weapon", "cost": 1, "slot": "main_hand",
+      "weapon": { "damage": "1d4", "damage_type": "piercing", "category": "simple",
+                  "finesse": true, "ability": "dex", "thrown": true, "range": 4, "long_range": 12 }
     },
     {
       "id": "light_crossbow", "kind": "weapon", "cost": 25, "slot": "two_hand",
-      "weapon": { "damage": "1d8", "damage_type": "piercing", "ability": "dex",
-                  "range": 16, "long_range": 64 }
+      "weapon": { "damage": "1d8", "damage_type": "piercing", "category": "simple",
+                  "ability": "dex", "range": 16, "long_range": 64 }
     },
     {
       "id": "shortbow", "kind": "weapon", "cost": 25, "slot": "two_hand",
-      "weapon": { "damage": "1d6", "damage_type": "piercing", "ability": "dex",
-                  "range": 16, "long_range": 64 }
+      "weapon": { "damage": "1d6", "damage_type": "piercing", "category": "simple",
+                  "ability": "dex", "range": 16, "long_range": 64 }
     },
     {
       "id": "sling", "kind": "weapon", "cost": 1, "slot": "main_hand",
-      "weapon": { "damage": "1d4", "damage_type": "bludgeoning", "ability": "dex",
-                  "range": 6, "long_range": 24 }
+      "weapon": { "damage": "1d4", "damage_type": "bludgeoning", "category": "simple",
+                  "ability": "dex", "range": 6, "long_range": 24 }
     },
-
     {
       "id": "battleaxe", "kind": "weapon", "cost": 10, "slot": "main_hand",
-      "weapon": { "damage": "1d8", "damage_type": "slashing" }
+      "weapon": { "damage": "1d8", "damage_type": "slashing", "category": "martial",
+                  "versatile": "1d10" }
     },
     {
       "id": "flail", "kind": "weapon", "cost": 10, "slot": "main_hand",
-      "weapon": { "damage": "1d8", "damage_type": "bludgeoning" }
+      "weapon": { "damage": "1d8", "damage_type": "bludgeoning", "category": "martial" }
     },
     {
       "id": "glaive", "kind": "weapon", "cost": 20, "slot": "two_hand",
-      "weapon": { "damage": "1d10", "damage_type": "slashing", "reach": 2 }
+      "weapon": { "damage": "1d10", "damage_type": "slashing", "category": "martial",
+                  "heavy": true, "reach": 2 }
     },
     {
       "id": "greataxe", "kind": "weapon", "cost": 30, "slot": "two_hand",
-      "weapon": { "damage": "1d12", "damage_type": "slashing" }
+      "weapon": { "damage": "1d12", "damage_type": "slashing", "category": "martial",
+                  "heavy": true }
     },
     {
       "id": "greatsword", "kind": "weapon", "cost": 50, "slot": "two_hand",
-      "weapon": { "damage": "2d6", "damage_type": "slashing" }
+      "weapon": { "damage": "2d6", "damage_type": "slashing", "category": "martial", "heavy": true }
     },
     {
       "id": "halberd", "kind": "weapon", "cost": 20, "slot": "two_hand",
-      "weapon": { "damage": "1d10", "damage_type": "slashing", "reach": 2 }
+      "weapon": { "damage": "1d10", "damage_type": "slashing", "category": "martial",
+                  "heavy": true, "reach": 2 }
+    },
+    {
+      "id": "lance", "kind": "weapon", "cost": 10, "slot": "two_hand",
+      "weapon": { "damage": "1d10", "damage_type": "piercing", "category": "martial",
+                  "heavy": true, "reach": 2 }
     },
     {
       "id": "longsword", "kind": "weapon", "cost": 15, "slot": "main_hand",
-      "weapon": { "damage": "1d8", "damage_type": "slashing" }
+      "weapon": { "damage": "1d8", "damage_type": "slashing", "category": "martial",
+                  "versatile": "1d10" }
     },
     {
       "id": "maul", "kind": "weapon", "cost": 10, "slot": "two_hand",
-      "weapon": { "damage": "2d6", "damage_type": "bludgeoning" }
+      "weapon": { "damage": "2d6", "damage_type": "bludgeoning", "category": "martial",
+                  "heavy": true }
     },
     {
       "id": "morningstar", "kind": "weapon", "cost": 15, "slot": "main_hand",
-      "weapon": { "damage": "1d8", "damage_type": "piercing" }
+      "weapon": { "damage": "1d8", "damage_type": "piercing", "category": "martial" }
+    },
+    {
+      "id": "pike", "kind": "weapon", "cost": 5, "slot": "two_hand",
+      "weapon": { "damage": "1d10", "damage_type": "piercing", "category": "martial",
+                  "heavy": true, "reach": 2 }
     },
     {
       "id": "rapier", "kind": "weapon", "cost": 25, "slot": "main_hand",
-      "weapon": { "damage": "1d8", "damage_type": "piercing", "finesse": true, "ability": "dex" }
+      "weapon": { "damage": "1d8", "damage_type": "piercing", "category": "martial",
+                  "finesse": true, "ability": "dex" }
     },
     {
       "id": "scimitar", "kind": "weapon", "cost": 25, "slot": "main_hand",
-      "weapon": { "damage": "1d6", "damage_type": "slashing", "finesse": true, "ability": "dex" }
+      "weapon": { "damage": "1d6", "damage_type": "slashing", "category": "martial",
+                  "finesse": true, "ability": "dex", "light": true }
     },
     {
       "id": "shortsword", "kind": "weapon", "cost": 10, "slot": "main_hand",
-      "weapon": { "damage": "1d6", "damage_type": "piercing", "finesse": true, "ability": "dex" }
+      "weapon": { "damage": "1d6", "damage_type": "piercing", "category": "martial",
+                  "finesse": true, "ability": "dex", "light": true }
+    },
+    {
+      "id": "trident", "kind": "weapon", "cost": 5, "slot": "main_hand",
+      "weapon": { "damage": "1d8", "damage_type": "piercing", "category": "martial",
+                  "thrown": true, "range": 4, "long_range": 12, "versatile": "1d10" }
     },
     {
       "id": "warhammer", "kind": "weapon", "cost": 15, "slot": "main_hand",
-      "weapon": { "damage": "1d8", "damage_type": "bludgeoning" }
+      "weapon": { "damage": "1d8", "damage_type": "bludgeoning", "category": "martial",
+                  "versatile": "1d10" }
+    },
+    {
+      "id": "war_pick", "kind": "weapon", "cost": 5, "slot": "main_hand",
+      "weapon": { "damage": "1d8", "damage_type": "piercing", "category": "martial",
+                  "versatile": "1d10" }
+    },
+    {
+      "id": "whip", "kind": "weapon", "cost": 2, "slot": "main_hand",
+      "weapon": { "damage": "1d4", "damage_type": "slashing", "category": "martial",
+                  "finesse": true, "ability": "dex", "reach": 2 }
+    },
+    {
+      "id": "blowgun", "kind": "weapon", "cost": 10, "slot": "main_hand",
+      "weapon": { "damage": "1", "damage_type": "piercing", "category": "martial",
+                  "ability": "dex", "range": 5, "long_range": 20 }
+    },
+    {
+      "id": "hand_crossbow", "kind": "weapon", "cost": 75, "slot": "main_hand",
+      "weapon": { "damage": "1d6", "damage_type": "piercing", "category": "martial",
+                  "ability": "dex", "light": true, "range": 6, "long_range": 24 }
     },
     {
       "id": "heavy_crossbow", "kind": "weapon", "cost": 50, "slot": "two_hand",
-      "weapon": { "damage": "1d10", "damage_type": "piercing", "ability": "dex",
-                  "range": 20, "long_range": 80 }
+      "weapon": { "damage": "1d10", "damage_type": "piercing", "category": "martial",
+                  "ability": "dex", "heavy": true, "range": 20, "long_range": 80 }
     },
     {
       "id": "longbow", "kind": "weapon", "cost": 50, "slot": "two_hand",
-      "weapon": { "damage": "1d8", "damage_type": "piercing", "ability": "dex",
-                  "range": 30, "long_range": 120 }
+      "weapon": { "damage": "1d8", "damage_type": "piercing", "category": "martial",
+                  "ability": "dex", "heavy": true, "range": 30, "long_range": 120 }
     }
   ]
 }

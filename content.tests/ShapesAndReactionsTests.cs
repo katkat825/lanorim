@@ -641,8 +641,8 @@ namespace Content.Tests
             Assert.True(ally.Has(Condition.Paralyzed));
 
             // the dispel's ability check rolls a 1: plus 4 is 5, which does not beat 15
-            Casting first = cast.Cast(mage, Book.Find("dispel_magic"), Aim.At(target));
-            Casting second = cast.Cast(mage, Book.Find("dispel_magic"), Aim.At(ally));
+            Casting first = cast.Cast(mage, Book.Find("dispel_magic"), Aim.At(target).Choosing("creature"));
+            Casting second = cast.Cast(mage, Book.Find("dispel_magic"), Aim.At(ally).Choosing("creature"));
 
             Assert.False(target.Boons.Has("bless"));
             Assert.Equal(1, first.Landings.Single().Amount);
@@ -666,10 +666,14 @@ namespace Content.Tests
             var cast = new Incantation(fight.Resolver);
 
             Turn first = fight.Next();
-            Casting summoned = cast.Cast(cleric, Book.Find("spiritual_weapon"), Aim.At(target),
+            // SRD p.165: the force appears in a space within range - beside the target, at (2,1) -
+            // and attacks a creature within 5 feet of it
+            Casting summoned = cast.Cast(cleric, Book.Find("spiritual_weapon"),
+                                         new Aim(new[] { target }, new Cell(2, 1)),
                                          turn: first, fight: fight);
 
             Assert.True(summoned.Cast, summoned.Refusal);
+            Assert.Contains(summoned.Landings, l => l.Effect.Kind == Primitive.Damage && ReferenceEquals(l.Target, target));
             Assert.Equal(0, first.BonusActions);
             Assert.Equal(2, first.Actions);
             Assert.Equal(2, Slots(cleric, 2));
@@ -679,8 +683,8 @@ namespace Content.Tests
             fight.EndTurn();
 
             Turn later = fight.Next();
-            Casting again = cast.Again(cleric, Book.Find("spiritual_weapon"), Aim.At(target),
-                                       later, fight);
+            Casting again = cast.Again(cleric, Book.Find("spiritual_weapon"),
+                                       new Aim(new[] { target }, new Cell(2, 1)), later, fight);
 
             Assert.True(again.Cast, again.Refusal);
             Assert.Single(again.Landings);
@@ -752,6 +756,41 @@ namespace Content.Tests
             Assert.False(SrdSpellNames.IsSrd("Drowse"));
         }
 
+        // THE EXCEPTIONS TO THE HARD RULE (decisions_checklist.md section 1): approximations that
+        // show their SRD name anyway, each approved by Kathleen 2026-09-25. their descriptions keep
+        // "(v1 ships a bounded version of this spell.)" - CC-BY asks us to say what changed
+        public static readonly IReadOnlyDictionary<string, string> KeptUnderTheirSrdNames =
+            new Dictionary<string, string>
+            {
+                ["find_familiar"] = "fixed familiar archetypes and a scouting menu, not any creature - close enough; approved by Kathleen 2026-09-25",
+                ["dominate_monster"] = "a short command set, not full obedience - close enough; approved by Kathleen 2026-09-25",
+                ["wish"] = "duplicates a spell or picks from an authored menu, no free-text wish - close enough; approved by Kathleen 2026-09-25",
+                ["polymorph"] = "curated form cards, not any beast's statblock - close enough; approved by Kathleen 2026-09-25",
+                ["shapechange"] = "curated high-level form cards, not any creature - close enough; approved by Kathleen 2026-09-25",
+                ["fly"] = "no altitude, and no extra creature for a higher slot - approved by Kathleen 2026-09-25",
+                ["gaseous_form"] = "can't share another creature's square (one piece to a square) - approved by Kathleen 2026-09-25",
+                ["slow"] = "no 25 percent failure for spells with a Somatic component (v1 doesn't track components) - approved by Kathleen 2026-09-25",
+            };
+
+        [Fact]
+        public void TheAllowListIsTheApprovedEightAndEachSaysWhatChanged()
+        {
+            IReadOnlyDictionary<string, string> english =
+                Locale.Read(System.IO.File.ReadAllText("game.csv"));
+
+            Assert.Equal(8, KeptUnderTheirSrdNames.Count);
+
+            foreach (string id in KeptUnderTheirSrdNames.Keys)
+            {
+                Spell spell = Book.Find(id);
+
+                Assert.True(spell != null && spell.Approximated, id);
+                Assert.True(SrdSpellNames.IsSrd(english[spell.NameKey]), id);
+                Assert.Contains("(v1 ships a bounded version of this spell.)",
+                                english[KeyConventions.Key(KeyConventions.SpellNs, id, "description")]);
+            }
+        }
+
         [Fact]
         public void NoApproximationIsShownUnderAnSrdName()
         {
@@ -761,7 +800,7 @@ namespace Content.Tests
             IReadOnlyDictionary<string, string> english =
                 Locale.Read(System.IO.File.ReadAllText("game.csv"));
 
-            foreach (Spell spell in Book.Renamed)
+            foreach (Spell spell in Book.Renamed.Where(s => !KeptUnderTheirSrdNames.ContainsKey(s.Id)))
             {
                 Assert.True(english.TryGetValue(spell.NameKey, out string name),
                             $"{spell.Id} has no English name");

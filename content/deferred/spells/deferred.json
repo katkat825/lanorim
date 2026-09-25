@@ -1,0 +1,182 @@
+{
+  "_": "NOT SHIPPED IN V1 (Kathleen, 2026-09-25; docs/deferred.md 'deferred spells'). Kept so the work isn't lost. This folder is outside content/srd/, so it is not embedded and the loader never reads it: these spells are not learnable, castable, on any class list or in any campaign. Their English names and descriptions were taken out of game/locale/game.csv; each entry's 'note' says what it did. To bring one back, move its entry into a content/srd/spells file and give it locale keys again.",
+
+  "spells": [
+    {
+      "id": "feather_fall",
+      "level": 1,
+      "school": "transmutation",
+      "range": 12,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "narrate",
+          "reach": "creatures",
+          "targets": 5,
+          "duration": "encounter",
+          "note": "SRD 5.2.1: a reaction when you or a creature within 60 ft falls - up to five falling creatures descend 60 ft per round for 1 minute and take no falling damage. v1 has no falling and no 'falls' trigger, so it is cast as an action and the campaign's authored falls answer it"
+        }
+      ],
+      "english_name": "Drifting Descent",
+      "english_description": "Level 1. Its effect is told by the narrator. (v1 ships a bounded version of this spell.)"
+    },
+    {
+      "id": "heat_metal",
+      "level": 2,
+      "school": "transmutation",
+      "range": 12,
+      "concentration": true,
+      "repeat": "bonus_action",
+      "classes": ["mage", "druid"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "2d8",
+          "per_extra_level": "1d8",
+          "damage_type": "fire",
+          "repeats": true,
+          "note": "SRD 5.2.1 targets a manufactured metal object, burning whoever touches it for 2d8 fire with no save when cast and again by bonus action on later turns. v1 aims at the creature holding or wearing it; items carry no 'metal' flag, so the target is not checked"
+        },
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "follows": true,
+          "leans": "disadvantage_on_attacks|disadvantage_on_checks",
+          "duration": "next_turn",
+          "until": "caster",
+          "repeats": true,
+          "note": "SRD 5.2.1: a creature holding or wearing the object that takes the damage makes a Constitution save or drops it if it can; if it does not drop it, it has disadvantage on attack rolls and ability checks until the start of the caster's next turn. v1 cannot make a creature drop an item, so the save and the drop are gone and it always takes the disadvantage"
+        }
+      ],
+      "english_name": "Forge Fever",
+      "english_description": "Level 2. 2d8 fire damage, and again on later turns while you hold it; disadvantage on attack rolls, disadvantage on ability checks. Requires concentration. (v1 ships a bounded version of this spell.)"
+    },
+    {
+      "id": "plane_shift",
+      "level": 7,
+      "school": "conjuration",
+      "range": 0,
+      "classes": ["mage", "cleric", "druid"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "shift",
+          "reach": "creatures",
+          "targets": 9,
+          "note": "proposed name: Worldwalk. SRD 5.2.1: the caster and up to eight willing creatures linking hands go to another plane (a tuning fork attuned to it); or a melee spell attack then a Cha save banishes an unwilling creature. v1 travels to a campaign-authored place only, and the banishing use - removing a creature from the fight - has no primitive"
+        }
+      ],
+      "english_name": "Worldwalk",
+      "english_description": "Level 7. Moves you elsewhere. (v1 ships a bounded version of this spell.)"
+    },
+    {
+      "id": "reverse_gravity",
+      "level": 7,
+      "school": "transmutation",
+      "range": 20,
+      "concentration": true,
+      "classes": ["mage", "druid"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "burst",
+          "radius": 10,
+          "condition": "restrained",
+          "save": "dex",
+          "on_save": "negates",
+          "duration": "concentration",
+          "note": "proposed name: Skyward Fall. SRD 5.2.1: in a 50-foot-radius, 100-foot-high cylinder everything falls upward (a Dex save grabs something fixed), takes falling damage on a ceiling, hangs at the top, and falls back down when the spell ends. v1 has no altitude or falling damage, so the ones who fly up are Restrained for concentration"
+        },
+        {
+          "primitive": "zone",
+          "reach": "place",
+          "radius": 10,
+          "duration": "concentration"
+        }
+      ],
+      "english_name": "Skyward Fall",
+      "english_description": "Level 7. Leaves the target restrained in a 50-foot burst, dex save to avoid it; fills 50 feet around the point. Requires concentration. (v1 ships a bounded version of this spell.)"
+    },
+    {
+      "id": "antimagic_field",
+      "level": 8,
+      "school": "abjuration",
+      "range": 0,
+      "concentration": true,
+      "classes": ["mage", "cleric"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "dispel",
+          "reach": "around",
+          "radius": 2,
+          "note": "proposed name: Null Sphere. SRD 5.2.1: a 10-foot emanation that suppresses (does not end) spells, magic items, magical attacks and summoned creatures inside it, the caster included, for as long as they are inside. v1 has no suppression, so it dispels what is around the caster when cast and marks the field"
+        },
+        {
+          "primitive": "zone",
+          "reach": "caster",
+          "radius": 2,
+          "duration": "concentration"
+        }
+      ],
+      "english_name": "Null Sphere",
+      "english_description": "Level 8. Ends the spells on the target; fills 10 feet around the point. Requires concentration. (v1 ships a bounded version of this spell.)"
+    },
+    {
+      "id": "earthquake",
+      "level": 8,
+      "school": "transmutation",
+      "range": 100,
+      "concentration": true,
+      "repeat": "action",
+      "classes": ["mage", "cleric", "druid"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "burst",
+          "radius": 20,
+          "condition": "prone",
+          "save": "dex",
+          "on_save": "negates",
+          "repeats": true,
+          "note": "proposed name: Rending Quake. SRD 5.2.1: a 100-foot-radius tremor; when cast and at the end of each of the caster's turns, creatures on the ground make a Dex save or fall Prone, concentrators make a Con save or lose it, fissures open and swallow, structures take 50 bludgeoning and may collapse, and the ground is difficult terrain. v1 re-shakes only when the caster spends an action (not free at turn end), and has no concentration-breaking, fissures, structure damage or difficult terrain (v1_spell_list.md: hazard pulses and authored destructible tags)"
+        },
+        {
+          "primitive": "zone",
+          "reach": "place",
+          "radius": 20,
+          "duration": "concentration"
+        }
+      ],
+      "english_name": "Rending Quake",
+      "english_description": "Level 8. Leaves the target prone in a 100-foot burst, dex save to avoid it; fills 100 feet around the point. Requires concentration. (v1 ships a bounded version of this spell.)"
+    },
+    {
+      "id": "true_polymorph",
+      "level": 9,
+      "school": "transmutation",
+      "range": 6,
+      "concentration": true,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "afflict",
+          "reach": "creature",
+          "condition": "stunned",
+          "save": "wis",
+          "on_save": "negates",
+          "duration": "concentration",
+          "note": "proposed name: Perfect Remaking. SRD 5.2.1: turn a creature into another creature or an object, or an object into a creature (Wis save if unwilling); new stat block and form HP; permanent if concentration lasts the full hour. v1 has no stat-block swap; here only the hostile use exists - turned into an object, the target is out of the fight for concentration. Allied forms and permanence belong to curated forms and authored hooks (v1_spell_list.md)"
+        }
+      ],
+      "english_name": "Perfect Remaking",
+      "english_description": "Level 9. Leaves the target stunned, wis save to avoid it. Requires concentration. (v1 ships a bounded version of this spell.)"
+    }
+  ]
+}

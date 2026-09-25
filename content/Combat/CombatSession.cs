@@ -73,6 +73,8 @@ namespace Content.Combat
         Surge,
         Flee,
         EndTurn,
+        Grapple,
+        Shove,
     }
 
     // ONE BUTTON ON THE ACTION BAR: what it is, what it costs, whether it can be pressed now and,
@@ -103,6 +105,9 @@ namespace Content.Combat
         public IReadOnlyList<DamageType> DamageChoices { get; init; } = Array.Empty<DamageType>();
 
         public Attack Attack { get; init; }
+
+        // a Shove's choice: "push" five feet, or "prone"
+        public string ShoveMode { get; init; } = "";
 
         public Spell Spell { get; init; }
 
@@ -195,7 +200,8 @@ namespace Content.Combat
             new[] { "no_action", "no_bonus", "no_reaction", "cannot_act", "out_of_range", "not_seen",
                     "no_target", "spent", "not_on_your_turn", "rooted", "too_far", "pinned",
                     "nothing_to_break", "nobody_to_shake", "no_uses", "charmed", "not_an_edge",
-                    "shifted", "no_surge", "choose_mode", "choose_type" }
+                    "shifted", "no_surge", "choose_mode", "choose_type", "cannot_cast", "too_long",
+                    "seen" }
                 .Select(Why);
 
         // --- the flow -----------------------------------------------------------------------------
@@ -269,6 +275,21 @@ namespace Content.Combat
                     Enabled = WhyNotAttack(attack) == null, WhyNotKey = WhyNotAttack(attack),
                 });
 
+            // SRD 5.2.1 Light (p.89): after an attack with a Light weapon, the other Light weapon
+            // attacks with the bonus action, without the ability modifier on its damage
+            if (ReferenceEquals(Hero.LightTurn, Turn))
+                foreach (Attack other in Hero.Attacks.Where(a => a.Light && a.Id != Hero.LightWeapon))
+                {
+                    bool bonus = Turn.Can(Spend.Bonus);
+
+                    options.Add(new ActionOption
+                    {
+                        Id = "bonus_attack:" + other.Id, Kind = OptionKind.Attack, NameKey = other.NameKey,
+                        Cost = Spend.Bonus, Attack = Hero.LightBonusAttack(other), Targeting = Targeting.Creature,
+                        Enabled = bonus, WhyNotKey = bonus ? null : Why("no_bonus"),
+                    });
+                }
+
             if (Hero.Caster != null)
             {
                 foreach (Spell spell in Hero.Caster.Known.Where(s => !s.Answers))
@@ -328,6 +349,25 @@ namespace Content.Combat
             if (me.Has(Condition.Restrained) || me.Has(Condition.Grappled))
                 options.Add(Simple("break_free", OptionKind.BreakFree, Spend.Action));
 
+            // the Unarmed Strike's other two options (SRD 5.2.1 p.190): each one attack
+            if (!me.IsShifted)
+                foreach ((string id, OptionKind kind, string mode) in new[]
+                         {
+                             ("grapple", OptionKind.Grapple, ""),
+                             ("shove", OptionKind.Shove, "push"),
+                             ("shove_prone", OptionKind.Shove, "prone"),
+                         })
+                {
+                    string why = WhyNotAttack(Content.Sheet.Hero.UnarmedStrike);
+
+                    options.Add(new ActionOption
+                    {
+                        Id = id, Kind = kind, NameKey = UiName(id), Cost = Spend.Action,
+                        Attack = Content.Sheet.Hero.UnarmedStrike, Targeting = Targeting.Creature,
+                        ShoveMode = mode, Enabled = why == null, WhyNotKey = why,
+                    });
+                }
+
             if (Fight.Field.Where(me) is Cell here &&
                 Fight.Field.Adjacent(here).Any(a => Battle.Magic.CanBeShaken(a)))
                 options.Add(Simple("shake", OptionKind.Shake, Spend.Action));
@@ -343,17 +383,23 @@ namespace Content.Combat
                 });
 
             foreach (Feature feature in Hero.Activatable.Where(f => f.Trait == Trait.Stance ||
-                                                                    f.Trait == Trait.Recovery))
+                                                                    f.Trait == Trait.Recovery ||
+                                                                    f.Trait == Trait.Boost))
             {
                 bool uses = Hero.UsesLeft(feature) > 0;
-                bool bonus = Turn.Can(Spend.Bonus);
+
+                // what it costs is the feature's: Rage a bonus action, Preserve Life an action,
+                // Reckless Attack nothing (SRD 5.2.1)
+                bool paid = Turn.Can(feature.Cost);
 
                 options.Add(new ActionOption
                 {
                     Id = "feature:" + feature.Id, Kind = OptionKind.Feature, NameKey = feature.NameKey,
-                    Cost = Spend.Bonus, Feature = feature,
-                    Enabled = uses && bonus,
-                    WhyNotKey = !uses ? Why("no_uses") : !bonus ? Why("no_bonus") : null,
+                    Cost = feature.Cost, Feature = feature,
+                    Enabled = uses && paid,
+                    WhyNotKey = !uses ? Why("no_uses")
+                              : !paid ? Why(feature.Cost == Spend.Bonus ? "no_bonus" : "no_action")
+                              : null,
                 });
             }
 
@@ -402,7 +448,8 @@ namespace Content.Combat
 
         public static IEnumerable<string> ActionKeys() =>
             new[] { "dash", "disengage", "hide", "bonus_dash", "bonus_disengage", "bonus_hide",
-                    "stand_up", "break_free", "shake", "surge", "flee", "end_turn" }
+                    "stand_up", "break_free", "shake", "surge", "flee", "end_turn",
+                    "grapple", "shove", "shove_prone" }
                 .Select(UiName)
                 .Concat(Keys())
                 .Concat(ReactionPolicies.Keys());
@@ -441,6 +488,11 @@ namespace Content.Combat
             if (!Hero.Actor.CanAct) return Why("cannot_act");
 
             if (Hero.Actor.IsShifted) return Why("shifted");
+
+            if (Hero.Actor.Boons.NoCasting) return Why("cannot_cast");
+
+            // Identify's minute, Raise Dead's hour: cast between fights, not in one
+            if (spell.OutOfCombat) return Why("too_long");
 
             if (!Hero.Caster.CanCast(spell, spell.Level)) return Why("spent");
 
@@ -828,7 +880,7 @@ namespace Content.Combat
 
                     if (target == null) return ActionResult.No(Why("no_target"));
 
-                    Blow blow = Hero.Hit(Fight, Turn, target, option.Attack);
+                    Blow blow = Hero.Hit(Fight, Turn, target, option.Attack, spend: option.Cost);
 
                     return blow == null ? ActionResult.No(Why("out_of_range")) : new ActionResult { Done = true, Blow = blow };
                 }
@@ -860,8 +912,27 @@ namespace Content.Combat
 
                 case OptionKind.Hide:
                 {
+                    // SRD 5.2.1: not while an enemy can see you
+                    if (!Fight.CanHide(me)) return ActionResult.No(Why("seen"));
+
                     Attempt hid = Fight.Hide(Turn, option.Cost);
                     return hid == null ? ActionResult.No(Why("no_action")) : new ActionResult { Done = true, Attempt = hid };
+                }
+
+                case OptionKind.Grapple:
+                case OptionKind.Shove:
+                {
+                    Actor target = targets.FirstOrDefault();
+
+                    if (target == null) return ActionResult.No(Why("no_target"));
+
+                    Attempt save = option.Kind == OptionKind.Grapple
+                        ? Fight.Grapple(Turn, target, option.Attack)
+                        : Fight.ShoveAway(Turn, target, option.ShoveMode == "prone", option.Attack);
+
+                    return save == null
+                        ? ActionResult.No(Why("out_of_range"))
+                        : new ActionResult { Done = true, Attempt = save };
                 }
 
                 case OptionKind.StandUp:
@@ -869,6 +940,16 @@ namespace Content.Combat
 
                 case OptionKind.BreakFree:
                 {
+                    // a grapple made with hands is escaped from the fight's own record
+                    if (Fight.IsHeldByGrapple(me) && !me.Has(Condition.Restrained))
+                    {
+                        Attempt free = Fight.EscapeGrapple(Turn);
+
+                        return free == null
+                            ? ActionResult.No(Why("nothing_to_break"))
+                            : new ActionResult { Done = true, Attempt = free };
+                    }
+
                     Condition held = me.Has(Condition.Restrained) ? Condition.Restrained : Condition.Grappled;
                     Attempt escape = Battle.Magic.BreakFree(Fight, Turn, held);
 
@@ -892,9 +973,17 @@ namespace Content.Combat
 
                 case OptionKind.Feature:
                 {
-                    if (!Turn.Take(Spend.Bonus)) return ActionResult.No(Why("no_bonus"));
+                    if (Hero.UsesLeft(option.Feature) <= 0) return ActionResult.No(Why("no_uses"));
 
-                    return Done(Hero.Invoke(option.Feature, Fight.Resolver), "no_uses");
+                    if (!Turn.Take(option.Feature.Cost))
+                        return ActionResult.No(Why(option.Feature.Cost == Spend.Bonus ? "no_bonus" : "no_action"));
+
+                    bool invoked = Hero.Invoke(option.Feature, Fight.Resolver);
+
+                    // Adrenaline Rush: the bonus action is a Dash too
+                    if (invoked && option.Feature.Trait == Trait.Boost) Turn.Hasten();
+
+                    return Done(invoked, "no_uses");
                 }
 
                 case OptionKind.Shape:

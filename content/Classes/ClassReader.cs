@@ -133,6 +133,9 @@ namespace Content.Classes
                                       priority)
             {
                 ImprovementLevels = improvements,
+                Gold = entry.Number("gold"),
+                Tools = entry.Strings("tools"),
+                Weapons = entry.Strings("weapons"),
             };
         }
     }
@@ -228,11 +231,153 @@ namespace Content.Classes
                                       manoeuvres)
             {
                 Tags = raw.Strings("tags"),
+                OncePerTurn = raw.Flag("once_per_turn"),
+                WhileStances = raw.Strings("while_stances"),
+                Weapon = raw.Text("weapon") ?? "",
+                Forgoes = raw.Text("forgoes") ?? "",
+                UsesByLevel = Levels(raw, "uses_by_level", owner, id, problems),
+                Recharge = Recharge(raw, owner, id, problems),
+                Spends = raw.Text("spends") ?? "",
+                AdvantageOn = raw.Strings("advantage_on"),
+                UnlessIncapacitated = raw.Flag("unless_incapacitated"),
+                CritOn = raw.Number("crit_on"),
+                AuraAbility = raw.Ability("aura_ability", problems, id),
+                ArmoredArmorClass = raw.Number("armored_ac"),
+                Immune = raw.Strings("immune")
+                            .Select(c => Conditions.TryParse(c, out Condition read) ? read : Condition.None)
+                            .Where(c => c != Condition.None).ToList(),
+                FlatByLevel = Levels(raw, "flat_by_level", owner, id, problems),
+                AmountByLevel = Amounts(raw, "amount_by_level", owner, id, problems),
+                FlatAbility = raw.Ability("flat_ability", problems, id),
+                Resists = raw.Strings("resists")
+                             .Select(d => DamageTypes.TryParse(d, out DamageType read) ? read : DamageType.None)
+                             .Where(d => d != DamageType.None).ToList(),
+                StanceAdvantage = raw.Strings("stance_advantage"),
+                StrengthOnly = raw.Flag("strength_only"),
+                AdvantageAgainst = raw.Flag("advantage_against"),
+                Cost = Cost(raw, owner, id, problems),
+                Reaction = raw.Text("reaction") ?? "",
+                Spells = SpellLevels(raw),
+                FreeCasts = Counts(raw, "free_casts"),
+                CantripsByLevel = Levels(raw, "cantrips_by_level", owner, id, problems),
+                KnownByLevel = Levels(raw, "known_by_level", owner, id, problems),
+                SkillPicks = raw.Number("skill_picks"),
+                ExpertiseFrom = raw.Strings("expertise_from")
+                                   .Select(s => Skills.TryParse(s, out Skill read) ? read : Skill.None)
+                                   .Where(s => s != Skill.None).ToList(),
+                SaveDc = raw.Number("save_dc"),
+                DcStep = raw.Number("dc_step"),
+                HitPointsPerLevel = raw.Number("hp_per_level"),
+                OnlyBloodied = raw.Flag("only_bloodied"),
+                CapHalf = raw.Flag("cap_half"),
+                MaxHitPointsPerLevel = raw.Number("max_hp_per_level"),
+                NotInHeavyArmor = raw.Flag("not_in_heavy_armor"),
+                InnateSpell = Innate(raw, owner, id, problems),
+                SpellAbilities = raw.Strings("spell_abilities")
+                                    .Select(s => Abilities.TryParse(s, out Ability read) ? read : (Ability?)null)
+                                    .Where(a => a.HasValue).Select(a => a.Value).ToList(),
             };
 
             Check(feature, owner, problems);
 
             return feature;
+        }
+
+        static Spell Innate(JsonElement raw, string owner, string id, List<string> problems)
+        {
+            if (!raw.Has("spell")) return null;
+
+            var trouble = new List<string>();
+            Spell spell = Content.Spells.SpellReader.ReadEntry(raw.GetProperty("spell"), trouble);
+
+            foreach (string p in trouble) problems.Add($"{owner}/{id}: {p}");
+
+            return spell;
+        }
+
+        // {"3": 2, "6": 4}: a number by the level it starts at
+        static Dictionary<int, int> Levels(JsonElement raw, string name, string owner, string id,
+                                           List<string> problems)
+        {
+            var table = new Dictionary<int, int>();
+
+            if (!raw.Has(name)) return table;
+
+            foreach (JsonProperty entry in raw.GetProperty(name).EnumerateObject())
+            {
+                if (int.TryParse(entry.Name, out int level) && entry.Value.TryGetInt32(out int value))
+                    table[level] = value;
+                else
+                    problems.Add($"{owner}/{id}: '{name}' is levels to numbers - '{entry.Name}' isn't");
+            }
+
+            return table;
+        }
+
+        static Dictionary<int, DiceRoll> Amounts(JsonElement raw, string name, string owner, string id,
+                                                 List<string> problems)
+        {
+            var table = new Dictionary<int, DiceRoll>();
+
+            if (!raw.Has(name)) return table;
+
+            foreach (JsonProperty entry in raw.GetProperty(name).EnumerateObject())
+            {
+                if (int.TryParse(entry.Name, out int level) &&
+                    DiceRoll.TryParse(entry.Value.GetString() ?? "", out DiceRoll dice, out _))
+                    table[level] = dice;
+                else
+                    problems.Add($"{owner}/{id}: '{name}' is levels to dice - '{entry.Name}' isn't");
+            }
+
+            return table;
+        }
+
+        static Dictionary<int, IReadOnlyList<string>> SpellLevels(JsonElement raw)
+        {
+            var table = new Dictionary<int, IReadOnlyList<string>>();
+
+            if (!raw.Has("spells")) return table;
+
+            foreach (JsonProperty entry in raw.GetProperty("spells").EnumerateObject())
+                if (int.TryParse(entry.Name, out int level))
+                    table[level] = entry.Value.EnumerateArray().Select(v => v.GetString())
+                                        .Where(s => !string.IsNullOrEmpty(s)).ToList();
+
+            return table;
+        }
+
+        static Dictionary<string, int> Counts(JsonElement raw, string name)
+        {
+            var table = new Dictionary<string, int>(StringComparer.Ordinal);
+
+            if (!raw.Has(name)) return table;
+
+            foreach (JsonProperty entry in raw.GetProperty(name).EnumerateObject())
+                if (entry.Value.TryGetInt32(out int n)) table[entry.Name] = n;
+
+            return table;
+        }
+
+        static Recharge Recharge(JsonElement raw, string owner, string id, List<string> problems)
+        {
+            if (!Recharges.TryParse(raw.Text("recharge", "short"), out Recharge read))
+                problems.Add($"{owner}/{id}: 'recharge' is short, short_one or long");
+
+            return read;
+        }
+
+        static Spend Cost(JsonElement raw, string owner, string id, List<string> problems)
+        {
+            switch (raw.Text("cost", "bonus"))
+            {
+                case "bonus": return Spend.Bonus;
+                case "action": return Spend.Action;
+                case "free": return Spend.Free;
+                default:
+                    problems.Add($"{owner}/{id}: 'cost' is bonus, action or free");
+                    return Spend.Bonus;
+            }
         }
 
         static void Check(Feature feature, string owner, List<string> problems)
@@ -250,7 +395,8 @@ namespace Content.Classes
                     break;
 
                 case Trait.Stance:
-                    if (feature.Touches == Core.Magic.Sways.None)
+                    if (feature.Touches == Core.Magic.Sways.None && feature.StanceAdvantage.Count == 0 &&
+                        feature.Resists.Count == 0 && !feature.AdvantageAgainst)
                         problems.Add($"{where}: a stance that touches no roll");
                     break;
 

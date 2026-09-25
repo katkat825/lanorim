@@ -84,6 +84,13 @@ namespace Core.Rules
         // only a creature this size or smaller: the wolf's "if the target is Medium or smaller"
         public Size? MaxSize { get; init; }
 
+        // not on these: the Ghoul's claw paralyses "a creature that isn't an Undead or elf"
+        public IReadOnlyList<string> ExceptTags { get; init; } = Array.Empty<string>();
+
+        // the condition lasts "until the end of its next turn" (the target's), not for good: the
+        // fight keeps that book (Encounter.Hit)
+        public bool UntilTargetsNextTurn { get; init; }
+
         public DamageType TypeOr(DamageType weapon) => Type == DamageType.None ? weapon : Type;
 
         public override string ToString() =>
@@ -108,32 +115,44 @@ namespace Core.Rules
         // the board's when there is one (walls, obscurement) and the creatures' own otherwise
         public static Advantage Lean(Actor attacker, Actor target, bool close = true,
                                      bool? attackerSees = null, bool? targetSees = null,
-                                     Advantage extra = Advantage.Flat)
+                                     Advantage extra = Advantage.Flat, bool? fearInSight = null,
+                                     Attack attack = null)
         {
-            (bool adv, bool dis) mine = attacker.AttackLeans;
-            (bool adv, bool dis) theirs = target.LeansAgainstMe(close);
+            (bool adv, bool dis) mine = attacker.AttackLeansWith(attack);
+
+            // SRD 5.2.1 Frightened: disadvantage "while the source of fear is within line of
+            // sight" - the fight says whether it is; off a board it is taken to be
+            if (attacker.Has(Condition.Frightened) && (fearInSight ?? true)) mine.dis = true;
+
+            // SRD 5.2.1 Grappled: disadvantage on attacks at anyone but the grappler
+            if (attacker.Has(Condition.Grappled) && !attacker.HasFrom(Condition.Grappled, target))
+                mine.dis = true;
 
             // SRD 5.2.1: attacking what you can't see is at disadvantage; being attacked by what
             // you can't see gives the attacker advantage
             bool sees = attackerSees ?? attacker.CanSee(target);
             bool seen = targetSees ?? target.CanSee(attacker);
 
+            (bool adv, bool dis) theirs = target.LeansAgainstMe(close, attacker, sees);
+
             return Advantages.Of(mine.adv || theirs.adv || !seen || extra == Advantage.Advantage,
                                  mine.dis || theirs.dis || !sees ||
-                                 extra == Advantage.Disadvantage);
+                                 extra == Advantage.Disadvantage).And(
+                       extra == Advantage.Cancelled ? Advantage.Cancelled : Advantage.Flat);
         }
 
         public static Attempt Roll(IResolver resolver, Actor attacker, Actor target, Attack attack,
                                    Advantage extra = Advantage.Flat, bool close = true,
                                    bool? attackerSees = null, bool? targetSees = null,
-                                   int cover = 0)
+                                   int cover = 0, bool? fearInSight = null)
         {
             if (resolver == null) throw new ArgumentNullException(nameof(resolver));
             if (attacker == null) throw new ArgumentNullException(nameof(attacker));
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (attack == null) throw new ArgumentNullException(nameof(attack));
 
-            Advantage advantage = Lean(attacker, target, close, attackerSees, targetSees, extra);
+            Advantage advantage = Lean(attacker, target, close, attackerSees, targetSees, extra,
+                                       fearInSight, attack);
 
             int boons = 0;
 
@@ -141,6 +160,9 @@ namespace Core.Rules
 
             Attempt attempt = resolver.Resolve(RollKind.Attack, attack.Modifier(attacker) + boons,
                                                target.ArmorClass + cover, advantage, attacker);
+
+            // the Champion's 19 and 18: a weapon or an Unarmed Strike (SRD 5.2.1 p.49)
+            if (attacker.CritOn < 20) attempt = attempt.CritsFrom(attacker.CritOn);
 
             // whatever that roll leaned on is spent now it has been leaned on
             attacker.Boons.Attacked();
@@ -196,6 +218,9 @@ namespace Core.Rules
             if (!attempt.Succeeded)
                 return new Blow(attacker, target, attack, attempt, 0, 0, Array.Empty<Rider>());
 
+            // Uncanny Dodge: the attack's damage against it is halved
+            bool halved = target.Boons.TakeHalving();
+
             int rolled = Math.Max(0, resolver.Roll(attack.DamageFor(attacker, attempt.IsCritical),
                                                    attacker));
 
@@ -212,6 +237,8 @@ namespace Core.Rules
 
             DamageType type = attack.DamageTypeFor(attacker, target);
 
+            if (halved) rolled /= 2;
+
             int suffered = target.Suffer(rolled, type);
 
             var landed = new List<Rider>();
@@ -227,14 +254,20 @@ namespace Core.Rules
 
                     int extraRolled = Math.Max(0, resolver.Roll(dice, attacker));
 
+                    if (halved) extraRolled /= 2;
+
                     rolled += extraRolled;
                     suffered += target.Suffer(extraRolled, rider.TypeOr(type));
                 }
 
                 if (rider.Condition != Condition.None &&
                     (!rider.MaxSize.HasValue || target.CurrentSize <= rider.MaxSize.Value) &&
+                    !rider.ExceptTags.Any(target.Is) &&
                     (!rider.Save.HasValue ||
-                     Checks.Save(resolver, target, rider.Save.Value, rider.Dc).Failed))
+                     Checks.Save(resolver, target, rider.Save.Value, rider.Dc,
+                                 target.HasAdvantage("save_vs:" + rider.Condition.Id())
+                                     ? Advantage.Advantage
+                                     : Advantage.Flat).Failed))
                     target.Apply(rider.Condition, attacker);
 
                 landed.Add(rider);

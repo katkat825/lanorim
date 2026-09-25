@@ -55,7 +55,7 @@
       "level": 1,
       "school": "abjuration",
       "range": 0,
-      "classes": ["cleric", "druid", "paladin"],
+      "classes": ["cleric", "druid", "mage", "paladin"],
       "effects": [
         {
           "primitive": "heal",
@@ -115,7 +115,8 @@
           "on_save": "negates",
           "escape": "str",
           "duration": "concentration",
-          "note": "SRD 5.2.1: everyone in the 20-foot square when it is cast saves or is restrained until the spell ends, and can spend an action on a Strength (Athletics) check to break free"
+          "note": "SRD 5.2.1: everyone in the 20-foot square when it is cast saves or is restrained until the spell ends, and can spend an action on a Strength (Athletics) check to break free",
+          "spares_caster": true
         },
         {
           "primitive": "zone",
@@ -123,7 +124,8 @@
           "length": 4,
           "rough": true,
           "duration": "concentration",
-          "note": "the plants make the square difficult terrain for as long as the spell is held"
+          "note": "the plants make the square difficult terrain for as long as the spell is held",
+          "ground": true
         }
       ]
     },
@@ -142,7 +144,8 @@
           "duration": "rest",
           "note": "fixed familiar archetypes and a scouting command menu; no freeform animal simulation (v1_spell_list.md)"
         }
-      ]
+      ],
+      "out_of_combat": true
     },
     {
       "id": "guiding_bolt",
@@ -180,10 +183,27 @@
       "casting_time": "bonus_action",
       "classes": ["mage"],
       "effects": [
-        {"primitive": "sway", "reach": "creature", "mark": "1d6", "damage_type": "necrotic", "duration": "concentration"},
-        {"primitive": "sway", "reach": "creature", "leans": "disadvantage_on_checks", "ability": "chosen", "duration": "concentration", "note": "SRD 5.2.1 also lets the caster move the curse to a new creature when the first drops; v1 does not yet, which is flagged in the build notes"}
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "mark": "1d6",
+          "damage_type": "necrotic",
+          "duration": "concentration",
+          "repeats": true
+        },
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "leans": "disadvantage_on_checks",
+          "ability": "chosen",
+          "duration": "concentration",
+          "note": "SRD 5.2.1 (SRD p.140): when the target drops to 0 Hit Points, a bonus action on a later turn moves the curse to a new creature (moves_when_down)",
+          "repeats": true
+        }
       ],
-      "curse": true
+      "curse": true,
+      "repeat": "bonus_action",
+      "moves_when_down": true
     },
     {
       "id": "hunters_mark",
@@ -192,7 +212,7 @@
       "range": 18,
       "concentration": true,
       "casting_time": "bonus_action",
-      "classes": ["druid", "paladin"],
+      "classes": ["druid"],
       "effects": [
         {
           "primitive": "sway",
@@ -200,9 +220,12 @@
           "mark": "1d6",
           "damage_type": "force",
           "duration": "concentration",
-          "note": "SRD 5.2.1 also gives advantage on Perception and Survival checks to find the target and lets the mark move when it drops; v1 does neither yet, flagged in the build notes"
+          "note": "SRD 5.2.1: +1d6 Force on each of your hits against the marked creature; if it drops to 0 Hit Points, a Bonus Action moves the mark to a new creature you can see within range. Its Advantage on Wisdom (Perception or Survival) checks to find the quarry is the narrator's - finding is exploration, not the fight",
+          "repeats": true
         }
-      ]
+      ],
+      "repeat": "bonus_action",
+      "moves_when_down": true
     },
     {
       "id": "mage_armor",
@@ -215,7 +238,7 @@
           "primitive": "sway",
           "reach": "creature",
           "unarmored_base": 13,
-          "duration": "rest",
+          "duration": "long_rest",
           "note": "SRD 5.2.1: base armor class 13 + Dex while the target wears no armor"
         }
       ]
@@ -252,19 +275,37 @@
           "sway": 5,
           "touches": "armor_class",
           "duration": "next_turn",
-          "note": "SRD 5.2.1: a reaction to being hit, +5 AC including against the triggering attack, until the start of your next turn. the Magic Missile clause is not yet modelled - flagged in the build notes"
+          "note": "SRD 5.2.1: a reaction when you are hit by an attack roll or targeted by Magic Missile. Until the start of your next turn, +5 AC - against the triggering attack too - and no damage from Magic Missile",
+          "wards_spell": "magic_missile"
         }
-      ]
+      ],
+      "answers_spell": "magic_missile"
     },
     {
       "id": "sleep",
       "level": 1,
       "school": "enchantment",
-      "range": 18,
+      "range": 12,
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "afflict", "reach": "burst", "radius": 1, "condition": "incapacitated", "save": "wis", "on_save": "negates", "repeat_save": true, "worsens": "unconscious", "worsens_after": 2, "ends_on_damage": "any", "shakeable": true, "except_tags": ["sleepless"], "spares_allies": true, "duration": "concentration", "note": "SRD 5.2.1: creatures of your choice in a 5-foot-radius sphere, Wis save or Incapacitated; the save is repeated at the end of its next turn and a second failure is Unconscious for the duration. damage or a shake from within 5 feet ends it. creatures that don't sleep (an elf's Trance, the exhaustion-immune) are unaffected"}
+        {
+          "primitive": "afflict",
+          "reach": "burst",
+          "radius": 1,
+          "condition": "incapacitated",
+          "save": "wis",
+          "on_save": "negates",
+          "repeat_save": true,
+          "worsens": "unconscious",
+          "worsens_after": 2,
+          "ends_on_damage": "any",
+          "shakeable": true,
+          "except_tags": ["sleepless"],
+          "spares_allies": true,
+          "duration": "concentration",
+          "note": "SRD 5.2.1: creatures of your choice in a 5-foot-radius sphere, Wis save or Incapacitated; the save is repeated at the end of its next turn and a second failure is Unconscious for the duration. damage or a shake from within 5 feet ends it. creatures that don't sleep (an elf's Trance, the exhaustion-immune) are unaffected"
+        }
       ]
     },
     {

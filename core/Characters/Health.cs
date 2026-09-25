@@ -129,8 +129,9 @@ namespace Core.Characters
             return Heal(rolled);
         }
 
-        // long rest is the delta: full HP, not half your dice back. updated_decisions.md -
-        // "long rest = full hp recovery". SRD's half-your-hit-dice return is kept.
+        // SRD 5.2.1 Long Rest: all lost hit points and all spent Hit Point Dice come back.
+        // decisions_checklist.md's Rest line still says "half hit dice" (the 2014 rule) - flagged
+        // for Kathleen in RUN_LOG_2026-09-25.md; the code follows the SRD text until she decides
         public void LongRest()
         {
             Current = Maximum;

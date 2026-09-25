@@ -59,17 +59,14 @@ namespace Content.Tests
         {
             Hero rogue = WoodElfRogue(1);
 
-            int before = rogue.Actor.SaveModifier(Ability.Dexterity);
+            Assert.False(rogue.Actor.Is("evasion"));
 
             rogue.LevelTo(6);
-            int six = rogue.Actor.SaveModifier(Ability.Dexterity);
+            Assert.False(rogue.Actor.Is("evasion"));
 
+            // SRD 5.2.1 Evasion (p.63) lands at 7
             rogue.LevelTo(7);
-            int seven = rogue.Actor.SaveModifier(Ability.Dexterity);
-
-            // proficiency goes up at 5; Evasion's +2 lands at 7
-            Assert.Equal(six + 2, seven);
-            Assert.True(six >= before);
+            Assert.True(rogue.Actor.Is("evasion"));
         }
     }
 }

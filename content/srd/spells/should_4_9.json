@@ -9,9 +9,37 @@
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "zone", "reach": "square", "length": 4, "rough": true, "duration": "concentration", "note": "SRD 5.2.1: a 20-foot square of tentacles, difficult terrain"},
-        {"primitive": "damage", "reach": "zone", "pulses": "appear|enter|end_turn", "amount": "3d6", "damage_type": "bludgeoning", "save": "str", "on_save": "negates", "note": "SRD 5.2.1: whoever is there when it appears, enters it, or ends its turn there makes a Str save (once per turn): 3d6 bludgeoning and Restrained"},
-        {"primitive": "afflict", "reach": "zone", "pulses": "appear|enter|end_turn", "condition": "restrained", "save": "str", "on_save": "negates", "same_save": true, "escape": "str", "duration": "concentration", "note": "an action and a Strength (Athletics) check against the spell's DC breaks free"}
+        {
+          "primitive": "zone",
+          "reach": "square",
+          "length": 4,
+          "rough": true,
+          "duration": "concentration",
+          "note": "SRD 5.2.1: a 20-foot square of tentacles, difficult terrain",
+          "ground": true
+        },
+        {
+          "primitive": "damage",
+          "reach": "zone",
+          "pulses": "appear|enter|end_turn",
+          "amount": "3d6",
+          "damage_type": "bludgeoning",
+          "save": "str",
+          "on_save": "negates",
+          "note": "SRD 5.2.1: whoever is there when it appears, enters it, or ends its turn there makes a Str save (once per turn): 3d6 bludgeoning and Restrained"
+        },
+        {
+          "primitive": "afflict",
+          "reach": "zone",
+          "pulses": "appear|enter|end_turn",
+          "condition": "restrained",
+          "save": "str",
+          "on_save": "negates",
+          "same_save": true,
+          "escape": "str",
+          "duration": "concentration",
+          "note": "an action and a Strength (Athletics) check against the spell's DC breaks free"
+        }
       ]
     },
     {
@@ -19,10 +47,7 @@
       "level": 4,
       "school": "necromancy",
       "range": 6,
-      "classes": [
-        "mage",
-        "druid"
-      ],
+      "classes": ["mage", "druid"],
       "effects": [
         {
           "primitive": "damage",
@@ -32,7 +57,7 @@
           "damage_type": "necrotic",
           "save": "con",
           "on_save": "half",
-          "note": "SRD 5.2.1: a Plant creature automatically fails the save, and a nonmagical plant that is not a creature simply withers. v1 statblocks carry no creature type yet (same flag as the construct rider in level_2.json); the withering plant is narration"
+          "auto_fail_tags": ["plant"]
         }
       ]
     },
@@ -51,10 +76,7 @@
       "level": 4,
       "school": "evocation",
       "range": 60,
-      "classes": [
-        "mage",
-        "druid"
-      ],
+      "classes": ["mage", "druid"],
       "effects": [
         {
           "primitive": "damage",
@@ -82,7 +104,8 @@
           "radius": 4,
           "rough": true,
           "duration": "next_turn_end",
-          "note": "SRD 5.2.1: the ground is difficult terrain until the end of your next turn"
+          "note": "SRD 5.2.1: the ground is difficult terrain until the end of your next turn",
+          "ground": true
         }
       ]
     },
@@ -189,10 +212,29 @@
       "range": 0,
       "classes": ["mage", "cleric", "paladin"],
       "effects": [
-        {"primitive": "heal", "reach": "creature", "amount": "1", "note": "proposed name: Rekindled Life. SRD 5.2.1: a 1-hour casting (500 gp diamond, consumed) returns a creature dead no more than 10 days, not undead, with 1 HP, neutralizes poisons and closes mortal wounds; the target takes -4 on D20 Tests, reduced by 1 each long rest. v1 has no hour-long casting time and no penalty that shrinks per rest, so the -4 lasts until the next rest and then ends. The 10-day and undead limits are the campaign's to enforce", "revives": true},
-        {"primitive": "relieve", "reach": "creature", "condition": "poisoned"},
-        {"primitive": "sway", "reach": "creature", "sway": -4, "touches": "attacks|saves|checks", "duration": "long_rest", "eases_per_long_rest": 1, "note": "SRD 5.2.1: -4 to D20 Tests, reduced by 1 each time the target finishes a long rest"}
-      ]
+        {
+          "primitive": "heal",
+          "reach": "creature",
+          "amount": "1",
+          "note": "proposed name: Rekindled Life. SRD 5.2.1: a 1-hour casting (500 gp diamond, consumed) returns a creature dead no more than 10 days, not undead, with 1 HP, neutralizes poisons and closes mortal wounds; the target takes -4 on D20 Tests, reduced by 1 each long rest. The 10-day and undead limits are the campaign's to enforce",
+          "revives": true
+        },
+        {
+          "primitive": "relieve",
+          "reach": "creature",
+          "condition": "poisoned"
+        },
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "sway": -4,
+          "touches": "attacks|saves|checks",
+          "duration": "long_rest",
+          "eases_per_long_rest": 1,
+          "note": "SRD 5.2.1: -4 to D20 Tests, reduced by 1 each time the target finishes a long rest"
+        }
+      ],
+      "out_of_combat": true
     },
     {
       "id": "telekinesis",
@@ -203,9 +245,42 @@
       "repeat": "action",
       "classes": ["mage"],
       "effects": [
-        {"primitive": "shift", "reach": "creature", "length": 6, "save": "str", "on_save": "negates", "max_size": "huge", "repeats": true, "switches": true, "mode": "creature", "note": "SRD 5.2.1: when cast and as a Magic action later: a Huge or smaller creature makes a Str save or is moved up to 30 feet within range and Restrained until the end of your next turn. lifting it into the air is the narrator's (no altitude on the board)"},
-        {"primitive": "afflict", "reach": "creature", "condition": "restrained", "save": "str", "on_save": "negates", "same_save": true, "max_size": "huge", "duration": "next_turn_end", "until": "caster", "repeats": true, "switches": true, "mode": "creature"},
-        {"primitive": "disarm", "reach": "creature", "contest": "str", "repeats": true, "switches": true, "mode": "object", "note": "SRD 5.2.1: an object a creature holds - your spellcasting ability check against its Strength check pulls it away, up to 30 feet. moving unattended objects and fine control are the narrator's"}
+        {
+          "primitive": "shift",
+          "reach": "creature",
+          "length": 6,
+          "save": "str",
+          "on_save": "negates",
+          "max_size": "huge",
+          "repeats": true,
+          "switches": true,
+          "mode": "creature",
+          "note": "SRD 5.2.1: when cast and as a Magic action later: a Huge or smaller creature makes a Str save or is moved up to 30 feet within range and Restrained until the end of your next turn. lifting it into the air is the narrator's (no altitude on the board)"
+        },
+        {
+          "primitive": "afflict",
+          "reach": "creature",
+          "condition": "restrained",
+          "save": "str",
+          "on_save": "negates",
+          "same_save": true,
+          "max_size": "huge",
+          "duration": "next_turn_end",
+          "until": "caster",
+          "repeats": true,
+          "switches": true,
+          "mode": "creature"
+        },
+        {
+          "primitive": "disarm",
+          "reach": "creature",
+          "repeats": true,
+          "switches": true,
+          "mode": "object",
+          "note": "SRD 5.2.1: an object a creature is wearing or carrying - it makes a Strength saving throw, or you pull the object away",
+          "save": "str",
+          "on_save": "negates"
+        }
       ]
     },
     {
@@ -217,8 +292,26 @@
       "shapes": ["line", "ring"],
       "classes": ["cleric"],
       "effects": [
-        {"primitive": "zone", "reach": "wall", "length": 20, "ring_size": 12, "rough": true, "cover": 5, "duration": "concentration", "note": "SRD 5.2.1: a wall of whirling blades up to 100 feet long, or a ring 60 feet across, 5 feet thick: three-quarters cover (+5 AC and Dex saves) to whoever is behind it, and its space is difficult terrain"},
-        {"primitive": "damage", "reach": "zone", "pulses": "appear|enter|end_turn", "amount": "6d10", "damage_type": "slashing", "save": "dex", "on_save": "half", "note": "a creature in the wall's space when it appears, entering it, or ending its turn there makes a Dex save (once per turn): 6d10 slashing, half on a success"}
+        {
+          "primitive": "zone",
+          "reach": "wall",
+          "length": 20,
+          "ring_size": 12,
+          "rough": true,
+          "cover": 5,
+          "duration": "concentration",
+          "note": "SRD 5.2.1: a wall of whirling blades up to 100 feet long, or a ring 60 feet across, 5 feet thick: three-quarters cover (+5 AC and Dex saves) to whoever is behind it, and its space is difficult terrain"
+        },
+        {
+          "primitive": "damage",
+          "reach": "zone",
+          "pulses": "appear|enter|end_turn",
+          "amount": "6d10",
+          "damage_type": "force",
+          "save": "dex",
+          "on_save": "half",
+          "note": "a creature in the wall's space when it appears, entering it, or ending its turn there makes a Dex save (once per turn): 6d10 force, half on a success"
+        }
       ]
     },
     {
@@ -229,8 +322,33 @@
       "concentration": true,
       "classes": ["mage", "druid"],
       "effects": [
-        {"primitive": "afflict", "reach": "creature", "condition": "restrained", "save": "con", "on_save": "negates", "repeat_save": true, "ends_after": 3, "worsens": "petrified", "worsens_after": 3, "auto_save_tags": ["construct"], "duration": "concentration", "note": "SRD 5.2.1: Con save or Restrained; it saves again at the end of each of its turns, three successes end the spell and three failures (the first save counts) Petrify it for the duration. a Construct succeeds automatically. the permanence of a full minute held is the campaign's: a fight ends before it"},
-        {"primitive": "sway", "reach": "creature", "speed_change": "zero", "save": "con", "on_save": "on_success", "same_save": true, "auto_save_tags": ["construct"], "duration": "next_turn", "until": "caster", "note": "SRD 5.2.1: on a successful save, Speed 0 until the start of the caster's next turn"}
+        {
+          "primitive": "afflict",
+          "reach": "creature",
+          "condition": "restrained",
+          "save": "con",
+          "on_save": "negates",
+          "repeat_save": true,
+          "ends_after": 3,
+          "worsens": "petrified",
+          "worsens_after": 3,
+          "auto_save_tags": ["construct"],
+          "duration": "concentration",
+          "note": "SRD 5.2.1: Con save or Restrained; it saves again at the end of each of its turns, three successes end the spell and three failures (the first save counts) Petrify it for the duration. a Construct succeeds automatically. Held the full minute (10 rounds), the Petrified condition stays until Greater Restoration ends it (permanent_after_rounds)",
+          "permanent_after_rounds": 10
+        },
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "speed_change": "zero",
+          "save": "con",
+          "on_save": "on_success",
+          "same_save": true,
+          "auto_save_tags": ["construct"],
+          "duration": "next_turn",
+          "until": "caster",
+          "note": "SRD 5.2.1: on a successful save, Speed 0 until the start of the caster's next turn"
+        }
       ]
     },
     {
@@ -261,117 +379,29 @@
       "range": 20,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "zone", "reach": "square", "length": 4, "ring_size": 4, "encloses": "bars", "mode": "cage", "duration": "rest", "note": "SRD 5.2.1: an immobile cage of force bars 20 feet on a side for an hour: nothing inside walks out, but it can be seen and shot through. no save. magical travel out needs a Cha save. Dispel Magic cannot end it. the 1,500 gp ruby dust is not tracked (no v1 spell tracks costly components)"},
-        {"primitive": "zone", "reach": "square", "length": 2, "ring_size": 2, "encloses": "solid", "mode": "box", "duration": "rest", "note": "or a solid box 10 feet on a side that nothing passes through - not sight, not spells"}
-      ]
-    },
-    {
-      "id": "plane_shift",
-      "level": 7,
-      "school": "conjuration",
-      "range": 0,
-      "classes": [
-        "mage",
-        "cleric",
-        "druid"
-      ],
-      "approximated": true,
-      "effects": [
         {
-          "primitive": "shift",
-          "reach": "creatures",
-          "targets": 9,
-          "note": "proposed name: Worldwalk. SRD 5.2.1: the caster and up to eight willing creatures linking hands go to another plane (a tuning fork attuned to it); or a melee spell attack then a Cha save banishes an unwilling creature. v1 travels to a campaign-authored place only, and the banishing use - removing a creature from the fight - has no primitive"
-        }
-      ]
-    },
-    {
-      "id": "reverse_gravity",
-      "level": 7,
-      "school": "transmutation",
-      "range": 20,
-      "concentration": true,
-      "classes": [
-        "mage",
-        "druid"
-      ],
-      "approximated": true,
-      "effects": [
-        {
-          "primitive": "afflict",
-          "reach": "burst",
-          "radius": 10,
-          "condition": "restrained",
-          "save": "dex",
-          "on_save": "negates",
+          "primitive": "zone",
+          "reach": "square",
+          "length": 4,
+          "ring_size": 4,
+          "encloses": "bars",
+          "mode": "cage",
           "duration": "concentration",
-          "note": "proposed name: Skyward Fall. SRD 5.2.1: in a 50-foot-radius, 100-foot-high cylinder everything falls upward (a Dex save grabs something fixed), takes falling damage on a ceiling, hangs at the top, and falls back down when the spell ends. v1 has no altitude or falling damage, so the ones who fly up are Restrained for concentration"
+          "note": "SRD 5.2.1: an immobile cage of force bars 20 feet on a side for as long as you concentrate, up to an hour: nothing inside walks out, but it can be seen and shot through. no save. magical travel out needs a Cha save. Dispel Magic cannot end it. the 1,500 gp ruby dust is not tracked (no v1 spell tracks costly components)"
         },
         {
           "primitive": "zone",
-          "reach": "place",
-          "radius": 10,
-          "duration": "concentration"
+          "reach": "square",
+          "length": 2,
+          "ring_size": 2,
+          "encloses": "solid",
+          "mode": "box",
+          "duration": "concentration",
+          "note": "or a solid box 10 feet on a side that nothing passes through - not sight, not spells"
         }
-      ]
-    },
-    {
-      "id": "antimagic_field",
-      "level": 8,
-      "school": "abjuration",
-      "range": 0,
-      "concentration": true,
-      "classes": [
-        "mage",
-        "cleric"
       ],
-      "approximated": true,
-      "effects": [
-        {
-          "primitive": "dispel",
-          "reach": "around",
-          "radius": 2,
-          "note": "proposed name: Null Sphere. SRD 5.2.1: a 10-foot emanation that suppresses (does not end) spells, magic items, magical attacks and summoned creatures inside it, the caster included, for as long as they are inside. v1 has no suppression, so it dispels what is around the caster when cast and marks the field"
-        },
-        {
-          "primitive": "zone",
-          "reach": "caster",
-          "radius": 2,
-          "duration": "concentration"
-        }
-      ]
-    },
-    {
-      "id": "earthquake",
-      "level": 8,
-      "school": "transmutation",
-      "range": 100,
       "concentration": true,
-      "repeat": "action",
-      "classes": [
-        "mage",
-        "cleric",
-        "druid"
-      ],
-      "approximated": true,
-      "effects": [
-        {
-          "primitive": "afflict",
-          "reach": "burst",
-          "radius": 20,
-          "condition": "prone",
-          "save": "dex",
-          "on_save": "negates",
-          "repeats": true,
-          "note": "proposed name: Rending Quake. SRD 5.2.1: a 100-foot-radius tremor; when cast and at the end of each of the caster's turns, creatures on the ground make a Dex save or fall Prone, concentrators make a Con save or lose it, fissures open and swallow, structures take 50 bludgeoning and may collapse, and the ground is difficult terrain. v1 re-shakes only when the caster spends an action (not free at turn end), and has no concentration-breaking, fissures, structure damage or difficult terrain (v1_spell_list.md: hazard pulses and authored destructible tags)"
-        },
-        {
-          "primitive": "zone",
-          "reach": "place",
-          "radius": 20,
-          "duration": "concentration"
-        }
-      ]
+      "force_creation": true
     },
     {
       "id": "maze",
@@ -379,17 +409,17 @@
       "school": "conjuration",
       "range": 12,
       "concentration": true,
-      "classes": [
-        "mage"
-      ],
-      "approximated": true,
+      "classes": ["mage"],
       "effects": [
         {
-          "primitive": "afflict",
+          "primitive": "sway",
           "reach": "creature",
-          "condition": "stunned",
+          "banishes": true,
+          "escape": "int",
+          "escape_skill": "investigation",
+          "escape_dc": 20,
           "duration": "concentration",
-          "note": "proposed name: Labyrinth Exile. SRD 5.2.1: no save; the target is banished into a labyrinthine demiplane and can take a Study action for a DC 20 Int (Investigation) check to escape, reappearing where it left. v1 leaves the mini on the board marked out of the fight (as banishment does) and has no escape check"
+          "note": "SRD 5.2.1 (SRD p.148): no save. A creature you can see within 60 feet is banished into a labyrinthine demiplane (off the board, its mini beside the map) for the duration or until it escapes: a Study action and a DC 20 Intelligence (Investigation) check, and on a success it escapes and the spell ends. It reappears in the space it left or the nearest unoccupied one"
         }
       ]
     },
@@ -409,19 +439,18 @@
       "level": 9,
       "school": "divination",
       "range": 0,
-      "classes": [
-        "mage",
-        "druid"
-      ],
+      "classes": ["mage", "druid"],
       "effects": [
         {
           "primitive": "sway",
           "reach": "creature",
           "leans": "advantage_on_attacks|advantage_on_checks|advantage_on_saves|disadvantage_against",
-          "duration": "rest",
+          "duration": "long_rest",
           "note": "SRD 5.2.1: advantage on D20 tests, and attack rolls against the creature have disadvantage, for eight hours"
         }
-      ]
+      ],
+      "out_of_combat": true,
+      "ends_previous": true
     },
     {
       "id": "shapechange",
@@ -441,28 +470,6 @@
           "amount": "100",
           "duration": "concentration",
           "note": "proposed name: Myriad Forms. SRD 5.2.1: the caster becomes any creature of CR up to their level they have seen, takes its stat block (keeping mental scores, class features and spellcasting), gains temporary HP equal to the form's HP, and can switch form as a bonus action. v1 plans curated high-level form cards with one swap per turn (v1_spell_list.md); until they exist it grants a placeholder 100 temporary HP standing in for a form's HP"
-        }
-      ]
-    },
-    {
-      "id": "true_polymorph",
-      "level": 9,
-      "school": "transmutation",
-      "range": 6,
-      "concentration": true,
-      "classes": [
-        "mage"
-      ],
-      "approximated": true,
-      "effects": [
-        {
-          "primitive": "afflict",
-          "reach": "creature",
-          "condition": "stunned",
-          "save": "wis",
-          "on_save": "negates",
-          "duration": "concentration",
-          "note": "proposed name: Perfect Remaking. SRD 5.2.1: turn a creature into another creature or an object, or an object into a creature (Wis save if unwilling); new stat block and form HP; permanent if concentration lasts the full hour. v1 has no stat-block swap; here only the hostile use exists - turned into an object, the target is out of the fight for concentration. Allied forms and permanence belong to curated forms and authored hooks (v1_spell_list.md)"
         }
       ]
     }

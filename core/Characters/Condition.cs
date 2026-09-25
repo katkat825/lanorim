@@ -77,20 +77,20 @@ namespace Core.Characters
             condition == Condition.Paralyzed || condition == Condition.Petrified ||
             condition == Condition.Unconscious;
 
-        // speed 0: can it leave the square it is in? Stunned stays here as it was before
-        // 2026-09-24 (SRD 5.2.1's Stunned lists no speed change - flagged in the run log);
-        // Incapacitated alone does not stop a creature moving, which is why Hypnotic Pattern
-        // says "and a Speed of 0" separately
+        // speed 0: can it leave the square it is in? SRD 5.2.1's Stunned has no speed clause (SRD
+        // p.189) - a stunned creature can't act but can move - so it isn't here (2026-09-25, run-log
+        // question 2). Incapacitated alone does not stop a creature moving either, which is why
+        // Hypnotic Pattern says "and a Speed of 0" separately
         public static bool Roots(this Condition condition) =>
             condition == Condition.Restrained || condition == Condition.Grappled ||
-            condition == Condition.Stunned ||
             condition == Condition.Paralyzed || condition == Condition.Petrified ||
             condition == Condition.Unconscious;
 
-        // SRD: disadvantage on its own attack rolls. prone and restrained always; poisoned and
-        // frightened too. Blinded is the sight rule (Actor.CanSee), not this list
+        // SRD: disadvantage on its own attack rolls. prone, poisoned and restrained always.
+        // Frightened only while the source is in sight, and Grappled only against anyone but the
+        // grappler - both need the fight, so Strike.Lean asks them. Blinded is the sight rule
         public static bool AttacksAtDisadvantage(this Condition condition) =>
-            condition == Condition.Poisoned || condition == Condition.Frightened ||
+            condition == Condition.Poisoned ||
             condition == Condition.Restrained || condition == Condition.Prone;
 
         // SRD: poisoned and frightened also sour ability checks

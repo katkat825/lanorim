@@ -119,11 +119,15 @@ ENCOUNTERS = {
             "trigger": {"roll": "1d20", "at_least": 4},
             "entries": [
                 {"id": "crows", "kind": "line", "weight": 1},
+                # one wolf: two knock a level-2 hero prone and bite with Pack Tactics, and the sim
+                # has them winning more often than not (BALANCE_2026-09-25.md)
                 {"id": "wolves", "kind": "fight", "weight": 3, "map": "road_clearing",
                  "monsters": [{"monster": "wolf"}]},
                 {"id": "bandits", "kind": "fight", "weight": 2, "map": "road_clearing",
                  "loot": "bandit_purse",
-                 "monsters": [{"monster": "bandit"}]},
+                 # two since 2026-09-25: a monster attacks once a turn now (its SRD statblock's
+                 # turn, not the hero's two actions), and one bandit alone was a formality
+                 "monsters": [{"monster": "bandit", "count": "2"}]},
             ],
         },
     ]
@@ -344,7 +348,7 @@ EXTRA_KEYS = [
     ("encounter.set_pieces.line.goblin_camp", "The goblin boss kicks over the cauldron and comes for you."),
     ("encounter.mill_road.line.crows", "Crows lift off the verge, complaining."),
     ("encounter.mill_road.line.wolves", "A wolf slinks out of the hedge."),
-    ("encounter.mill_road.line.bandits", "A figure steps into the road with a drawn blade."),
+    ("encounter.mill_road.line.bandits", "Two figures step into the road with drawn blades."),
     ("encounter.rat_nest.loot.gnawed_purse", "A gnawed purse, still heavy with coin."),
     ("encounter.rat_nest.loot.old_torches", "A bundle of old torches, damp but usable."),
     ("encounter.bandit_purse.loot.coin", "A few coins in a bandit's purse."),

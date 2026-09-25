@@ -68,7 +68,8 @@
           "primitive": "illuminate",
           "reach": "place",
           "radius": 4,
-          "duration": "rest"
+          "duration": "rest",
+          "dim_radius": 4
         }
       ]
     },
@@ -112,7 +113,7 @@
         {
           "primitive": "narrate",
           "reach": "place",
-          "duration": "encounter",
+          "duration": "rest",
           "note": "the small tricks. narrative only, by design"
         }
       ]

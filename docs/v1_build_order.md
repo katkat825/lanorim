@@ -65,7 +65,7 @@ Phases 0–3 build to exactly that. Get it working end to end before adding brea
 ## Phase 4 — Spells
 - Spell-effect **primitive library** (the #1 cost) — **(Claude)**
 - Spell resource (slots or points, chosen at creation), at-will cantrips, upcasting, binary concentration — **(Claude)**
-- Wire ~15 spells first, then scale to the 131 — **(Claude)**
+- Wire ~15 spells first, then scale to the 131 (123 since 2026-09-25) — **(Claude)**
 - Spell cards UI — logic **(Claude)** → cards in Godot (EB Garamond) **(You in Godot)**
 
 ## Phase 5 — Classes, species, progression

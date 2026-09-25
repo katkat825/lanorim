@@ -281,7 +281,7 @@ namespace Sim
             {
                 Actor goblin = Goblin(i);
 
-                fight.Enlist(goblin, new Cell(9, Math.Min(4, i)));
+                fight.Enlist(goblin, new Cell(9, Math.Min(4, i)), ActionBudget.Statblock());
                 fight.ArmOpportunity(goblin, Scimitar);
 
                 brains[goblin] = new BasicTactics(new[] { Scimitar });

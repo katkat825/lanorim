@@ -24,11 +24,34 @@ namespace Core.Combat
     // (decisions_checklist.md section 1, corrected 2026-09-23). an extra action a class grants may
     // be for the first round only, for every round, or a fixed number per rest, so the grants are
     // kept apart from the baseline and asked separately.
+    //
+    // the solo delta is the HERO'S. a monster plays its SRD statblock's turn (decisions_checklist.md
+    // section 1, "Monsters don't get the solo extra action", 2026-09-25): one action, a bonus action
+    // only if the statblock has one, one reaction - see Statblock.
     public sealed class ActionBudget
     {
         public const int BaseActions = 2;
         public const int BaseBonusActions = 1;
         public const int BaseReactions = 1;
+
+        // a statblock's turn: one action, whatever it is spent on
+        public const int StatblockActions = 1;
+
+        // a monster's budget. its Attack action is one attack, or its Multiattack's whole list
+        public static ActionBudget Statblock(Multiattack multiattack = null, bool bonusAction = false) =>
+            new ActionBudget
+            {
+                _actions = StatblockActions,
+                _bonusActions = bonusAction ? 1 : 0,
+                Multiattack = multiattack != null && multiattack.Count > 1 ? multiattack : null,
+            };
+
+        int _actions = BaseActions;
+        int _bonusActions = BaseBonusActions;
+
+        // SRD Multiattack: what the one Attack action makes. null for a hero, and for a monster
+        // that makes one attack
+        public Multiattack Multiattack { get; private set; }
 
         // THE GUARDRAIL, and the only one. nothing forbids a feature granting an action - Extra
         // Attack is exactly that - but no turn holds more than this many, however the grants stack.
@@ -62,10 +85,10 @@ namespace Core.Combat
 
         public int ActionsFor(int round) =>
             Math.Min(MostActionsInATurn,
-                     BaseActions + ExtraActionsEachRound + (round == 1 ? ExtraActionsFirstRound : 0));
+                     _actions + ExtraActionsEachRound + (round == 1 ? ExtraActionsFirstRound : 0));
 
         public int BonusActionsFor(int round) =>
-            BaseBonusActions + ExtraBonusActionsEachRound;
+            _bonusActions + ExtraBonusActionsEachRound;
 
         public int ReactionsFor(int round) =>
             BaseReactions + ExtraReactionsEachRound + (round == 1 ? ExtraReactionsFirstRound : 0);
@@ -143,7 +166,8 @@ namespace Core.Combat
 
             switch (spend)
             {
-                case Spend.Action: Actions -= amount; _tookAction = true; break;
+                // an action spent on anything else ends a Multiattack that was under way
+                case Spend.Action: Actions -= amount; _tookAction = true; _volley = null; break;
                 case Spend.Bonus: BonusActions -= amount; _tookBonus = true; break;
                 case Spend.Movement: Movement -= amount; break;
             }
@@ -163,25 +187,62 @@ namespace Core.Combat
         }
 
         // an attack paid for with an action. a Slowed creature attacks once whatever it has left;
-        // a Hasted one may spend its narrow action on it when the ordinary ones are gone
-        public bool TakeAttack(Spend spend)
+        // a Hasted one may spend its narrow action on it when the ordinary ones are gone. a monster
+        // with Multiattack pays one action for the first attack and makes the rest of the list free
+        public bool TakeAttack(Spend spend, Attack attack = null)
         {
             if (spend == Spend.Action && Actor.Boons.ActionOrBonus && _attacked) return false;
 
-            bool paid = Take(spend) || spend == Spend.Action && TakeLimited();
+            // the rest of a Multiattack already paid for
+            if (spend == Spend.Action && _volley != null && Actor.CanAct && !Actor.Boons.NoActions &&
+                _volley.Take(attack?.Id))
+                return true;
 
-            if (paid) _attacked = true;
+            bool ordinary = Take(spend);
+            bool paid = ordinary || spend == Spend.Action && TakeLimited();
 
-            return paid;
+            if (!paid) return false;
+
+            _attacked = true;
+
+            // a Slowed creature makes one attack, and Haste's narrow action buys one weapon attack,
+            // Multiattack or not. an attack the Multiattack isn't made of is an Attack action of one
+            if (ordinary && spend == Spend.Action && Budget.Multiattack != null &&
+                !Actor.Boons.ActionOrBonus)
+            {
+                Volley volley = Budget.Multiattack.Begin();
+
+                if (volley.Take(attack?.Id)) _volley = volley;
+            }
+
+            return true;
         }
 
         bool _attacked;
+
+        Volley _volley;
+
+        // the attacks left of a Multiattack under way
+        public int AttacksLeft => _volley?.Left ?? 0;
+
+        // whether it can attack now: the rest of a Multiattack, or an action to start one
+        public bool CanAttack =>
+            AttacksLeft > 0 && Actor.CanAct && !Actor.Boons.NoActions ||
+            Can(Spend.Action);
+
+        // whether this attack can be the next: any attack starts an action, but the rest of a
+        // Multiattack is the attacks it lists
+        public bool Allows(Attack attack) =>
+            AttacksLeft == 0 || attack == null || _volley.Allows(attack.Id) || Can(Spend.Action);
 
         // SRD: standing up costs half your speed, rounded the way the table always rounds it -
         // down to a whole square
         public bool StandUp()
         {
             if (!Actor.Has(Condition.Prone) || Actor.IsPinned(Condition.Prone)) return false;
+
+            // SRD 5.2.1 Prone: "You can't right yourself ... if your Speed is 0"
+            if (Actor.IsRooted || Actor.Moves == 0) return false;
 
             int cost = Actor.Speed / 2 / FeetPerSquare * FeetPerSquare;
 
@@ -194,6 +255,15 @@ namespace Core.Combat
 
         // SRD Dash: movement equal to your speed again, on top of what is left
         public void Hasten() => Movement += Actor.Moves;
+
+        // SRD: when your speed changes during your move, subtract the distance you have already
+        // moved from the new speed - which is the change, added to what is left
+        public void SpeedChanged(int before, int after)
+        {
+            if (before == after) return;
+
+            Movement = Math.Max(0, Movement + after - before);
+        }
 
         public void Disengage() => Disengaged = true;
 

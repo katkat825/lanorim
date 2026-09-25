@@ -375,6 +375,31 @@ namespace Game.Board
         // and it went over. THE BODY STAYS ON THE MAP
         public void Topple(Actor actor) => Of(actor)?.Topple();
 
+        // OFF THE BOARD FOR A WHILE (Banishment, Maze): the piece stands on the table beside the map,
+        // just past its east edge, one square down for each piece already there, until the spell
+        // ends and it is Placed back on its square
+        public void SetAside(Actor actor)
+        {
+            Mini mini = Of(actor);
+
+            if (mini == null || Metrics == null) return;
+
+            int already = _aside.Count(a => !ReferenceEquals(a, actor));
+
+            if (!_aside.Contains(actor)) _aside.Add(actor);
+
+            mini.PlaceAt(Metrics.Centre(new Cell(Metrics.Columns, Mathf.Min(already, Metrics.Rows - 1))) +
+                         new Vector3(Metrics.CellSize * 0.5f, 0f, 0f));
+        }
+
+        public void BringBack(Actor actor, Cell at)
+        {
+            _aside.Remove(actor);
+            Place(actor, at);
+        }
+
+        readonly List<Actor> _aside = new();
+
         public void Clear(Actor actor)
         {
             if (actor == null || !_minis.Remove(actor, out Mini mini)) return;
@@ -384,6 +409,8 @@ namespace Game.Board
 
         public void ClearAll()
         {
+            _aside.Clear();
+
             foreach (Mini mini in _minis.Values) mini.QueueFree();
 
             _minis.Clear();

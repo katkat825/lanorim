@@ -16,10 +16,32 @@ namespace Core.Rules
             if (resolver == null) throw new ArgumentNullException(nameof(resolver));
             if (actor == null) throw new ArgumentNullException(nameof(actor));
 
-            return resolver.Resolve(RollKind.Check,
-                                    actor.CheckModifier(skill) + Boonus(resolver, actor, skill),
-                                    dc, actor.CheckAdvantageFor(skill.Governs(), skill).And(extra),
-                                    actor);
+            Attempt attempt = resolver.Resolve(RollKind.Check,
+                                               actor.CheckModifier(skill) + Boonus(resolver, actor, skill),
+                                               dc, actor.CheckAdvantageFor(skill.Governs(), skill).And(extra),
+                                               actor);
+
+            // SRD 5.2.1 Reliable Talent (p.63): a check using a proficiency treats a d20 of 9 or
+            // lower as a 10
+            if (actor.Is("reliable_talent") && actor.TrainingIn(skill) != Training.Untrained &&
+                attempt.Natural < 10)
+                attempt = new Attempt(RollKind.Check, D20Roll.Fixed(10, attempt.Roll.Modifier), dc);
+
+            return Mighty(actor, skill.Governs(), attempt);
+        }
+
+        // SRD 5.2.1 Indomitable Might (p.30): a Strength check or save that totals less than the
+        // Strength score uses the score instead
+        static Attempt Mighty(Actor actor, Ability ability, Attempt attempt)
+        {
+            if (ability != Ability.Strength || !actor.Is("indomitable_might")) return attempt;
+
+            int score = actor.Scores.Score(Ability.Strength);
+
+            if (attempt.Total >= score) return attempt;
+
+            return new Attempt(attempt.Kind, D20Roll.Fixed(attempt.Natural, score - attempt.Natural),
+                               attempt.Against);
         }
 
         public static Attempt Check(IResolver resolver, Actor actor, Skill skill,
@@ -46,8 +68,9 @@ namespace Core.Rules
             if (resolver == null) throw new ArgumentNullException(nameof(resolver));
             if (actor == null) throw new ArgumentNullException(nameof(actor));
 
-            // SRD: stunned and unconscious auto-fail STR and DEX saves. the roll still happens, so
-            // the tray shows a die and the log records one - it just can't win.
+            // SRD 5.2.1: Paralyzed, Petrified, Stunned and Unconscious auto-fail Strength and
+            // Dexterity saves (Condition.AutoFailsSave). the roll still happens, so the tray shows a
+            // die and the log records one - it just can't win.
             foreach (Condition condition in actor.Conditions)
             {
                 if (!condition.AutoFailsSave(ability)) continue;
@@ -59,8 +82,23 @@ namespace Core.Rules
 
             foreach (DiceRoll boon in actor.Boons.DiceOnSave(ability)) dice += resolver.Roll(boon, actor);
 
-            return resolver.Resolve(RollKind.Save, actor.SaveModifier(ability) + dice, dc,
-                                    actor.SaveAdvantage(ability).And(extra), actor);
+            Attempt save = Mighty(actor, ability,
+                                  resolver.Resolve(RollKind.Save, actor.SaveModifier(ability) + dice, dc,
+                                                   actor.SaveAdvantage(ability).And(extra), actor));
+
+            // SRD 5.2.1 Indomitable (p.48): a failed save rerolled, adding the Fighter's level -
+            // spent the moment a save fails
+            if (save.Failed && actor.SaveRerolls > 0)
+            {
+                actor.SaveRerolls--;
+
+                save = Mighty(actor, ability,
+                              resolver.Resolve(RollKind.Save,
+                                               actor.SaveModifier(ability) + dice + actor.SaveRerollBonus,
+                                               dc, actor.SaveAdvantage(ability).And(extra), actor));
+            }
+
+            return save;
         }
 
         // the solo delta: one d20, no modifiers, 10 or better and you are back up on 1 hit point

@@ -11,8 +11,25 @@
       "repeat": "action",
       "classes": ["druid"],
       "effects": [
-        {"primitive": "illuminate", "reach": "caster", "radius": 4, "duration": "encounter", "note": "SRD 5.2.1: a flame in your hand for 10 minutes (v1: the fight): bright light 20 feet and dim light 20 feet beyond"},
-        {"primitive": "damage", "reach": "creature", "amount": "1d8", "damage_type": "fire", "attack_roll": true, "cantrip_scaling": true, "repeats": true, "repeat_only": true, "note": "until it ends, a Magic action hurls fire at a creature within 60 feet: a ranged spell attack, 1d8 fire, a die more at 5, 11 and 17"}
+        {
+          "primitive": "illuminate",
+          "reach": "caster",
+          "radius": 4,
+          "duration": "encounter",
+          "note": "SRD 5.2.1: a flame in your hand for 10 minutes (v1: the fight): bright light 20 feet and dim light 20 feet beyond",
+          "dim_radius": 4
+        },
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "1d8",
+          "damage_type": "fire",
+          "attack_roll": true,
+          "cantrip_scaling": true,
+          "repeats": true,
+          "repeat_only": true,
+          "note": "until it ends, a Magic action hurls fire at a creature within 60 feet: a ranged spell attack, 1d8 fire, a die more at 5, 11 and 17"
+        }
       ]
     },
     {
@@ -161,10 +178,7 @@
       "school": "evocation",
       "range": 12,
       "concentration": true,
-      "classes": [
-        "mage",
-        "druid"
-      ],
+      "classes": ["mage", "druid"],
       "effects": [
         {
           "primitive": "sway",
@@ -175,26 +189,8 @@
           "save": "dex",
           "on_save": "negates",
           "duration": "concentration",
-          "note": "SRD 5.2.1: a 20-foot cube; outlined creatures shed dim light (narrated - v1 has no light levels in a fight), attack rolls against them have advantage, and they can't benefit from the Invisible condition"
-        }
-      ]
-    },
-    {
-      "id": "feather_fall",
-      "level": 1,
-      "school": "transmutation",
-      "range": 12,
-      "classes": [
-        "mage"
-      ],
-      "approximated": true,
-      "effects": [
-        {
-          "primitive": "narrate",
-          "reach": "creatures",
-          "targets": 5,
-          "duration": "encounter",
-          "note": "SRD 5.2.1: a reaction when you or a creature within 60 ft falls - up to five falling creatures descend 60 ft per round for 1 minute and take no falling damage. v1 has no falling and no 'falls' trigger, so it is cast as an action and the campaign's authored falls answer it"
+          "note": "SRD 5.2.1: a 20-foot cube; outlined creatures shed dim light (narrated - v1 has no light levels in a fight), attack rolls against them have advantage, and they can't benefit from the Invisible condition",
+          "if_seen": true
         }
       ]
     },
@@ -271,8 +267,31 @@
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "afflict", "reach": "creature", "condition": "prone", "save": "wis", "on_save": "negates", "repeat_save": true, "save_on_damage": true, "pinned": true, "duration": "concentration", "note": "SRD 5.2.1: Wis save or Prone and Incapacitated for the duration, unable to stand; it saves again at the end of each of its turns and whenever it takes damage (with advantage then), and a success ends the spell"},
-        {"primitive": "afflict", "reach": "creature", "condition": "incapacitated", "save": "wis", "on_save": "negates", "same_save": true, "duration": "concentration"}
+        {
+          "primitive": "afflict",
+          "reach": "creatures",
+          "condition": "prone",
+          "save": "wis",
+          "on_save": "negates",
+          "repeat_save": true,
+          "save_on_damage": true,
+          "pinned": true,
+          "duration": "concentration",
+          "note": "SRD 5.2.1: Wis save or Prone and Incapacitated for the duration, unable to stand; it saves again at the end of each of its turns and whenever it takes damage (with advantage then), and a success ends the spell",
+          "targets": 1,
+          "extra_targets_per_level": 1
+        },
+        {
+          "primitive": "afflict",
+          "reach": "creatures",
+          "condition": "incapacitated",
+          "save": "wis",
+          "on_save": "negates",
+          "same_save": true,
+          "duration": "concentration",
+          "targets": 1,
+          "extra_targets_per_level": 1
+        }
       ]
     },
     {
@@ -281,16 +300,15 @@
       "school": "divination",
       "range": 0,
       "ritual": true,
-      "classes": [
-        "mage"
-      ],
+      "classes": ["mage"],
       "effects": [
         {
           "primitive": "reveal",
           "reach": "place",
           "note": "the touched object's magical properties, attunement, charges and the spells affecting it. information by nature: the campaign supplies what is learned"
         }
-      ]
+      ],
+      "out_of_combat": true
     },
     {
       "id": "searing_smite",
@@ -348,10 +366,19 @@
       "level": 1,
       "school": "enchantment",
       "range": 12,
-      "not_in_srd": true,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "damage", "reach": "creature", "amount": "3d6", "per_extra_level": "1d6", "damage_type": "psychic", "save": "wis", "on_save": "half", "reaction_flee": true, "note": "v1_spell_list.md's Dissonant Whispers is not in SRD 5.2.1, so it ships as an original spell under an original name (decisions_checklist.md section 1, 2026-09-24): 3d6 psychic, Wis save for half; a creature that fails spends its reaction running as far as its speed allows away from you"}
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "3d6",
+          "per_extra_level": "1d6",
+          "damage_type": "psychic",
+          "save": "wis",
+          "on_save": "half",
+          "reaction_flee": true,
+          "note": "SRD 5.2.1 (SRD p.124): one creature you can see within 60 feet, Wis save: on a failure 3d6 Psychic and it must immediately use its Reaction, if available, to move as far from you as it can; on a success half damage only. +1d6 per slot level above 1"
+        }
       ]
     }
   ]

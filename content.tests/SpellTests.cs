@@ -68,24 +68,23 @@ namespace Content.Tests
         }
 
         [Fact]
-        public void TheShouldListIsThereWithTheTwoTheSrdDoesNotHaveUnderNewNames()
+        public void TheShouldListIsThere()
         {
-            // the 69 SHOULD spells of v1_spell_list.md. Dissonant Whispers and Dragon's Breath are
-            // not in SRD 5.2.1; decisions_checklist.md section 1 (2026-09-24) keeps them as working
-            // spells under original names (Murmur of Dread, Wyrmbreath Boon) rather than dropping
-            // them
+            // the SHOULD spells of v1_spell_list.md: 69, less the seven Kathleen deferred and the
+            // one she skipped (2026-09-25) - 61. Dissonant Whispers and Dragon's Breath ARE in SRD
+            // 5.2.1 after all (SRD p.124, p.126) and ship under their own names
             string[] should =
             {
                 "produce_flame", "ray_of_frost", "shillelagh", "shocking_grasp",
                 "spare_the_dying", "thaumaturgy", "true_strike",
 
-                "chromatic_orb", "command", "divine_smite", "faerie_fire", "feather_fall",
+                "chromatic_orb", "command", "divine_smite", "faerie_fire",
                 "fog_cloud", "goodberry", "healing_word", "hellish_rebuke", "hideous_laughter",
                 "identify", "searing_smite", "silent_image", "speak_with_animals",
 
                 "aid", "blindness_deafness", "blur", "darkness", "darkvision", "enhance_ability",
-                "enlarge_reduce", "flaming_sphere", "heat_metal", "moonbeam",
-                "pass_without_trace", "spike_growth", "suggestion",
+                "enlarge_reduce", "flaming_sphere", "moonbeam",
+                "pass_without_trace", "spike_growth",
 
                 "call_lightning", "fear", "gaseous_form", "major_image", "remove_curse",
                 "sleet_storm", "speak_with_dead", "stinking_cloud",
@@ -97,22 +96,37 @@ namespace Content.Tests
 
                 "blade_barrier", "flesh_to_stone", "globe_of_invulnerability", "true_seeing",
 
-                "forcecage", "plane_shift", "reverse_gravity",
+                "forcecage",
 
-                "antimagic_field", "earthquake", "maze", "power_word_stun",
+                "maze", "power_word_stun",
 
-                "foresight", "shapechange", "true_polymorph",
+                "foresight", "shapechange",
+
+                "dissonant_whispers", "dragons_breath",
             };
 
-            Assert.Equal(67, should.Length);
+            Assert.Equal(61, should.Length);
 
             string[] missing = should.Where(id => !Book.Has(id)).ToArray();
 
             Assert.True(missing.Length == 0, "not in the spell files: " + string.Join(", ", missing));
 
-            Assert.Equal(62 + 69, Book.Count);
-            Assert.True(Book.Find("dissonant_whispers").NotInSrd);
-            Assert.True(Book.Find("dragons_breath").NotInSrd);
+            // 131 on the v1 list, 123 working (Kathleen, 2026-09-25)
+            Assert.Equal(62 + 61, Book.Count);
+            Assert.Equal(123, Book.Count);
+            Assert.False(Book.Find("dissonant_whispers").Renamed);
+            Assert.False(Book.Find("dragons_breath").Renamed);
+        }
+
+        [Fact]
+        public void TheDeferredAndSkippedSpellsAreOutOfTheFunctioningSet()
+        {
+            // Kathleen, 2026-09-25: seven deferred (docs/deferred.md) and Suggestion skipped. their
+            // data is parked in content/deferred/spells/, which is not embedded - so they are on no
+            // class list, can't be learned and can't be cast
+            foreach (string id in new[] { "feather_fall", "heat_metal", "plane_shift", "reverse_gravity",
+                                          "antimagic_field", "earthquake", "true_polymorph", "suggestion" })
+                Assert.False(Book.Has(id), id);
         }
 
         [Fact]
@@ -139,21 +153,26 @@ namespace Content.Tests
             // Shillelagh, Spare the Dying, Divine Smite, Searing Smite, Fog Cloud, Darkness,
             // Enlarge/Reduce, Remove Curse, Sleet Storm, Stinking Cloud, Cloudkill, Globe of
             // Invulnerability
+            //
+            // 2026-09-25 (Kathleen's decisions): Banishment and Maze made faithful (off the board
+            // and back); seven deferred and Suggestion skipped. Fly, Gaseous Form and Slow are
+            // closer but still not exact, and keep their SRD names on the allow-list with Find
+            // Familiar, Dominate Monster, Wish, Polymorph and Shapechange
+            // (ShapesAndReactionsTests.KeptUnderTheirSrdNames). Wall of Force ships as Cube of
+            // Force, Teleport as Waypoint
             string[] must =
             {
-                "find_familiar", "fly", "slow", "banishment", "wall_of_force", "teleport",
+                "find_familiar", "fly", "slow", "wall_of_force", "teleport",
                 "dominate_monster", "wish",
             };
 
             string[] should =
             {
-                "feather_fall", "heat_metal", "suggestion", "gaseous_form", "polymorph",
-                "plane_shift", "reverse_gravity", "antimagic_field", "earthquake", "maze",
-                "shapechange", "true_polymorph",
+                "gaseous_form", "polymorph", "shapechange",
             };
 
-            Assert.Equal(8, must.Length);
-            Assert.Equal(12, should.Length);
+            Assert.Equal(7, must.Length);
+            Assert.Equal(3, should.Length);
 
             Assert.Equal(must.Concat(should).OrderBy(id => id),
                          Book.Approximations.Select(s => s.Id).OrderBy(id => id));

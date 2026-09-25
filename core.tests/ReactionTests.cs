@@ -401,27 +401,35 @@ namespace Core.Tests
         }
 
         [Fact]
-        public void HidingGivesAdvantageUntilYouAttack()
+        public void HidingNeedsToBeUnseenAndGivesTheInvisibleConditionUntilYouAttack()
         {
-            // initiative, a Stealth check of 18, then two attacks: each a pair of d20s for the
-            // advantage, and a damage die
+            // initiative, a Stealth check of 18, then an attack: a pair of d20s for the advantage,
+            // and a damage die
             Encounter fight = HeroFirst(out Actor hero, out Actor goblin, 10, 1, 18, 2, 19, 4, 3);
             fight.Begin();
 
             Turn turn = fight.Next();
 
+            // SRD 5.2.1 Hide (p.183): not while an enemy can see you
+            Assert.False(fight.CanHide(hero));
+            Assert.Null(fight.Hide(turn));
+
+            goblin.Apply(Condition.Blinded);
+            Assert.True(fight.CanHide(hero));
+
             Attempt hid = fight.Hide(turn);
 
             Assert.True(hid.Succeeded);
-            Assert.True(hero.Boons.Has(Encounter.Hidden));
-            Assert.Equal(Advantage.Advantage, hero.AttackAdvantage);
-            Assert.Equal(Advantage.Disadvantage, hero.AdvantageAgainstMe);
+            Assert.True(hero.Has(Condition.Invisible));
+
+            goblin.Remove(Condition.Blinded);
+            Assert.False(fight.Sees(goblin, hero));
 
             fight.Hit(turn, goblin, Combatants.Longsword);
 
             // the attack gave it away
-            Assert.False(hero.Boons.Has(Encounter.Hidden));
-            Assert.Equal(Advantage.Flat, hero.AttackAdvantage);
+            Assert.False(hero.Has(Condition.Invisible));
+            Assert.True(fight.Sees(goblin, hero));
         }
     }
 

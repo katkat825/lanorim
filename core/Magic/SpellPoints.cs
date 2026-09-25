@@ -156,8 +156,9 @@ namespace Core.Magic
             {
                 CasterProgression.Full => level,
 
-                // a half caster has no magic at all at level 1, and half a full caster's after
-                CasterProgression.Half => level / 2,
+                // a half caster counts half its levels, rounded up (SRD 5.2.1 p.25) - so a level 1
+                // Paladin has a first-level caster's pool
+                CasterProgression.Half => (level + 1) / 2,
 
                 _ => 0,
             };

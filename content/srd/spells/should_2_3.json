@@ -28,16 +28,15 @@
       "school": "illusion",
       "range": 0,
       "concentration": true,
-      "classes": [
-        "mage"
-      ],
+      "classes": ["mage"],
       "effects": [
         {
           "primitive": "sway",
           "reach": "caster",
           "leans": "disadvantage_against",
           "duration": "concentration",
-          "note": "SRD 5.2.1: attack rolls against you have disadvantage for 1 minute. The exception for attackers with Blindsight or Truesight is not carried, because v1 statblocks have no special senses at all - flagged in the build notes if senses arrive"
+          "note": "SRD 5.2.1: attack rolls against you have disadvantage for 1 minute. An attacker with Truesight is unaffected (not_vs_truesight); Blindsight isn't modelled, since statblocks carry no senses",
+          "not_vs_truesight": true
         }
       ]
     },
@@ -57,15 +56,12 @@
       "level": 2,
       "school": "transmutation",
       "range": 0,
-      "classes": [
-        "mage",
-        "druid"
-      ],
+      "classes": ["mage", "druid"],
       "effects": [
         {
           "primitive": "narrate",
           "reach": "creature",
-          "duration": "rest",
+          "duration": "long_rest",
           "note": "SRD 5.2.1: a willing creature gains Darkvision with a range of 150 feet for 8 hours. v1 has no vision or lighting rules on the fight board, so the narrator and the campaign honour it; judged narrative, not approximated. Revisit if v1 adds senses"
         }
       ]
@@ -76,11 +72,7 @@
       "school": "transmutation",
       "range": 0,
       "concentration": true,
-      "classes": [
-        "mage",
-        "cleric",
-        "druid"
-      ],
+      "classes": ["mage", "cleric", "druid"],
       "effects": [
         {
           "primitive": "sway",
@@ -90,7 +82,8 @@
           "leans": "advantage_on_checks",
           "ability": "chosen",
           "duration": "concentration",
-          "note": "SRD 5.2.1: for 1 hour the target has advantage on ability checks using one ability the caster chooses; one extra creature per slot level above 2"
+          "note": "SRD 5.2.1: for 1 hour the target has advantage on ability checks using one ability the caster chooses; one extra creature per slot level above 2",
+          "ability_choices": ["str", "dex", "int", "wis", "cha"]
         }
       ]
     },
@@ -109,49 +102,46 @@
     {
       "id": "flaming_sphere",
       "level": 2,
-      "school": "evocation",
+      "school": "conjuration",
       "range": 12,
       "concentration": true,
       "repeat": "bonus_action",
       "classes": ["mage", "druid"],
       "effects": [
-        {"primitive": "zone", "reach": "place", "radius": 1, "unoccupied": true, "duration": "concentration", "note": "SRD 5.2.1: a 5-foot sphere of fire on an empty square within range"},
-        {"primitive": "damage", "reach": "zone", "pulses": "end_turn|ram", "amount": "2d6", "per_extra_level": "1d6", "damage_type": "fire", "save": "dex", "on_save": "half", "note": "a creature that ends its turn within 5 feet of it, or that it is rolled into, makes a Dex save: 2d6 fire, half on a success"},
-        {"primitive": "shift", "reach": "zone", "length": 6, "repeats": true, "rams": true, "note": "a bonus action rolls it up to 30 feet; rolled into a creature, it stops there for the turn"},
-        {"primitive": "illuminate", "reach": "place", "radius": 4, "duration": "concentration", "note": "bright light 20 feet and dim light 20 feet beyond"}
-      ]
-    },
-    {
-      "id": "heat_metal",
-      "level": 2,
-      "school": "transmutation",
-      "range": 12,
-      "concentration": true,
-      "repeat": "bonus_action",
-      "classes": [
-        "mage",
-        "druid"
-      ],
-      "approximated": true,
-      "effects": [
         {
-          "primitive": "damage",
-          "reach": "creature",
-          "amount": "2d8",
-          "per_extra_level": "1d8",
-          "damage_type": "fire",
-          "repeats": true,
-          "note": "SRD 5.2.1 targets a manufactured metal object, burning whoever touches it for 2d8 fire with no save when cast and again by bonus action on later turns. v1 aims at the creature holding or wearing it; items carry no 'metal' flag, so the target is not checked"
+          "primitive": "zone",
+          "reach": "place",
+          "radius": 1,
+          "unoccupied": true,
+          "duration": "concentration",
+          "note": "SRD 5.2.1: a 5-foot sphere of fire on an empty square within range"
         },
         {
-          "primitive": "sway",
-          "reach": "creature",
-          "follows": true,
-          "leans": "disadvantage_on_attacks|disadvantage_on_checks",
-          "duration": "next_turn",
-          "until": "caster",
+          "primitive": "damage",
+          "reach": "zone",
+          "pulses": "end_turn|ram",
+          "amount": "2d6",
+          "per_extra_level": "1d6",
+          "damage_type": "fire",
+          "save": "dex",
+          "on_save": "half",
+          "note": "a creature that ends its turn within 5 feet of it, or that it is rolled into, makes a Dex save: 2d6 fire, half on a success"
+        },
+        {
+          "primitive": "shift",
+          "reach": "zone",
+          "length": 6,
           "repeats": true,
-          "note": "SRD 5.2.1: a creature holding or wearing the object that takes the damage makes a Constitution save or drops it if it can; if it does not drop it, it has disadvantage on attack rolls and ability checks until the start of the caster's next turn. v1 cannot make a creature drop an item, so the save and the drop are gone and it always takes the disadvantage"
+          "rams": true,
+          "note": "a bonus action rolls it up to 30 feet; rolled into a creature, it stops there for the turn"
+        },
+        {
+          "primitive": "illuminate",
+          "reach": "place",
+          "radius": 4,
+          "duration": "concentration",
+          "note": "bright light 20 feet and dim light 20 feet beyond",
+          "dim_radius": 4
         }
       ]
     },
@@ -162,9 +152,7 @@
       "range": 24,
       "concentration": true,
       "repeat": "action",
-      "classes": [
-        "druid"
-      ],
+      "classes": ["druid"],
       "effects": [
         {
           "primitive": "zone",
@@ -181,7 +169,8 @@
           "damage_type": "radiant",
           "save": "con",
           "on_save": "half",
-          "note": "SRD 5.2.1: when the beam appears, moves onto a creature, or a creature enters it or ends its turn there - once per turn. the shape-shifter rider waits for creature types on statblocks, flagged in the build notes"
+          "note": "SRD 5.2.1: when the beam appears, moves onto a creature, or a creature enters it or ends its turn there - once per turn. A shape-shifter in the beam reverts to its true form and can't shift while inside (reverts_shape)",
+          "reverts_shape": true
         },
         {
           "primitive": "shift",
@@ -210,16 +199,15 @@
       "school": "transmutation",
       "range": 30,
       "concentration": true,
-      "classes": [
-        "druid"
-      ],
+      "classes": ["druid"],
       "effects": [
         {
           "primitive": "zone",
           "reach": "place",
           "radius": 4,
           "rough": true,
-          "duration": "concentration"
+          "duration": "concentration",
+          "ground": true
         },
         {
           "primitive": "damage",
@@ -228,27 +216,6 @@
           "amount": "2d4",
           "damage_type": "piercing",
           "note": "SRD 5.2.1: difficult terrain, and 2d4 piercing for every 5 feet moved into or within it. its camouflage is the narrator's"
-        }
-      ]
-    },
-    {
-      "id": "suggestion",
-      "level": 2,
-      "school": "enchantment",
-      "range": 6,
-      "concentration": true,
-      "classes": [
-        "mage"
-      ],
-      "approximated": true,
-      "effects": [
-        {
-          "primitive": "narrate",
-          "reach": "creature",
-          "save": "wis",
-          "on_save": "negates",
-          "duration": "concentration",
-          "note": "SRD 5.2.1: on a failed Wisdom save the target has the Charmed condition for up to 8 hours and pursues a suggested course of action (25 words or fewer), ending early if the caster or an ally damages it. v1 has the Charmed condition now but cannot drive a creature's turns toward a free-text course of action, so the narrator plays the suggestion; the charm's no-attacking-the-caster and the end-on-damage are not enforced in fights (RUN_LOG question 1)"
         }
       ]
     },
@@ -282,16 +249,49 @@
       "school": "transmutation",
       "range": 0,
       "concentration": true,
-      "classes": [
-        "mage"
-      ],
+      "classes": ["mage"],
       "approximated": true,
       "effects": [
         {
-          "primitive": "shift",
-          "reach": "creature",
+          "primitive": "sway",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "fly_speed": 10,
+          "resists": "bludgeoning|piercing|slashing",
+          "immune": ["prone"],
+          "no_attacks": true,
+          "no_casting": true,
+          "ends_at_zero": true,
           "duration": "concentration",
-          "note": "SRD 5.2.1: a willing creature becomes a misty cloud for 1 hour - Fly speed 10 feet and hover, resistance to bludgeoning, piercing and slashing damage, advantage on Strength, Dexterity and Constitution saves, passes through narrow openings, cannot attack or cast spells, and liquids count as solid. v1 has no speed changes, no granted resistance, no advantage on saves and no attack/cast lockout; it is a terrain-ignoring movement state like Fly, with the rest left to the narrator"
+          "note": "SRD 5.2.1 (SRD p.134): a willing creature you touch becomes a misty cloud, concentration up to 1 hour. Its only movement is a Fly Speed of 10 feet; Resistance to Bludgeoning, Piercing and Slashing; Immunity to Prone; Advantage on Str, Dex and Con saves; it can't attack or cast spells; the spell ends on it at 0 HP. +1 creature per slot level above 3. Not carried: entering and occupying another creature's space (one piece to a square), and the Magic action to end it on itself. Kept under the SRD name by Kathleen (2026-09-25)"
+        },
+        {
+          "primitive": "sway",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "leans": "advantage_on_saves",
+          "leans_on": "str",
+          "duration": "concentration"
+        },
+        {
+          "primitive": "sway",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "leans": "advantage_on_saves",
+          "leans_on": "dex",
+          "duration": "concentration"
+        },
+        {
+          "primitive": "sway",
+          "reach": "creatures",
+          "targets": 1,
+          "extra_targets_per_level": 1,
+          "leans": "advantage_on_saves",
+          "leans_on": "con",
+          "duration": "concentration"
         }
       ]
     },
@@ -301,9 +301,7 @@
       "school": "illusion",
       "range": 24,
       "concentration": true,
-      "classes": [
-        "mage"
-      ],
+      "classes": ["mage"],
       "effects": [
         {
           "primitive": "narrate",
@@ -311,7 +309,8 @@
           "duration": "concentration",
           "note": "SRD 5.2.1: an illusion of an object, creature or phenomenon no larger than a 20-foot cube, with sound, smell and temperature, for 10 minutes; a creature that takes a Study action makes an Intelligence (Investigation) check against the spell save DC to see through it. How creatures react to an illusion is the narrator's call at any table, so this is narrative: the narrator places it and calls the Investigation check. Judged not approximated"
         }
-      ]
+      ],
+      "concentration_below": 4
     },
     {
       "id": "remove_curse",
@@ -371,12 +370,25 @@
       "level": 2,
       "school": "transmutation",
       "range": 0,
+      "casting_time": "bonus_action",
       "concentration": true,
       "repeat": "action",
-      "not_in_srd": true,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "damage", "reach": "cone", "length": 3, "amount": "3d6", "per_extra_level": "1d6", "damage_type": "chosen", "damage_choices": ["acid", "cold", "fire", "lightning", "poison"], "save": "dex", "on_save": "half", "repeats": true, "repeat_only": true, "note": "v1_spell_list.md's Dragon's Breath is not in SRD 5.2.1, so it ships as an original spell under an original name: for as long as you hold it, an action breathes a 15-foot cone of the element you chose at the cast, 3d6, Dex save for half"}
+        {
+          "primitive": "damage",
+          "reach": "cone",
+          "length": 3,
+          "amount": "3d6",
+          "per_extra_level": "1d6",
+          "damage_type": "chosen",
+          "damage_choices": ["acid", "cold", "fire", "lightning", "poison"],
+          "save": "dex",
+          "on_save": "half",
+          "repeats": true,
+          "repeat_only": true,
+          "note": "SRD 5.2.1 (SRD p.126): a bonus action, Touch, concentration up to 1 minute. You touch one willing creature (in a solo game, you) and choose Acid, Cold, Fire, Lightning or Poison; until the spell ends it can take a Magic action to exhale a 15-foot Cone: Dex save, 3d6 of the chosen type, half on a success. +1d6 per slot level above 2"
+        }
       ]
     }
   ]

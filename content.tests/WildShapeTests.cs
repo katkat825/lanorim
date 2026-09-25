@@ -180,21 +180,22 @@ namespace Content.Tests
         }
 
         [Fact]
-        public void AShortRestStillGivesEveryOtherFeatureBackWhole()
+        public void WildShapeHasThreeUsesAtSixAndAShortRestGivesOneBack()
         {
-            // Natural Recovery is a Circle of the Land feature at 6 in SRD 5.2.1
+            // SRD 5.2.1 (p.41-42): Wild Shape 2, 3 at 6, 4 at 17; one back on a short rest.
+            // Natural Recovery at 6 is slots and a free Circle spell (p.46), not a heal - narrated
             Hero hero = Druid(6);
-            Feature recovery = hero.Activatable.First(f => f.Id == "natural_recovery");
             var resolver = new StandardResolver(new ScriptedRng(4));
 
-            hero.Actor.Suffer(5, DamageType.Slashing);
+            Assert.Equal(3, hero.UsesLeft(hero.WildShape));
+            Assert.DoesNotContain(hero.Activatable, f => f.Id == "natural_recovery");
 
-            Assert.True(hero.Invoke(recovery, resolver));
             Assert.True(hero.Shift(Card("cat")));
+            Assert.True(hero.Shift(Card("cat")));
+            Assert.Equal(1, hero.UsesLeft(hero.WildShape));
 
             hero.ShortRest(resolver);
 
-            Assert.Equal(1, hero.UsesLeft(recovery));
             Assert.Equal(2, hero.UsesLeft(hero.WildShape));
         }
 

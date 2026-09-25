@@ -9,7 +9,7 @@
     { "id": "charlatan", "skills": ["deception", "sleight_of_hand"],
       "abilities": ["dex", "con", "cha"], "gear": ["dagger"], "gold": 15 },
     { "id": "criminal", "skills": ["sleight_of_hand", "stealth"],
-      "abilities": ["dex", "con", "int"], "gear": ["dagger", "thieves_tools"], "gold": 16 },
+      "abilities": ["dex", "con", "int"], "gear": ["dagger", "dagger", "thieves_tools"], "gold": 16 },
     { "id": "guard", "skills": ["athletics", "perception"], "abilities": ["str", "int", "wis"],
       "gear": ["spear", "light_crossbow"], "gold": 12 },
     { "id": "hermit", "skills": ["medicine", "religion"], "abilities": ["con", "wis", "cha"],

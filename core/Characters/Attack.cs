@@ -42,6 +42,36 @@ namespace Core.Characters
 
         public string Id { get; }
 
+        // --- SRD 5.2.1 weapon properties (p.89-90), 2026-09-25 -------------------------------------
+
+        // Thrown: a melee weapon that can also be thrown - a melee attack within its reach, a
+        // ranged one past it. without this a dagger was ranged-only, and at disadvantage in melee
+        public bool Thrown { get; init; }
+
+        // Light: the second Light weapon's bonus-action attack (CombatSession)
+        public bool Light { get; init; }
+
+        // Heavy: disadvantage for a wielder with less than 13 Strength (melee) or Dexterity (ranged)
+        public bool Heavy { get; init; }
+
+        // Versatile: the damage with both hands on it
+        public DiceRoll Versatile { get; init; }
+
+        // "simple" or "martial": what a class's weapon training reads
+        public string Category { get; init; } = "";
+
+        // the same attack, trained or not, with other damage dice or none of the ability on the
+        // damage (the Light bonus attack)
+        public Attack With(bool? proficient = null, DiceRoll? damage = null, bool? addsAbility = null,
+                           int? damageBonus = null) =>
+            new Attack(Id, damage ?? Damage, DamageType, Ability, proficient ?? Proficient, Reach, Range,
+                       LongRange, Hand, Finesse, AttackBonus, damageBonus ?? DamageBonus,
+                       addsAbility ?? AddsAbilityToDamage)
+            {
+                Thrown = Thrown, Light = Light, Heavy = Heavy, Versatile = Versatile, Category = Category,
+                OnHit = OnHit,
+            };
+
         public DiceRoll Damage { get; }
 
         public DamageType DamageType { get; }
@@ -71,7 +101,8 @@ namespace Core.Characters
         // a Magic Missile-shaped attack adds no ability modifier to its damage
         public bool AddsAbilityToDamage { get; }
 
-        public bool IsRanged => Range > 0;
+        // a thrown weapon is a melee weapon that can also reach further
+        public bool IsRanged => Range > 0 && !Thrown;
 
         // what a hit with it always carries: a statblock's poison, its knock-down. riders the
         // attacker's own features add (Sneak Attack) come with the swing instead
@@ -115,7 +146,7 @@ namespace Core.Characters
                        (AddsAbilityToDamage && actor != null
                            ? actor.AbilityModifier(AbilityFor(actor))
                            : 0) +
-                       (actor?.Boons.FlatOnDamage ?? 0);
+                       (actor == null ? 0 : actor.Boons.FlatOnDamageFor(AbilityFor(actor)));
 
             DiceRoll die = actor?.Boons.RewriteFor(Id) is WeaponRewrite rewrite &&
                            !rewrite.Die.IsNothing
@@ -145,7 +176,7 @@ namespace Core.Characters
         }
 
         // how far away it can still be used, in squares. a melee attack's answer is its reach
-        public int Reaches => IsRanged ? LongRange : Reach;
+        public int Reaches => IsRanged ? LongRange : Thrown ? Math.Max(Reach, LongRange) : Reach;
 
         public override string ToString() =>
             $"{Id}: {Damage} {DamageType.Id()}" +

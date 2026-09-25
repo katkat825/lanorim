@@ -60,7 +60,7 @@ namespace Core.Resolution
 
         public override string ToString() =>
             $"d20 {string.Join("/", Faces)}" +
-            (Advantage == Advantage.Flat ? "" : $" ({Advantage.Id()})") +
+            (Advantage.IsFlat() ? "" : $" ({Advantage.Id()})") +
             $" -> {Natural}{(Modifier >= 0 ? "+" : "")}{Modifier} = {Total}";
     }
 }

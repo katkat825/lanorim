@@ -40,8 +40,25 @@ namespace Core.Characters
 
         public Health Health { get; private set; }
 
-        // SRD 5.2.1 default; a species or an effect moves it
-        public int Speed { get; set; } = 30;
+        // SRD 5.2.1 default; a species or an effect moves it. what is added only out of heavy
+        // armor (the Barbarian's Fast Movement) rides on top, so "Speed += n" keeps working
+        public int Speed
+        {
+            get => _speed + LightFootedBonus - ArmorDrag;
+            set => _speed = value - LightFootedBonus + ArmorDrag;
+        }
+
+        int _speed = 30;
+
+        // SRD 5.2.1 Fast Movement (p.30): "while you aren't wearing Heavy armor"
+        public int SpeedOutOfHeavyArmor { get; set; }
+
+        int LightFootedBonus => Armor.Weight == ArmorWeight.Heavy ? 0 : SpeedOutOfHeavyArmor;
+
+        // SRD 5.2.1 armor (p.92): armor with a Strength score costs 10 feet of Speed to a wearer
+        // below it. a statblock's armor names none, so a monster never pays it
+        int ArmorDrag =>
+            Armor.StrengthRequirement > 0 && Scores.Score(Ability.Strength) < Armor.StrengthRequirement ? 10 : 0;
 
         // what kind of creature it is and what it is by nature: "humanoid", "undead", "construct"
         // from a statblock, "sleepless" from an elf's Trance. a spell that only works on some
@@ -179,7 +196,8 @@ namespace Core.Characters
             Scores.Modifier(ability) +
             (SavesWith(ability) ? ProficiencyBonus : 0) +
             SaveBonus(ability) +
-            Boons.FlatOnSave(ability);
+            Boons.FlatOnSave(ability) +
+            AuraBonus;
 
 
         // --- armor ----------------------------------------------------------------------------
@@ -213,6 +231,7 @@ namespace Core.Characters
                     from = Math.Max(from, Boons.UnarmoredBase + dex);
 
                 return from + (HasShield ? ArmorWeights.ShieldBonus : 0) + ArmorClassBonus +
+                       (Armor.Weight != ArmorWeight.None ? ArmoredArmorClassBonus : 0) +
                        Boons.ArmorClass;
             }
         }
@@ -245,7 +264,7 @@ namespace Core.Characters
                 : (IReadOnlyList<Actor>)Array.Empty<Actor>();
 
         public bool IsImmuneTo(Condition condition) =>
-            _immunities.Contains(condition) ||
+            _immunities.Contains(condition) || Boons.Immune(condition) ||
             condition == Condition.Poisoned && _conditions.Contains(Condition.Petrified);
 
         public void MakeImmune(Condition condition)
@@ -342,9 +361,55 @@ namespace Core.Characters
         // the same, for one particular check: a boon can lean on a single skill or a single
         // ability (Hex), and the blanket answer above cannot see that
         public Advantage CheckAdvantageFor(Ability ability, Skill skill) =>
-            Advantages.Of(Boons.AdvantageOnCheck(ability, skill),
+            Advantages.Of(Boons.AdvantageOnCheck(ability, skill) ||
+                          HasAdvantage("check:" + ability.Id()) ||
+                          skill != Skill.None && HasAdvantage("skill:" + skill.Id()),
                           Boons.DisadvantageOnCheck(ability, skill) ||
                           _conditions.Any(c => c.ChecksAtDisadvantage()));
+
+        // --- what a feature grants that isn't a number (2026-09-25, the SRD check) ----------------
+
+        // standing advantages, keyed "save:dex", "check:str", "skill:athletics", "initiative":
+        // Danger Sense, Remarkable Athlete. some hold only while the creature can act
+        readonly Dictionary<string, bool> _advantages = new(StringComparer.OrdinalIgnoreCase);
+
+        public void GrantAdvantage(string key, bool unlessIncapacitated = false)
+        {
+            if (string.IsNullOrWhiteSpace(key)) return;
+
+            // "unless incapacitated" only narrows: a second grant without it widens it back
+            _advantages[key] = _advantages.TryGetValue(key, out bool was) ? was && unlessIncapacitated
+                                                                           : unlessIncapacitated;
+        }
+
+        public bool HasAdvantage(string key) =>
+            _advantages.TryGetValue(key, out bool unlessIncapacitated) &&
+            !(unlessIncapacitated && IsIncapacitated);
+
+        public bool InitiativeAdvantage => HasAdvantage("initiative");
+
+        // the lowest natural roll that crits with a weapon or an Unarmed Strike: Improved and
+        // Superior Critical (SRD 5.2.1 p.49)
+        public int CritOn { get; set; } = 20;
+
+        // Aura of Protection: saves add this ability's modifier, at least +1, while the creature
+        // can act (SRD 5.2.1 p.55)
+        public Ability? AuraAbility { get; set; }
+
+        public int AuraBonus =>
+            AuraAbility.HasValue && !IsIncapacitated ? Math.Max(1, AbilityModifier(AuraAbility.Value)) : 0;
+
+        // the Defense fighting style: armor class while wearing armor (SRD 5.2.1 p.88)
+        public int ArmoredArmorClassBonus { get; set; }
+
+        // Indomitable: rerolls of a failed save, with a bonus, until the next long rest
+        public int SaveRerolls { get; set; }
+
+        public int SaveRerollBonus { get; set; }
+
+        // the one boon an attack is giving up the advantage of: Brutal Strike forgoes Reckless
+        // Attack's (SRD 5.2.1 p.29)
+        public string ForgoingAdvantageFrom { get; set; }
 
         // what attack rolls at it lean on, from within 5 feet. an outlined creature gets nothing
         // from being unseen - Faerie Fire's rule, and the only thing that makes a boon's own
@@ -354,9 +419,28 @@ namespace Core.Characters
         // the two halves of an attack roll's lean, kept apart so that one advantage and one
         // disadvantage anywhere in the attack cancel however many sources each side has. SRD's
         // rule; Advantage.And across three already-cancelled answers could not keep it
-        public (bool advantage, bool disadvantage) AttackLeans =>
-            (Boons.AnyAdvantageOnAttacks,
-             Boons.AnyDisadvantageOnAttacks || _conditions.Any(c => c.AttacksAtDisadvantage()));
+        public (bool advantage, bool disadvantage) AttackLeans => AttackLeansWith(null);
+
+        // the same, for one attack: a Strength-only advantage needs a Strength attack
+        public (bool advantage, bool disadvantage) AttackLeansWith(Attack attack) =>
+            (Boons.AdvantageOnAttackWith(attack?.AbilityFor(this), ForgoingAdvantageFrom),
+             Boons.AnyDisadvantageOnAttacks || _conditions.Any(c => c.AttacksAtDisadvantage()) ||
+             Unwieldy(attack));
+
+        // SRD 5.2.1 Heavy (p.89): Strength below 13 for a Heavy melee weapon, Dexterity below 13
+        // for a Heavy ranged one
+        bool Unwieldy(Attack attack) =>
+            attack != null && attack.Heavy &&
+            Scores.Score(attack.IsRanged ? Ability.Dexterity : Ability.Strength) < 13;
+
+        // the same, for one attacker that sees (or doesn't see) this creature
+        public (bool advantage, bool disadvantage) LeansAgainstMe(bool close, Actor attacker,
+                                                                 bool attackerSees) =>
+            (Boons.AdvantageAgainstFrom(attackerSees) ||
+             _conditions.Any(c => c.GrantsAdvantageToAttackers()) ||
+             close && Has(Condition.Prone),
+             Boons.DisadvantageAgainstFrom(attacker) && !Boons.Exposed ||
+             !close && Has(Condition.Prone));
 
         public (bool advantage, bool disadvantage) LeansAgainstMe(bool close) =>
             (Boons.AnyAdvantageAgainst || _conditions.Any(c => c.GrantsAdvantageToAttackers()) ||
@@ -372,7 +456,7 @@ namespace Core.Characters
                           !close && Has(Condition.Prone));
 
         public Advantage SaveAdvantage(Ability ability) =>
-            Advantages.Of(Boons.AdvantageOnSave(ability),
+            Advantages.Of(Boons.AdvantageOnSave(ability) || HasAdvantage("save:" + ability.Id()),
                           Boons.DisadvantageOnSave(ability) ||
                           _conditions.Any(c => c.SavesAtDisadvantage(ability)));
 
@@ -394,6 +478,14 @@ namespace Core.Characters
 
         public bool IsInvisible => Has(Condition.Invisible);
 
+        // Disintegrate's gray dust: dead, and past anything v1 has that brings the dead back
+        public bool Dust { get; private set; }
+
+        public void TurnToDust() => Dust = true;
+
+        // flying: difficult ground and zones on the ground don't touch it (2026-09-25)
+        public bool IsFlying => Boons.FlySpeed > 0;
+
         // what a turn actually gets to walk: the speed, and whatever is slowing or hastening it
         public int Moves
         {
@@ -401,7 +493,8 @@ namespace Core.Characters
             {
                 if (Boons.SpeedZero) return 0;
 
-                int feet = Math.Max(0, Speed + Boons.Speed);
+                // a Fly Speed is its speed for as long as it flies (Fly, Gaseous Form)
+                int feet = IsFlying ? Boons.FlySpeed : Math.Max(0, Speed + Boons.Speed);
 
                 // SRD doubling and halving; both at once is neither
                 if (Boons.SpeedDoubled && !Boons.SpeedHalved) feet *= 2;
@@ -616,7 +709,8 @@ namespace Core.Characters
 
         public void LongRest()
         {
-            if (IsDead) return;
+            // SRD 5.2.1: a rest needs at least 1 hit point to start
+            if (IsDead || IsDown) return;
 
             Health.LongRest();
             Scores.Rested();

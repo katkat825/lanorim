@@ -99,11 +99,14 @@ namespace Content.Tests
         }
 
         [Fact]
-        public void ElfIsTheOnlySpeciesWithLineagesAndAllThreeShipped()
+        public void TheElfAndTheDragonbornAreTheSpeciesWithLineages()
         {
             Assert.Equal(3, Srd.LineagesOf("elf").Count());
 
-            foreach (Kind kind in Srd.Playable.Where(k => k.Id != "elf"))
+            // SRD 5.2.1 p.84: ten dragons, five damage types - the colour is cosmetic
+            Assert.Equal(5, Srd.LineagesOf("dragonborn").Count());
+
+            foreach (Kind kind in Srd.Playable.Where(k => k.Id != "elf" && k.Id != "dragonborn"))
                 Assert.Empty(kind.Lineages);
         }
 
@@ -178,8 +181,9 @@ namespace Content.Tests
         {
             CharacterClass paladin = Srd.Class("paladin");
 
-            Assert.DoesNotContain(paladin.By(1), f => f.Id == "divine_smite");
-            Assert.Contains(paladin.By(2), f => f.Id == "divine_smite");
+            // SRD 5.2.1: Paladin's Smite at 2 (p.53)
+            Assert.DoesNotContain(paladin.By(1), f => f.Id == "paladins_smite");
+            Assert.Contains(paladin.By(2), f => f.Id == "paladins_smite");
         }
 
         // the resource grows with the level, whichever mode the character chose
@@ -237,12 +241,13 @@ namespace Content.Tests
         {
             Hero hero = Fighter();
 
-            Assert.NotNull(hero.Equipment.In(Items.Slot.Body));
-            Assert.NotNull(hero.Equipment.In(Items.Slot.MainHand));
-            Assert.NotNull(hero.Equipment.In(Items.Slot.Shield));
+            // SRD 5.2.1 kit A (p.47): Chain Mail, Greatsword, Flail, 8 Javelins - no shield
+            Assert.Equal("chain_mail", hero.Equipment.In(Items.Slot.Body)?.Id);
+            Assert.NotNull(hero.Equipment.In(Items.Slot.MainHand) ?? hero.Equipment.In(Items.Slot.TwoHand));
+            Assert.Equal(8, hero.Pack.CountOf("javelin") + (hero.Equipment.IsEquipped("javelin") ? 1 : 0));
 
-            // chain mail 16, no Dexterity, plus the shield
-            Assert.Equal(18, hero.Actor.ArmorClass);
+            // chain mail 16, no Dexterity, and the Defense fighting style's +1 in armor (p.88)
+            Assert.Equal(17, hero.Actor.ArmorClass);
         }
 
         [Fact]
@@ -348,12 +353,18 @@ namespace Content.Tests
                        new[] { Skill.Stealth },
                        Srd.Items);
 
-            Assert.Empty(hero.RidersFor(false));
-            Assert.Contains(hero.RidersFor(true), r => r.Id == "sneak_attack");
+            Attack dagger = Srd.Items.Find("dagger").Attack;
+            Attack club = Srd.Items.Find("club").Attack;
+
+            Assert.Empty(hero.RidersFor(false, attack: dagger));
+            Assert.Contains(hero.RidersFor(true, attack: dagger), r => r.Id == "sneak_attack");
+
+            // SRD 5.2.1 (p.61): a Finesse or a Ranged weapon - not a club
+            Assert.DoesNotContain(hero.RidersFor(true, attack: club), r => r.Id == "sneak_attack");
 
             // 3d6 at level 5
             Assert.Equal(new DiceRoll(3, Die.D6),
-                         hero.RidersFor(true).First(r => r.Id == "sneak_attack").Damage);
+                         hero.RidersFor(true, attack: dagger).First(r => r.Id == "sneak_attack").Damage);
         }
 
         [Fact]
@@ -373,13 +384,15 @@ namespace Content.Tests
             Feature rage = hero.Activatable.First(f => f.Id == "rage");
 
             Assert.True(hero.Invoke(rage));
-            Assert.Equal(2, hero.Actor.Boons.FlatOnDamage);
+
+            // SRD 5.2.1 (p.29): the Rage Damage bonus is a Strength attack's
+            Assert.Equal(2, hero.Actor.Boons.FlatOnDamageFor(Ability.Strength));
+            Assert.Equal(0, hero.Actor.Boons.FlatOnDamageFor(Ability.Dexterity));
 
             Assert.True(hero.EndStance(rage));
-            Assert.Equal(0, hero.Actor.Boons.FlatOnDamage);
+            Assert.Equal(0, hero.Actor.Boons.FlatOnDamageFor(Ability.Strength));
 
-            // three uses, and the fourth is refused
-            Assert.True(hero.Invoke(rage));
+            // two rages at level 1 (p.28), and the third is refused
             Assert.True(hero.Invoke(rage));
             Assert.False(hero.Invoke(rage));
 
@@ -426,8 +439,9 @@ namespace Content.Tests
 
             int was = hero.Actor.Health.Current;
 
+            // SRD 5.2.1 (p.48): 1d10 + the Fighter's level - a 6 and 3
             Assert.True(hero.Invoke(wind, resolver));
-            Assert.Equal(was + 7, hero.Actor.Health.Current);
+            Assert.Equal(was + 9, hero.Actor.Health.Current);
         }
 
         [Fact]
@@ -493,8 +507,16 @@ namespace Content.Tests
         {
             Hero hero = Fighter();
 
+            // a longsword and a shield on, then the greatsword
+            Item longsword = Srd.Items.Find("longsword");
+            Item shield = Srd.Items.Find("shield");
+            hero.Pack.Take(longsword);
+            hero.Pack.Take(shield);
+            Assert.True(hero.Wear(longsword));
+            Assert.True(hero.Wear(shield));
+
             Item greatsword = Srd.Items.Find("greatsword");
-            hero.Pack.Take(greatsword);
+            if (!hero.Pack.Has("greatsword")) hero.Pack.Take(greatsword);
 
             Assert.True(hero.Wear(greatsword));
             Assert.Null(hero.Equipment.In(Items.Slot.Shield));

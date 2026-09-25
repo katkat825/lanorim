@@ -29,6 +29,10 @@ namespace Core.Combat
         // the reactor's own attack just hit. offered to the attacker, and answered with a bonus
         // action on its own turn rather than a reaction: SRD 5.2.1's Divine Smite and Searing Smite
         Struck,
+
+        // a named spell has just picked the reactor as a target and has not landed yet: SRD 5.2.1
+        // Shield's "or targeted by the Magic Missile spell" (2026-09-25)
+        Targeted,
     }
 
     public static class Triggers
@@ -107,6 +111,9 @@ namespace Core.Combat
         public static Moment Cast(Actor caster, string spell, int level) =>
             new Moment(Trigger.Cast, caster, null) { Spell = spell, Level = level };
 
+        public static Moment Targeted(Actor caster, Actor target, string spell) =>
+            new Moment(Trigger.Targeted, caster, target) { Spell = spell };
+
         public static Moment Leaving(Actor mover, Actor watcher, Cell from, Cell to) =>
             new Moment(Trigger.LeaveReach, mover, watcher) { From = from, To = to };
 
@@ -143,6 +150,10 @@ namespace Core.Combat
 
         // what answering costs: a reaction for nearly everything, a bonus action for a smite
         Spend Cost => Spend.Reaction;
+
+        // a moment it answers besides its own trigger: Shield's "or targeted by the Magic
+        // Missile spell"
+        bool AlsoAnswers(Moment moment) => false;
 
         bool CanAnswer(Encounter fight, Actor reactor, Moment moment);
 
@@ -197,15 +208,39 @@ namespace Core.Combat
                 Attempt hit = moment.Attempt;
 
                 // a natural 20 hits whatever the armor class is; spending a Shield on it is a
-                // wasted spell
-                if (hit == null || hit.IsCritical) return null;
+                // wasted spell - but halving it (Uncanny Dodge) still helps, and helps most
+                if (hit == null) return null;
 
-                return options.Where(o => o.Deflects > 0)
-                              .Where(o => !hit.Rejudged(reactor.ArmorClass + o.Deflects).Succeeded)
-                              .OrderBy(o => o.Deflects)
-                              .FirstOrDefault();
+                IReaction turns = hit.IsCritical
+                    ? null
+                    : options.Where(o => o.Deflects > 0)
+                             .Where(o => !hit.Rejudged(reactor.ArmorClass + o.Deflects).Succeeded)
+                             .OrderBy(o => o.Deflects)
+                             .FirstOrDefault();
+
+                return turns ?? options.FirstOrDefault(o => o is HalveReaction);
             }
         }
+    }
+
+    // SRD 5.2.1 Uncanny Dodge (p.63): "When an attacker that you can see hits you with an attack
+    // roll, you can take a Reaction to halve the attack's damage against you"
+    public sealed class HalveReaction : IReaction
+    {
+        public HalveReaction(string id = "uncanny_dodge") => Id = id ?? "uncanny_dodge";
+
+        public string Id { get; }
+
+        public Trigger Trigger => Trigger.Hit;
+
+        public int Deflects => 0;
+
+        public bool CanAnswer(Encounter fight, Actor reactor, Moment moment) =>
+            moment != null && ReferenceEquals(moment.Target, reactor) && reactor.CanAct &&
+            (fight == null || fight.Sees(reactor, moment.Source));
+
+        public void Answer(Encounter fight, Actor reactor, Moment moment) =>
+            reactor.Boons.Add(new Boon(Id, Id, Duration.Encounter) { HalvesNextHit = true });
     }
 
     // the opportunity attack, as one reaction among several rather than the only one there is
@@ -233,6 +268,9 @@ namespace Core.Combat
 
             // a charmed creature does not swing at its charmer
             if (reactor.HasFrom(Condition.Charmed, moment.Source)) return false;
+
+            // SRD 5.2.1: "a creature that you can see" leaving your reach
+            if (!fight.Sees(reactor, moment.Source)) return false;
 
             Cell? standing = fight.Field.Where(reactor);
 

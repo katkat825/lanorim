@@ -44,9 +44,19 @@ namespace Core.Magic
                                      (e.Touches & Sways.ArmorClass) != 0)
                  .Sum(e => e.Sway);
 
+        public bool AlsoAnswers(Moment moment) =>
+            moment != null && moment.Trigger == Trigger.Targeted && Spell.AnswersSpell.Length > 0 &&
+            moment.Spell == Spell.AnswersSpell;
+
         public bool CanAnswer(Encounter fight, Actor reactor, Moment moment)
         {
-            if (moment == null || moment.Trigger != Trigger) return false;
+            if (moment == null) return false;
+
+            // Shield: being targeted by the one spell it names (Magic Missile)
+            bool targeted = moment.Trigger == Trigger.Targeted && Spell.AnswersSpell.Length > 0 &&
+                            moment.Spell == Spell.AnswersSpell;
+
+            if (moment.Trigger != Trigger && !targeted) return false;
 
             if (!ReferenceEquals(reactor, _caster.Actor)) return false;
 
@@ -54,9 +64,10 @@ namespace Core.Magic
 
             switch (moment.Trigger)
             {
-                // being hit, being hurt: only ever about you
+                // being hit, being hurt, being targeted: only ever about you
                 case Trigger.Hit:
                 case Trigger.Damaged:
+                case Trigger.Targeted:
                     if (!ReferenceEquals(moment.Target, reactor)) return false;
                     break;
 
@@ -77,6 +88,10 @@ namespace Core.Magic
 
             if (outward && fight != null &&
                 !fight.Field.InRange(reactor, moment.Source, Math.Max(1, Spell.Range)))
+                return false;
+
+            // Counterspell: "when you see a creature ... casting a spell"
+            if (moment.Trigger == Trigger.Cast && fight != null && !fight.Sees(reactor, moment.Source))
                 return false;
 
             return true;

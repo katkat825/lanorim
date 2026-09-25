@@ -153,7 +153,7 @@ namespace Content.Tests
             Hero hero = Fighter();
             SheetView sheet = SheetView.Of(hero);
 
-            WeaponRow sword = sheet.Weapons.Single(w => w.Attack.Id == "longsword");
+            WeaponRow sword = sheet.Weapons.First(w => w.Attack.Id != "unarmed_strike");
 
             Assert.Equal(sword.Attack.Modifier(hero.Actor), sword.AttackBonus);
             Assert.Equal(sword.Damage.Count * 2, sword.CriticalDamage.Count);

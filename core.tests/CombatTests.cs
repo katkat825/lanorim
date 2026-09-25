@@ -150,15 +150,17 @@ namespace Core.Tests
         }
 
         [Fact]
-        public void BeingStunnedStopsActionsButTheTurnStillHappens()
+        public void BeingStunnedStopsActionsButNotMovement()
         {
+            // SRD 5.2.1 Stunned (p.189) has no speed clause: Incapacitated, Str and Dex saves
+            // failed, attacks against it at advantage - and it can still move
             Actor hero = Combatants.Hero();
             hero.Apply(Condition.Stunned);
 
             var turn = new Turn(hero, new ActionBudget(), 1);
 
             Assert.False(turn.Can(Spend.Action));
-            Assert.False(turn.Can(Spend.Movement, 5));
+            Assert.True(turn.Can(Spend.Movement, 5));
         }
 
         [Fact]

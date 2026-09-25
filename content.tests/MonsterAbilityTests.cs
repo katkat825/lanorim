@@ -151,9 +151,9 @@ namespace Content.Tests
             Assert.True(caster.Pay(fireball, 3));
             Assert.False(caster.CanCast(fireball, 3));
 
-            // fire bolt is at will
-            Spell bolt = caster.Find("fire_bolt");
-            for (int i = 0; i < 5; i++) Assert.True(caster.Pay(bolt, 0));
+            // light is at will (SRD 5.2.1's mage has no Fire Bolt - its Arcane Burst is an attack)
+            Spell light = caster.Find("light");
+            for (int i = 0; i < 5; i++) Assert.True(caster.Pay(light, 0));
 
             caster.Rested(Rest.Long);
             Assert.True(caster.CanCast(fireball, 3));
@@ -186,6 +186,65 @@ namespace Content.Tests
             // the best of its areas for two heroes side by side (Cone of Cold, as it happens)
             Assert.Contains(brain.Cast, c => c.Touched.Contains(a) && c.Touched.Contains(b));
             Assert.True(a.Health.Current < 60 && b.Health.Current < 60);
+        }
+
+        // every swing in a fight, for counting a monster's attacks on its turn
+        sealed class Swings : CombatObserver
+        {
+            public readonly List<Blow> Blows = new List<Blow>();
+
+            public override void Struck(Blow blow) => Blows.Add(blow);
+        }
+
+        // one monster turn, played by its own brain, beside a hero that will not drop
+        static List<string> OneTurn(string id)
+        {
+            Monster monster = Srd.Bestiary.Find(id);
+            Assert.True(MapReader.TryRead(Hall, out MapLayout map, out string problem), problem);
+
+            var swings = new Swings();
+            var fight = new Encounter(new StandardResolver(Script(20, 1)), new Battlefield(map), swings);
+
+            Actor me = monster.Spawn();
+            Actor hero = Hero(hp: 500);
+            Caster caster = monster.CasterFor(me, Srd.Spells);
+
+            fight.Enlist(me, new Cell(3, 2), monster.Budget(caster));
+            fight.Enlist(hero, new Cell(4, 2));
+            fight.Begin();
+
+            Turn turn = fight.Next();
+            Assert.Same(me, turn.Actor);
+
+            monster.Brain(caster, new Incantation(fight.Resolver)).Take(fight, turn);
+
+            return swings.Blows.Where(b => ReferenceEquals(b.Attacker, me))
+                         .Select(b => b.Attack.Id).ToList();
+        }
+
+        [Fact]
+        public void AMonsterWithoutMultiattackAttacksOncePerTurn()
+        {
+            Assert.Single(OneTurn("goblin"));
+            Assert.Single(OneTurn("wolf"));
+            Assert.Single(OneTurn("ogre"));
+        }
+
+        [Fact]
+        public void AMonsterWithMultiattackMakesItsListedAttacks()
+        {
+            // "The bear makes one Bite attack and one Claw attack"
+            Assert.Equal(new[] { "bear_bite", "bear_claw" }, OneTurn("brown_bear").OrderBy(a => a));
+
+            Assert.Equal(new[] { "ghoul_bite", "ghoul_bite" }, OneTurn("ghoul"));
+            Assert.Equal(2, OneTurn("goblin_boss").Count);
+        }
+
+        [Fact]
+        public void TheMageMakesThreeArcaneBurstsWhenNoSpellBeatsThem()
+        {
+            // one hero in reach: no area spell is worth more than three bursts at it
+            Assert.Equal(new[] { "arcane_burst", "arcane_burst", "arcane_burst" }, OneTurn("mage"));
         }
 
         [Fact]

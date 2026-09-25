@@ -59,6 +59,8 @@ namespace Core.Magic
 
         public bool Rough => Area.Rough;
 
+        public bool Ground => Area.Ground;
+
         public bool SparesAllies => Area.SparesAllies;
 
         public Obscurement Obscures => Area.Obscures;

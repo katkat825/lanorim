@@ -69,6 +69,9 @@ namespace Core.Combat
         // difficult terrain inside it: every square costs double to walk into
         bool Rough { get; }
 
+        // it is on the ground - grease, spikes, grasping weeds: a flyer passes over it untouched
+        bool Ground => false;
+
         // the owner's side is left alone - "creatures of your choice", which in a solo game is
         // everybody on the other side
         bool SparesAllies { get; }
