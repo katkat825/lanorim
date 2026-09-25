@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -37,6 +38,30 @@ namespace Content.Saves
                 json.WriteNumber("campaign_format", save.CampaignFormat);
                 json.WriteString("chapter", save.Chapter ?? "");
                 json.WriteString("map", save.Map ?? "");
+
+                json.WriteString("kind", Vocabulary.NameOf(save.Kind));
+                json.WriteNumber("slot", save.Slot);
+
+                if (!string.IsNullOrEmpty(save.Label)) json.WriteString("label", save.Label);
+
+                json.WriteString("node", save.Node ?? "");
+
+                json.WritePropertyName("story");
+                json.WriteStartObject();
+
+                foreach (KeyValuePair<string, float> n in save.Numbers) json.WriteNumber(n.Key, n.Value);
+                foreach (KeyValuePair<string, string> w in save.Words) json.WriteString(w.Key, w.Value ?? "");
+                foreach (KeyValuePair<string, bool> f in save.Flags) json.WriteBoolean(f.Key, f.Value);
+
+                json.WriteEndObject();
+
+                if (save.Steps.Count > 0)
+                {
+                    json.WritePropertyName("steps");
+                    json.WriteStartArray();
+                    foreach (string step in save.Steps) json.WriteStringValue(step);
+                    json.WriteEndArray();
+                }
 
                 json.WriteNumber("round", save.Round);
                 json.WriteNumber("turn", save.Turn);
@@ -85,6 +110,8 @@ namespace Content.Saves
             if (!string.IsNullOrEmpty(hero.Lineage)) json.WriteString("lineage", hero.Lineage);
 
             json.WriteString("background", hero.Background ?? "");
+
+            if (!string.IsNullOrEmpty(hero.Alignment)) json.WriteString("alignment", hero.Alignment);
             json.WriteNumber("level", hero.Level);
 
             json.WritePropertyName("scores");
@@ -96,8 +123,39 @@ namespace Content.Saves
 
             json.WriteEndObject();
 
+            if (hero.BackgroundSpend.Count > 0)
+            {
+                json.WritePropertyName("background_spend");
+                json.WriteStartObject();
+
+                foreach (Ability ability in Enum.GetValues<Ability>().OrderBy(a => (int)a))
+                    if (hero.BackgroundSpend.TryGetValue(ability, out int spend))
+                        json.WriteNumber(Vocabulary.NameOf(ability), spend);
+
+                json.WriteEndObject();
+            }
+
             Words(json, "skills", hero.Skills.Select(Vocabulary.NameOf));
             Words(json, "expertise", hero.Expertise.Select(Vocabulary.NameOf));
+
+            if (hero.DiscardWarningDismissed) json.WriteBoolean("discard_warning_dismissed", true);
+
+            // always written, even empty: its presence is how a reader tells a save that records
+            // the player's improvements from one that predates them
+            // each one a list of the abilities it raised: ["str"] is +2, ["dex", "con"] +1 each
+            json.WritePropertyName("improvements");
+            json.WriteStartArray();
+
+            foreach (string word in hero.Improvements)
+            {
+                json.WriteStartArray();
+                foreach (string ability in word.Split('+')) json.WriteStringValue(ability);
+                json.WriteEndArray();
+            }
+
+            json.WriteEndArray();
+
+            json.WriteNumber("improvements_pending", hero.PendingImprovements);
 
             json.WriteNumber("hp", hero.HitPoints);
 
@@ -138,6 +196,21 @@ namespace Content.Saves
 
             Words(json, "known", hero.Known);
             Words(json, "conditions", hero.Conditions.Select(Vocabulary.NameOf));
+
+            if (hero.Spent.Count > 0)
+            {
+                json.WritePropertyName("spent");
+                json.WriteStartObject();
+
+                foreach (string feature in hero.Spent.Keys.OrderBy(k => k, StringComparer.Ordinal))
+                    json.WriteNumber(feature, hero.Spent[feature]);
+
+                json.WriteEndObject();
+            }
+
+            if (hero.ExtraActions >= 0) json.WriteNumber("extra_actions", hero.ExtraActions);
+
+            if (!string.IsNullOrEmpty(hero.Form)) json.WriteString("form", hero.Form);
 
             if (hero.Worn.Count > 0)
             {

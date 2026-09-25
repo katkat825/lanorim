@@ -79,6 +79,27 @@ namespace Content.Dialogue
 
         public IEnumerable<string> Keys() => Lines.Select(l => l.Key);
 
+        // every key a line CAN be asked under: its own, and for a line left to any companion, one
+        // per companion that might override it. None of the overrides is demanded - the generic
+        // row is the floor - so, like BeatBook.KeysFor, this exists only so the locale audit knows
+        // a wolf's row in a CSV is a real key and not an orphan.
+        public IEnumerable<string> KeysFor(IEnumerable<string> companions)
+        {
+            foreach (DialogueLine line in Lines)
+            {
+                yield return line.Key;
+
+                if (!line.ForAnyCompanion) continue;
+
+                foreach (string companion in companions ?? Array.Empty<string>())
+                {
+                    string own = line.KeyAs(companion);
+
+                    if (own != null) yield return own;
+                }
+            }
+        }
+
         public int Count => _lines.Count;
 
 
@@ -123,6 +144,24 @@ namespace Content.Dialogue
             return book;
         }
 
+        static readonly IReadOnlyList<Declaration> EngineVariables = new[]
+        {
+            Declare(RequestVariables.Passed, Types.Boolean, false),
+            Declare(RequestVariables.Total, Types.Number, 0f),
+            Declare(RequestVariables.Natural, Types.Number, 0f),
+            Declare(RequestVariables.Consequence, Types.Boolean, false),
+            Declare(RequestVariables.Roll, Types.Number, 0f),
+            Declare(RequestVariables.Encounter, Types.String, ""),
+            Declare(RequestVariables.EncounterFight, Types.Boolean, false),
+            Declare(RequestVariables.Fight, Types.String, ""),
+            Declare(RequestVariables.LootGold, Types.Number, 0f),
+        };
+
+        static Declaration Declare(string name, IType type, IConvertible value) =>
+            new DeclarationBuilder().WithName(name).WithType(type).WithDefaultValue(value)
+                                    .WithDescription("set by the table when it answers a campaign's ask")
+                                    .Declaration;
+
         void Compile(IReadOnlyList<CompilationJob.File> sources)
         {
             CompilationResult result;
@@ -135,6 +174,11 @@ namespace Content.Dialogue
                 {
                     Inputs = sources,
                     Library = new Yarn.Library(),
+
+                    // the variables the table answers into (Asks.cs), declared here so a campaign
+                    // reads $passed without having to declare it, and cannot declare it as
+                    // something else
+                    VariableDeclarations = EngineVariables,
                 });
             }
             catch (Exception threw)
@@ -149,6 +193,13 @@ namespace Content.Dialogue
 
             foreach (Diagnostic complaint in result.Diagnostics)
             {
+                // the table's variables are declared for every campaign, and a campaign that never
+                // reads one is not doing anything wrong - that one notice is Yarn's, not the author's
+                if (complaint.Severity != Diagnostic.DiagnosticSeverity.Error &&
+                    EngineVariables.Any(v => complaint.Message.Contains($"'{v.Name}'")) &&
+                    complaint.Message.Contains("never used"))
+                    continue;
+
                 // both are refused: Yarn calls a jump to a node nobody wrote a warning, and a
                 // conversation that runs off its own end is as broken as one that will not compile
                 _problems.Add(new ContentProblem(
@@ -268,7 +319,7 @@ namespace Content.Dialogue
                 }
 
                 _lines[entry.Key] = new DialogueLine(entry.Key, key, speaker, info.nodeName, file,
-                                                     info.lineNumber, info.text);
+                                                     info.lineNumber, info.text, Campaign);
             }
         }
 

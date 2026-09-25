@@ -34,14 +34,15 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED] Attack & damage, initiative** — d20 + mods vs. AC; damage = weapon die + mod;
   initiative d20 + Dex. Flag if you want a delta.
 - **[DECIDED] Ability Score Improvements** — SRD grants an ASI/feat at set levels; feats are deferred, so at
-  those levels: a straight +2 to spend. 
+  those levels: a straight +2 to spend. **[DECIDED 2026-09-24] The player chooses where it goes** — +2 to one
+  score or +1 to two, no score above 20 (SRD's Ability Score Improvement). No auto-spend for the player's hero.
 - **[DECIDED] Saving throws** — six SRD saves + class proficiencies.
 - **[DECIDED] Critical hits in combat** — double the damage dice plus the standard pool of consequences.
 - **[DECIDED] Armor Class** — derived from equipped armor + Dex (SRD, shields) 
 - **[DECIDED] Movement & grid scale** — SRD
 - **[DECIDED] Currency** — Confirmed gold-only.
 - **[DEFERRED] Damage types & resistances** — full SRD, tagged-but-simple, or flatten? (see §6) deferred or flatten
-- **[DECIDED] Conditions** — v1 subset: prone, poisoned, stunned, frightened, restrained, grappled — core effects only; exhaustion's 6-level ladder deferred (decided in §6).
+- **[DECIDED] Conditions** — v1 subset: prone, poisoned, stunned, frightened, restrained, grappled — core effects only; exhaustion's 6-level ladder deferred (decided in §6). **[UPDATED 2026-09-24]** The subset may grow to any SRD condition a faithful spell needs (blinded, charmed, deafened, incapacitated, invisible, paralyzed, petrified, …) — see *Spell fidelity* below. Exhaustion stays deferred.
 - **[DECIDED] Rest** — pin exact recovery to SRD (long rest = half hit dice + all slots; short rest spends hit dice) unless you simplify. except long rest = full hp recovery
 - **[DECIDED, updated 2026-09-23] Spellcasting** — SRD spell lists + effects + concentration **[DECIDED]**;
   **flat known/equipped model [DECIDED]** — the spells on your sheet are what you can cast: no daily
@@ -62,20 +63,24 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   5e SRD version, it gets a NEW, distinct name and never ships under the SRD name.** Rules-lawyer casters
   will rage at a "Shield" or "Fireball" that behaves differently than they know — so an SRD name only ever
   sits on the SRD effect. Scope: the spell's *own* mechanics — dice, save, range/shape, duration, targets,
-  condition. **Universal system substitutions that hit every spell equally** — mana instead of slots,
+  condition. **Universal system substitutions that hit every spell equally** — the slots-or-points resource choice,
   milestone leveling, binary concentration, one flat known/equipped list — are disclosed once in a "how
   spells work here" screen and do **not** trigger a rename. Consequences: (a) a spell implemented faithfully
   keeps its SRD name; (b) a spell we implement differently is renamed and the SRD-named version is not shipped
   with that changed effect; (c) a spell we don't implement can still ship as a faithful SRD **reference card**
   under its real name. This also satisfies CC-BY's "indicate if changes were made."
-- **[DEFER] Feats · Multiclassing · Encumbrance.**
+- **[DECIDED 2026-09-24] Spell fidelity is the priority.** As many v1 spells as possible ship **exactly as the
+  SRD 5.2.1 spell, under its SRD name** — build the missing mechanics rather than approximate. Only a spell that
+  genuinely can't be made faithful keeps a new name (the HARD RULE above). **A spell that isn't in SRD 5.2.1 at
+  all is renamed** (new name, original wording) — it is not dropped.
+- **[DEFER] Feats · Multiclassing · Encumbrance.** *(Feats also listed in `deferred.md`.)*
 
 ## 2. Content scope for v1
 
 - **[DECIDED] Races/ancestries** — **7 v1 species: Human, Elf, Dragonborn, Tiefling, Dwarf, Halfling,
   Orc** (`v1_species_roster.md`); Gnome/Goliath deferred. Light to implement; minis reusable; v1 may
   ignore species for the mini. The cost knee is the visual pipeline, not the mechanics.
-- **[DECIDED, approach] Backgrounds** — SRD; light (skills/flavor).
+- **[DECIDED, approach] Backgrounds** — SRD; light (skills/flavor). *(2026-09-24: 5 of the 9 in the data may not be SRD 5.2.1 — a review list is being produced; decision pending.)*
 - **[DECIDED, approach] Monsters** — full SRD pool + custom per campaign. Statblocks are
   cheap; *special abilities are the cost* (§6).
 - **[DECIDED] Level range & leveling** — milestone leveling, up to level 20; XP deferred (allowing both,
@@ -84,8 +89,8 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   Paladin, Druid**, one SRD subclass each (`v1_class_roster.md`). **Mage is merged** (Wizard + Warlock +
   Sorcerer themes in one class). **Fighter shares Barbarian's companion; Paladin (the cheap 7th, a
   Cleric + Fighter hybrid) shares Cleric's** — no new dialogue lanes. Bard/Ranger/Sorcerer/Monk deferred
-  or route-covered (Ranger was the next cheap candidate, intentionally held). Extra Attack isn't ported
-  literally (hero has 2 actions); Wild Shape = 3–5 curated forms.
+  or route-covered (Ranger was the next cheap candidate, intentionally held). Extra Attack ports as +1
+  action (corrected 2026-09-23, §1); Wild Shape = 3–5 curated forms.
 - **[DECIDED] Spells** — full ~339 SRD list ships as reference cards (all CC-BY, legal); a **131-spell
   subset (62 MUST + 69 SHOULD) fully FUNCTIONS in v1**, composed from effect primitives
   (`v1_spell_list.md`). Only useable spells exist as cards; the handful that still can't match the SRD
@@ -99,7 +104,7 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   narrator who tells you the story, and campaigns can have the "DM" make hidden rolls — e.g. roll for
   whether a random encounter happens and which one. (I earlier mis-said this was
   removed — what was removed is the *no-menus/hands/room* presentation, not the DM-as-narrator.) *Builds
-  needed:* random-encounter tables (weighted table + trigger) and the hidden-roll surface.
+  needed:* random-encounter tables (weighted table + trigger) and the hidden-roll surface. *(Both built at the code layer 2026-09-24 — `core/Tables`.)*
 - **[OPEN] Combat interaction model — how faithful to 5e tactics?** Opportunity attacks, cover, LoS,
   flanking, AoE templates, targeting/range, and *how the player issues an action*. Biggest scope driver;
   also a cost hotspot (§6). suggest a simplified version for v1
@@ -113,10 +118,10 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   Cleric). Details in `v1_class_roster.md`.
 - **[DECIDED] Save model** — reload-on-death. autosave on events plus manual saves, save all if feasible, otherwise last 10. 
 - **[OPEN] Character-creation flow** — guided vs. freeform; order of picks. [DECIDED] whatever's easiest
-- **[OPEN] Encounter & map authoring format** — how a campaign places monsters and lays out a fight.
+- **[OPEN] Encounter & map authoring format** — how a campaign places monsters and lays out a fight. *(Build status 2026-09-24: maps + spawns exist in the map format; a story starts a fight with `<<fight id>>`; encounter tables name a monster group and a map. The authoring UI is the map builder.)*
 - **[DECIDED] Dialog presentation** — popup with Continue button.
 - **[DECIDED-ish] Tutorial / onboarding.** - tutorial campaigns. ask player how familiar they are with ttrpg (beginner, intermediate, advanced) and select related tutorial campaign. tutorial campaigns are replayable
-- **[OPEN] Fleeing combat** — an option? [DECIDED-ish] whatever is more expected and is easier
+- **[OPEN] Fleeing combat** — an option? [DECIDED-ish] whatever is more expected and is easier. *(Built 2026-09-24: step off an open edge of the map; provokes opportunity attacks unless you Disengage; a closed map can't be fled.)*
 
 ## 4. Presentation & art
 

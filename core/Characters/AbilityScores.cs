@@ -65,6 +65,22 @@ namespace Core.Characters
 
         public bool AnyShifted => _shift.Any(s => s != 0);
 
+        // Greater Restoration: every reduction to a score ends; a boost stays
+        public bool Restore()
+        {
+            bool any = false;
+
+            for (int i = 0; i < Abilities.Count; i++)
+            {
+                if (_shift[i] >= 0) continue;
+
+                _shift[i] = 0;
+                any = true;
+            }
+
+            return any;
+        }
+
         // what every roll actually reads. the ceiling applies to the score you earned, not to a
         // temporary shift, so a boon can carry a 20 to 21 for one adventuring day.
         public int Score(Ability ability) =>

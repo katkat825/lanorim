@@ -1,0 +1,57 @@
+keys,en
+actor.oda.name,Oda
+campaign.sample_millbrook.description,"A short test campaign: a cellar, a road and a goblin camp. It exercises every system a campaign can use."
+campaign.sample_millbrook.name,Millbrook (test campaign)
+dialogue.companion.line.sample_millbrook.comp_beds,Good bread. Good beds. I could get used to this.
+dialogue.companion.line.sample_millbrook.comp_boots,Something was feeding them. Those are goblin boots.
+dialogue.companion.line.sample_millbrook.comp_count,Just the big one. The rest must be out on the road.
+dialogue.companion.line.sample_millbrook.comp_teeth,"Something with teeth, by the look of those sacks."
+dialogue.dm.line.sample_millbrook.after_shop,"You step back out into the street, pack heavier than before."
+dialogue.dm.line.sample_millbrook.ambush,Something moves in the clearing ahead.
+dialogue.dm.line.sample_millbrook.arrive,"Millbrook is a village of one street, one well, and one mill that has stopped turning."
+dialogue.dm.line.sample_millbrook.boss_down,"The goblin boss drops the coat, and Oda's grain money spills out of the lining."
+dialogue.dm.line.sample_millbrook.coal_chute,It will not budge. You find the coal chute instead and slither down into the dark.
+dialogue.dm.line.sample_millbrook.creep_bad,A pot clatters under your boot. Every head turns.
+dialogue.dm.line.sample_millbrook.creep_ok,You are among the carts before anyone looks up.
+dialogue.dm.line.sample_millbrook.crows,"A crowd of crows lifts off a dead ewe, complaining. Nothing else stirs."
+dialogue.dm.line.sample_millbrook.door_gives,"It gives with a crack, and the smell of wet grain rolls out."
+dialogue.dm.line.sample_millbrook.door_stuck,The cellar door is swollen shut with damp.
+dialogue.dm.line.sample_millbrook.fled_camp,"You run, and the goblins' laughter follows you down the road."
+dialogue.dm.line.sample_millbrook.fled_rats,"You scramble back up into daylight. Oda looks at you, then at the door, and says nothing."
+dialogue.dm.line.sample_millbrook.follow_tracks,You catch your breath on the cellar steps and follow the tracks out onto the road.
+dialogue.dm.line.sample_millbrook.land_badly,"You land badly among the sacks. Nothing broken, but everything in there heard you."
+dialogue.dm.line.sample_millbrook.miller_waits,"The miller is waiting on the bridge, wringing a floury cap in both hands."
+dialogue.dm.line.sample_millbrook.no_trouble,The miles pass without trouble.
+dialogue.dm.line.sample_millbrook.opt_creep,Creep closer along the ditch.
+dialogue.dm.line.sample_millbrook.opt_go,Show me the door.
+dialogue.dm.line.sample_millbrook.opt_supplies,I'll need supplies first.
+dialogue.dm.line.sample_millbrook.opt_walk,Walk straight in.
+dialogue.dm.line.sample_millbrook.opt_whats_there,What's in the cellar?
+dialogue.dm.line.sample_millbrook.rain_in,"Rain sets in as you crest the hill, and the old mill yard is below you."
+dialogue.dm.line.sample_millbrook.rat_eyes,"Eyes in the lamplight. Two pairs, low down."
+dialogue.dm.line.sample_millbrook.rat_purse,"Somebody lost a purse down here, and the rats found it first."
+dialogue.dm.line.sample_millbrook.rats_done,"The last rat goes still. Behind the grain bins, a nest of chewed sacking."
+dialogue.dm.line.sample_millbrook.rest_before_camp,You rest in the lee of a wall before going down.
+dialogue.dm.line.sample_millbrook.road_north,The road north runs between hedges gone wild.
+dialogue.dm.line.sample_millbrook.road_quiet,The road is quiet again.
+dialogue.dm.line.sample_millbrook.sun_out,"The sun comes out as you crest the hill, and the old mill yard is below you."
+dialogue.dm.line.sample_millbrook.test_over,This is the end of the test campaign.
+dialogue.dm.line.sample_millbrook.the_camp,"Goblins have made a camp of the ruined mill: a cauldron, a stolen cart, and a big one in a stolen coat."
+dialogue.dm.line.sample_millbrook.to_the_door,Oda leads you round to a low door under the millrace.
+dialogue.dm.line.sample_millbrook.walk_in,The big one grins and draws a scimitar.
+dialogue.dm.line.sample_millbrook.wheel_turns,You walk back into Millbrook as the mill wheel creaks and turns again.
+dialogue.oda.line.sample_millbrook.oda_asks,"Thank the stars. Something is in my cellar, and the grain is going missing by the sack."
+dialogue.oda.line.sample_millbrook.oda_hesk,Hesk's store is across the street. Tell her I sent you.
+dialogue.oda.line.sample_millbrook.oda_rats,Rats. Big ones. And tracks out the back that no rat made.
+dialogue.oda.line.sample_millbrook.oda_thanks,You'll eat with us tonight. And take this - it's not much.
+encounter.bandit_purse.loot.coin,A few coins in a bandit's purse.
+encounter.goblin_chest.loot.stolen_takings,"The mill's stolen takings, and a potion wrapped in a rag."
+encounter.mill_road.line.bandits,A figure steps into the road with a drawn blade.
+encounter.mill_road.line.crows,"Crows lift off the verge, complaining."
+encounter.mill_road.line.wolves,A wolf slinks out of the hedge.
+encounter.rat_nest.loot.gnawed_purse,"A gnawed purse, still heavy with coin."
+encounter.rat_nest.loot.old_torches,"A bundle of old torches, damp but usable."
+encounter.set_pieces.line.cellar_rats,Rats pour out from behind the grain bins.
+encounter.set_pieces.line.goblin_camp,The goblin boss kicks over the cauldron and comes for you.
+merchant.millbrook_store.name,Hesk's Store
+quest.sample_millbrook.old_mill.title,The Old Mill

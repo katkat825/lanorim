@@ -1,0 +1,18 @@
+{
+  "merchants": [
+    {
+      "id": "millbrook_store",
+      "stock": [
+        "potion_of_healing",
+        "torch",
+        "rope",
+        "antitoxin",
+        "dagger",
+        "shortbow",
+        "shield",
+        "leather_armor"
+      ],
+      "sell_percent": 50
+    }
+  ]
+}

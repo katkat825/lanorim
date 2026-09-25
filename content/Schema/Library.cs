@@ -16,7 +16,8 @@ namespace Content.Schema
         Library(SpellBook spells, ItemShelf items,
                 IReadOnlyList<CharacterClass> classes, IReadOnlyList<Kind> species,
                 IReadOnlyList<Background> backgrounds, Bestiary bestiary,
-                Core.Resolution.ConsequencePool consequences, IReadOnlyList<string> problems)
+                Core.Resolution.ConsequencePool consequences, FormShelf forms,
+                IReadOnlyList<string> problems)
         {
             Spells = spells;
             Items = items;
@@ -25,6 +26,7 @@ namespace Content.Schema
             Backgrounds = backgrounds;
             Bestiary = bestiary;
             Consequences = consequences;
+            Forms = forms;
             Problems = problems;
         }
 
@@ -42,6 +44,10 @@ namespace Content.Schema
 
         // the nat-1 / nat-20 pool; a campaign adds its own on top with With
         public Core.Resolution.ConsequencePool Consequences { get; }
+
+        // the Druid's Wild Shape cards. SRD-only: a campaign adding a sixth would be the
+        // beast-catalogue converter v1_class_roster.md rules out
+        public FormShelf Forms { get; }
 
         public IReadOnlyList<string> Problems { get; }
 
@@ -71,6 +77,7 @@ namespace Content.Schema
                   .Concat(Backgrounds.SelectMany(b => b.Keys()))
                   .Concat(Bestiary.Keys())
                   .Concat(Consequences.All.SelectMany(c => c.Keys()))
+                  .Concat(Forms.Keys())
                   .Concat(Inventory.Merchant.Keys())
                   .Distinct();
 
@@ -102,7 +109,7 @@ namespace Content.Schema
 
             return new Library(Spells.With(spells), Items.With(items),
                                Classes, Species, Backgrounds,
-                               Bestiary.With(monsters), Consequences, problems);
+                               Bestiary.With(monsters), Consequences, Forms, problems);
         }
 
         static List<T> Keep<T>(IEnumerable<T> offered, Func<T, string> idOf,
@@ -144,6 +151,9 @@ namespace Content.Schema
 
             Bestiary bestiary = Bestiary.Srd();
             problems.AddRange(bestiary.Problems);
+
+            FormShelf forms = FormShelf.Srd();
+            problems.AddRange(forms.Problems);
 
             var consequences = new List<Core.Resolution.Consequence>();
 
@@ -207,8 +217,17 @@ namespace Content.Schema
                     if (!items.Has(gear))
                         problems.Add($"{one.Id}: gear '{gear}' is not an item");
 
+            // a Shape feature's count is how many cards it offers, and the cards are the data -
+            // so the two are held to each other rather than trusted to agree
+            foreach (CharacterClass one in classes)
+                foreach (Feature shape in one.Features.Where(f => f.Trait == Trait.Shape))
+                    if (shape.Count != forms.Count)
+                        problems.Add($"{one.Id}/{shape.Id}: count {shape.Count} but " +
+                                     $"{forms.Count} form cards ship");
+
             return new Library(spells, items, classes, species, backgrounds, bestiary,
-                               new Core.Resolution.ConsequencePool(consequences), problems);
+                               new Core.Resolution.ConsequencePool(consequences), forms,
+                               problems);
         }
 
         static IEnumerable<string> Missing(IEnumerable<string> got, IEnumerable<string> wanted,

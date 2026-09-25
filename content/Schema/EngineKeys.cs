@@ -42,6 +42,23 @@ namespace Content.Schema
             // the enum, so a third mode would be owed its words the day it existed
             foreach (string key in Content.Creation.Creation.ResourceKeys()) yield return key;
 
+            // the combat command API, the reaction settings and the combat log (docs/combat_ux.md)
+            foreach (string key in Content.Combat.CombatSession.ActionKeys()) yield return key;
+            foreach (string key in Content.Combat.FightLog.Keys()) yield return key;
+
+            // the ability score improvement: its choices and why one is refused
+            foreach (string key in Content.Sheet.ImprovementRefusals.Keys()) yield return key;
+
+            // the nine alignments, for the identity block of the sheet
+            foreach (string key in Content.Sheet.Alignments.Keys()) yield return key;
+
+            // what the spell card says about when and how a spell is cast, and its school
+            foreach (string key in Content.Spells.SpellCard.Keys()) yield return key;
+
+            // the screens' own labels: the book, the tutorial picker, level-up, the pack and the
+            // counter, the dialogue popup, the combat HUD, settings, the death screen
+            foreach (string key in Content.Screens.ScreenKeys.All()) yield return key;
+
             // everything the SRD data ships: spells, items, classes, species, backgrounds and
             // the merchant's refusals
             foreach (string key in Library.Srd().Keys()) yield return key;

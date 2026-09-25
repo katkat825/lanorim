@@ -18,7 +18,8 @@ namespace Core.Rules
 
             return resolver.Resolve(RollKind.Check,
                                     actor.CheckModifier(skill) + Boonus(resolver, actor, skill),
-                                    dc, actor.CheckAdvantage.And(extra));
+                                    dc, actor.CheckAdvantageFor(skill.Governs(), skill).And(extra),
+                                    actor);
         }
 
         public static Attempt Check(IResolver resolver, Actor actor, Skill skill,
@@ -35,7 +36,8 @@ namespace Core.Rules
             return resolver.Resolve(RollKind.Check,
                                     actor.CheckModifier(ability) +
                                     Boonus(resolver, actor, Skill.None),
-                                    dc, actor.CheckAdvantage.And(extra));
+                                    dc, actor.CheckAdvantageFor(ability, Skill.None).And(extra),
+                                    actor);
         }
 
         public static Attempt Save(IResolver resolver, Actor actor, Ability ability, int dc,
@@ -55,9 +57,10 @@ namespace Core.Rules
 
             int dice = 0;
 
-            foreach (DiceRoll boon in actor.Boons.DiceOnSave(ability)) dice += resolver.Roll(boon);
+            foreach (DiceRoll boon in actor.Boons.DiceOnSave(ability)) dice += resolver.Roll(boon, actor);
 
-            return resolver.Resolve(RollKind.Save, actor.SaveModifier(ability) + dice, dc, extra);
+            return resolver.Resolve(RollKind.Save, actor.SaveModifier(ability) + dice, dc,
+                                    actor.SaveAdvantage(ability).And(extra), actor);
         }
 
         // the solo delta: one d20, no modifiers, 10 or better and you are back up on 1 hit point
@@ -65,7 +68,8 @@ namespace Core.Rules
         {
             if (resolver == null) throw new ArgumentNullException(nameof(resolver));
 
-            Attempt attempt = resolver.Resolve(RollKind.Death, 0, Resolution.DeathSave.Dc);
+            Attempt attempt = resolver.Resolve(RollKind.Death, 0, Resolution.DeathSave.Dc,
+                                               Advantage.Flat, actor);
 
             if (actor == null) return attempt;
 
@@ -88,7 +92,7 @@ namespace Core.Rules
         {
             int total = 0;
 
-            foreach (DiceRoll boon in actor.Boons.DiceOnCheck(skill)) total += resolver.Roll(boon);
+            foreach (DiceRoll boon in actor.Boons.DiceOnCheck(skill)) total += resolver.Roll(boon, actor);
 
             return total;
         }

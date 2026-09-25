@@ -20,22 +20,28 @@ namespace Content.Dialogue
     //   Nerve spent -> death saves. There is no Nerve to spend. What "the day pushed you" looks
     //                               like in SRD is a hero rolling to get off the floor, and
     //                               DeathSaved is the observer call that says so.
-    //   Tier.Dread -> NOTHING.      This is the one that could not be ported. A boss was a TIER on
-    //                               the actor, so the old Day could read it off the thing it just
-    //                               watched fall over. SRD's equivalent is challenge rating, and
-    //                               that lives on the STATBLOCK, not on the Actor an observer is
-    //                               handed - so Day cannot tell a goblin from a dragon, and
-    //                               Topic.Boss is never offered.
-    //
-    // Topic.Boss is deliberately left in the enum rather than deleted: the information exists, it
-    // is just not on this side of the observer, and Phase 7 is where the fight tells the day what
-    // it was fighting. A topic that is never offered costs a campaign an unused bank; a topic
-    // deleted and re-added costs every campaign that wrote for it.
+    //   Tier.Dread -> challenge.    A boss was a TIER on the actor, so the old Day could read it off
+    //                               the thing it just watched fall over. SRD's equivalent is
+    //                               challenge rating, which lives on the STATBLOCK - so the fight
+    //                               tells the day what it was fighting (Knows, set by the Battle,
+    //                               2026-09-24), and a fallen foe of challenge at or above the
+    //                               hero's level, or one its campaign tags "boss", is a boss.
+    //                               Topic.Boss is offered again.
     public sealed class Day : CombatObserver
     {
         readonly Actor _hero;
 
         public Day(Actor hero) => _hero = hero;
+
+        // what each creature in the fight is, as far as a boss goes: its challenge rating and
+        // whether its campaign calls it a boss. the Battle hands this in; without it no fallen foe
+        // is a boss (the old behaviour)
+        public void Knows(System.Func<Actor, (double challenge, bool boss)> what) => _what = what;
+
+        System.Func<Actor, (double challenge, bool boss)> _what;
+
+        // a boss went down today
+        public bool KilledABoss { get; private set; }
 
         public int Fights { get; private set; }
 
@@ -88,6 +94,13 @@ namespace Content.Dialogue
             }
 
             Felled++;
+
+            if (_what != null && _hero != null)
+            {
+                (double challenge, bool boss) = _what(actor);
+
+                if (boss || challenge >= System.Math.Max(1, _hero.Level)) KilledABoss = true;
+            }
         }
 
         public override void DeathSaved(Actor actor, Core.Resolution.Attempt attempt)
@@ -121,6 +134,7 @@ namespace Content.Dialogue
             Felled = 0;
             WentDown = false;
             DeathSaves = 0;
+            KilledABoss = false;
             _took.Clear();
             Lowest = 1.0;
         }
@@ -129,6 +143,7 @@ namespace Content.Dialogue
         public Topic About()
         {
             if (WentDown) return Topic.Loss;
+            if (KilledABoss) return Topic.Boss;
             if (Bloodied) return Topic.Bloodied;
             if (DeathSaves > 0) return Topic.Trouble;
             if (_took.Count > 0 || (_hero != null && _hero.Conditions.Count > 0)) return Topic.Wounded;
@@ -158,6 +173,7 @@ namespace Content.Dialogue
         public override string ToString() =>
             $"{Fights} fights, {Won} won, {Felled} felled" +
             (WentDown ? ", and the hero on the floor" : "") +
+            (KilledABoss ? ", a boss among them" : "") +
             $"; hp down to {Lowest:0%}, {DeathSaves} death saves, " +
             $"{_took.Count} conditions - {About().Word()}";
     }

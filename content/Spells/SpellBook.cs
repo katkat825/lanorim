@@ -44,6 +44,10 @@ namespace Content.Spells
 
         public IEnumerable<Spell> Approximations => All.Where(s => s.Approximated);
 
+        // everything that must not wear an SRD name: the approximations, and the two v1 spells
+        // that are not in SRD 5.2.1 at all
+        public IEnumerable<Spell> Renamed => All.Where(s => s.Renamed);
+
         public SpellBook With(IEnumerable<Spell> more) =>
             new SpellBook(_byId.Values.Concat(more ?? Enumerable.Empty<Spell>()), Problems);
 

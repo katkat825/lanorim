@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://bl4n0r1mlnch1"]
+
+; THE MAIN SCENE: the title, the campaign book, the tutorial picker, settings and character creation.
+; Everything on it is built in code (Screens/Launch.cs) from containers and the theme
+; (ui/lanorim_theme.tres), so the look is the theme's to change.
+
+[ext_resource type="Script" path="res://Screens/Launch.cs" id="1_launch"]
+
+[node name="Launch" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_launch")

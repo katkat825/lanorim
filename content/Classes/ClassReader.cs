@@ -5,6 +5,7 @@ using System.Text.Json;
 using Content.Schema;
 using Core.Magic;
 using Core.Characters;
+using Core.Combat;
 using Core.Dice;
 
 namespace Content.Classes
@@ -107,13 +108,32 @@ namespace Content.Classes
             if (picks > skills.Count && skills.Count > 0)
                 problems.Add($"{id}: {picks} skills to pick from a list of {skills.Count}");
 
+            IReadOnlyList<int> improvements = CharacterClass.UsualImprovementLevels;
+
+            if (entry.Has("improvement_levels"))
+            {
+                var levels = new List<int>();
+
+                foreach (System.Text.Json.JsonElement level in entry.Items("improvement_levels"))
+                    if (level.ValueKind == System.Text.Json.JsonValueKind.Number &&
+                        level.TryGetInt32(out int at) && at >= 1 && at <= 20)
+                        levels.Add(at);
+                    else
+                        problems.Add($"{id}: improvement_levels holds '{level}', which is not a level from 1 to 20");
+
+                improvements = levels.Distinct().OrderBy(l => l).ToList();
+            }
+
             return new CharacterClass(id, hitDie, saves, skills, picks, armor,
                                       entry.Flag("shields"),
                                       entry.Strings("starting_gear"),
                                       features,
                                       entry.Text("subclass"),
                                       entry.Text("companion"),
-                                      priority);
+                                      priority)
+            {
+                ImprovementLevels = improvements,
+            };
         }
     }
 
@@ -177,6 +197,14 @@ namespace Content.Classes
                 else problems.Add($"{owner}/{id}: '{save}' is not an ability");
             }
 
+            Manoeuvre manoeuvres = Manoeuvre.None;
+
+            foreach (string word in raw.Strings("manoeuvres"))
+            {
+                if (Manoeuvres.TryParse(word, out Manoeuvre read)) manoeuvres |= read;
+                else problems.Add($"{owner}/{id}: '{word}' is not dash, disengage or hide");
+            }
+
             var feature = new Feature(id, trait,
                                       raw.Number("level", 1),
                                       raw.Dice("amount", problems, id),
@@ -196,7 +224,11 @@ namespace Content.Classes
                                       saves,
                                       touches,
                                       progression,
-                                      raw.Text("note"));
+                                      raw.Text("note"),
+                                      manoeuvres)
+            {
+                Tags = raw.Strings("tags"),
+            };
 
             Check(feature, owner, problems);
 
@@ -254,12 +286,19 @@ namespace Content.Classes
                     break;
 
                 case Trait.ActionGrant:
-                    // the line v1_class_roster.md draws: the hero already has two actions, so a
-                    // standing extra one is Extra Attack in disguise. every round is a bonus
-                    // action or a reaction; a whole action is a per-rest thing.
-                    if (feature.Uses == 0 && feature.Grants == Grants.Action)
-                        problems.Add($"{where}: an extra action every round is Extra Attack by " +
-                                     "another name. give it 'uses', or grant a bonus_action");
+                    // an extra action every round is allowed - it is Extra Attack, ported
+                    // literally (decisions_checklist.md section 1, corrected 2026-09-23). what is
+                    // refused is a grant so large no single turn could ever hold it
+                    if (Math.Max(1, feature.Count) >
+                        ActionBudget.MostActionsInATurn - ActionBudget.BaseActions)
+                        problems.Add($"{where}: grants {feature.Count} actions, and no turn holds " +
+                                     $"more than {ActionBudget.MostActionsInATurn}");
+                    break;
+
+                case Trait.Nimble:
+                    if (feature.Manoeuvres == Manoeuvre.None)
+                        problems.Add($"{where}: a nimble feature that frees no manoeuvre - say " +
+                                     "which of dash, disengage and hide with 'manoeuvres'");
                     break;
             }
         }

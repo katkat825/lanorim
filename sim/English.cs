@@ -9,6 +9,7 @@ using Content.Schema;
 using Content.Species;
 using Content.Spells;
 using Core.Characters;
+using Core.Combat;
 using Core.Dice;
 using Core.Localization;
 using Core.Magic;
@@ -269,6 +270,13 @@ namespace Sim
                         ? "one extra action, once between rests"
                         : "an extra action every round",
 
+                Trait.Nimble =>
+                    "your bonus action can " +
+                    string.Join(", ", Manoeuvres.All.Where(m => feature.Manoeuvres.HasFlag(m))
+                                                .Select(m => m.Id())
+                                                .Select(Title)) +
+                    ", as well as whatever else it does",
+
                 Trait.UnarmoredDefense =>
                     $"with no armor on, your Armor Class is 10 plus Dexterity plus " +
                     $"{Ability(feature.Ability.Value.Id())}",
@@ -431,12 +439,20 @@ namespace Sim
 
             foreach (SpellEffect effect in spell.Effects)
             {
+                string plus = effect.AddsModifier ? " plus your spellcasting modifier" : "";
+
                 string one = effect.Kind switch
                 {
-                    Primitive.Damage =>
-                        $"{effect.Amount} {effect.DamageType.Id()} damage",
+                    Primitive.Damage when effect.SlaysAtOrBelow > 0 =>
+                        $"a creature with {effect.SlaysAtOrBelow} hit points or fewer dies; " +
+                        $"anything else takes {effect.Amount} {effect.DamageType.Id()} damage",
 
-                    Primitive.Heal => $"restores {effect.Amount} hit points",
+                    Primitive.Damage =>
+                        $"{effect.Amount}{plus} {effect.DamageType.Id()} damage" +
+                        (effect.Beams ? ", more beams as you level" : "") +
+                        (effect.Repeats ? ", and again on later turns while you hold it" : ""),
+
+                    Primitive.Heal => $"restores {effect.Amount}{plus} hit points",
 
                     Primitive.Ward => $"grants {effect.Amount} temporary hit points",
 
@@ -446,22 +462,53 @@ namespace Sim
 
                     Primitive.Sway => Swayed(effect),
 
-                    Primitive.Shift => "moves you elsewhere",
+                    Primitive.Zone when effect.Reach == Reach.Square =>
+                        $"fills a {effect.Length * 5}-foot square",
 
-                    Primitive.Zone => $"fills {effect.Radius} squares around the point",
+                    Primitive.Zone when effect.Reach == Reach.Around =>
+                        $"surrounds you for {effect.Radius * 5} feet",
+
+                    Primitive.Zone => $"fills {effect.Radius * 5} feet around the point",
+
+                    Primitive.Shift when effect.Reach == Reach.Zone =>
+                        effect.Length > 0 ? $"moves it up to {effect.Length * 5} feet on a later turn"
+                                          : "moves it on a later turn",
+
+                    Primitive.Shift => "moves you elsewhere",
 
                     Primitive.Illuminate => $"lights {effect.Radius} squares",
 
                     Primitive.Reveal => "shows you what is hidden",
 
-                    Primitive.Dispel => "ends a magic effect",
+                    Primitive.Dispel => "ends the spells on the target",
+
+                    Primitive.Counter => "stops a spell as it is cast",
 
                     Primitive.Summon => "calls something to your side",
 
                     _ => "its effect is told by the narrator",
                 };
 
-                if (effect.Save.HasValue)
+                // a zone already said how big it is
+                if (effect.Kind != Primitive.Zone) one += Shape(effect);
+
+                if (effect.Pulses != Pulses.None)
+                    one += " " + Pulsed(effect.Pulses);
+
+                if (effect.Kind == Primitive.Zone && effect.Rough) one += ", difficult terrain";
+
+                if (effect.Escape.HasValue)
+                    one += $", {Ability(effect.Escape.Value.Id())} check as an action to break free";
+
+                if (effect.RepeatSave) one += ", saving again at the end of each turn";
+
+                if (one.Trim().Length == 0) continue;
+
+                if (effect.Save.HasValue && effect.SameSave)
+                    one += effect.OnSave == OnSave.Half
+                        ? ", the same save for half"
+                        : ", on the same failed save";
+                else if (effect.Save.HasValue)
                     one += $", {effect.Save.Value.Id()} save " +
                            (effect.OnSave == OnSave.Half ? "for half" : "to avoid it");
 
@@ -470,9 +517,24 @@ namespace Sim
                 said.Add(one);
             }
 
+            if (said.Count == 0) said.Add("its effect is told by the narrator");
+
             var text = new StringBuilder();
 
             text.Append(spell.IsCantrip ? "Cantrip. " : $"Level {spell.Level}. ");
+
+            text.Append(spell.CastingTime switch
+            {
+                CastingTime.BonusAction => "Bonus action. ",
+                CastingTime.Reaction => spell.Trigger switch
+                {
+                    Core.Combat.Trigger.Hit => "Reaction, when an attack hits you. ",
+                    Core.Combat.Trigger.Cast => "Reaction, when you see a spell cast. ",
+                    Core.Combat.Trigger.Damaged => "Reaction, when you are hurt. ",
+                    _ => "Reaction. ",
+                },
+                _ => "",
+            });
 
             text.Append(char.ToUpperInvariant(said[0][0])).Append(said[0].Substring(1));
 
@@ -488,7 +550,78 @@ namespace Sim
             return text.ToString();
         }
 
+        static string Pulsed(Pulses pulses)
+        {
+            var when = new List<string>();
+
+            if ((pulses & Pulses.Appear) != 0) when.Add("when it appears");
+            if ((pulses & Pulses.Enter) != 0) when.Add("when a creature enters it");
+            if ((pulses & Pulses.StartTurn) != 0) when.Add("when a creature starts its turn there");
+            if ((pulses & Pulses.EndTurn) != 0) when.Add("when a creature ends its turn there");
+            if ((pulses & Pulses.EachSquare) != 0) when.Add("for every 5 feet moved through it");
+
+            return string.Join(", ", when);
+        }
+
+        // where an area lands, in feet, because feet are what a player reads on a card
+        static string Shape(SpellEffect effect) => effect.Reach switch
+        {
+            Reach.Line => $" in a {effect.Length * 5}-foot line",
+            Reach.Cone => $" in a {effect.Length * 5}-foot cone",
+            Reach.Cube => $" in a {effect.Length * 5}-foot cube",
+            Reach.Square => $" in a {effect.Length * 5}-foot square",
+            Reach.Burst when effect.Kind == Primitive.Damage || effect.Kind == Primitive.Afflict =>
+                effect.Points > 1
+                    ? $" in {effect.Points} {effect.Radius * 5}-foot bursts"
+                    : $" in a {effect.Radius * 5}-foot burst",
+            Reach.Around when effect.Kind == Primitive.Damage =>
+                $" to everything within {effect.Radius * 5} feet of you",
+            _ => "",
+        };
+
         static string Swayed(SpellEffect effect)
+        {
+            var said = new List<string>();
+
+            if (effect.Sway != 0 || !effect.SwayDice.IsNothing) said.Add(Numbers(effect));
+
+            if ((effect.Leans & Leans.AdvantageOnAttacks) != 0) said.Add("advantage on attack rolls");
+            if ((effect.Leans & Leans.DisadvantageOnAttacks) != 0)
+                said.Add(effect.Once ? "disadvantage on its next attack roll"
+                                     : "disadvantage on attack rolls");
+            if ((effect.Leans & Leans.AdvantageAgainst) != 0)
+                said.Add(effect.Once ? "the next attack roll against it has advantage"
+                                     : "attack rolls against it have advantage");
+            if ((effect.Leans & Leans.DisadvantageAgainst) != 0)
+                said.Add("attack rolls against it have disadvantage");
+            if ((effect.Leans & Leans.AdvantageOnChecks) != 0) said.Add("advantage on ability checks");
+            if ((effect.Leans & Leans.DisadvantageOnChecks) != 0)
+                said.Add(effect.ChosenAbility ? "disadvantage on checks with an ability you choose"
+                                              : "disadvantage on ability checks");
+
+            if (!effect.Mark.IsNothing)
+                said.Add($"{effect.Mark} {effect.DamageType.Id()} damage whenever you hit it " +
+                         "with an attack roll");
+
+            if (effect.UnarmoredBase > 0)
+                said.Add($"Armor Class {effect.UnarmoredBase} plus Dexterity while wearing no armor");
+
+            if (effect.Resists.Count > 0)
+                said.Add("resistance to " + string.Join(", ", effect.Resists.Select(t => t.Id())) +
+                         " damage");
+
+            if (effect.Speed != 0) said.Add($"{effect.Speed:+0;-0} feet of speed");
+
+            if (effect.NoOpportunityAttacks) said.Add("it can't make opportunity attacks");
+
+            if (effect.Exposes) said.Add("it gains nothing from being unseen");
+
+            if (effect.EndsOnAttack) said.Add("until it attacks or casts");
+
+            return string.Join(", ", said);
+        }
+
+        static string Numbers(SpellEffect effect)
         {
             string amount = effect.SwayDice.IsNothing
                 ? $"{effect.Sway:+0;-0}"
@@ -499,7 +632,8 @@ namespace Sim
             if ((effect.Touches & Sways.Attacks) != 0) rolls.Add("attack rolls");
             if ((effect.Touches & Sways.Saves) != 0) rolls.Add("saving throws");
             if ((effect.Touches & Sways.Checks) != 0)
-                rolls.Add(effect.Skill == Skill.None
+                rolls.Add(effect.ChosenSkill ? "checks with a skill you choose"
+                          : effect.Skill == Skill.None
                               ? "ability checks"
                               : Title(effect.Skill.Id()) + " checks");
             if ((effect.Touches & Sways.Damage) != 0) rolls.Add("damage");

@@ -4,9 +4,9 @@ using Core.Localization;
 
 namespace Core.Characters
 {
-    // the v1 subset, core effects only - decisions_checklist.md section 6 defers the rest, and
-    // exhaustion's six-level ladder with it. Unconscious is here because dropping to 0 HP has to
-    // land somewhere; it isn't a condition content can apply.
+    // SRD 5.2.1's conditions, core effects only. decisions_checklist.md section 1 (2026-09-24) lets
+    // the subset grow to whatever a faithful spell needs; exhaustion's six-level ladder stays
+    // deferred. Unconscious is set by dropping to 0 HP, and a spell (Sleep) may set it too.
     public enum Condition
     {
         None = 0,
@@ -18,25 +18,32 @@ namespace Core.Characters
         Restrained,
         Grappled,
 
-        // engine-owned: set by falling to 0 HP, cleared by healing above it
+        // set by falling to 0 HP (cleared by healing above it), or by a spell
         Unconscious,
+
+        // added 2026-09-24 so the spells that name them can keep their SRD names
+        Blinded,
+        Charmed,
+        Deafened,
+        Incapacitated,
+        Invisible,
+        Paralyzed,
+        Petrified,
     }
 
     public static class Conditions
     {
-        // what content may apply. Unconscious is deliberately absent.
+        // what content may apply
         public static readonly IReadOnlyList<Condition> Appliable = new[]
         {
             Condition.Prone, Condition.Poisoned, Condition.Stunned,
             Condition.Frightened, Condition.Restrained, Condition.Grappled,
+            Condition.Unconscious,
+            Condition.Blinded, Condition.Charmed, Condition.Deafened, Condition.Incapacitated,
+            Condition.Invisible, Condition.Paralyzed, Condition.Petrified,
         };
 
-        public static readonly IReadOnlyList<Condition> All = new[]
-        {
-            Condition.Prone, Condition.Poisoned, Condition.Stunned,
-            Condition.Frightened, Condition.Restrained, Condition.Grappled,
-            Condition.Unconscious,
-        };
+        public static readonly IReadOnlyList<Condition> All = Appliable;
 
         public static string Id(this Condition condition) =>
             condition == Condition.None ? "none" : condition.ToString().ToLowerInvariant();
@@ -64,17 +71,24 @@ namespace Core.Characters
 
         // --- the core effects. one rule per question, asked by the combat engine ---
 
-        // can it act at all? SRD: stunned and unconscious are incapacitated
+        // can it act at all? SRD 5.2.1: Incapacitated, and the four that include it
         public static bool Incapacitates(this Condition condition) =>
-            condition == Condition.Stunned || condition == Condition.Unconscious;
+            condition == Condition.Incapacitated || condition == Condition.Stunned ||
+            condition == Condition.Paralyzed || condition == Condition.Petrified ||
+            condition == Condition.Unconscious;
 
-        // can it leave the square it is in?
+        // speed 0: can it leave the square it is in? Stunned stays here as it was before
+        // 2026-09-24 (SRD 5.2.1's Stunned lists no speed change - flagged in the run log);
+        // Incapacitated alone does not stop a creature moving, which is why Hypnotic Pattern
+        // says "and a Speed of 0" separately
         public static bool Roots(this Condition condition) =>
             condition == Condition.Restrained || condition == Condition.Grappled ||
-            condition.Incapacitates();
+            condition == Condition.Stunned ||
+            condition == Condition.Paralyzed || condition == Condition.Petrified ||
+            condition == Condition.Unconscious;
 
-        // SRD: restrained gives disadvantage on its own attacks; poisoned and frightened too;
-        // prone gives disadvantage on attacks at anything not adjacent, handled by the caller
+        // SRD: disadvantage on its own attack rolls. prone and restrained always; poisoned and
+        // frightened too. Blinded is the sight rule (Actor.CanSee), not this list
         public static bool AttacksAtDisadvantage(this Condition condition) =>
             condition == Condition.Poisoned || condition == Condition.Frightened ||
             condition == Condition.Restrained || condition == Condition.Prone;
@@ -83,19 +97,63 @@ namespace Core.Characters
         public static bool ChecksAtDisadvantage(this Condition condition) =>
             condition == Condition.Poisoned || condition == Condition.Frightened;
 
-        // attacks against it: restrained and prone-in-reach and unconscious grant advantage
+        // attack rolls against it have advantage, from any distance. Prone is not here: it is
+        // advantage from within 5 feet and disadvantage from further, which needs the distance
+        // (Actor.AdvantageAgainstMe). Blinded is the sight rule
         public static bool GrantsAdvantageToAttackers(this Condition condition) =>
-            condition == Condition.Restrained || condition == Condition.Prone ||
+            condition == Condition.Restrained || condition == Condition.Stunned ||
+            condition == Condition.Paralyzed || condition == Condition.Petrified ||
             condition == Condition.Unconscious;
 
-        // SRD: stunned and unconscious auto-fail STR and DEX saves
+        // SRD 5.2.1: a hit from within 5 feet is a critical hit
+        public static bool CritsFromClose(this Condition condition) =>
+            condition == Condition.Paralyzed || condition == Condition.Unconscious;
+
+        // SRD: stunned, paralyzed, petrified and unconscious auto-fail STR and DEX saves
         public static bool AutoFailsSave(this Condition condition, Ability ability) =>
-            condition.Incapacitates() &&
+            (condition == Condition.Stunned || condition == Condition.Paralyzed ||
+             condition == Condition.Petrified || condition == Condition.Unconscious) &&
             (ability == Ability.Strength || ability == Ability.Dexterity);
+
+        // SRD: restrained has disadvantage on Dexterity saves
+        public static bool SavesAtDisadvantage(this Condition condition, Ability ability) =>
+            condition == Condition.Restrained && ability == Ability.Dexterity;
 
         // getting up off the floor costs half your movement; grappled and restrained cost nothing
         // to try but can't be shrugged off by moving
         public static bool StandingCostsMovement(this Condition condition) =>
             condition == Condition.Prone;
+    }
+}
+
+namespace Core.Characters
+{
+    public enum Size
+    {
+        Tiny,
+        Small,
+        Medium,
+        Large,
+        Huge,
+        Gargantuan,
+    }
+
+    public static class Sizes
+    {
+        public static string Id(this Size size) => size.ToString().ToLowerInvariant();
+
+        public static bool TryParse(string id, out Size size)
+        {
+            foreach (Size s in Enum.GetValues(typeof(Size)))
+            {
+                if (!string.Equals(s.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
+
+                size = s;
+                return true;
+            }
+
+            size = Size.Medium;
+            return false;
+        }
     }
 }

@@ -46,6 +46,9 @@ namespace Game.Table
 
         public Captioned Captions { get; private set; }
 
+        // the GM's screen on the far side of the board (Tier 3d); placed whenever a map is laid
+        public GmScreen GmScreen { get; private set; }
+
         readonly ILocalizer _text = new GodotLocalizer();
 
         // what the table is waiting on: the question asked of the dice, and who to tell
@@ -60,6 +63,15 @@ namespace Game.Table
             Captions = CaptionsPath == null || CaptionsPath.IsEmpty
                 ? null
                 : GetNodeOrNull<Captioned>(CaptionsPath);
+
+            // one in the scene is used as it is (its dials are Kathleen's); otherwise the blank one
+            GmScreen = GetNodeOrNull<GmScreen>("GmScreen");
+
+            if (GmScreen == null)
+            {
+                GmScreen = new GmScreen { Name = "GmScreen" };
+                AddChild(GmScreen);
+            }
 
             if (Tray == null)
             {
@@ -101,7 +113,13 @@ namespace Game.Table
 
             GD.Print("table   Q and E turn the table a quarter, - and = zoom, space throws");
 
-            Demonstrate();
+            // A CAMPAIGN TO PLAY: the launch screen made or loaded a character, so the table is the
+            // game's and not the demonstration's. Opened on its own (the editor, check-table), the
+            // demonstration still shows the whole stack working
+            if (Game.Play.GameState.Run != null)
+                AddChild(new Game.Play.PlayDirector { Name = "Play", Table = this });
+            else
+                Demonstrate();
 
 
             // and a picture of it, if one was asked for. Added last so it photographs the table
@@ -189,6 +207,7 @@ namespace Game.Table
             MapLayout map = draft.Layout();
 
             Board.Lay(map);
+            GmScreen?.StandBehind(Board);
 
             _field = new Battlefield(map);
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Core.Magic
 {
@@ -34,7 +35,7 @@ namespace Core.Magic
         Shift,
 
         // an area that persists and does something to whoever is in it: Web, Spirit Guardians,
-        // Wall of Fire. v1 keeps one shape, a burst
+        // Wall of Fire
         Zone,
 
         // a square the light reaches, or takes away
@@ -43,11 +44,33 @@ namespace Core.Magic
         // information: Detect Magic, True Seeing, Identify. answers a question, changes nothing
         Reveal,
 
-        // ends another effect: Dispel Magic, Counterspell
+        // ends another effect that is already in place: Dispel Magic
         Dispel,
+
+        // stops a spell while it is still being cast, so it never takes effect: Counterspell.
+        // kept apart from Dispel because the two land on different things - Dispel on what a
+        // creature is holding up, Counter on the casting in front of it - and only a reaction to
+        // a cast has a casting in front of it
+        Counter,
 
         // a creature the caster did not have a moment ago. v1 summons are fixed archetypes
         Summon,
+
+        // a creature at 0 hit points stops dying: SRD 5.2.1's Stable. Spare the Dying
+        Stabilize,
+
+        // one attack with a weapon the caster holds, made by the spell: True Strike
+        Strike,
+
+        // the creature's next turn is decided for it, from a closed list of words: Command
+        Direct,
+
+        // what the creature holds is taken from it: Telekinesis pulling a weapon away
+        Disarm,
+
+        // items that were not there a moment ago, into the caster's hands: Goodberry's ten
+        // berries. core names the item; the content layer puts it in the pack
+        Conjure,
 
         // nothing mechanical - the narrator handles it, and the campaign decides what that means.
         // Prestidigitation, Disguise Self, Minor Illusion
@@ -74,6 +97,40 @@ namespace Core.Magic
 
         // a square, not a creature: a wall, a light, a zone
         Place,
+
+        // everything in a line coming out of the caster: Lightning Bolt, Sunbeam
+        Line,
+
+        // everything in a cone coming out of the caster: Burning Hands, Cone of Cold
+        Cone,
+
+        // everything in a cube against the caster's own square: Thunderwave
+        Cube,
+
+        // everything in a square area put down on the aimed square: Web, Faerie Fire
+        Square,
+
+        // a wall of squares put down within range: a straight run from the aimed square in the
+        // aimed facing, or a ring round a block with the aimed square at its corner - Wall of Fire,
+        // Blade Barrier, Forcecage. only a zone takes this shape
+        Wall,
+
+        // whoever the spell's zone is acting on, when it acts - an effect with this reach does
+        // nothing when the spell is cast, only when its zone pulses (Spirit Guardians' damage)
+        Zone,
+    }
+
+    // what casting a spell costs out of the turn. SRD's other casting times - a minute, an hour -
+    // are rituals and travel, which the campaign narrates rather than the fight counting.
+    public enum CastingTime
+    {
+        Action,
+
+        BonusAction,
+
+        // cast only in answer to a moment the fight offers: Shield when hit, Counterspell when
+        // somebody casts. never on your own turn
+        Reaction,
     }
 
     // what a successful saving throw does about it
@@ -90,6 +147,10 @@ namespace Core.Magic
 
         // the damage lands in full but the condition does not
         KeepsDamage,
+
+        // the effect lands only on a SUCCESSFUL save: Flesh to Stone's "on a successful save, its
+        // Speed is 0"
+        OnSuccess,
     }
 
     // which rolls a Sway touches. a Bless is attacks and saves; a Guidance is one check; a
@@ -105,14 +166,41 @@ namespace Core.Magic
         ArmorClass = 1 << 4,
     }
 
+    // which way a Sway tips a roll rather than how far: advantage and disadvantage, on the
+    // bearer's own rolls or on the rolls made at it. Guiding Bolt is advantage against; being
+    // Invisible is advantage on your attacks and disadvantage against you.
+    [Flags]
+    public enum Leans
+    {
+        None = 0,
+        AdvantageOnAttacks = 1 << 0,
+        DisadvantageOnAttacks = 1 << 1,
+        AdvantageAgainst = 1 << 2,
+        DisadvantageAgainst = 1 << 3,
+        AdvantageOnChecks = 1 << 4,
+        DisadvantageOnChecks = 1 << 5,
+        AdvantageOnSaves = 1 << 6,
+        DisadvantageOnSaves = 1 << 7,
+    }
+
+    // whose turn a turn-shaped duration counts: the creature wearing the effect, or the caster
+    // who put it there. Vicious Mockery lasts to the end of the *target's* next turn; Guiding
+    // Bolt's glimmer to the end of the *caster's*
+    public enum Until
+    {
+        Bearer,
+        Caster,
+    }
+
     public static class Primitives
     {
         public static readonly IReadOnlyList<Primitive> All = new[]
         {
             Primitive.Damage, Primitive.Heal, Primitive.Ward, Primitive.Afflict,
             Primitive.Relieve, Primitive.Sway, Primitive.Shift, Primitive.Zone,
-            Primitive.Illuminate, Primitive.Reveal, Primitive.Dispel, Primitive.Summon,
-            Primitive.Narrate,
+            Primitive.Illuminate, Primitive.Reveal, Primitive.Dispel, Primitive.Counter,
+            Primitive.Summon, Primitive.Stabilize, Primitive.Strike, Primitive.Direct,
+            Primitive.Disarm, Primitive.Conjure, Primitive.Narrate,
         };
 
         public static string Id(this Primitive primitive) => primitive.ToString().ToLowerInvariant();
@@ -139,6 +227,8 @@ namespace Core.Magic
                      {
                          Reach.Caster, Reach.Creature, Reach.Creatures,
                          Reach.Burst, Reach.Around, Reach.Place,
+                         Reach.Line, Reach.Cone, Reach.Cube, Reach.Square, Reach.Zone,
+                         Reach.Wall,
                      })
             {
                 if (!string.Equals(r.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
@@ -157,13 +247,15 @@ namespace Core.Magic
             OnSave.Half => "half",
             OnSave.Negates => "negates",
             OnSave.KeepsDamage => "keeps_damage",
+            OnSave.OnSuccess => "on_success",
             _ => "none",
         };
 
         public static bool TryParse(string id, out OnSave save)
         {
             foreach (OnSave s in new[]
-                     { OnSave.None, OnSave.Half, OnSave.Negates, OnSave.KeepsDamage })
+                     { OnSave.None, OnSave.Half, OnSave.Negates, OnSave.KeepsDamage,
+                       OnSave.OnSuccess })
             {
                 if (!string.Equals(s.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
 
@@ -177,10 +269,94 @@ namespace Core.Magic
 
         // an effect that lands on more than one creature at a time
         public static bool IsArea(this Reach reach) =>
-            reach == Reach.Burst || reach == Reach.Around;
+            reach == Reach.Burst || reach == Reach.Around || reach == Reach.Square ||
+            reach.IsDirected();
+
+        // a shape that comes out of the caster and has to be pointed somewhere
+        public static bool IsDirected(this Reach reach) =>
+            reach == Reach.Line || reach == Reach.Cone || reach == Reach.Cube;
 
         public static bool NeedsATargetSquare(this Reach reach) =>
-            reach == Reach.Burst || reach == Reach.Place;
+            reach == Reach.Burst || reach == Reach.Place || reach == Reach.Square ||
+            reach == Reach.Wall;
+
+        static readonly (Leans lean, string id)[] LeanIds =
+        {
+            (Leans.AdvantageOnAttacks, "advantage_on_attacks"),
+            (Leans.DisadvantageOnAttacks, "disadvantage_on_attacks"),
+            (Leans.AdvantageAgainst, "advantage_against"),
+            (Leans.DisadvantageAgainst, "disadvantage_against"),
+            (Leans.AdvantageOnChecks, "advantage_on_checks"),
+            (Leans.DisadvantageOnChecks, "disadvantage_on_checks"),
+            (Leans.AdvantageOnSaves, "advantage_on_saves"),
+            (Leans.DisadvantageOnSaves, "disadvantage_on_saves"),
+        };
+
+        public static string Id(this Leans leans) =>
+            leans == Leans.None
+                ? "none"
+                : string.Join("|", LeanIds.Where(l => (leans & l.lean) != 0).Select(l => l.id));
+
+        // pipes again, for the same reason as Sways
+        public static bool TryParse(string id, out Leans leans)
+        {
+            leans = Leans.None;
+
+            if (string.IsNullOrWhiteSpace(id) || id == "none") return true;
+
+            foreach (string part in id.Split('|'))
+            {
+                string wanted = part.Trim().ToLowerInvariant();
+                (Leans lean, string id) match = LeanIds.FirstOrDefault(l => l.id == wanted);
+
+                if (match.id == null) return false;
+
+                leans |= match.lean;
+            }
+
+            return true;
+        }
+
+        public static bool TryParse(string id, out Until until)
+        {
+            switch ((id ?? "").Trim().ToLowerInvariant())
+            {
+                case "":
+                case "bearer":
+                case "target":
+                    until = Until.Bearer;
+                    return true;
+
+                case "caster":
+                    until = Until.Caster;
+                    return true;
+            }
+
+            until = Until.Bearer;
+            return false;
+        }
+
+        public static string Id(this CastingTime time) => time switch
+        {
+            CastingTime.BonusAction => "bonus_action",
+            CastingTime.Reaction => "reaction",
+            _ => "action",
+        };
+
+        public static bool TryParse(string id, out CastingTime time)
+        {
+            foreach (CastingTime t in new[]
+                     { CastingTime.Action, CastingTime.BonusAction, CastingTime.Reaction })
+            {
+                if (!string.Equals(t.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
+
+                time = t;
+                return true;
+            }
+
+            time = CastingTime.Action;
+            return false;
+        }
 
         public static string Id(this Sways sways) =>
             sways == Sways.None ? "none" : sways.ToString().ToLowerInvariant().Replace(" ", "");

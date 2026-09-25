@@ -9,6 +9,10 @@ namespace Core.Space
 
         // shut; an open door isn't a value here, it's Edge.None - a gap in the wall
         Door,
+
+        // bars: nothing walks through, everything is seen through - Forcecage's cage. runtime
+        // only (a spell raises them on the board); no map file writes one
+        Bars,
     }
 
     public static class Edges
@@ -16,6 +20,6 @@ namespace Core.Space
         public static bool IsOpen(this Edge edge) => edge == Edge.None;
 
         // separate from IsOpen on purpose - a portcullis or low wall is one without the other
-        public static bool IsTransparent(this Edge edge) => edge == Edge.None;
+        public static bool IsTransparent(this Edge edge) => edge == Edge.None || edge == Edge.Bars;
     }
 }

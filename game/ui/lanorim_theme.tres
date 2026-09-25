@@ -1,0 +1,197 @@
+[gd_resource type="Theme" load_steps=28 format=3]
+
+[ext_resource type="FontFile" path="res://fonts/AlegreyaSC-Regular.ttf" id="1_ui"]
+[ext_resource type="FontFile" path="res://fonts/AlegreyaSC-Bold.ttf" id="2_ui_bold"]
+[ext_resource type="FontFile" path="res://fonts/EBGaramond-Regular.ttf" id="3_card"]
+[ext_resource type="FontFile" path="res://fonts/EBGaramond-SemiBold.ttf" id="4_card_bold"]
+[ext_resource type="FontFile" path="res://fonts/CormorantUpright-Regular.ttf" id="5_story"]
+[ext_resource type="FontFile" path="res://fonts/AtkinsonHyperlegibleMono-Regular.ttf" id="6_story_plain"]
+[ext_resource type="Texture2D" path="res://ui/kenney/panel_brown.png" id="7_panel"]
+[ext_resource type="Texture2D" path="res://ui/kenney/panel_brown_dark.png" id="8_panel_dark"]
+[ext_resource type="Texture2D" path="res://ui/kenney/panel_border_brown.png" id="9_panel_border"]
+[ext_resource type="Texture2D" path="res://ui/kenney/button_brown.png" id="10_button"]
+[ext_resource type="Texture2D" path="res://ui/kenney/button_grey.png" id="11_button_off"]
+[ext_resource type="Texture2D" path="res://ui/kenney/button_red.png" id="12_button_hot"]
+[ext_resource type="Texture2D" path="res://ui/kenney/checkbox_brown_checked.png" id="13_check_on"]
+[ext_resource type="Texture2D" path="res://ui/kenney/checkbox_brown_empty.png" id="14_check_off"]
+[ext_resource type="Texture2D" path="res://ui/kenney/scrollbar_brown.png" id="15_scroll"]
+[ext_resource type="Texture2D" path="res://ui/kenney/progress_red.png" id="16_bar"]
+
+[sub_resource type="StyleBoxTexture" id="Panel"]
+texture = ExtResource("7_panel")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+content_margin_left = 20.0
+content_margin_top = 18.0
+content_margin_right = 20.0
+content_margin_bottom = 18.0
+
+[sub_resource type="StyleBoxTexture" id="PanelDark"]
+texture = ExtResource("8_panel_dark")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+content_margin_left = 20.0
+content_margin_top = 18.0
+content_margin_right = 20.0
+content_margin_bottom = 18.0
+
+[sub_resource type="StyleBoxTexture" id="PanelBorder"]
+texture = ExtResource("9_panel_border")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+content_margin_left = 20.0
+content_margin_top = 18.0
+content_margin_right = 20.0
+content_margin_bottom = 18.0
+draw_center = false
+
+[sub_resource type="StyleBoxTexture" id="Button"]
+texture = ExtResource("10_button")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="ButtonHover"]
+texture = ExtResource("10_button")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+modulate_color = Color(1.12, 1.08, 1, 1)
+
+[sub_resource type="StyleBoxTexture" id="ButtonPressed"]
+texture = ExtResource("12_button_hot")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxTexture" id="ButtonDisabled"]
+texture = ExtResource("11_button_off")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="Focus"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.98, 0.84, 0.42, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 3.0
+expand_margin_top = 3.0
+expand_margin_right = 3.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxTexture" id="Scroll"]
+texture = ExtResource("15_scroll")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="Bar"]
+texture = ExtResource("16_bar")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="BarBack"]
+bg_color = Color(0.16, 0.11, 0.08, 0.85)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[resource]
+default_font = ExtResource("1_ui")
+default_font_size = 20
+Button/colors/font_color = Color(0.22, 0.13, 0.07, 1)
+Button/colors/font_disabled_color = Color(0.36, 0.34, 0.32, 1)
+Button/colors/font_focus_color = Color(0.16, 0.09, 0.04, 1)
+Button/colors/font_hover_color = Color(0.12, 0.07, 0.03, 1)
+Button/colors/font_hover_pressed_color = Color(1, 0.96, 0.9, 1)
+Button/colors/font_pressed_color = Color(1, 0.96, 0.9, 1)
+Button/fonts/font = ExtResource("2_ui_bold")
+Button/styles/disabled = SubResource("ButtonDisabled")
+Button/styles/focus = SubResource("Focus")
+Button/styles/hover = SubResource("ButtonHover")
+Button/styles/normal = SubResource("Button")
+Button/styles/pressed = SubResource("ButtonPressed")
+CheckBox/colors/font_color = Color(0.2, 0.13, 0.08, 1)
+CheckBox/icons/checked = ExtResource("13_check_on")
+CheckBox/icons/unchecked = ExtResource("14_check_off")
+CheckBox/styles/focus = SubResource("Focus")
+Label/colors/font_color = Color(0.2, 0.13, 0.08, 1)
+LineEdit/colors/font_color = Color(0.2, 0.13, 0.08, 1)
+LineEdit/styles/focus = SubResource("Focus")
+LineEdit/styles/normal = SubResource("PanelBorder")
+OptionButton/colors/font_color = Color(0.22, 0.13, 0.07, 1)
+OptionButton/colors/font_hover_color = Color(0.12, 0.07, 0.03, 1)
+OptionButton/colors/font_focus_color = Color(0.16, 0.09, 0.04, 1)
+OptionButton/colors/font_pressed_color = Color(1, 0.96, 0.9, 1)
+OptionButton/styles/focus = SubResource("Focus")
+OptionButton/styles/normal = SubResource("Button")
+OptionButton/styles/hover = SubResource("ButtonHover")
+OptionButton/styles/pressed = SubResource("ButtonPressed")
+OptionButton/styles/disabled = SubResource("ButtonDisabled")
+Panel/styles/panel = SubResource("Panel")
+PanelContainer/styles/panel = SubResource("Panel")
+ProgressBar/styles/background = SubResource("BarBack")
+ProgressBar/styles/fill = SubResource("Bar")
+RichTextLabel/colors/default_color = Color(0.2, 0.13, 0.08, 1)
+RichTextLabel/fonts/normal_font = ExtResource("5_story")
+VScrollBar/styles/grabber = SubResource("Scroll")
+VScrollBar/styles/grabber_highlight = SubResource("Scroll")
+VScrollBar/styles/grabber_pressed = SubResource("Scroll")
+CardLabel/base_type = &"Label"
+CardLabel/fonts/font = ExtResource("3_card")
+CardLabel/font_sizes/font_size = 18
+CardTitle/base_type = &"Label"
+CardTitle/fonts/font = ExtResource("4_card_bold")
+CardTitle/font_sizes/font_size = 22
+DarkPanel/base_type = &"PanelContainer"
+DarkPanel/styles/panel = SubResource("PanelDark")
+HudLabel/base_type = &"Label"
+HudLabel/colors/font_color = Color(0.98, 0.95, 0.88, 1)
+HudLabel/colors/font_outline_color = Color(0.1, 0.07, 0.05, 1)
+HudLabel/constants/outline_size = 4
+NarrationLabel/base_type = &"RichTextLabel"
+NarrationLabel/fonts/normal_font = ExtResource("5_story")
+NarrationLabel/font_sizes/normal_font_size = 24
+NarrationPlain/base_type = &"RichTextLabel"
+NarrationPlain/fonts/normal_font = ExtResource("6_story_plain")
+NarrationPlain/font_sizes/normal_font_size = 20
+TitleLabel/base_type = &"Label"
+TitleLabel/fonts/font = ExtResource("2_ui_bold")
+TitleLabel/font_sizes/font_size = 32

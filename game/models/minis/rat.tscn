@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+; A STATIC MINI from an OBJ (the Easy Animated Enemy Pack ships this one only as FBX, OBJ and
+; .blend, and the FBX's skinned mesh imports at the wrong size). One mesh, the pack's own flat
+; colours from its .mtl; the painted shader on the board relights it like every other piece.
+
+[ext_resource type="Mesh" path="res://models/minis/rat.obj" id="1_mesh"]
+
+[node name="rat" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_mesh")

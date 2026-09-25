@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using Content.Schema;
 
@@ -62,6 +63,14 @@ namespace Content.Campaigns
                 IReadOnlyList<string> needs = Dependencies(root, id, file, problems);
                 IReadOnlyList<Chapter> chapters = Chapters(root, kind, file, problems);
                 string start = Start(root, chapters, file, problems);
+                string screen = root.TryGetProperty("gm_screen", out JsonElement named) &&
+                                named.ValueKind == JsonValueKind.String
+                    ? named.GetString()
+                    : "blank";
+
+                if (!Manifest.GmScreens.Contains(screen))
+                    problems.Add(new ContentProblem(file, "gm_screen",
+                        $"'{screen}' is not a GM screen - it is {Vocabulary.Offer(Manifest.GmScreens)}"));
 
                 Unknown(root, file, problems);
 
@@ -69,14 +78,17 @@ namespace Content.Campaigns
 
                 return Read<Manifest>.Good(
                     new Manifest(id, kind, format, engine, author, tags, preview, needs,
-                                 chapters, start));
+                                 chapters, start)
+                    {
+                        GmScreen = screen,
+                    });
             }
         }
 
         static readonly string[] Fields =
         {
             "id", "kind", "format", "engine", "author", "tags", "preview", "dependencies",
-            "chapters", "start",
+            "chapters", "start", "gm_screen",
         };
 
         static void Unknown(JsonElement root, string file, List<ContentProblem> problems)

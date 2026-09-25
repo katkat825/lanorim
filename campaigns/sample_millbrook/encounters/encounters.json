@@ -1,0 +1,69 @@
+{
+  "tables": [
+    {
+      "id": "set_pieces",
+      "entries": [
+        {
+          "id": "cellar_rats",
+          "kind": "fight",
+          "map": "mill_cellar",
+          "loot": "rat_nest",
+          "monsters": [
+            {
+              "monster": "giant_rat",
+              "count": "2"
+            }
+          ]
+        },
+        {
+          "id": "goblin_camp",
+          "kind": "fight",
+          "map": "mill_yard",
+          "loot": "goblin_chest",
+          "monsters": [
+            {
+              "monster": "goblin_boss"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mill_road",
+      "trigger": {
+        "roll": "1d20",
+        "at_least": 4
+      },
+      "entries": [
+        {
+          "id": "crows",
+          "kind": "line",
+          "weight": 1
+        },
+        {
+          "id": "wolves",
+          "kind": "fight",
+          "weight": 3,
+          "map": "road_clearing",
+          "monsters": [
+            {
+              "monster": "wolf"
+            }
+          ]
+        },
+        {
+          "id": "bandits",
+          "kind": "fight",
+          "weight": 2,
+          "map": "road_clearing",
+          "loot": "bandit_purse",
+          "monsters": [
+            {
+              "monster": "bandit"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

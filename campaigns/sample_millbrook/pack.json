@@ -1,0 +1,21 @@
+{
+  "id": "sample_millbrook",
+  "kind": "campaign",
+  "format": 1,
+  "engine": "0.1",
+  "author": "Lanorim test content",
+  "tags": [
+    "test"
+  ],
+  "chapters": [
+    {
+      "id": "old_mill",
+      "maps": [
+        "mill_cellar",
+        "road_clearing",
+        "mill_yard"
+      ]
+    }
+  ],
+  "start": "old_mill"
+}

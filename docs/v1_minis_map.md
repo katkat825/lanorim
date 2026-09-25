@@ -11,7 +11,7 @@ licence. Written 2026-09-21.
 for many SRD monsters. So the game needs ~a dozen archetype minis, not hundreds. On-map minis are
 **static** (no animation), like tabletop pieces; only the off-map companion may be animated.
 
-Base look = **Quaternius** (single-creator on-map style). A few non-Quaternius fills are allowed **for
+Base look = **Quaternius**, with **KayKit** as the second base for kitbash (`decisions_checklist.md` §4, updated after this was written). A few non-Quaternius fills are allowed **for
 monsters only** (transient, on-map, reskinned) and get a light palette pass to sit with the set. The
 companion is deliberately its own visual lane and can differ freely.
 

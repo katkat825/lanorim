@@ -26,8 +26,11 @@ namespace Sim
             {
                 case "locale": return Locale(args.Skip(1).ToArray());
                 case "spells": return Spells();
+                case "check-spells": return CheckSpells(args.Skip(1).ToArray());
                 case "fairness": return Fairness();
                 case "balance": return Balance(args.Skip(1).ToArray());
+                case "classes": return Classes.Run(args.Skip(1).ToArray(), Find);
+                case "trace": return Classes.Trace(args.Skip(1).ToArray(), Find);
                 case "help": return Help();
 
                 default:
@@ -40,8 +43,10 @@ namespace Sim
         {
             Console.WriteLine("sim locale [path]   scaffold the English locale csv");
             Console.WriteLine("sim spells          print the spell catalogue and its problems");
+            Console.WriteLine("sim check-spells f  read a spell file off disk and print what it read, or why not");
             Console.WriteLine("sim fairness        chi-squared every die");
             Console.WriteLine("sim balance [runs]  play fights and print the win tables");
+            Console.WriteLine("sim classes [runs] [class]  every class, levels 1-5, against the sample campaign's fights");
             return 0;
         }
 
@@ -122,6 +127,55 @@ namespace Sim
                                                         .Where(n => n.Length > 0)));
 
             return book.Sound ? 0 : 1;
+        }
+
+
+        // a spell file that is not in the SRD folder yet - one being written. reads it with the
+        // same reader the game uses, prints each spell the way `spells` does, and says whether
+        // any id collides with a spell the SRD files already have
+        static int CheckSpells(string[] args)
+        {
+            if (args.Length == 0)
+            {
+                Console.Error.WriteLine("check-spells needs a path to a spell file");
+                return 2;
+            }
+
+            bool sound = true;
+            SpellBook srd = SpellBook.Srd();
+
+            foreach (string path in args)
+            {
+                if (!File.Exists(path))
+                {
+                    Console.Error.WriteLine($"{path}: no such file");
+                    sound = false;
+                    continue;
+                }
+
+                bool read = SpellReader.TryRead(File.ReadAllText(path),
+                                                out IReadOnlyList<Spell> spells,
+                                                out IReadOnlyList<string> problems);
+
+                Console.WriteLine($"{path}: {spells.Count} spells, {problems.Count} problems");
+
+                foreach (string problem in problems) Console.WriteLine("  PROBLEM " + problem);
+
+                foreach (Spell spell in spells)
+                {
+                    Console.WriteLine("   " + spell);
+
+                    if (srd.Has(spell.Id))
+                    {
+                        Console.WriteLine($"  PROBLEM {spell.Id}: already in the SRD spell files");
+                        sound = false;
+                    }
+                }
+
+                sound &= read;
+            }
+
+            return sound ? 0 : 1;
         }
 
 
@@ -215,7 +269,10 @@ namespace Sim
 
             Actor hero = Hero(level);
 
-            fight.Enlist(hero, new Cell(0, 2));
+            // a Fighter's Extra Attack from level 5: a third action every round, stacked on the
+            // base two (decisions_checklist.md section 1, corrected 2026-09-23)
+            fight.Enlist(hero, new Cell(0, 2),
+                         new ActionBudget { ExtraActionsEachRound = level >= 5 ? 1 : 0 });
             fight.ArmOpportunity(hero, Longsword(hero));
 
             var brains = new Dictionary<Actor, ITactics>();

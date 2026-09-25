@@ -86,6 +86,19 @@ namespace Core.Magic
             return true;
         }
 
+        // A SAVE PUTTING BACK THE DAY, and nothing else calls it. Not done by paying, because a
+        // pool with 4 points left and a 6th-level cast behind it could never be reached that way:
+        // the cast costs 9. Only the once-a-day levels are marked; anything lower was never a flag.
+        public void Resume(int remaining, IEnumerable<int> spentHighLevels = null)
+        {
+            Remaining = Math.Clamp(remaining, 0, Maximum);
+
+            Array.Clear(_spentHigh, 0, _spentHigh.Length);
+
+            foreach (int level in spentHighLevels ?? Enumerable.Empty<int>())
+                if (SpellLevels.IsLeveled(level) && IsOncePerDay(level)) _spentHigh[level] = true;
+        }
+
         public void Restore(Rest rest)
         {
             // same rule as slots: the day's magic comes back on a long rest and not before

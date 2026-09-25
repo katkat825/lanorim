@@ -27,7 +27,8 @@ confirmed at the one-hour IP/legal review before the game sells.
 
 Every 3D asset in lanorim comes from **Quaternius** (quaternius.com): characters, dungeon and other
 environments (village, wilderness, sci-fi), monsters, and animals/companions. One creator, one style
-family — this *is* the game's look. **KayKit is retired from lanorim.**
+family — this *is* the game's look. **KayKit is the second base** (CC0, for kitbash — see *3D assets — KayKit* below;
+`docs/decisions_checklist.md` §4).
 
 **Licence — Quaternius Asset License (QAL) v1.0** (quaternius.com/license.html; the version in effect at
 download time governs). Commercial use permitted, **no attribution required**, perpetual and irrevocable
@@ -46,7 +47,7 @@ Packs in use (all from quaternius.com; downloaded 2026-09-21 into `lanorim/asset
 
 | Pack | Role | Notes |
 |---|---|---|
-| Ultimate Animated Character Pack | Characters / heroes | The player-mini source. Pulled into the project so far: `Goblin_Male` → `game/models/minis/`. The hero mini is **`rogue_v2.glb`, Kathleen’s own model** (source in the gitignored `assets/modified/`, processed copy committed). Its skinned body rides this pack’s armature — 25 joints, `CharacterArmature`, the pack’s 17 clip names — so that part is a QAL derivative and ships baked into the game like any other, not redistributable raw. **Its cloak and hood are two separate unskinned meshes named `character_skeleton_mage_cloak` and `Skeleton_Rogue_Hood`, which are KayKit Skeletons names — provenance UNCONFIRMED and owed an entry of its own if so.** That matters twice: KayKit is retired from lanorim on art-cohesion grounds (`docs/decisions_checklist.md` §4), and non-Quaternius assets carry their own licence and get a full individual entry per the rule above. `Ninja_Male` is still in the repo, now unreferenced. |
+| Ultimate Animated Character Pack | Characters / heroes | The player-mini source. Pulled into the project so far: `Goblin_Male` → `game/models/minis/`. The hero mini is **`rogue_v2.glb`, Kathleen’s own model** (source in the gitignored `assets/modified/`, processed copy committed). Its skinned body rides this pack’s armature — 25 joints, `CharacterArmature`, the pack’s 17 clip names — so that part is a QAL derivative and ships baked into the game like any other, not redistributable raw. **Its cloak and hood are two separate unskinned meshes named `character_skeleton_mage_cloak` and `Skeleton_Rogue_Hood`, which are KayKit Skeletons names — provenance UNCONFIRMED and owed an entry of its own if so.** If they are KayKit, the licence is CC0 and KayKit Skeletons 1.1 is already listed in the KayKit section below (KayKit is a second base, not retired — `docs/decisions_checklist.md` §4); what's owed is confirming the source and noting it here. `Ninja_Male` is still in the repo, now unreferenced. |
 | Ultimate Fantasy RTS | Characters + fantasy buildings | Extra unit/character variety. |
 | Bestiary – Dungeon Monsters Kit [Standard] | Monsters | Standard/free tier = Imp + Puglin only; full 7-monster set is a paid upgrade. |
 | Ultimate Animated Animals | Companions + beast minis | Wolf, fox, etc. — companion source *and* quadruped-beast enemies. |
@@ -105,6 +106,8 @@ SFX) or supplement it (paper props, map decor). Each keeps its own licence. (Tra
 | Alegreya SC | UI / buttons / labels |
 | Atkinson Hyperlegible Mono *or* Cormorant Upright | Storytelling / narration (pick one) |
 
+*Staged 2026-09-24:* all four families' `.ttf` files and their OFL texts are in `game/fonts/` (both narration candidates, since the pick is still open). Kenney **UI Pack: Adventure** (CC0) panels, buttons (brown, grey, red), checkboxes, a scrollbar and a progress bar, with Kenney's `License.txt`, are in `game/ui/kenney/`. *Wired 2026-09-24:* `game/ui/lanorim_theme.tres` is the project's default theme — Alegreya SC for the UI, EB Garamond for cards (`CardLabel`, `CardTitle`), and **both** narration candidates as type variations (`NarrationLabel` = Cormorant Upright, `NarrationPlain` = Atkinson Hyperlegible Mono) until the pick is made.
+
 **2D GM-screen art:** Admurin parallax backgrounds — detailed in the *3D models* section below (custom
 licence, Workshop caveat).
 
@@ -136,6 +139,19 @@ Packs in use (all CC0; in `lanorim/assets/`):
 
 **Kitbash note:** parts are cannibalized across packs and mixed with Quaternius; the one-palette bake unifies
 colour and the painted-miniature shader unifies shading, so mixed-source builds read as one game.
+
+### Pulled into `game/` (2026-09-24, the unattended run)
+
+- **Map props** — `game/models/props/<pack>/`, by `tools/pull_props.py` from the palette
+  (`content/srd/props/props.json`): **KayKit Dungeon Pack 1.1**, **KayKit Furniture Bits 1.0**, **KayKit Forest
+  Nature Pack 1.0** (CC0) and **Quaternius Fantasy Props MegaKit [Standard]** (QAL). The tool drops each glTF's
+  normal / ORM / emissive maps (the painted shader relights everything) and keeps the base colour, which took
+  the Fantasy Props textures from 33 MB to 10 MB. Processed copies, not the raw packs.
+- **Monster minis** — `game/models/minis/`: `wolf.gltf` (Quaternius Ultimate Animated Animals), `pirate_male.gltf`,
+  `knight_male.gltf`, `zombie_male.gltf` (Quaternius Ultimate Animated Character Pack), `rat.obj` / `spider.obj`
+  (+ `.mtl`, each wrapped in a one-node `.tscn`) from the Quaternius Easy Animated Enemy Pack — its FBX skinned
+  meshes imported at the wrong size, so the static OBJ is used. All QAL. Which statblock mini uses which model:
+  `game/Board/MiniModels.cs`.
 
 ## Audio
 

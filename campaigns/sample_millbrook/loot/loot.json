@@ -1,0 +1,61 @@
+{
+  "tables": [
+    {
+      "id": "rat_nest",
+      "entries": [
+        {
+          "id": "gnawed_purse",
+          "kind": "find",
+          "weight": 3,
+          "gold": "2d6",
+          "line": true
+        },
+        {
+          "id": "old_torches",
+          "kind": "find",
+          "weight": 1,
+          "items": [
+            {
+              "item": "torch",
+              "count": "1d4"
+            }
+          ],
+          "gold": "3"
+        }
+      ]
+    },
+    {
+      "id": "bandit_purse",
+      "entries": [
+        {
+          "id": "coin",
+          "kind": "find",
+          "gold": {
+            "roll": "2d6",
+            "times": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "goblin_chest",
+      "entries": [
+        {
+          "id": "stolen_takings",
+          "kind": "find",
+          "gold": {
+            "roll": "4d6",
+            "times": 10
+          },
+          "items": [
+            {
+              "item": "potion_of_healing",
+              "count": "1"
+            }
+          ],
+          "line": true
+        }
+      ]
+    }
+  ]
+}

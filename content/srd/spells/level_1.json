@@ -1,5 +1,5 @@
 {
-  "_": "SRD 5.2.1 level 1 spells, CC-BY-4.0. Ranges are in squares: one square is five feet.",
+  "_": "SRD 5.2.1 level 1 spells, CC-BY-4.0. Ranges are in squares: one square is five feet. A spell marked 'approximated' does not do what the SRD spell of the same id does, so it never ships under the SRD name - its English name is in the locale file (decisions_checklist.md section 1, the hard rule).",
 
   "spells": [
     {
@@ -25,13 +25,13 @@
       "id": "burning_hands",
       "level": 1,
       "school": "evocation",
-      "range": 3,
+      "range": 0,
       "classes": ["mage"],
       "effects": [
         {
           "primitive": "damage",
-          "reach": "around",
-          "radius": 3,
+          "reach": "cone",
+          "length": 3,
           "amount": "3d6",
           "per_extra_level": "1d6",
           "damage_type": "fire",
@@ -47,19 +47,8 @@
       "range": 6,
       "classes": ["mage", "druid"],
       "effects": [
-        {
-          "primitive": "afflict",
-          "reach": "creatures",
-          "targets": 1,
-          "extra_targets_per_level": 1,
-          "condition": "frightened",
-          "save": "wis",
-          "on_save": "negates",
-          "duration": "encounter",
-          "note": "SRD charms; v1 has no charmed condition, so the target is handled as frightened of the caster's foes and authored dialogue carries the rest"
-        }
-      ],
-      "approximated": true
+        {"primitive": "afflict", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "condition": "charmed", "save": "wis", "on_save": "negates", "only_tags": ["humanoid"], "advantage_if_fought": true, "ends_on_damage": "caster_side", "duration": "rest", "note": "SRD 5.2.1: a Humanoid, Wis save (with advantage if you or your allies are fighting it) or Charmed for 1 hour, ended early if you or your allies damage it. being Friendly to the caster is the campaign's to play"}
+      ]
     },
     {
       "id": "cure_wounds",
@@ -72,7 +61,8 @@
           "primitive": "heal",
           "reach": "creature",
           "amount": "2d8",
-          "per_extra_level": "2d8"
+          "per_extra_level": "2d8",
+          "add_modifier": true
         }
       ]
     },
@@ -118,18 +108,22 @@
       "effects": [
         {
           "primitive": "afflict",
-          "reach": "burst",
-          "radius": 2,
+          "reach": "square",
+          "length": 4,
           "condition": "restrained",
           "save": "str",
           "on_save": "negates",
-          "duration": "concentration"
+          "escape": "str",
+          "duration": "concentration",
+          "note": "SRD 5.2.1: everyone in the 20-foot square when it is cast saves or is restrained until the spell ends, and can spend an action on a Strength (Athletics) check to break free"
         },
         {
           "primitive": "zone",
-          "reach": "place",
-          "radius": 2,
-          "duration": "concentration"
+          "reach": "square",
+          "length": 4,
+          "rough": true,
+          "duration": "concentration",
+          "note": "the plants make the square difficult terrain for as long as the spell is held"
         }
       ]
     },
@@ -168,11 +162,12 @@
         {
           "primitive": "sway",
           "reach": "creature",
-          "sway": 0,
-          "sway_dice": "1d4",
-          "touches": "attacks",
-          "duration": "encounter",
-          "note": "SRD grants the next attacker advantage; v1 expresses it as a bonus on attacks against it, which the boon system already carries"
+          "leans": "advantage_against",
+          "once": true,
+          "follows": true,
+          "duration": "next_turn_end",
+          "until": "caster",
+          "note": "SRD 5.2.1: on a hit, the next attack roll against the target before the end of your next turn has advantage"
         }
       ]
     },
@@ -182,16 +177,13 @@
       "school": "enchantment",
       "range": 18,
       "concentration": true,
+      "casting_time": "bonus_action",
       "classes": ["mage"],
       "effects": [
-        {
-          "primitive": "sway",
-          "reach": "creature",
-          "sway": -2,
-          "touches": "checks",
-          "duration": "concentration"
-        }
-      ]
+        {"primitive": "sway", "reach": "creature", "mark": "1d6", "damage_type": "necrotic", "duration": "concentration"},
+        {"primitive": "sway", "reach": "creature", "leans": "disadvantage_on_checks", "ability": "chosen", "duration": "concentration", "note": "SRD 5.2.1 also lets the caster move the curse to a new creature when the first drops; v1 does not yet, which is flagged in the build notes"}
+      ],
+      "curse": true
     },
     {
       "id": "hunters_mark",
@@ -199,18 +191,18 @@
       "school": "divination",
       "range": 18,
       "concentration": true,
+      "casting_time": "bonus_action",
       "classes": ["druid", "paladin"],
       "effects": [
         {
           "primitive": "sway",
-          "reach": "caster",
-          "sway": 2,
-          "touches": "damage",
+          "reach": "creature",
+          "mark": "1d6",
+          "damage_type": "force",
           "duration": "concentration",
-          "note": "SRD adds 1d6 against the marked creature only; v1 has no per-target damage rider on a boon, so it is a flat bonus while the mark is held"
+          "note": "SRD 5.2.1 also gives advantage on Perception and Survival checks to find the target and lets the mark move when it drops; v1 does neither yet, flagged in the build notes"
         }
-      ],
-      "approximated": true
+      ]
     },
     {
       "id": "mage_armor",
@@ -222,10 +214,9 @@
         {
           "primitive": "sway",
           "reach": "creature",
-          "sway": 3,
-          "touches": "armor_class",
+          "unarmored_base": 13,
           "duration": "rest",
-          "note": "SRD sets unarmored AC to 13 + Dex; the +3 is the same number for an unarmored caster and needs no special case in the AC pipeline"
+          "note": "SRD 5.2.1: base armor class 13 + Dex while the target wears no armor"
         }
       ]
     },
@@ -251,16 +242,17 @@
       "level": 1,
       "school": "abjuration",
       "range": 0,
+      "casting_time": "reaction",
+      "trigger": "hit",
       "classes": ["mage"],
-      "approximated": true,
       "effects": [
         {
           "primitive": "sway",
           "reach": "caster",
           "sway": 5,
           "touches": "armor_class",
-          "duration": "encounter",
-          "note": "SRD is a reaction lasting until your next turn. v1 has opportunity attacks and nothing else as a reaction (decisions_checklist.md section 6), so it is cast on your turn and holds for the fight. Flagged for the sim: this is the strongest of the eight approximations"
+          "duration": "next_turn",
+          "note": "SRD 5.2.1: a reaction to being hit, +5 AC including against the triggering attack, until the start of your next turn. the Magic Missile clause is not yet modelled - flagged in the build notes"
         }
       ]
     },
@@ -272,18 +264,8 @@
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {
-          "primitive": "afflict",
-          "reach": "burst",
-          "radius": 2,
-          "condition": "stunned",
-          "save": "wis",
-          "on_save": "negates",
-          "duration": "concentration",
-          "note": "SRD's hit-point pool is replaced by a save; incapacitated is the closest v1 condition to asleep"
-        }
-      ],
-      "approximated": true
+        {"primitive": "afflict", "reach": "burst", "radius": 1, "condition": "incapacitated", "save": "wis", "on_save": "negates", "repeat_save": true, "worsens": "unconscious", "worsens_after": 2, "ends_on_damage": "any", "shakeable": true, "except_tags": ["sleepless"], "spares_allies": true, "duration": "concentration", "note": "SRD 5.2.1: creatures of your choice in a 5-foot-radius sphere, Wis save or Incapacitated; the save is repeated at the end of its next turn and a second failure is Unconscious for the duration. damage or a shake from within 5 feet ends it. creatures that don't sleep (an elf's Trance, the exhaustion-immune) are unaffected"}
+      ]
     },
     {
       "id": "thunderwave",
@@ -292,24 +274,8 @@
       "range": 0,
       "classes": ["mage", "druid"],
       "effects": [
-        {
-          "primitive": "damage",
-          "reach": "around",
-          "radius": 3,
-          "amount": "2d8",
-          "per_extra_level": "1d8",
-          "damage_type": "thunder",
-          "save": "con",
-          "on_save": "half"
-        },
-        {
-          "primitive": "shift",
-          "reach": "around",
-          "radius": 3,
-          "save": "con",
-          "on_save": "negates",
-          "note": "pushed two squares away from the caster"
-        }
+        {"primitive": "damage", "reach": "cube", "length": 3, "amount": "2d8", "per_extra_level": "1d8", "damage_type": "thunder", "save": "con", "on_save": "half"},
+        {"primitive": "shift", "reach": "cube", "length": 3, "save": "con", "on_save": "negates", "same_save": true, "note": "SRD 5.2.1: on a failed save, pushed 10 feet straight away from the caster", "push": 2}
       ]
     }
   ]

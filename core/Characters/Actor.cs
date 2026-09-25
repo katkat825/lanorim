@@ -4,6 +4,7 @@ using System.Linq;
 using Core.Dice;
 using Core.Localization;
 using Core.Resolution;
+using Core.Space;
 
 namespace Core.Characters
 {
@@ -26,7 +27,7 @@ namespace Core.Characters
             Level = Proficiency.Clamp(level);
             Scores = scores ?? new AbilityScores();
             Side = side;
-            Health = new Health(1);
+            SetHealth(new Health(1));
         }
 
         public string Id { get; }
@@ -42,14 +43,70 @@ namespace Core.Characters
         // SRD 5.2.1 default; a species or an effect moves it
         public int Speed { get; set; } = 30;
 
+        // what kind of creature it is and what it is by nature: "humanoid", "undead", "construct"
+        // from a statblock, "sleepless" from an elf's Trance. a spell that only works on some
+        // creatures reads these (Hold Person, Divine Smite's fiends and undead)
+        readonly HashSet<string> _tags = new(StringComparer.OrdinalIgnoreCase);
+
+        public IReadOnlyCollection<string> Tags => _tags;
+
+        public bool Is(string tag) => !string.IsNullOrEmpty(tag) && _tags.Contains(tag);
+
+        public void Tag(string tag)
+        {
+            if (!string.IsNullOrWhiteSpace(tag)) _tags.Add(tag.Trim());
+        }
+
+        // SRD size category. every creature is one square on the v1 board whatever its size (the
+        // grid has no multi-square creatures); size is read by the spells that limit what they
+        // can move (Telekinesis' "Huge or smaller")
+        public Size Size { get; set; } = Size.Medium;
+
+        // --- what it holds -----------------------------------------------------------------------
+
+        // it dropped what it was holding (Command's Drop, Fear) or had it pulled away
+        // (Telekinesis): an attack with a held weapon is not there until it is picked up again.
+        // natural weapons - a claw, a bite - cannot be dropped
+        public bool Disarmed { get; private set; }
+
+        // where the dropped weapon lies; picking it up is the free object interaction SRD gives a
+        // turn, from its square or beside it
+        public Cell? DroppedAt { get; private set; }
+
+        public void Disarm(Cell? at)
+        {
+            Disarmed = true;
+            DroppedAt = at;
+        }
+
+        public bool Rearm()
+        {
+            if (!Disarmed) return false;
+
+            Disarmed = false;
+            DroppedAt = null;
+            return true;
+        }
+
+        // whether this attack is one it can make now
+        public bool CanUse(Attack attack) =>
+            attack != null && !(Disarmed && attack.Hand != Hand.None);
+
+        // the size it is right now: Enlarge makes it one bigger, Reduce one smaller
+        public Size CurrentSize =>
+            (Size)Math.Clamp((int)Size + Boons.SizeStep, (int)Size.Tiny, (int)Size.Gargantuan);
+
         public int ProficiencyBonus => Proficiency.Bonus(Level);
 
         public string NameKey => KeyConventions.ActorName(Id);
 
         public void SetLevel(int level) => Level = Proficiency.Clamp(level);
 
-        public void SetHealth(Health health) =>
+        public void SetHealth(Health health)
+        {
             Health = health ?? throw new ArgumentNullException(nameof(health));
+            Health.RaisedBy(() => Boons.MaxHitPoints);
+        }
 
 
         // --- training -------------------------------------------------------------------------
@@ -140,11 +197,20 @@ namespace Core.Characters
         {
             get
             {
+                // a borrowed shape's AC is the statblock's number. the armor stays on the sheet
+                // untouched underneath, which is why taking the shape off needs to restore nothing
+                if (Shape != null) return Shape.ArmorClass + Boons.ArmorClass;
+
                 int dex = AbilityModifier(Ability.Dexterity);
 
                 int from = UnarmoredDefense.HasValue && Armor.Weight == ArmorWeight.None
                     ? 10 + dex + AbilityModifier(UnarmoredDefense.Value)
                     : Armor.ArmorClass(dex);
+
+                // Mage Armor's 13 + Dex. SRD lets a creature with two ways of working out its
+                // unarmored armor class pick one; picking the better is the only sensible pick
+                if (Armor.Weight == ArmorWeight.None && Boons.UnarmoredBase > 0)
+                    from = Math.Max(from, Boons.UnarmoredBase + dex);
 
                 return from + (HasShield ? ArmorWeights.ShieldBonus : 0) + ArmorClassBonus +
                        Boons.ArmorClass;
@@ -156,16 +222,92 @@ namespace Core.Characters
 
         readonly HashSet<Condition> _conditions = new();
 
+        // who put a condition there, where it matters: Charmed is about the charmer, Frightened
+        // about the source of the fear. a condition with nobody behind it (0 HP) has no entry
+        readonly Dictionary<Condition, List<Actor>> _sources = new();
+
+        // conditions this creature cannot have: a statblock's condition immunities, a Petrified
+        // body's immunity to Poisoned
+        readonly HashSet<Condition> _immunities = new();
+
         public IReadOnlyCollection<Condition> Conditions => _conditions;
 
         public bool Has(Condition condition) => _conditions.Contains(condition);
 
-        public bool Apply(Condition condition) =>
-            condition != Condition.None && _conditions.Add(condition);
+        // whether it has the condition *because of* this creature - "charmed by you"
+        public bool HasFrom(Condition condition, Actor source) =>
+            source != null && _sources.TryGetValue(condition, out List<Actor> from) &&
+            from.Contains(source);
 
-        public bool Remove(Condition condition) => _conditions.Remove(condition);
+        public IReadOnlyList<Actor> SourcesOf(Condition condition) =>
+            _sources.TryGetValue(condition, out List<Actor> from)
+                ? from
+                : (IReadOnlyList<Actor>)Array.Empty<Actor>();
 
-        public void ClearConditions() => _conditions.Clear();
+        public bool IsImmuneTo(Condition condition) =>
+            _immunities.Contains(condition) ||
+            condition == Condition.Poisoned && _conditions.Contains(Condition.Petrified);
+
+        public void MakeImmune(Condition condition)
+        {
+            if (condition != Condition.None) _immunities.Add(condition);
+        }
+
+        public IReadOnlyCollection<Condition> Immunities => _immunities;
+
+        public bool Apply(Condition condition, Actor source = null)
+        {
+            if (condition == Condition.None || IsImmuneTo(condition)) return false;
+
+            bool added = _conditions.Add(condition);
+
+            if (source != null)
+            {
+                if (!_sources.TryGetValue(condition, out List<Actor> from))
+                    _sources[condition] = from = new List<Actor>();
+
+                if (!from.Contains(source)) from.Add(source);
+            }
+
+            // SRD 5.2.1: Unconscious includes Prone, and "when this condition ends, you remain
+            // Prone" - so the prone is its own condition, not a part that leaves with it
+            if (added && condition == Condition.Unconscious) _conditions.Add(Condition.Prone);
+
+            // Petrified: immunity to Poisoned, which ends one already there
+            if (added && condition == Condition.Petrified) _conditions.Remove(Condition.Poisoned);
+
+            // SRD 5.2.1: a Wild Shape ends when its wearer is incapacitated. 0 hit points is
+            // unconscious, which incapacitates, so this one line is also "drop to 0 and revert"
+            if (added && Shape != null && condition.Incapacitates()) Revert();
+
+            return added;
+        }
+
+        // conditions the creature cannot end itself while a spell holds them: Hideous Laughter's
+        // Prone. standing up asks this
+        readonly HashSet<Condition> _pinned = new();
+
+        public void Pin(Condition condition)
+        {
+            if (Has(condition)) _pinned.Add(condition);
+        }
+
+        public bool IsPinned(Condition condition) => _pinned.Contains(condition);
+
+        public bool Remove(Condition condition)
+        {
+            _sources.Remove(condition);
+            _pinned.Remove(condition);
+
+            return _conditions.Remove(condition);
+        }
+
+        public void ClearConditions()
+        {
+            _conditions.Clear();
+            _sources.Clear();
+            _pinned.Clear();
+        }
 
         public bool IsIncapacitated => _conditions.Any(c => c.Incapacitates());
 
@@ -180,6 +322,7 @@ namespace Core.Characters
         public void Perish()
         {
             IsDead = true;
+            Stable = false;
             Health.Kill();
             Apply(Condition.Unconscious);
         }
@@ -196,16 +339,104 @@ namespace Core.Characters
                           Boons.AnyDisadvantageOnChecks ||
                           _conditions.Any(c => c.ChecksAtDisadvantage()));
 
-        public Advantage AdvantageAgainstMe =>
-            Advantages.Of(_conditions.Any(c => c.GrantsAdvantageToAttackers()), false);
+        // the same, for one particular check: a boon can lean on a single skill or a single
+        // ability (Hex), and the blanket answer above cannot see that
+        public Advantage CheckAdvantageFor(Ability ability, Skill skill) =>
+            Advantages.Of(Boons.AdvantageOnCheck(ability, skill),
+                          Boons.DisadvantageOnCheck(ability, skill) ||
+                          _conditions.Any(c => c.ChecksAtDisadvantage()));
+
+        // what attack rolls at it lean on, from within 5 feet. an outlined creature gets nothing
+        // from being unseen - Faerie Fire's rule, and the only thing that makes a boon's own
+        // "disadvantage against" not count
+        public Advantage AdvantageAgainstMe => AdvantageAgainstMeFrom(close: true);
+
+        // the two halves of an attack roll's lean, kept apart so that one advantage and one
+        // disadvantage anywhere in the attack cancel however many sources each side has. SRD's
+        // rule; Advantage.And across three already-cancelled answers could not keep it
+        public (bool advantage, bool disadvantage) AttackLeans =>
+            (Boons.AnyAdvantageOnAttacks,
+             Boons.AnyDisadvantageOnAttacks || _conditions.Any(c => c.AttacksAtDisadvantage()));
+
+        public (bool advantage, bool disadvantage) LeansAgainstMe(bool close) =>
+            (Boons.AnyAdvantageAgainst || _conditions.Any(c => c.GrantsAdvantageToAttackers()) ||
+             close && Has(Condition.Prone),
+             Boons.AnyDisadvantageAgainst && !Boons.Exposed || !close && Has(Condition.Prone));
+
+        // SRD 5.2.1 Prone: advantage for an attacker within 5 feet, disadvantage for one further off
+        public Advantage AdvantageAgainstMeFrom(bool close) =>
+            Advantages.Of(Boons.AnyAdvantageAgainst ||
+                          _conditions.Any(c => c.GrantsAdvantageToAttackers()) ||
+                          close && Has(Condition.Prone),
+                          Boons.AnyDisadvantageAgainst && !Boons.Exposed ||
+                          !close && Has(Condition.Prone));
+
+        public Advantage SaveAdvantage(Ability ability) =>
+            Advantages.Of(Boons.AdvantageOnSave(ability),
+                          Boons.DisadvantageOnSave(ability) ||
+                          _conditions.Any(c => c.SavesAtDisadvantage(ability)));
+
+
+        // --- sight ------------------------------------------------------------------------------
+
+        // SRD 5.2.1's Blinded and Invisible, as the one question both come down to. what the board
+        // adds - walls, heavily obscured squares - is the fight's to ask (Encounter.Sees)
+        public bool CanSee(Actor other)
+        {
+            if (other == null || ReferenceEquals(other, this)) return true;
+
+            if (Has(Condition.Blinded)) return false;
+
+            if (!other.Has(Condition.Invisible)) return true;
+
+            return other.Boons.Exposed || Boons.Truesight;
+        }
+
+        public bool IsInvisible => Has(Condition.Invisible);
+
+        // what a turn actually gets to walk: the speed, and whatever is slowing or hastening it
+        public int Moves
+        {
+            get
+            {
+                if (Boons.SpeedZero) return 0;
+
+                int feet = Math.Max(0, Speed + Boons.Speed);
+
+                // SRD doubling and halving; both at once is neither
+                if (Boons.SpeedDoubled && !Boons.SpeedHalved) feet *= 2;
+                else if (Boons.SpeedHalved && !Boons.SpeedDoubled) feet /= 2;
+
+                return feet;
+            }
+        }
+
+        // which of Dash, Disengage and Hide this actor may spend a bonus action on. empty for
+        // nearly everybody; the Rogue's Cunning Action fills it
+        public Manoeuvre QuickOnBonus { get; set; }
 
 
         // --- damage ---------------------------------------------------------------------------
 
         readonly Dictionary<DamageType, Defense> _defenses = new();
 
-        public Defense DefenseAgainst(DamageType type) =>
-            _defenses.TryGetValue(type, out Defense d) ? d : Defense.Normal;
+        // what the actor always has, and what a spell is lending it. a lent resistance never makes
+        // things worse: it cancels a vulnerability, makes normal damage halved, and leaves an
+        // immunity alone
+        public Defense DefenseAgainst(DamageType type)
+        {
+            Defense own = _defenses.TryGetValue(type, out Defense d) ? d : Defense.Normal;
+
+            // SRD 5.2.1 Petrified: resistance to all damage
+            if (!Boons.Resist(type) && !Has(Condition.Petrified)) return own;
+
+            return own switch
+            {
+                Defense.Vulnerable => Defense.Normal,
+                Defense.Normal => Defense.Resistant,
+                _ => own,
+            };
+        }
 
         public void SetDefense(DamageType type, Defense defense)
         {
@@ -221,11 +452,44 @@ namespace Core.Characters
         public int Suffer(int amount, DamageType type)
         {
             int after = DefenseAgainst(type).Apply(amount);
+
+            // Death Ward: the first drop to 0 is a drop to 1, and the ward is spent
+            Boon ward = Boons.DeathWard;
+
+            if (ward != null && after > 0 && after >= Health.Current + Health.Temporary &&
+                Health.Current > 0)
+            {
+                Boons.Remove(ward);
+
+                int kept = Health.Current - 1;
+                int soaked = Health.Temporary;
+
+                Health.Take(soaked + kept);
+                Stable = false;
+
+                return kept;
+            }
+
             int taken = Health.Take(after);
+
+            // SRD 5.2.1: a Stable creature that takes damage is no longer Stable
+            if (after > 0) Stable = false;
 
             if (Health.IsDown) Apply(Condition.Unconscious);
 
             return taken;
+        }
+
+        // SRD 5.2.1 Stable: at 0 hit points but no longer rolling death saves. Spare the Dying.
+        // taking damage ends it; healing above 0 makes it moot
+        public bool Stable { get; private set; }
+
+        public bool Stabilize()
+        {
+            if (!IsDown || IsDead || Stable) return false;
+
+            Stable = true;
+            return true;
         }
 
         public int Mend(int amount)
@@ -233,9 +497,12 @@ namespace Core.Characters
             // nothing heals the dead; a raise is a separate thing and it clears the flag itself
             if (IsDead) return 0;
 
+            bool wasDown = Health.IsDown;
             int healed = Health.Heal(amount);
 
-            if (!Health.IsDown) Remove(Condition.Unconscious);
+            // healing wakes the dying, not the sleeping - a Sleep spell's Unconscious is not the
+            // 0-hit-points one and healing does not end it
+            if (wasDown && !Health.IsDown) Remove(Condition.Unconscious);
 
             return healed;
         }
@@ -269,6 +536,68 @@ namespace Core.Characters
         }
 
 
+        // --- borrowed shapes ------------------------------------------------------------------
+
+        // the body the actor is wearing that is not its own, or null. while it is set the
+        // physical scores, the armor class and the speed are the shape's; everything else is not
+        public Shape Shape { get; private set; }
+
+        public bool IsShifted => Shape != null;
+
+        // what the shape covered up, kept so taking it off puts back exactly what was there
+        readonly int[] _ownBody = new int[3];
+        int _ownSpeed;
+
+        public bool Assume(Shape shape)
+        {
+            if (shape == null) return false;
+
+            // one borrowed body at a time: a second shape goes on over the actor, not the first
+            Revert();
+
+            for (int i = 0; i < Shape.Physical.Count; i++)
+            {
+                Ability ability = Shape.Physical[i];
+
+                _ownBody[i] = Scores.Base(ability);
+                Scores.SetBase(ability, shape.Score(ability));
+            }
+
+            _ownSpeed = Speed;
+            Speed = shape.Speed;
+
+            // the creature's training rides on as a boon rather than as Train, because Train never
+            // demotes - and a thing that cannot be taken off cannot be worn. a skill the actor is
+            // already trained in gains nothing: SRD 5.2.1 keeps the better of the two
+            foreach (Skill skill in shape.Skills)
+                if (TrainingIn(skill) == Training.Untrained)
+                    Boons.Add(new Boon(shape.Source, shape.Source, Duration.Rest,
+                                       ProficiencyBonus, checks: true, skill: skill));
+
+            Shape = shape;
+            return true;
+        }
+
+        // back to the actor's own body. returns the shape that came off, or null if none was on
+        public Shape Revert()
+        {
+            Shape was = Shape;
+
+            if (was == null) return null;
+
+            Shape = null;
+
+            for (int i = 0; i < Shape.Physical.Count; i++)
+                Scores.SetBase(Shape.Physical[i], _ownBody[i]);
+
+            Speed = _ownSpeed;
+
+            Boons.EndFrom(was.Source);
+
+            return was;
+        }
+
+
         // --- rest -----------------------------------------------------------------------------
 
         public void ShortRest()
@@ -293,7 +622,7 @@ namespace Core.Characters
             Scores.Rested();
             ClearConditions();
             EndConcentration();
-            Boons.Rested();
+            Boons.LongRested();
         }
 
         public override string ToString() =>

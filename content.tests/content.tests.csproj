@@ -30,4 +30,9 @@
     <None Include="..\game\locale\game.csv" Link="game.csv" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- the sample test campaign, played end to end by SampleCampaignTests -->
+  <ItemGroup>
+    <None Include="..\campaigns\**\*" LinkBase="campaigns" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

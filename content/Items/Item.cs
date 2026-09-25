@@ -108,6 +108,13 @@ namespace Content.Items
         // 0 is unlimited; a wand has a number
         public int Uses { get; }
 
+        // gone from the pack at the next long rest: Goodberry's berries (24 hours)
+        public bool Vanishes { get; init; }
+
+        // what using it costs in a fight: SRD 5.2.1 drinks a potion as a bonus action, and eats
+        // a goodberry the same way
+        public Core.Combat.Spend UseTime { get; init; } = Core.Combat.Spend.Bonus;
+
         public bool IsEquippable => Slot != Slot.None;
 
         // a quest item that does nothing for the character takes no slot

@@ -17,6 +17,18 @@ namespace Content.Saves
     // and the World layer's places and facts. SRD needs different things and fewer of them: hit
     // points, temporary hit points, hit dice, the spell resource, conditions, and where the
     // piece is standing.
+    // why a save was written: the player asked, or something happened worth coming back to
+    public enum SaveKind
+    {
+        Manual,
+        ChapterStart,
+        FightStart,
+        FightWon,
+        Rest,
+        LevelUp,
+        Quit,
+    }
+
     public sealed class SaveGame
     {
         public string Campaign { get; set; } = "";
@@ -40,6 +52,31 @@ namespace Content.Saves
         public int ActionsLeft { get; set; }
 
         public SavedHero Hero { get; set; }
+
+        // THE STORY: which Yarn node it is on, and every story variable, by type (Yarn's three).
+        // what makes a loaded game pick up the conversation where it left it
+        public string Node { get; set; } = "";
+
+        public IDictionary<string, float> Numbers { get; } = new SortedDictionary<string, float>(StringComparer.Ordinal);
+
+        public IDictionary<string, string> Words { get; } = new SortedDictionary<string, string>(StringComparer.Ordinal);
+
+        public IDictionary<string, bool> Flags { get; } = new SortedDictionary<string, bool>(StringComparer.Ordinal);
+
+        // WHERE IN THE NODE: every answer and choice since it began, in order, so a load replays
+        // the node to the exact spot rather than from its top (which would run a won fight again).
+        // with steps, the variables above are the ones the node began with
+        public IList<string> Steps { get; } = new List<string>();
+
+        // what made it: an autosave on an event, or the player's own (docs/decisions_checklist.md
+        // section 3: autosave on events plus manual saves)
+        public SaveKind Kind { get; set; } = SaveKind.Manual;
+
+        // which of the campaign's five character slots
+        public int Slot { get; set; }
+
+        // the player's own words for a manual save; empty for an autosave
+        public string Label { get; set; } = "";
 
         public IList<SavedActor> Foes { get; } = new List<SavedActor>();
 
@@ -71,16 +108,41 @@ namespace Content.Saves
 
         public string Background { get; set; } = "";
 
+        public string Alignment { get; set; } = "";
+
         public int Level { get; set; } = 1;
 
         // BASE scores, before anything shifted them. A shift lasts until a rest, so it is a thing
         // that happened rather than a thing the character is, and rebuilding from base and
         // re-applying is how a changed rule reaches an old save.
+        //
+        // Base here means the array AS PICKED - before the species, the background's spend and the
+        // improvements - because all three are rules, and HeroSaves re-applies them on the way in.
         public IDictionary<Ability, int> Scores { get; } = new Dictionary<Ability, int>();
 
+        // the +2/+1 or +1/+1/+1 the player spent. It is the player's choice rather than the
+        // background's, so it cannot be read back off the background and has to be written down.
+        public IDictionary<Ability, int> BackgroundSpend { get; } = new Dictionary<Ability, int>();
+
+        // every skill the character is trained in, and the ones doubled. Expertise is a subset.
         public IList<Skill> Skills { get; } = new List<Skill>();
 
         public IList<Skill> Expertise { get; } = new List<Skill>();
+
+        // THE ABILITY SCORE IMPROVEMENTS THE PLAYER SPENT, in order: "str" is +2 Strength,
+        // "dex+con" is +1 to each. The player's choices, so they are written down - Build does not
+        // spend them on its own any more (decisions_checklist.md section 1, 2026-09-24).
+        public IList<string> Improvements { get; } = new List<string>();
+
+        // false for a save written before improvements were saved at all: its improvements were
+        // the automatic ones, and it loads with them pending (and a caution) rather than re-spent
+        public bool ImprovementsRecorded { get; set; } = true;
+
+        // how many were waiting to be spent when it was saved - a check on the list above
+        public int PendingImprovements { get; set; }
+
+        // the player said not to warn this character about discards again
+        public bool DiscardWarningDismissed { get; set; }
 
         public int HitPoints { get; set; } = -1;
 
@@ -107,6 +169,18 @@ namespace Content.Saves
         public IList<string> Known { get; } = new List<string>();
 
         public IList<Condition> Conditions { get; } = new List<Condition>();
+
+        // USES SPENT SINCE THE LAST REST, by feature id. Spent rather than left, for the same
+        // reason slots save what is left rather than the maximum: the class says how many a
+        // feature has, and a retuned feature should reach a save without the save arguing.
+        public IDictionary<string, int> Spent { get; } = new Dictionary<string, int>();
+
+        // the per-rest extra actions still banked - Action Surge. -1 is "all of them", which is
+        // how a hero who has not surged since the rest saves.
+        public int ExtraActions { get; set; } = -1;
+
+        // the Wild Shape card being worn, or empty. Its statblock is the card's, so only the id.
+        public string Form { get; set; } = "";
 
         // item ids by the slot they are worn in
         public IDictionary<Slot, string> Worn { get; } = new Dictionary<Slot, string>();

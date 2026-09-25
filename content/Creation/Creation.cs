@@ -21,6 +21,13 @@ namespace Content.Creation
         Lineage,
         Background,
         Abilities,
+
+        // a character made above level 4 spends its ability score improvements here, one by one.
+        // it is a step Next STOPS on while any is unspent: the screen pre-fills each with the
+        // class's suggestion (SuggestedImprovement), and the player says yes or changes it - never
+        // spent on the player's behalf (decisions_checklist.md section 1, 2026-09-24)
+        Improvements,
+
         Skills,
         Spells,
 
@@ -29,6 +36,11 @@ namespace Content.Creation
         // never opens this step gets slots, which is the right default. It is a Step so the UI has
         // somewhere to put it; ChoosesResource says whether to show it at all.
         SpellResource,
+
+        // ALSO NEVER STOPPED ON, for the same reason: pre-answered (true neutral), so a player who
+        // skips it still has the field the sheet requires. make Next stop here if it should be
+        // asked every time - that is a one-line change and the call is Kathleen's
+        Alignment,
 
         Name,
         Done,
@@ -63,6 +75,73 @@ namespace Content.Creation
         readonly List<Skill> _skills = new List<Skill>();
         readonly List<Skill> _expertise = new List<Skill>();
         readonly List<Spell> _spells = new List<Spell>();
+        readonly List<AbilityImprovement> _improvements = new List<AbilityImprovement>();
+
+        public IReadOnlyList<AbilityImprovement> Improvements => _improvements;
+
+        // how many the starting level gives, and how many are still to choose
+        public int ImprovementPicks => Hero.AbilityScoreImprovements(Level, Class);
+
+        public int ImprovementPicksLeft => Math.Max(0, ImprovementPicks - _improvements.Count);
+
+        // a score as it will stand once the species, the background's spend and the improvements
+        // chosen so far are on it - what the cap of 20 is measured against
+        public int ScoreAfter(Ability ability) =>
+            Scores.Base(ability) +
+            (Species?.Bumps.TryGetValue(ability, out int bump) == true ? bump : 0) +
+            (Lineage?.Bumps.TryGetValue(ability, out int lineageBump) == true ? lineageBump : 0) +
+            (_backgroundSpend.TryGetValue(ability, out int spend) ? spend : 0) +
+            _improvements.SelectMany(i => i.Points).Where(p => p.ability == ability)
+                         .Sum(p => p.points);
+
+        public bool Improve(AbilityImprovement choice, out string whyNotKey)
+        {
+            whyNotKey = null;
+
+            if (ImprovementPicksLeft <= 0)
+            {
+                whyNotKey = ImprovementRefusals.Key(ImprovementRefusals.NonePending);
+                return false;
+            }
+
+            string why = ImprovementRefusals.Check(choice, ScoreAfter);
+
+            if (why != null)
+            {
+                whyNotKey = ImprovementRefusals.Key(why);
+                return false;
+            }
+
+            _improvements.Add(choice);
+            return true;
+        }
+
+        public bool Improve(AbilityImprovement choice) => Improve(choice, out _);
+
+        // back a step on the improvements screen
+        public bool Unimprove()
+        {
+            if (_improvements.Count == 0) return false;
+
+            _improvements.RemoveAt(_improvements.Count - 1);
+            return true;
+        }
+
+        // what the screen pre-fills: +2 on the class's first priority that has room for it
+        public AbilityImprovement SuggestedImprovement()
+        {
+            IEnumerable<Ability> order = (Class?.Priority ?? Array.Empty<Ability>())
+                                         .Concat(Abilities.All).Distinct();
+
+            foreach (Ability ability in order)
+                if (ScoreAfter(ability) <= Abilities.Ceiling - 2) return AbilityImprovement.Two(ability);
+
+            List<Ability> room = order.Where(a => ScoreAfter(a) < Abilities.Ceiling).ToList();
+
+            return room.Count >= 2
+                ? AbilityImprovement.OneEach(room[0], room[1])
+                : AbilityImprovement.Two(Ability.Strength);
+        }
 
         public IReadOnlyDictionary<Ability, int> BackgroundSpend => _backgroundSpend;
 
@@ -105,6 +184,10 @@ namespace Content.Creation
         // Both labels are keys, not words: the screen shows "Spell slots (classic D&D)" against
         // "Spell points (simpler bookkeeping)" in whatever language it is being read in.
         public SpellResourceMode Resource { get; private set; } = SpellResourceMode.Slots;
+
+        public Alignment Alignment { get; private set; } = Alignment.Neutral;
+
+        public void Pick(Alignment alignment) => Alignment = alignment;
 
         // a non-caster is never asked, and answering for one is refused rather than ignored
         public bool ChoosesResource => Class != null && Class.Casts;
@@ -154,7 +237,13 @@ namespace Content.Creation
 
         public int Level { get; private set; } = 1;
 
-        public void StartAt(int level) => Level = Proficiency.Clamp(level);
+        public void StartAt(int level)
+        {
+            Level = Proficiency.Clamp(level);
+
+            // a lower starting level has fewer to spend
+            while (_improvements.Count > ImprovementPicks) _improvements.RemoveAt(_improvements.Count - 1);
+        }
 
 
         // --- picking ----------------------------------------------------------------------------
@@ -168,6 +257,7 @@ namespace Content.Creation
             _skills.Clear();
             _expertise.Clear();
             _spells.Clear();
+            _improvements.Clear();
 
             // the point-buy array is dealt into the class's priority order, which is the "guided"
             // half of the guided creator - the player can still move it
@@ -246,6 +336,21 @@ namespace Content.Creation
             return true;
         }
 
+        // THE SCREEN'S UNDO: a pick taken back. A skill that has an expertise on it takes the
+        // expertise with it, since expertise doubles a proficiency the character no longer has
+        public bool Untrain(Skill skill)
+        {
+            if (!_skills.Remove(skill)) return false;
+
+            if (!(Background?.Skills.Contains(skill) ?? false)) _expertise.Remove(skill);
+
+            return true;
+        }
+
+        public bool Unmaster(Skill skill) => _expertise.Remove(skill);
+
+        public bool Unlearn(Spell spell) => spell != null && _spells.RemoveAll(s => s.Id == spell.Id) > 0;
+
         public bool Learn(Spell spell)
         {
             if (spell == null || Class == null || !Class.Casts) return false;
@@ -284,6 +389,7 @@ namespace Content.Creation
           : NeedsLineage && Lineage == null ? Step.Lineage
           : Background == null ? Step.Background
           : !Scores.IsLegalPointBuy(out _) ? Step.Abilities
+          : ImprovementPicksLeft > 0 ? Step.Improvements
           : SkillPicksLeft > 0 || ExpertisePicksLeft > 0 ? Step.Skills
           : CantripPicksLeft > 0 || SpellPicksLeft > 0 ? Step.Spells
           : Name.Length == 0 ? Step.Name
@@ -307,6 +413,9 @@ namespace Content.Creation
                 if (Background != null && !Background.IsLegalSpend(_backgroundSpend, out string bg))
                     problems.Add(bg);
 
+                if (ImprovementPicksLeft > 0)
+                    problems.Add($"{ImprovementPicksLeft} ability score improvements still to spend");
+
                 if (SkillPicksLeft > 0) problems.Add($"{SkillPicksLeft} skills still to pick");
 
                 if (ExpertisePicksLeft > 0)
@@ -327,9 +436,12 @@ namespace Content.Creation
             if (!Ready) return null;
 
             var hero = new Hero(Name, Class, Species, Background, Scores.Copy(), Level, Lineage,
-                                Resource);
+                                Resource)
+            {
+                Alignment = Alignment,
+            };
 
-            hero.Build(_backgroundSpend, _skills, _expertise, Library.Items, _spells);
+            hero.Build(_backgroundSpend, _skills, _expertise, Library.Items, _spells, _improvements);
 
             return hero;
         }

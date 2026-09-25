@@ -24,6 +24,8 @@ namespace Core.Resolution
         }
 
         public int Roll(DiceRoll dice) => dice.Roll(_rng);
+
+        public int Roll(DiceRoll dice, out IReadOnlyList<int> faces) => dice.Roll(_rng, out faces);
     }
 
     // wraps another resolver and keeps every attempt it made, in order. the fight check and the
@@ -47,6 +49,21 @@ namespace Core.Resolution
         }
 
         public int Roll(DiceRoll dice) => _inner.Roll(dice);
+
+        public int Roll(DiceRoll dice, out IReadOnlyList<int> faces) => _inner.Roll(dice, out faces);
+
+        public Attempt Resolve(RollKind kind, int modifier, int against, Advantage advantage,
+                               Core.Characters.Actor roller)
+        {
+            Attempt attempt = _inner.Resolve(kind, modifier, against, advantage, roller);
+            _attempts.Add(attempt);
+            return attempt;
+        }
+
+        public int Roll(DiceRoll dice, Core.Characters.Actor roller) => _inner.Roll(dice, roller);
+
+        public int Roll(DiceRoll dice, Core.Characters.Actor roller, out IReadOnlyList<int> faces) =>
+            _inner.Roll(dice, roller, out faces);
     }
 
     public static class DeathSave

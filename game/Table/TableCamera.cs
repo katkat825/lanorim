@@ -53,6 +53,15 @@ namespace Game.Table
 
         Node3D _subject;
 
+        // SOMETHING TO FOLLOW for a moment - an enemy taking its turn (combat_ux.md). The camera
+        // eases toward it and back to the board's middle when it is let go (null)
+        public Vector3? Following { get; set; }
+
+        // seconds to get most of the way to a new point to follow
+        [Export] public float FollowSeconds { get; set; } = 0.4f;
+
+        Vector3? _focus;
+
         public override void _Ready()
         {
             _subject = SubjectPath == null || SubjectPath.IsEmpty
@@ -95,7 +104,14 @@ namespace Game.Table
 
         void Place(float delta)
         {
-            Vector3 centre = _subject?.GlobalTransform.Origin ?? Vector3.Zero;
+            Vector3 wanted = Following ?? _subject?.GlobalTransform.Origin ?? Vector3.Zero;
+
+            // eased toward what it follows; the first frame starts there
+            _focus = _focus.HasValue
+                ? _focus.Value.Lerp(wanted, Mathf.Clamp(delta / Mathf.Max(0.05f, FollowSeconds) * 2.5f, 0f, 1f))
+                : wanted;
+
+            Vector3 centre = _focus.Value;
 
             // eased, so it leaves and arrives softly and is linear in the middle
             float t = _turning >= 1f ? 1f : Ease(_turning);

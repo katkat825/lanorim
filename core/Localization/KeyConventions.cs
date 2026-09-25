@@ -26,8 +26,13 @@ namespace Core.Localization
         public const string ItemNs = "item";
         public const string MonsterNs = "monster";
 
+        // a Wild Shape form card. its own namespace rather than monster's: the card says what the
+        // shape is for, and a bestiary's cat and a druid's cat are described for different reasons
+        public const string FormNs = "form";
+
         public const string DifficultyNs = "difficulty";
         public const string ConsequenceNs = "consequence";
+        public const string EncounterNs = "encounter";
 
         public const string DialogueNs = "dialogue";
         public const string CombatNs = "combat";
@@ -36,13 +41,16 @@ namespace Core.Localization
         public const string MerchantNs = "merchant";
         public const string UiNs = "ui";
 
+        // a map prop from the builder's palette
+        public const string PropNs = "prop";
+
         public static readonly IReadOnlyCollection<string> Namespaces = new[]
         {
             ActorNs, AbilityNs, SkillNs, ConditionNs, DamageNs,
             ClassNs, SpeciesNs, BackgroundNs, FeatureNs,
-            SpellNs, ItemNs, MonsterNs,
-            DifficultyNs, ConsequenceNs,
-            DialogueNs, CombatNs, QuestNs, CampaignNs, MerchantNs, UiNs,
+            SpellNs, ItemNs, MonsterNs, FormNs,
+            DifficultyNs, ConsequenceNs, EncounterNs,
+            DialogueNs, CombatNs, QuestNs, CampaignNs, MerchantNs, UiNs, PropNs,
         };
 
 
@@ -75,6 +83,10 @@ namespace Core.Localization
         public static string ItemDescription(string id) => Key(ItemNs, id, "description");
 
         public static string MonsterName(string id) => Key(MonsterNs, id, "name");
+
+        public static string FormName(string id) => Key(FormNs, id, "name");
+
+        public static string FormDescription(string id) => Key(FormNs, id, "description");
 
         public static string BackgroundName(string id) => Key(BackgroundNs, id, "name");
 

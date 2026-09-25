@@ -1,5 +1,5 @@
 {
-  "_": "SRD 5.2.1 level 2 spells, CC-BY-4.0. Ranges are in squares: one square is five feet.",
+  "_": "SRD 5.2.1 level 2 spells, CC-BY-4.0. Ranges are in squares: one square is five feet. A spell marked 'approximated' never ships under its SRD name.",
 
   "spells": [
     {
@@ -10,16 +10,7 @@
       "concentration": true,
       "classes": ["mage", "cleric", "druid"],
       "effects": [
-        {
-          "primitive": "afflict",
-          "reach": "creatures",
-          "targets": 1,
-          "extra_targets_per_level": 1,
-          "condition": "stunned",
-          "save": "wis",
-          "on_save": "negates",
-          "duration": "concentration"
-        }
+        {"primitive": "afflict", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "condition": "paralyzed", "save": "wis", "on_save": "negates", "repeat_save": true, "only_tags": ["humanoid"], "duration": "concentration", "note": "SRD 5.2.1: a Humanoid you can see, Wis save or Paralyzed; it repeats the save at the end of each of its turns"}
       ]
     },
     {
@@ -35,21 +26,10 @@
           "reach": "creatures",
           "targets": 1,
           "extra_targets_per_level": 1,
-          "sway": 5,
-          "touches": "checks",
-          "skill": "stealth",
-          "duration": "concentration"
-        },
-        {
-          "primitive": "sway",
-          "reach": "creatures",
-          "targets": 1,
-          "extra_targets_per_level": 1,
-          "sway": 0,
-          "sway_dice": "1d4",
-          "touches": "attacks",
+          "leans": "advantage_on_attacks|disadvantage_against",
+          "ends_on_attack": true,
           "duration": "concentration",
-          "note": "unseen attackers roll with advantage in SRD; v1 spends the boon system's die on it"
+          "note": "SRD 5.2.1: the Invisible condition, ended early by an attack roll, damage or a spell"
         }
       ]
     },
@@ -58,17 +38,14 @@
       "level": 2,
       "school": "abjuration",
       "range": 0,
+      "casting_time": "bonus_action",
       "classes": ["cleric", "druid", "paladin"],
       "effects": [
         {
           "primitive": "relieve",
           "reach": "creature",
-          "condition": "poisoned"
-        },
-        {
-          "primitive": "relieve",
-          "reach": "creature",
-          "condition": "frightened"
+          "condition": "poisoned",
+          "note": "SRD 5.2.1 ends one of blinded, deafened, paralyzed or poisoned; poisoned is the only one of those v1 has"
         }
       ]
     },
@@ -78,16 +55,8 @@
       "school": "illusion",
       "range": 0,
       "classes": ["mage"],
-      "approximated": true,
       "effects": [
-        {
-          "primitive": "sway",
-          "reach": "caster",
-          "sway": 3,
-          "touches": "armor_class",
-          "duration": "encounter",
-          "note": "SRD tracks three duplicates and rolls to see which is hit; v1 spends the same expected value as armor class, because a duplicate ledger is a subsystem for one spell"
-        }
+        {"primitive": "sway", "reach": "caster", "decoys": 3, "duration": "encounter", "note": "SRD 5.2.1: three duplicates for 1 minute (the fight). each hit on you rolls a d6 per duplicate left, and on any 3+ a duplicate takes the hit and is destroyed. an attacker that is Blinded or has Truesight is not fooled"}
       ]
     },
     {
@@ -95,13 +64,10 @@
       "level": 2,
       "school": "conjuration",
       "range": 6,
+      "casting_time": "bonus_action",
       "classes": ["mage"],
       "effects": [
-        {
-          "primitive": "shift",
-          "reach": "caster",
-          "note": "teleport to a seen square within range; the board layer moves the mini"
-        }
+        {"primitive": "shift", "reach": "caster", "note": "SRD 5.2.1: teleport up to 30 feet to an unoccupied space you can see", "teleports": true}
       ]
     },
     {
@@ -137,7 +103,8 @@
           "per_extra_level": "1d8",
           "damage_type": "thunder",
           "save": "con",
-          "on_save": "half"
+          "on_save": "half",
+          "note": "SRD 5.2.1 gives a construct disadvantage on the save; v1 statblocks carry no creature type yet, flagged in the build notes"
         }
       ]
     },
@@ -147,21 +114,26 @@
       "school": "evocation",
       "range": 12,
       "concentration": true,
+      "casting_time": "bonus_action",
+      "repeat": "bonus_action",
       "classes": ["cleric", "paladin"],
       "effects": [
+        {
+          "primitive": "summon",
+          "reach": "place",
+          "duration": "concentration",
+          "note": "the floating weapon is a marker on the board, not a second controllable actor"
+        },
         {
           "primitive": "damage",
           "reach": "creature",
           "amount": "1d8",
           "per_extra_level": "1d8",
           "damage_type": "force",
-          "attack_roll": true
-        },
-        {
-          "primitive": "summon",
-          "reach": "place",
-          "duration": "concentration",
-          "note": "the floating weapon is a marker on the board, not a second controllable actor"
+          "attack_roll": true,
+          "add_modifier": true,
+          "repeats": true,
+          "note": "SRD 5.2.1: a melee spell attack from the weapon when it appears, and again as a bonus action on each later turn while it lasts"
         }
       ]
     },
@@ -174,19 +146,23 @@
       "classes": ["mage", "druid"],
       "effects": [
         {
+          "primitive": "zone",
+          "reach": "square",
+          "length": 4,
+          "rough": true,
+          "duration": "concentration",
+          "note": "SRD 5.2.1: a 20-foot cube of webs, difficult terrain. its light obscurement and its flammability are the narrator's"
+        },
+        {
           "primitive": "afflict",
-          "reach": "burst",
-          "radius": 2,
+          "reach": "zone",
+          "pulses": "start_turn|enter",
           "condition": "restrained",
           "save": "dex",
           "on_save": "negates",
-          "duration": "concentration"
-        },
-        {
-          "primitive": "zone",
-          "reach": "place",
-          "radius": 2,
-          "duration": "concentration"
+          "escape": "str",
+          "duration": "concentration",
+          "note": "SRD 5.2.1: starting a turn in the webs or entering them is a Dexterity save or Restrained; an action and a Strength (Athletics) check against the spell's DC breaks free"
         }
       ]
     }

@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Content.Classes;
+using Content.Encounters;
 using Content.Items;
+using Content.Loot;
 using Content.Maps;
 using Content.Monsters;
 using Content.Schema;
 using Content.Spells;
 using Core.Magic;
 using Core.Space;
+using Core.Tables;
 
 namespace Content.Campaigns
 {
@@ -35,6 +38,10 @@ namespace Content.Campaigns
 
         public const string MapsFolder = "maps";
 
+        public const string EncountersFolder = "encounters";
+
+        public const string LootFolder = "loot";
+
         public const string LocaleFolder = "locale";
 
         public const string AssetsFolder = "assets";
@@ -52,21 +59,27 @@ namespace Content.Campaigns
 
         public const string MapExtension = ".map";
 
+        // shops: an id, what it stocks, and optionally what it pays (inventory_decisions.md)
+        public const string MerchantsFolder = "merchants";
+
         public static readonly string[] Folders =
         {
-            MonstersFolder, ItemsFolder, SpellsFolder, MapsFolder, LocaleFolder, AssetsFolder,
-            DialogueFolder, MinisFolder, ModelsFolder, AudioFolder,
+            MonstersFolder, ItemsFolder, SpellsFolder, MapsFolder, EncountersFolder, LootFolder,
+            LocaleFolder, AssetsFolder, DialogueFolder, MinisFolder, ModelsFolder, AudioFolder,
+            MerchantsFolder,
         };
 
-        // read, but nothing is done with them yet
+        // read, but nothing is done with them yet. (dialogue/ is read by DialogueBook when a campaign
+        // is played, so it is not in here)
         public static readonly string[] NotLoadedYet =
         {
-            DialogueFolder, MinisFolder, ModelsFolder, AudioFolder,
+            MinisFolder, ModelsFolder, AudioFolder,
         };
 
         Package(string folder, string id, Manifest manifest,
                 IReadOnlyList<Monster> monsters, IReadOnlyList<Item> items,
                 IReadOnlyList<Spell> spells, IReadOnlyDictionary<string, MapLayout> maps,
+                IReadOnlyList<EncounterTable> encounters, IReadOnlyList<LootTable> loot,
                 List<ContentProblem> problems)
         {
             Folder = folder ?? "";
@@ -76,6 +89,8 @@ namespace Content.Campaigns
             Items = items ?? Array.Empty<Item>();
             Spells = spells ?? Array.Empty<Spell>();
             Maps = maps ?? new Dictionary<string, MapLayout>();
+            Encounters = encounters ?? Array.Empty<EncounterTable>();
+            Loot = new LootTables(loot);
             Problems = problems ?? new List<ContentProblem>();
         }
 
@@ -93,6 +108,24 @@ namespace Content.Campaigns
 
         public IReadOnlyDictionary<string, MapLayout> Maps { get; }
 
+        // what stands on each map's squares, by map id: the builder's props, which a MapLayout (the
+        // rules' map) has no use for and the board draws
+        public IReadOnlyDictionary<string, IReadOnlyList<Prop>> Props { get; private set; } =
+            new Dictionary<string, IReadOnlyList<Prop>>();
+
+        public IReadOnlyList<Prop> PropsOn(string map) =>
+            map != null && Props.TryGetValue(map, out IReadOnlyList<Prop> props) ? props : Array.Empty<Prop>();
+
+        public IReadOnlyList<EncounterTable> Encounters { get; }
+
+        public EncounterTable Encounter(string id) =>
+            Encounters.FirstOrDefault(t => string.Equals(t.Id, id, StringComparison.Ordinal));
+
+        // every loot table, together, because one may roll another from a different file
+        public LootTables Loot { get; }
+
+        public LootTable LootTable(string id) => Loot.Find(id);
+
         public IReadOnlyList<ContentProblem> Problems { get; }
 
         public IEnumerable<ContentProblem> Faults => Problems.Where(p => p.IsAFault);
@@ -109,13 +142,24 @@ namespace Content.Campaigns
                 .Concat(Monsters.SelectMany(m => m.Keys()))
                 .Concat(Items.SelectMany(i => i.Keys()))
                 .Concat(Spells.SelectMany(s => s.Keys()))
+                .Concat(Encounters.SelectMany(t => t.Keys()))
+                .Concat(Loot.All.SelectMany(t => t.Keys()))
+                .Concat(Merchants.Select(m => m.NameKey))
                 .Distinct();
+
+        // the campaign's shops, by id
+        public IReadOnlyList<MerchantDef> Merchants { get; private set; } = Array.Empty<MerchantDef>();
+
+        public MerchantDef Merchant(string id) =>
+            Merchants.FirstOrDefault(m => string.Equals(m.Id, id, StringComparison.Ordinal));
 
         public override string ToString() =>
             Manifest == null
                 ? $"{Id}: unreadable, {Problems.Count} problems"
                 : $"{Manifest}, {Monsters.Count} monsters, {Items.Count} items, " +
                   $"{Spells.Count} spells, {Maps.Count} maps" +
+                  (Encounters.Count > 0 ? $", {Encounters.Count} encounter tables" : "") +
+                  (Loot.Count > 0 ? $", {Loot.Count} loot tables" : "") +
                   (Sound ? "" : $", {Faults.Count()} faults");
 
 
@@ -130,7 +174,7 @@ namespace Content.Campaigns
                 problems.Add(new ContentProblem(folder ?? "", "",
                     "there is no folder there to read a campaign out of"));
 
-                return new Package(folder, "", null, null, null, null, null, problems);
+                return new Package(folder, "", null, null, null, null, null, null, null, problems);
             }
 
             string name = new DirectoryInfo(folder).Name;
@@ -140,19 +184,71 @@ namespace Content.Campaigns
             // without a manifest nothing below can be scoped, so the pack stops here rather than
             // registering a folder full of content under no id at all
             if (manifest == null)
-                return new Package(folder, name, null, null, null, null, null, problems);
+                return new Package(folder, name, null, null, null, null, null, null, null, problems);
 
             UnknownFolders(folder, problems);
 
             IReadOnlyList<Monster> monsters = ReadMonsters(folder, manifest.Id, problems);
             IReadOnlyList<Item> items = ReadItems(folder, manifest.Id, problems);
             IReadOnlyList<Spell> spells = ReadSpells(folder, manifest.Id, problems);
-            IReadOnlyDictionary<string, MapLayout> maps = ReadMaps(folder, manifest.Id, problems);
+            var props = new Dictionary<string, IReadOnlyList<Prop>>(StringComparer.Ordinal);
+            IReadOnlyDictionary<string, MapLayout> maps = ReadMaps(folder, manifest.Id, problems, props);
 
             ChaptersNameRealMaps(manifest, maps, problems);
 
+            IReadOnlyList<LootTable> loot = ReadLoot(folder, manifest.Id, items, problems);
+
+            IReadOnlyList<EncounterTable> encounters =
+                ReadEncounters(folder, manifest.Id, monsters, maps, loot, problems);
+
+            IReadOnlyList<MerchantDef> merchants = ReadMerchants(folder, items, problems);
+
             return new Package(folder, manifest.Id, manifest, monsters, items, spells, maps,
-                               problems);
+                               encounters, loot, problems)
+            {
+                Merchants = merchants,
+                Props = props,
+            };
+        }
+
+        static IReadOnlyList<MerchantDef> ReadMerchants(string folder, IReadOnlyList<Item> items,
+                                                        List<ContentProblem> problems)
+        {
+            var own = new HashSet<string>(items.Select(i => i.Id), StringComparer.Ordinal);
+            ItemShelf srd = Library.Srd().Items;
+            var all = new List<MerchantDef>();
+
+            foreach ((string file, string text) in Jsons(folder, MerchantsFolder, problems))
+            {
+                if (!Json.TryParse(text, out System.Text.Json.JsonDocument doc, out string bad))
+                {
+                    problems.Add(new ContentProblem(file, "", bad));
+                    continue;
+                }
+
+                using (doc)
+                    foreach (System.Text.Json.JsonElement one in doc.RootElement.Items("merchants"))
+                    {
+                        string id = one.Text("id");
+
+                        if (!Json.IsId(id))
+                        {
+                            problems.Add(new ContentProblem(file, "", $"'{id}' is not a merchant id"));
+                            continue;
+                        }
+
+                        IReadOnlyList<string> stock = one.Strings("stock");
+
+                        foreach (string item in stock.Where(i => !own.Contains(i) && !srd.Has(i)))
+                            problems.Add(new ContentProblem(file, $"merchants.{id}",
+                                $"'{item}' is not an item in this campaign or the SRD"));
+
+                        all.Add(new MerchantDef(id, stock,
+                                                one.Has("sell_percent") ? one.Number("sell_percent") : -1));
+                    }
+            }
+
+            return all;
         }
 
         static Manifest ReadManifest(string folder, string name, List<ContentProblem> problems)
@@ -308,6 +404,122 @@ namespace Content.Campaigns
             return Scoped(all, s => s.Id, SpellsFolder, campaign, problems);
         }
 
+        // A TABLE IS READ LAST because it names the things read before it. A monster it calls for
+        // is the campaign's own or the SRD's; one from a dependency is not reachable yet, for the
+        // same reason Library.With does not scope ids yet - that is finalizing the pack format.
+        static IReadOnlyList<EncounterTable> ReadEncounters(
+            string folder, string campaign, IReadOnlyList<Monster> monsters,
+            IReadOnlyDictionary<string, MapLayout> maps, IReadOnlyList<LootTable> loot,
+            List<ContentProblem> problems)
+        {
+            var own = new HashSet<string>(monsters.Select(m => m.Id), StringComparer.Ordinal);
+            var chests = new HashSet<string>(loot.Select(t => t.Id), StringComparer.Ordinal);
+            Bestiary srd = Library.Srd().Bestiary;
+
+            var all = new List<EncounterTable>();
+
+            foreach ((string file, string text) in Jsons(folder, EncountersFolder, problems))
+            {
+                EncounterReader.TryRead(text, out IReadOnlyList<EncounterTable> read,
+                                        out IReadOnlyList<string> trouble);
+
+                foreach (string one in trouble)
+                    problems.Add(new ContentProblem(file, "", one));
+
+                // an encounter that calls for a monster nobody shipped is a fight that stops the
+                // campaign the night it comes up, so it is caught on the shelf instead
+                foreach (EncounterTable table in read)
+                    foreach (EncounterEntry entry in table.Entries)
+                    {
+                        string where = $"tables.{table.Id}.entries.{entry.Id}";
+
+                        foreach (Band band in entry.Monsters)
+                            if (!own.Contains(band.Monster) && !srd.Has(band.Monster))
+                                problems.Add(new ContentProblem(file, where,
+                                    $"'{band.Monster}' is not a monster in this campaign's " +
+                                    $"{MonstersFolder}/ or the SRD's"));
+
+                        if (entry.Map.Length > 0 && !maps.ContainsKey(entry.Map))
+                            problems.Add(new ContentProblem(file, where,
+                                $"'{entry.Id}' is fought on '{entry.Map}' and there is no " +
+                                $"{MapsFolder}/{entry.Map}{MapExtension} in this campaign"));
+
+                        if (entry.Loot.Length > 0 && !chests.Contains(entry.Loot))
+                            problems.Add(new ContentProblem(file, where,
+                                $"'{entry.Id}' leaves '{entry.Loot}' and there is no loot table " +
+                                $"by that name in this campaign's {LootFolder}/"));
+                    }
+
+                all.AddRange(read);
+            }
+
+            return Scoped(all, t => t.Id, EncountersFolder, campaign, problems);
+        }
+
+        // LOOT IS READ AFTER ITEMS because it names them, and before encounters because a fight
+        // names it. an item is the campaign's own or the SRD's, like an encounter's monster; a
+        // table one entry rolls may be in any file of loot/, so that link and the loop check are
+        // asked of every file's tables together once they are all read.
+        static IReadOnlyList<LootTable> ReadLoot(string folder, string campaign,
+                                                 IReadOnlyList<Item> items,
+                                                 List<ContentProblem> problems)
+        {
+            var own = new HashSet<string>(items.Select(i => i.Id), StringComparer.Ordinal);
+            ItemShelf srd = Library.Srd().Items;
+
+            var all = new List<LootTable>();
+            var from = new Dictionary<string, string>(StringComparer.Ordinal);
+
+            foreach ((string file, string text) in Jsons(folder, LootFolder, problems))
+            {
+                LootReader.TryRead(text, out IReadOnlyList<LootTable> read,
+                                   out IReadOnlyList<string> trouble);
+
+                foreach (string one in trouble)
+                    problems.Add(new ContentProblem(file, "", one));
+
+                // a find of an item nobody shipped is a chest that cannot be opened, so it is
+                // caught on the shelf, not the night the dice land on it
+                foreach (LootTable table in read)
+                {
+                    foreach (LootEntry entry in table.Entries)
+                        foreach (Lot lot in entry.Items)
+                            if (!own.Contains(lot.Item) && !srd.Has(lot.Item))
+                                problems.Add(new ContentProblem(file,
+                                    $"tables.{table.Id}.entries.{entry.Id}",
+                                    $"'{lot.Item}' is not an item in this campaign's " +
+                                    $"{ItemsFolder}/ or the SRD's"));
+
+                    from.TryAdd(table.Id, file);
+                }
+
+                all.AddRange(read);
+            }
+
+            IReadOnlyList<LootTable> kept = Scoped(all, t => t.Id, LootFolder, campaign, problems);
+
+            var every = new LootTables(kept);
+
+            foreach (LootTable table in kept)
+                foreach (LootEntry entry in table.Entries.Where(e => e.Kind == LootKind.Table))
+                    if (!every.Has(entry.Table))
+                        problems.Add(new ContentProblem(from[table.Id],
+                            $"tables.{table.Id}.entries.{entry.Id}",
+                            $"'{entry.Id}' rolls '{entry.Table}' and there is no loot table by " +
+                            $"that name in this campaign's {LootFolder}/"));
+
+            // a loop inside one file was already said by that file's reader; this is the one
+            // that runs through two files, which no single reader could see
+            IReadOnlyList<string> cycle = every.Cycle();
+
+            if (cycle.Select(id => from[id]).Distinct().Count() > 1)
+                problems.Add(new ContentProblem(from[cycle[0]], $"tables.{cycle[0]}",
+                    LootReader.Loop(kept) + " - the loop runs through " +
+                    string.Join(" and ", cycle.Select(id => from[id]).Distinct())));
+
+            return kept;
+        }
+
         // EVERY ID A CAMPAIGN DEFINES IS ITS OWN. A pack that ships a "goblin" must not shadow the
         // SRD's, so ids are read locally and checked here rather than being written scoped in the
         // file - an author should not have to spell their own campaign's name on every line.
@@ -343,7 +555,8 @@ namespace Content.Campaigns
         }
 
         static IReadOnlyDictionary<string, MapLayout> ReadMaps(string folder, string campaign,
-                                                               List<ContentProblem> problems)
+                                                               List<ContentProblem> problems,
+                                                               Dictionary<string, IReadOnlyList<Prop>> props = null)
         {
             var maps = new Dictionary<string, MapLayout>(StringComparer.Ordinal);
 
@@ -397,7 +610,14 @@ namespace Content.Campaigns
                     continue;
                 }
 
+                // a prop the palette doesn't have is drawn as a placeholder - worth a word, not a refusal
+                foreach (string unknown in new MapEditor(draft).UnknownProps)
+                    problems.Add(ContentProblem.Caution(file, "props",
+                        $"'{unknown}' is not in the map builder's palette, so the table draws a placeholder"));
+
                 maps[id] = draft.Layout();
+
+                if (props != null) props[id] = draft.Props.ToList();
             }
 
             return maps;
@@ -417,5 +637,27 @@ namespace Content.Campaigns
                             $"chapter '{chapter.Id}' is played on '{map}' and there is no " +
                             $"{MapsFolder}/{map}{MapExtension} in this campaign"));
         }
+    }
+
+    // a shop, as the campaign writes it: the id, the stock, and what it pays for what it buys
+    public sealed class MerchantDef
+    {
+        public MerchantDef(string id, IReadOnlyList<string> stock, int sellPercent = -1)
+        {
+            Id = id ?? "";
+            Stock = stock ?? Array.Empty<string>();
+            SellPercent = sellPercent;
+        }
+
+        public string Id { get; }
+
+        public IReadOnlyList<string> Stock { get; }
+
+        public int SellPercent { get; }
+
+        public string NameKey => Core.Localization.KeyConventions.Key("merchant", Id, "name");
+
+        public Content.Inventory.Merchant Open(ItemShelf shelf) =>
+            new Content.Inventory.Merchant(Id, shelf, Stock, SellPercent);
     }
 }

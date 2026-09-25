@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Core.Space
 {
     // symmetric by construction - one segment between two centres, not a ray, so A sees B iff B sees A
@@ -66,6 +69,51 @@ namespace Core.Space
             }
 
             return true;
+        }
+
+        // the squares the same line passes through, both ends included - what a fog or a darkness
+        // has to cover to stand in the way. a line through an exact corner goes diagonally
+        public static IReadOnlyList<Cell> Between(Cell from, Cell to)
+        {
+            var cells = new List<Cell> { from };
+
+            int dx = to.X - from.X;
+            int dy = to.Y - from.Y;
+            int nx = Math.Abs(dx);
+            int ny = Math.Abs(dy);
+            int sx = Math.Sign(dx);
+            int sy = Math.Sign(dy);
+            int x = from.X;
+            int y = from.Y;
+            int across = 0;
+            int along = 0;
+
+            while (across < nx || along < ny)
+            {
+                long decision = (long)(1 + 2 * across) * ny - (long)(1 + 2 * along) * nx;
+
+                if (decision == 0)
+                {
+                    x += sx;
+                    y += sy;
+                    across++;
+                    along++;
+                }
+                else if (decision < 0)
+                {
+                    x += sx;
+                    across++;
+                }
+                else
+                {
+                    y += sy;
+                    along++;
+                }
+
+                cells.Add(new Cell(x, y));
+            }
+
+            return cells;
         }
 
         static bool Steps(MapLayout map, Cell from, Cell to, Cell target) =>

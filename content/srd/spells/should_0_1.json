@@ -1,0 +1,358 @@
+{
+  "_": "SRD 5.2.1 SHOULD spells, cantrips and level 1 (docs/v1_spell_list.md), CC-BY-4.0. Ranges are in squares: one square is five feet. A spell marked 'approximated' never ships under its SRD name.",
+  "spells": [
+    {
+      "id": "produce_flame",
+      "level": 0,
+      "school": "conjuration",
+      "range": 12,
+      "casting_time": "bonus_action",
+      "lasts": "encounter",
+      "repeat": "action",
+      "classes": ["druid"],
+      "effects": [
+        {"primitive": "illuminate", "reach": "caster", "radius": 4, "duration": "encounter", "note": "SRD 5.2.1: a flame in your hand for 10 minutes (v1: the fight): bright light 20 feet and dim light 20 feet beyond"},
+        {"primitive": "damage", "reach": "creature", "amount": "1d8", "damage_type": "fire", "attack_roll": true, "cantrip_scaling": true, "repeats": true, "repeat_only": true, "note": "until it ends, a Magic action hurls fire at a creature within 60 feet: a ranged spell attack, 1d8 fire, a die more at 5, 11 and 17"}
+      ]
+    },
+    {
+      "id": "ray_of_frost",
+      "level": 0,
+      "school": "evocation",
+      "range": 12,
+      "classes": [
+        "mage"
+      ],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "1d8",
+          "damage_type": "cold",
+          "attack_roll": true,
+          "cantrip_scaling": true
+        },
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "speed": -10,
+          "follows": true,
+          "duration": "next_turn",
+          "until": "caster",
+          "note": "SRD 5.2.1: on a hit, the target's speed is 10 feet less until the start of your next turn"
+        }
+      ]
+    },
+    {
+      "id": "shillelagh",
+      "level": 0,
+      "school": "transmutation",
+      "range": 0,
+      "casting_time": "bonus_action",
+      "classes": ["druid"],
+      "effects": [
+        {"primitive": "sway", "reach": "caster", "weapons": ["club", "quarterstaff"], "rewrite_die_tiers": ["1d8", "1d10", "1d12", "2d6"], "rewrite_damage_type": "force", "duration": "encounter", "note": "SRD 5.2.1: for 1 minute (the fight) a club or quarterstaff you hold may use your spellcasting ability for attack and damage, rolls a d8 (d10 at 5, d12 at 11, 2d6 at 17), and may deal force damage - v1 takes whichever of each is better for you"}
+      ]
+    },
+    {
+      "id": "shocking_grasp",
+      "level": 0,
+      "school": "evocation",
+      "range": 0,
+      "classes": [
+        "mage"
+      ],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "1d8",
+          "damage_type": "lightning",
+          "attack_roll": true,
+          "cantrip_scaling": true
+        },
+        {
+          "primitive": "sway",
+          "reach": "creature",
+          "no_opportunity_attacks": true,
+          "follows": true,
+          "duration": "next_turn",
+          "note": "SRD 5.2.1: on a hit, the target can't make opportunity attacks until the start of its next turn"
+        }
+      ]
+    },
+    {
+      "id": "spare_the_dying",
+      "level": 0,
+      "school": "necromancy",
+      "range": 3,
+      "range_scales": true,
+      "classes": ["cleric", "druid"],
+      "effects": [
+        {"primitive": "stabilize", "reach": "creature", "note": "SRD 5.2.1: a creature within 15 feet at 0 HP and not dead becomes Stable; the range doubles at 5, 11 and 17"}
+      ]
+    },
+    {
+      "id": "thaumaturgy",
+      "level": 0,
+      "school": "transmutation",
+      "range": 6,
+      "classes": [
+        "cleric"
+      ],
+      "effects": [
+        {
+          "primitive": "narrate",
+          "reach": "place",
+          "duration": "encounter",
+          "note": "minor wonders - a booming voice, flickering flames, tremors, a slammed door, altered eyes - for up to 1 minute. narrative by nature: authored interactables and dialogue answer it"
+        }
+      ]
+    },
+    {
+      "id": "true_strike",
+      "level": 0,
+      "school": "divination",
+      "range": 0,
+      "classes": ["mage"],
+      "effects": [
+        {"primitive": "strike", "reach": "creature", "rewrite_damage_type": "radiant", "damage_type": "radiant", "extra_tiers": ["", "1d6", "2d6", "3d6"], "note": "SRD 5.2.1: one attack with the weapon used in the casting, using your spellcasting ability for attack and damage, dealing radiant or the weapon's type (v1 takes the better); +1d6 radiant on a hit at 5, 2d6 at 11, 3d6 at 17"}
+      ]
+    },
+    {
+      "id": "chromatic_orb",
+      "level": 1,
+      "school": "evocation",
+      "range": 18,
+      "classes": ["mage"],
+      "effects": [
+        {"primitive": "damage", "reach": "creature", "amount": "3d8", "per_extra_level": "1d8", "damage_type": "chosen", "damage_choices": ["acid", "cold", "fire", "lightning", "poison", "thunder"], "attack_roll": true, "leaps": 6, "note": "SRD 5.2.1: a ranged spell attack for 3d8 of the type you choose; if two of the d8s match it leaps to another creature within 30 feet of the target, with a new attack and damage roll, once per slot level, never to the same creature twice"}
+      ]
+    },
+    {
+      "id": "command",
+      "level": 1,
+      "school": "enchantment",
+      "range": 12,
+      "classes": ["mage", "cleric", "paladin"],
+      "effects": [
+        {"primitive": "direct", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "command": "approach", "mode": "approach", "save": "wis", "on_save": "negates", "note": "SRD 5.2.1: a Wis save or the creature follows the word on its next turn. Approach: toward you by the shortest route, ending its turn within 5 feet. Drop: drops what it holds and ends its turn (picked up again for free next turn if it is still there). Flee: its turn is a Dash away from you. Grovel: Prone, and its turn ends. Halt: no move, no action, no bonus action. One more creature per slot level above 1"},
+        {"primitive": "direct", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "command": "drop", "mode": "drop", "save": "wis", "on_save": "negates"},
+        {"primitive": "direct", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "command": "flee", "mode": "flee", "save": "wis", "on_save": "negates"},
+        {"primitive": "direct", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "command": "grovel", "mode": "grovel", "save": "wis", "on_save": "negates"},
+        {"primitive": "direct", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "command": "halt", "mode": "halt", "save": "wis", "on_save": "negates"}
+      ]
+    },
+    {
+      "id": "divine_smite",
+      "level": 1,
+      "school": "evocation",
+      "range": 0,
+      "casting_time": "bonus_action",
+      "trigger": "struck",
+      "classes": ["paladin"],
+      "effects": [
+        {"primitive": "damage", "reach": "creature", "amount": "2d8", "per_extra_level": "1d8", "damage_type": "radiant", "extra_against": ["fiend", "undead"], "extra_amount": "1d8", "note": "SRD 5.2.1: a bonus action right after you hit with a melee weapon or unarmed strike: 2d8 radiant more from that hit, +1d8 against a Fiend or Undead, +1d8 per slot level above 1. a critical doubles the dice"}
+      ]
+    },
+    {
+      "id": "faerie_fire",
+      "level": 1,
+      "school": "evocation",
+      "range": 12,
+      "concentration": true,
+      "classes": [
+        "mage",
+        "druid"
+      ],
+      "effects": [
+        {
+          "primitive": "sway",
+          "reach": "square",
+          "length": 4,
+          "leans": "advantage_against",
+          "exposes": true,
+          "save": "dex",
+          "on_save": "negates",
+          "duration": "concentration",
+          "note": "SRD 5.2.1: a 20-foot cube; outlined creatures shed dim light (narrated - v1 has no light levels in a fight), attack rolls against them have advantage, and they can't benefit from the Invisible condition"
+        }
+      ]
+    },
+    {
+      "id": "feather_fall",
+      "level": 1,
+      "school": "transmutation",
+      "range": 12,
+      "classes": [
+        "mage"
+      ],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "narrate",
+          "reach": "creatures",
+          "targets": 5,
+          "duration": "encounter",
+          "note": "SRD 5.2.1: a reaction when you or a creature within 60 ft falls - up to five falling creatures descend 60 ft per round for 1 minute and take no falling damage. v1 has no falling and no 'falls' trigger, so it is cast as an action and the campaign's authored falls answer it"
+        }
+      ]
+    },
+    {
+      "id": "fog_cloud",
+      "level": 1,
+      "school": "conjuration",
+      "range": 24,
+      "concentration": true,
+      "classes": ["mage", "druid"],
+      "effects": [
+        {"primitive": "zone", "reach": "place", "radius": 4, "radius_per_extra_level": 4, "obscures": "heavy", "duration": "concentration", "note": "SRD 5.2.1: a 20-foot-radius sphere of heavily obscuring fog for up to an hour, 20 feet wider per slot level above 1. a strong wind is the narrator's"}
+      ]
+    },
+    {
+      "id": "goodberry",
+      "level": 1,
+      "school": "conjuration",
+      "range": 0,
+      "classes": ["druid"],
+      "effects": [
+        {"primitive": "conjure", "reach": "caster", "item": "goodberry", "count": 10, "note": "SRD 5.2.1: ten berries for 24 hours (until the next long rest); a creature eats one as a bonus action to regain 1 HP, and one is a day's food"}
+      ]
+    },
+    {
+      "id": "healing_word",
+      "level": 1,
+      "school": "abjuration",
+      "range": 12,
+      "casting_time": "bonus_action",
+      "classes": [
+        "mage",
+        "cleric",
+        "druid"
+      ],
+      "effects": [
+        {
+          "primitive": "heal",
+          "reach": "creature",
+          "amount": "2d4",
+          "per_extra_level": "2d4",
+          "add_modifier": true
+        }
+      ]
+    },
+    {
+      "id": "hellish_rebuke",
+      "level": 1,
+      "school": "evocation",
+      "range": 12,
+      "casting_time": "reaction",
+      "trigger": "damaged",
+      "classes": [
+        "mage"
+      ],
+      "effects": [
+        {
+          "primitive": "damage",
+          "reach": "creature",
+          "amount": "2d10",
+          "per_extra_level": "1d10",
+          "damage_type": "fire",
+          "save": "dex",
+          "on_save": "half",
+          "note": "SRD 5.2.1: a reaction to taking damage from a creature within 60 ft; that creature makes a Dex save"
+        }
+      ]
+    },
+    {
+      "id": "hideous_laughter",
+      "level": 1,
+      "school": "enchantment",
+      "range": 6,
+      "concentration": true,
+      "classes": ["mage"],
+      "effects": [
+        {"primitive": "afflict", "reach": "creature", "condition": "prone", "save": "wis", "on_save": "negates", "repeat_save": true, "save_on_damage": true, "pinned": true, "duration": "concentration", "note": "SRD 5.2.1: Wis save or Prone and Incapacitated for the duration, unable to stand; it saves again at the end of each of its turns and whenever it takes damage (with advantage then), and a success ends the spell"},
+        {"primitive": "afflict", "reach": "creature", "condition": "incapacitated", "save": "wis", "on_save": "negates", "same_save": true, "duration": "concentration"}
+      ]
+    },
+    {
+      "id": "identify",
+      "level": 1,
+      "school": "divination",
+      "range": 0,
+      "ritual": true,
+      "classes": [
+        "mage"
+      ],
+      "effects": [
+        {
+          "primitive": "reveal",
+          "reach": "place",
+          "note": "the touched object's magical properties, attunement, charges and the spells affecting it. information by nature: the campaign supplies what is learned"
+        }
+      ]
+    },
+    {
+      "id": "searing_smite",
+      "level": 1,
+      "school": "evocation",
+      "range": 0,
+      "casting_time": "bonus_action",
+      "trigger": "struck",
+      "classes": ["paladin"],
+      "effects": [
+        {"primitive": "damage", "reach": "creature", "amount": "1d6", "per_extra_level": "1d6", "damage_type": "fire", "note": "SRD 5.2.1: a bonus action right after a melee hit: 1d6 fire more from that hit"},
+        {"primitive": "damage", "reach": "creature", "amount": "1d6", "per_extra_level": "1d6", "damage_type": "fire", "recurs": true, "end_save": "con", "duration": "encounter", "note": "and at the start of each of its turns for 1 minute (the fight) it takes 1d6 fire and then makes a Con save, a success ending the spell. all the damage grows by 1d6 per slot level above 1"}
+      ]
+    },
+    {
+      "id": "silent_image",
+      "level": 1,
+      "school": "illusion",
+      "range": 12,
+      "concentration": true,
+      "classes": [
+        "mage"
+      ],
+      "effects": [
+        {
+          "primitive": "narrate",
+          "reach": "place",
+          "duration": "concentration",
+          "note": "a soundless image up to a 15-foot cube, movable as a Magic action, seen through with an Investigation check. authored interactables answer it; there is no illusion sandbox, as with Minor Illusion"
+        }
+      ]
+    },
+    {
+      "id": "speak_with_animals",
+      "level": 1,
+      "school": "divination",
+      "range": 0,
+      "ritual": true,
+      "classes": [
+        "mage",
+        "druid"
+      ],
+      "effects": [
+        {
+          "primitive": "narrate",
+          "reach": "caster",
+          "duration": "encounter",
+          "note": "10 minutes of speech with Beasts. dialogue by nature: authored animal conversations answer it"
+        }
+      ]
+    },
+
+    {
+      "id": "dissonant_whispers",
+      "level": 1,
+      "school": "enchantment",
+      "range": 12,
+      "not_in_srd": true,
+      "classes": ["mage"],
+      "effects": [
+        {"primitive": "damage", "reach": "creature", "amount": "3d6", "per_extra_level": "1d6", "damage_type": "psychic", "save": "wis", "on_save": "half", "reaction_flee": true, "note": "v1_spell_list.md's Dissonant Whispers is not in SRD 5.2.1, so it ships as an original spell under an original name (decisions_checklist.md section 1, 2026-09-24): 3d6 psychic, Wis save for half; a creature that fails spends its reaction running as far as its speed allows away from you"}
+      ]
+    }
+  ]
+}

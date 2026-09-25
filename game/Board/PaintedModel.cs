@@ -60,11 +60,18 @@ namespace Game.Board
 
             copy.SetShaderParameter(TintParameter, standard.AlbedoColor);
 
+            // a textured surface (the Fantasy Props kit, a KayKit atlas) keeps its picture: the
+            // shader's atlas is that surface's own albedo, relit the same way as everything else
+            if (standard.AlbedoTexture != null)
+                copy.SetShaderParameter(AtlasParameter, standard.AlbedoTexture);
+
             return copy;
         }
 
         // matches the uniform in painted_miniature.gdshader
         const string TintParameter = "tint";
+
+        const string AtlasParameter = "atlas";
 
         public static Aabb Bounds(Node3D node)
         {

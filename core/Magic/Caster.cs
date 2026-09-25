@@ -54,10 +54,36 @@ namespace Core.Magic
 
         public IEnumerable<Spell> Leveled => _known.Where(s => !s.IsCantrip);
 
-        // SRD: 8 + proficiency + the casting ability's modifier
-        public int SaveDc => 8 + Actor.ProficiencyBonus + Actor.AbilityModifier(Ability);
+        // SRD: 8 + proficiency + the casting ability's modifier - or, for a monster, the number its
+        // statblock prints (FixedDc), because a statblock's DC is data, not a formula
+        public int SaveDc => FixedDc ?? 8 + Actor.ProficiencyBonus + Actor.AbilityModifier(Ability);
 
-        public int AttackModifier => Actor.ProficiencyBonus + Actor.AbilityModifier(Ability);
+        public int AttackModifier =>
+            FixedAttack ?? Actor.ProficiencyBonus + Actor.AbilityModifier(Ability);
+
+        public int? FixedDc { get; set; }
+
+        public int? FixedAttack { get; set; }
+
+        // PER-SPELL LIMITS, for a statblock: "Fire Breath (Recharge 5-6)", "1/day each". a spell
+        // with no entry here is limited only by the resource, the way a hero's spells are
+        readonly Dictionary<string, SpellUse> _uses = new Dictionary<string, SpellUse>();
+
+        public void Limit(string spellId, SpellUse use)
+        {
+            if (!string.IsNullOrEmpty(spellId) && use != null) _uses[spellId] = use;
+        }
+
+        public SpellUse UseOf(string spellId) =>
+            spellId != null && _uses.TryGetValue(spellId, out SpellUse use) ? use : null;
+
+        // the start of its turn: each spent recharge rolls its d6
+        public void Recharge(Core.Resolution.IResolver resolver)
+        {
+            foreach (SpellUse use in _uses.Values.Where(u => u.Recharge > 0 && !u.Ready))
+                if (resolver.Roll(new Core.Dice.DiceRoll(1, Core.Dice.Die.D6), Actor) >= use.Recharge)
+                    use.Ready = true;
+        }
 
         // the highest level it can pay for right now; 0 when only cantrips are left
         public int HighestAffordable => Resource?.Highest ?? 0;
@@ -67,6 +93,12 @@ namespace Core.Magic
             if (spell == null || !Knows(spell.Id)) return false;
 
             if (castAt < spell.Level || castAt > 9) return false;
+
+            // a borrowed shape casts nothing, cantrips included: SRD 5.2.1's Wild Shape
+            if (Actor.IsShifted) return false;
+
+            // a statblock's recharge or daily use
+            if (UseOf(spell.Id) is SpellUse use && !use.CanUse) return false;
 
             // a cantrip is at-will and costs nothing, ever
             if (spell.IsCantrip) return true;
@@ -83,16 +115,82 @@ namespace Core.Magic
         {
             if (spell == null) return false;
 
-            if (spell.IsCantrip) return true;
+            SpellUse use = UseOf(spell.Id);
 
-            return Resource != null && Resource.Pay(castAt);
+            if (use != null && !use.CanUse) return false;
+
+            bool paid = spell.IsCantrip || Resource != null && Resource.Pay(castAt);
+
+            if (paid) use?.Spend();
+
+            return paid;
         }
 
-        public void Rested(Rest rest) => Resource?.Restore(rest);
+        public void Rested(Rest rest)
+        {
+            Resource?.Restore(rest);
+
+            if (rest == Rest.Long)
+                foreach (SpellUse use in _uses.Values) use.Refill();
+        }
 
         public override string ToString() =>
             $"{Actor.Id} casts with {Ability.Id()}, dc {SaveDc}, " +
             (Resource?.Describe() ?? "no resource") + $", {_known.Count} spells";
     }
 
+
+    // one statblock limit on one spell or action: a recharge on a d6, or so many a day
+    public sealed class SpellUse
+    {
+        public SpellUse(int recharge = 0, int perDay = 0)
+        {
+            Recharge = Math.Clamp(recharge, 0, 6);
+            PerDay = Math.Max(0, perDay);
+            Left = PerDay;
+            Ready = true;
+        }
+
+        // 5 is "Recharge 5-6": spent, it comes back on a d6 of 5 or 6 at the start of a turn
+        public int Recharge { get; }
+
+        // 0 is not limited by the day
+        public int PerDay { get; }
+
+        public int Left { get; private set; }
+
+        public bool Ready { get; set; }
+
+        public bool CanUse => Ready && (PerDay == 0 || Left > 0);
+
+        public void Spend()
+        {
+            if (Recharge > 0) Ready = false;
+            if (PerDay > 0) Left--;
+        }
+
+        public void Refill()
+        {
+            Left = PerDay;
+            Ready = true;
+        }
+    }
+
+    // a statblock's spells cost nothing but their limits: at will, or so many a day (SpellUse)
+    public sealed class AtWill : ISpellResource
+    {
+        public SpellResourceMode Mode => SpellResourceMode.Slots;
+
+        public bool CanPay(int castLevel) => SpellLevels.IsLeveled(castLevel);
+
+        public bool Pay(int castLevel) => CanPay(castLevel);
+
+        public void Restore(Rest rest)
+        {
+        }
+
+        public int Highest => SpellLevels.Highest;
+
+        public string Describe() => "at will";
+    }
 }

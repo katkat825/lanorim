@@ -11,11 +11,13 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "reach": "creatures",
+          "targets": 1,
           "amount": "1d10",
           "damage_type": "force",
           "attack_roll": true,
-          "cantrip_scaling": true
+          "cantrip_beams": true,
+          "note": "SRD 5.2.1: more beams at 5, 11 and 17, each its own attack roll, at the same or different targets"
         }
       ]
     },
@@ -49,7 +51,9 @@
           "reach": "creature",
           "sway_dice": "1d4",
           "touches": "checks",
-          "duration": "concentration"
+          "skill": "chosen",
+          "duration": "concentration",
+          "note": "SRD 5.2.1: the caster chooses a skill, and the 1d4 is for checks with that skill"
         }
       ]
     },
@@ -150,11 +154,13 @@
         {
           "primitive": "sway",
           "reach": "creature",
-          "sway": -2,
-          "touches": "attacks",
+          "leans": "disadvantage_on_attacks",
+          "once": true,
           "save": "wis",
           "on_save": "negates",
-          "duration": "encounter"
+          "same_save": true,
+          "duration": "next_turn_end",
+          "note": "SRD 5.2.1: disadvantage on the next attack roll it makes before the end of its next turn - one save for both halves"
         }
       ]
     }

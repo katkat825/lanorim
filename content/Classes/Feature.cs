@@ -24,7 +24,8 @@ namespace Content.Classes
         // hit points back, a limited number of times. Second Wind, Lay on Hands
         Recovery,
 
-        // an extra action or reaction, each round or once per rest. Action Surge's descendant
+        // an extra action or reaction, each round or once per rest. Extra Attack is one every
+        // round, Action Surge one per rest
         ActionGrant,
 
         // armor class from an ability instead of armor. the Barbarian's Constitution
@@ -53,11 +54,16 @@ namespace Content.Classes
 
         // authored: the campaign decides what it means. Trance, Stonecunning's secrets
         Narrate,
+
+        // lets a bonus action be spent on Dash, Disengage or Hide. the Rogue's Cunning Action -
+        // what the bonus action can do, not how many there are
+        Nimble,
     }
 
-    // which part of the turn an ActionGrant adds to. a third *action* would be Extra Attack by
-    // another name, which v1_class_roster.md says never to port - so a class's compression is a
-    // bonus action doing an action's work, and the extra action is a per-rest thing.
+    // which part of the turn an ActionGrant adds to. the base two actions are solo compensation,
+    // not a stand-in for Extra Attack, so a whole extra action every round is allowed - it is
+    // exactly what Extra Attack ports as (v1_class_roster.md, corrected 2026-09-23). the one limit
+    // is ActionBudget's guardrail on how many a single turn can hold.
     public enum Grants
     {
         Action,
@@ -95,7 +101,8 @@ namespace Content.Classes
                        IReadOnlyList<Ability> saves = null,
                        Core.Magic.Sways touches = Core.Magic.Sways.None,
                        CasterProgression progression = CasterProgression.None,
-                       string note = null)
+                       string note = null,
+                       Manoeuvre manoeuvres = Manoeuvre.None)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Trait = trait;
@@ -118,9 +125,17 @@ namespace Content.Classes
             Touches = touches;
             Progression = progression;
             Note = note ?? "";
+            Manoeuvres = manoeuvres;
         }
 
         public string Id { get; }
+
+        // what owning it makes the creature, as far as a spell can tell: an elf's Trance is
+        // "sleepless" (magic can't put it to sleep)
+        public IReadOnlyList<string> Tags { get; init; } = Array.Empty<string>();
+
+        // for a Nimble feature, which of Dash, Disengage and Hide the bonus action may do
+        public Manoeuvre Manoeuvres { get; }
 
         public Trait Trait { get; }
 
@@ -205,6 +220,8 @@ namespace Content.Classes
         {
             if (actor == null || level < Level) return;
 
+            foreach (string tag in Tags) actor.Tag(tag);
+
             switch (Trait)
             {
                 case Trait.UnarmoredDefense:
@@ -217,6 +234,10 @@ namespace Content.Classes
 
                 case Trait.Speed:
                     actor.Speed += Flat;
+                    break;
+
+                case Trait.Nimble:
+                    actor.QuickOnBonus |= Manoeuvres;
                     break;
 
                 case Trait.Training:

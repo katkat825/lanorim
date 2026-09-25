@@ -85,8 +85,8 @@ the curated-forms cap is a declared product constraint. *Companion: borrowed-sha
 ## Companion minis (v1)
 
 The companion is a **live thing on the table, outside the map/campaign** — its own token, distinct from
-the on-map minis. Everything in lanorim is **Quaternius** now (single-creator base), so the companion is
-a Quaternius creature too:
+the on-map minis. The 3D base is **Quaternius + KayKit** (`decisions_checklist.md` §4); the companions below
+are all Quaternius creatures:
 
 | Companion | Quaternius mini | Status |
 |---|---|---|
@@ -109,9 +109,9 @@ Licence: Quaternius Asset License (commercial use, no credit required, no resell
   replacement for Extra Attack. The 5e multiattack ladder (2/3/4 attacks) collapses to a single +1 in v1;
   Action Surge = +1 action once per rest. *(Corrected 2026-09-23 — earlier drafts said "not literal".)*
 - **Spell resource:** the spells shown on your sheet are the ones you can cast (flat **known/equipped**
-  model). v1 uses 5e spell *lists and effects*, **not** the 5e slot tables or daily preparation.
-  **Expenditure [DECIDED]:** cantrips are at-will; leveled spells use a **point pool (mana)** — cost by
-  spell level, upcasting spends more points, pool refills on rest. Tracked in `decisions_checklist.md` §1.
+  model) — no daily preparation. **Expenditure [DECIDED 2026-09-23]:** cantrips are at-will; leveled spells
+  spend **spell slots** (SRD full-caster table for Mage/Cleric/Druid, half-caster for Paladin) **or spell
+  points**, the player's choice at character creation. Tracked in `decisions_checklist.md` §1.
 - **ASI levels:** feats are deferred, so each SRD "ASI or feat" level is a straight **+2 to spend**.
 - **"Channeling" is retired** — Cleric/Paladin use Channel Divinity (SRD); casters use the known/equipped
   model above.

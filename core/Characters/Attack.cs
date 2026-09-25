@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Core.Dice;
 using Core.Localization;
 
@@ -72,16 +73,29 @@ namespace Core.Characters
 
         public bool IsRanged => Range > 0;
 
+        // what a hit with it always carries: a statblock's poison, its knock-down. riders the
+        // attacker's own features add (Sneak Attack) come with the swing instead
+        public IReadOnlyList<Core.Rules.Rider> OnHit { get; init; } = Array.Empty<Core.Rules.Rider>();
+
         public string NameKey => KeyConventions.ItemName(Id);
 
         // finesse takes the better of the two, which is SRD's wording turned into arithmetic
         public Ability AbilityFor(Actor actor)
         {
-            if (actor == null || !Finesse) return Ability;
+            if (actor == null) return Ability;
 
-            return actor.AbilityModifier(Ability.Dexterity) > actor.AbilityModifier(Ability)
+            Ability own = Finesse &&
+                          actor.AbilityModifier(Ability.Dexterity) > actor.AbilityModifier(Ability)
                 ? Ability.Dexterity
                 : Ability;
+
+            // Shillelagh: this weapon MAY swing with the caster's spellcasting ability for now -
+            // "can use", so the better of the two
+            if (actor.Boons.RewriteFor(Id)?.Ability is Ability rewritten &&
+                actor.AbilityModifier(rewritten) > actor.AbilityModifier(own))
+                return rewritten;
+
+            return own;
         }
 
         public int Modifier(Actor actor)
@@ -103,9 +117,31 @@ namespace Core.Characters
                            : 0) +
                        (actor?.Boons.FlatOnDamage ?? 0);
 
-            DiceRoll dice = critical ? Damage.Doubled() : Damage;
+            DiceRoll die = actor?.Boons.RewriteFor(Id) is WeaponRewrite rewrite &&
+                           !rewrite.Die.IsNothing
+                ? rewrite.Die
+                : Damage;
+
+            DiceRoll dice = critical ? die.Doubled() : die;
 
             return dice.Plus(flat);
+        }
+
+        // the damage type this hit deals to that target. a rewrite that offers another type
+        // (Shillelagh's force) is taken when the target takes more from it - the wielder's choice,
+        // and nobody chooses the worse one
+        public DamageType DamageTypeFor(Actor actor, Actor target)
+        {
+            WeaponRewrite rewrite = actor?.Boons.RewriteFor(Id);
+
+            if (rewrite == null || rewrite.DamageType == DamageType.None) return DamageType;
+
+            if (target == null) return rewrite.DamageType;
+
+            int mine = target.DefenseAgainst(DamageType).Apply(100);
+            int theirs = target.DefenseAgainst(rewrite.DamageType).Apply(100);
+
+            return theirs > mine ? rewrite.DamageType : DamageType;
         }
 
         // how far away it can still be used, in squares. a melee attack's answer is its reach

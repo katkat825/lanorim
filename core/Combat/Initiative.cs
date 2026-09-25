@@ -36,8 +36,12 @@ namespace Core.Combat
 
             foreach (Actor actor in actors)
             {
+                // SRD 5.2.1: the Invisible roll initiative with advantage, the Incapacitated
+                // (surprised, in effect) with disadvantage
                 Attempt attempt = resolver.Resolve(RollKind.Check,
-                                                   actor.AbilityModifier(Ability.Dexterity), 0);
+                                                   actor.AbilityModifier(Ability.Dexterity), 0,
+                                                   Advantages.Of(actor.Has(Condition.Invisible),
+                                                                 actor.IsIncapacitated), actor);
 
                 rolled.Add(new InitiativeRoll(actor, attempt.Roll));
             }

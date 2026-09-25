@@ -373,4 +373,72 @@ namespace Core.Tests
             Assert.Equal(21, blow.Rolled);    // but it was rolled, and the sheet says so
         }
     }
+
+    // a borrowed body: core's half of Wild Shape, with no druid anywhere in it
+    public class ShapeTests
+    {
+        static readonly Shape Bear =
+            new Shape("black_bear", "wild_shape", 15, 12, 14, 11, 30, new[] { Skill.Perception });
+
+        static Actor Wearer()
+        {
+            var actor = new Actor("t", 4, new AbilityScores(8, 14, 13, 10, 16, 10));
+
+            actor.Armor = new ArmorProfile(ArmorWeight.Medium, 14);
+            actor.HasShield = true;
+
+            return actor;
+        }
+
+        [Fact]
+        public void TheShapesArmorClassReplacesTheArmorButNotTheBoons()
+        {
+            Actor actor = Wearer();
+
+            actor.Assume(Bear);
+            Assert.Equal(11, actor.ArmorClass);
+
+            actor.Boons.Add(new Boon("shield_of_faith", armorClass: 2));
+            Assert.Equal(13, actor.ArmorClass);
+        }
+
+        [Fact]
+        public void RevertingRestoresTheBodyAndTakesOnlyTheShapesBoons()
+        {
+            Actor actor = Wearer();
+            int armorClass = actor.ArmorClass;
+            int perception = actor.CheckModifier(Skill.Perception);
+
+            actor.Boons.Add(new Boon("bless", checks: true, flat: 1, duration: Duration.Rest));
+            actor.Assume(Bear);
+
+            Assert.Equal(15, actor.Scores[Ability.Strength]);
+            Assert.Equal(16, actor.Scores[Ability.Wisdom]);
+            Assert.Equal(perception + 1 + actor.ProficiencyBonus,
+                         actor.CheckModifier(Skill.Perception));
+
+            Assert.Same(Bear, actor.Revert());
+
+            Assert.Equal(8, actor.Scores[Ability.Strength]);
+            Assert.Equal(14, actor.Scores[Ability.Dexterity]);
+            Assert.Equal(13, actor.Scores[Ability.Constitution]);
+            Assert.Equal(30, actor.Speed);
+            Assert.Equal(armorClass, actor.ArmorClass);
+            Assert.True(actor.Boons.Has("bless"));
+            Assert.Null(actor.Revert());
+        }
+
+        [Fact]
+        public void GoingDownTakesTheShapeOff()
+        {
+            Actor actor = Wearer();
+            actor.SetHealth(new Health(10));
+
+            actor.Assume(Bear);
+            actor.Suffer(10, DamageType.Slashing);
+
+            Assert.False(actor.IsShifted);
+            Assert.Equal(8, actor.Scores[Ability.Strength]);
+        }
+    }
 }

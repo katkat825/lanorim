@@ -171,6 +171,19 @@ namespace Content.Inventory
             return count - left;
         }
 
+        // the long rest: whatever magic made that lasts a day is gone
+        public int Vanish()
+        {
+            int gone = 0;
+
+            foreach (Stack stack in Everything.Where(s => s.Item.Vanishes).ToList())
+                gone += stack.Take(stack.Count);
+
+            Tidy();
+
+            return gone;
+        }
+
         void Tidy()
         {
             _stacks.RemoveAll(s => s.Count <= 0);

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.Json;
@@ -162,21 +163,12 @@ namespace Content.Schema
 
             if (string.IsNullOrWhiteSpace(text)) return Core.Characters.Condition.None;
 
-            if (Conditions.TryParse(text, out Condition condition))
-            {
-                if (condition == Core.Characters.Condition.Unconscious)
-                {
-                    problems?.Add($"{where}: 'unconscious' is the engine's, not content's - " +
-                                  "it comes from hitting 0 hit points and nothing else");
+            // Unconscious used to be refused here as the engine's own. Sleep puts a creature
+            // Unconscious without it dropping to 0, so since 2026-09-24 content may name it
+            if (Conditions.TryParse(text, out Condition condition)) return condition;
 
-                    return Core.Characters.Condition.None;
-                }
-
-                return condition;
-            }
-
-            problems?.Add($"{where}: '{text}' is not a v1 condition " +
-                          "(prone, poisoned, stunned, frightened, restrained, grappled)");
+            problems?.Add($"{where}: '{text}' is not a v1 condition (" +
+                          string.Join(", ", Conditions.All.Select(c => c.Id())) + ")");
 
             return Core.Characters.Condition.None;
         }

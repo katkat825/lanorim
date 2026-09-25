@@ -1,5 +1,5 @@
 {
-  "_": "SRD 5.2.1 level 6 to 9 spells, CC-BY-4.0. Ranges are in squares: one square is five feet.",
+  "_": "SRD 5.2.1 level 6 to 9 spells, CC-BY-4.0. Ranges are in squares: one square is five feet. A spell marked 'approximated' never ships under its SRD name.",
 
   "spells": [
     {
@@ -17,7 +17,8 @@
           "amount": "10d8",
           "damage_type": "lightning",
           "save": "dex",
-          "on_save": "half"
+          "on_save": "half",
+          "note": "SRD 5.2.1: the three leaps must land within 30 feet of the first target; the targeting UI owes that check, flagged in the build notes"
         }
       ]
     },
@@ -55,7 +56,8 @@
         {
           "primitive": "relieve",
           "reach": "creature",
-          "condition": "poisoned"
+          "condition": "poisoned",
+          "note": "SRD 5.2.1 also ends blinded and deafened, which v1 does not have"
         }
       ]
     },
@@ -63,27 +65,14 @@
       "id": "sunbeam",
       "level": 6,
       "school": "evocation",
-      "range": 12,
+      "range": 0,
       "concentration": true,
+      "repeat": "action",
       "classes": ["mage", "cleric", "druid"],
-      "approximated": true,
       "effects": [
-        {
-          "primitive": "damage",
-          "reach": "burst",
-          "radius": 3,
-          "amount": "6d8",
-          "damage_type": "radiant",
-          "save": "con",
-          "on_save": "negates",
-          "note": "SRD is a repeating 60-foot line; v1's one area shape is a burst, fired once per cast"
-        },
-        {
-          "primitive": "illuminate",
-          "reach": "place",
-          "radius": 3,
-          "duration": "concentration"
-        }
+        {"primitive": "damage", "reach": "line", "length": 12, "width": 1, "amount": "6d8", "damage_type": "radiant", "save": "con", "on_save": "half", "repeats": true},
+        {"primitive": "afflict", "reach": "line", "length": 12, "width": 1, "condition": "blinded", "save": "con", "on_save": "negates", "same_save": true, "duration": "next_turn", "until": "caster", "repeats": true, "note": "SRD 5.2.1: a failed save is also Blinded until the start of the caster's next turn"},
+        {"primitive": "illuminate", "reach": "caster", "radius": 6, "duration": "concentration", "note": "the mote of sunlight: bright light 30 feet and dim light 30 feet beyond"}
       ]
     },
 
@@ -98,7 +87,6 @@
           "primitive": "damage",
           "reach": "creature",
           "amount": "7d8+30",
-          "per_extra_level": "1d8",
           "damage_type": "necrotic",
           "save": "con",
           "on_save": "half"
@@ -149,21 +137,8 @@
       "range": 30,
       "classes": ["mage", "druid"],
       "effects": [
-        {
-          "primitive": "damage",
-          "reach": "burst",
-          "radius": 12,
-          "amount": "12d6",
-          "damage_type": "radiant",
-          "save": "con",
-          "on_save": "half"
-        },
-        {
-          "primitive": "illuminate",
-          "reach": "place",
-          "radius": 12,
-          "duration": "encounter"
-        }
+        {"primitive": "damage", "reach": "burst", "radius": 12, "amount": "12d6", "damage_type": "radiant", "save": "con", "on_save": "half", "dispels_darkness": true},
+        {"primitive": "afflict", "reach": "burst", "radius": 12, "condition": "blinded", "save": "con", "on_save": "negates", "same_save": true, "repeat_save": true, "duration": "encounter", "note": "SRD 5.2.1: Blinded for 1 minute on a failed save, repeating the save at the end of each of its turns; the minute is the fight"}
       ]
     },
 
@@ -171,13 +146,14 @@
       "id": "meteor_swarm",
       "level": 9,
       "school": "evocation",
-      "range": 200,
+      "range": 1056,
       "classes": ["mage"],
       "effects": [
         {
           "primitive": "damage",
           "reach": "burst",
           "radius": 8,
+          "points": 4,
           "amount": "20d6",
           "damage_type": "fire",
           "save": "dex",
@@ -187,10 +163,13 @@
           "primitive": "damage",
           "reach": "burst",
           "radius": 8,
+          "points": 4,
           "amount": "20d6",
           "damage_type": "bludgeoning",
           "save": "dex",
-          "on_save": "half"
+          "on_save": "half",
+          "same_save": true,
+          "note": "SRD 5.2.1: four 40-foot spheres; one Dexterity save covers both halves, and a creature in several spheres is caught once"
         }
       ]
     },
@@ -200,14 +179,14 @@
       "school": "enchantment",
       "range": 12,
       "classes": ["mage"],
-      "approximated": true,
       "effects": [
         {
           "primitive": "damage",
           "reach": "creature",
-          "amount": "100",
+          "amount": "12d12",
           "damage_type": "psychic",
-          "note": "SRD kills outright below 100 hit points; 100 psychic damage with no save is the same outcome without a second death path in the engine"
+          "slays_at_or_below": 100,
+          "note": "SRD 5.2.1: a creature with 100 hit points or fewer dies; anything tougher takes 12d12 psychic"
         }
       ]
     },

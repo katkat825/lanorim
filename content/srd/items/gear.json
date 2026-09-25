@@ -66,6 +66,11 @@
       "id": "antitoxin", "kind": "consumable", "cost": 50, "stackable": true
     },
     {
+      "id": "goodberry", "kind": "consumable", "cost": 0, "stackable": true, "heals": "1",
+      "vanishes": "long_rest",
+      "_": "made by the Goodberry spell, never sold: gone at the next long rest (24 hours)"
+    },
+    {
       "id": "torch", "kind": "tool", "cost": 1, "stackable": true
     },
     {

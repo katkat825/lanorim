@@ -86,14 +86,16 @@ namespace Content.Tests
         }
 
         [Fact]
-        public void NoClassPortsExtraAttackLiterally()
+        public void TheMartialsPortExtraAttackLiterally()
         {
-            // the hero already has two actions (v1_class_roster.md); a feature that granted an
-            // extra action every round would be Extra Attack by another name
-            foreach (CharacterClass cls in Srd.Classes)
-                foreach (Feature feature in cls.Features.Where(f => f.Trait == Trait.ActionGrant))
-                    Assert.True(feature.Uses > 0 || feature.Grants != Grants.Action,
-                                $"{cls.Id}/{feature.Id} grants an action every round");
+            // REVERSED 2026-09-23. this test used to refuse any feature granting an action every
+            // round, on the reading that the base two actions *were* Extra Attack. they are solo
+            // compensation instead, and Extra Attack stacks on top as a third action
+            // (decisions_checklist.md section 1, v1_class_roster.md)
+            foreach (string id in new[] { "barbarian", "fighter", "paladin" })
+                Assert.Contains(Srd.Class(id).Features,
+                                f => f.Trait == Trait.ActionGrant && f.Level == 5 &&
+                                     f.Uses == 0 && f.Grants == Grants.Action);
         }
 
         [Fact]
@@ -303,9 +305,10 @@ namespace Content.Tests
         }
 
         [Fact]
-        public void AnAbilityScoreImprovementIsAStraightTwoToSpend()
+        public void AnAbilityScoreImprovementLevelLeavesOneToSpend()
         {
-            // feats are deferred, so each ASI level is +2 (decisions_checklist.md section 1)
+            // feats are deferred, so each ASI level is one improvement for the player to spend
+            // (decisions_checklist.md section 1; ImprovementTests has the rest)
             Assert.Equal(0, Hero.AbilityScoreImprovements(3));
             Assert.Equal(1, Hero.AbilityScoreImprovements(4));
             Assert.Equal(5, Hero.AbilityScoreImprovements(20));
@@ -313,14 +316,16 @@ namespace Content.Tests
             Hero low = Fighter(3);
             Hero high = Fighter(4);
 
-            Assert.Equal(low.Actor.Scores.Base(Ability.Strength) + 2,
+            Assert.Equal(low.Actor.Scores.Base(Ability.Strength),
                          high.Actor.Scores.Base(Ability.Strength));
+            Assert.Equal(1, high.PendingImprovements);
         }
 
         [Fact]
         public void AnImprovementNeverPushesAScorePastTwenty()
         {
             Hero hero = Fighter(20);
+            hero.ImproveAsSuggested();
 
             foreach (Ability ability in Abilities.All)
                 Assert.InRange(hero.Actor.Scores.Base(ability), 1, Abilities.Ceiling);

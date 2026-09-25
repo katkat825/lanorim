@@ -1,5 +1,5 @@
 {
-  "_": "The seven v1 classes (docs/v1_class_roster.md), built on SRD 5.2.1 chassis (CC-BY-4.0). Extra Attack is never ported literally - the hero already has two actions - so a martial class's edge is action quality, on-hit riders and reliability.",
+  "_": "The seven v1 classes (docs/v1_class_roster.md), built on SRD 5.2.1 chassis (CC-BY-4.0). The base two actions are solo compensation, not a stand-in for Extra Attack: Extra Attack ports literally as one more action every round, and Action Surge as one more action per rest (decisions_checklist.md section 1, corrected 2026-09-23).",
 
   "classes": [
     {
@@ -21,6 +21,8 @@
           "note": "SRD's per-day rage table becomes one bounded stance (v1_class_roster.md)" },
         { "id": "barbarian_unarmored_defense", "trait": "unarmored_defense", "level": 1,
           "ability": "con" },
+        { "id": "barbarian_extra_attack", "trait": "action_grant", "level": 5, "count": 1,
+          "note": "SRD Extra Attack, ported literally: a third action every round" },
         { "id": "reckless_attack", "trait": "stance", "level": 2, "flat": 0,
           "touches": "attacks", "duration": "encounter",
           "note": "advantage on your attacks, advantage against you; the fight layer reads the stance" },
@@ -30,7 +32,20 @@
         { "id": "relentless_rage", "trait": "death_intercept", "level": 11, "flat": 1,
           "uses": 1 },
         { "id": "indomitable_might", "trait": "training", "level": 18, "skills": ["athletics"],
-          "flat": 2 }
+          "flat": 2 },
+        { "id": "barbarian_weapon_mastery", "trait": "narrate", "level": 1, "note": "weapon mastery properties (cleave, graze, nick, push, sap, slow, topple, vex) are not in v1's weapon data yet" },
+        { "id": "primal_knowledge", "trait": "narrate", "level": 3, "note": "one more barbarian skill, and rage lets Strength stand in for some checks; v1 grants the skill at creation" },
+        { "id": "frenzy", "trait": "rider", "level": 3, "amount": "2d6", "when": "with_advantage", "note": "Path of the Berserker: while raging, the first hit with Reckless Attack's advantage deals extra d6s equal to the rage bonus; v1 fires it on an advantaged hit" },
+        { "id": "fast_movement", "trait": "speed", "level": 5, "flat": 10 },
+        { "id": "mindless_rage", "trait": "narrate", "level": 6, "note": "Berserker: immune to Charmed and Frightened while raging; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "feral_instinct", "trait": "narrate", "level": 7, "note": "advantage on initiative; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "instinctive_pounce", "trait": "narrate", "level": 7, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "retaliation", "trait": "narrate", "level": 10, "note": "Berserker: a reaction melee attack against a creature that damages you; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "improved_brutal_strike", "trait": "narrate", "level": 13, "note": "two more Brutal Strike effects to choose from; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "intimidating_presence", "trait": "narrate", "level": 14, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "persistent_rage", "trait": "narrate", "level": 15, "note": "rage no longer ends early; v1's rage already lasts the encounter" },
+        { "id": "brutal_strike_die", "trait": "rider", "level": 17, "amount": "1d10", "when": "always", "note": "Improved Brutal Strike at 17: the Brutal Strike damage becomes 2d10" },
+        { "id": "primal_champion", "trait": "narrate", "level": 20, "note": "+4 Strength and Constitution, to a maximum of 25; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" }
       ]
     },
 
@@ -45,6 +60,7 @@
       "shields": true,
       "priority": ["str", "con"],
       "subclass": "champion",
+      "improvement_levels": [4, 6, 8, 12, 14, 16, 19],
       "companion": "bonded_wolf",
       "starting_gear": ["longsword", "shield", "chain_mail", "light_crossbow"],
       "features": [
@@ -53,13 +69,27 @@
         { "id": "second_wind", "trait": "recovery", "level": 1, "amount": "1d10", "flat": 1,
           "uses": 2 },
         { "id": "action_surge", "trait": "action_grant", "level": 2, "count": 1, "uses": 1,
-          "note": "one extra action per rest, not per round: the hero already has two" },
+          "note": "one more action, once per rest - a burst turn" },
+        { "id": "fighter_extra_attack", "trait": "action_grant", "level": 5, "count": 1,
+          "note": "SRD Extra Attack, ported literally: a third action every round. SRD's later Two and Three Extra Attacks collapse into this single +1 in v1" },
         { "id": "improved_critical", "trait": "rider", "level": 3, "amount": "1d8",
           "when": "on_critical" },
         { "id": "indomitable", "trait": "training", "level": 9, "saves": ["wis", "cha"],
           "flat": 1 },
         { "id": "superior_critical", "trait": "rider", "level": 15, "amount": "2d8",
-          "when": "on_critical" }
+          "when": "on_critical" },
+        { "id": "fighter_weapon_mastery", "trait": "narrate", "level": 1, "note": "weapon mastery properties (cleave, graze, nick, push, sap, slow, topple, vex) are not in v1's weapon data yet" },
+        { "id": "tactical_mind", "trait": "narrate", "level": 2, "note": "spend a Second Wind to add 1d10 to a failed check; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "remarkable_athlete", "trait": "training", "level": 3, "skills": ["athletics"], "note": "Champion: advantage on initiative and Athletics; v1 trains Athletics" },
+        { "id": "tactical_shift", "trait": "narrate", "level": 5, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "additional_fighting_style", "trait": "narrate", "level": 7, "note": "Champion: a second Fighting Style; v1's Fighting Style is one flattened rider" },
+        { "id": "tactical_master", "trait": "narrate", "level": 9, "note": "weapon mastery properties (cleave, graze, nick, push, sap, slow, topple, vex) are not in v1's weapon data yet" },
+        { "id": "heroic_warrior", "trait": "narrate", "level": 10, "note": "Champion: Heroic Inspiration at the start of each turn; v1 has no inspiration economy yet" },
+        { "id": "two_extra_attacks", "trait": "narrate", "level": 11, "note": "SRD's multiattack ladder collapses into the single +1 action of Extra Attack in v1 (v1_class_roster.md)" },
+        { "id": "studied_attacks", "trait": "narrate", "level": 13, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "action_surge_second", "trait": "action_grant", "level": 17, "count": 1, "uses": 1, "note": "Action Surge twice per rest (the second use)" },
+        { "id": "survivor", "trait": "narrate", "level": 18, "note": "Champion: advantage on death saves, and hit points back each turn while Bloodied; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "three_extra_attacks", "trait": "narrate", "level": 20, "note": "SRD's multiattack ladder collapses into the single +1 action of Extra Attack in v1 (v1_class_roster.md)" }
       ]
     },
 
@@ -74,6 +104,7 @@
       "armor": ["light"],
       "priority": ["dex", "int"],
       "subclass": "thief",
+      "improvement_levels": [4, 8, 10, 12, 16, 19],
       "companion": "gossiping_raven",
       "starting_gear": ["rapier", "shortbow", "leather_armor", "thieves_tools", "dagger"],
       "features": [
@@ -81,16 +112,29 @@
           "per_level": "1d6", "per_levels": 2, "when": "with_advantage",
           "note": "the setup condition is expressed as advantage on the attack, which the fight layer already computes" },
         { "id": "expertise", "trait": "expertise", "level": 1, "count": 2 },
-        { "id": "cunning_action", "trait": "action_grant", "level": 2, "count": 1,
-          "grants": "bonus_action",
-          "note": "compression inside the two-action economy: a second bonus action that does an action's work. never a third action - that would be Extra Attack by another name (v1_class_roster.md)" },
+        { "id": "cunning_action", "trait": "nimble", "level": 2,
+          "manoeuvres": ["dash", "disengage", "hide"],
+          "note": "SRD Cunning Action: Dash, Disengage or Hide on your bonus action. not an extra action and not an extra bonus action (v1_class_roster.md)" },
         { "id": "uncanny_dodge", "trait": "stance", "level": 5, "flat": 2,
           "touches": "armor_class", "duration": "encounter" },
         { "id": "evasion", "trait": "training", "level": 7, "saves": ["dex"], "flat": 2 },
         { "id": "greater_expertise", "trait": "expertise", "level": 6, "count": 2 },
-        { "id": "reliable_talent", "trait": "training", "level": 11, "skills": ["stealth"],
+        { "id": "reliable_talent", "trait": "training", "level": 7, "skills": ["stealth"],
           "flat": 2 },
-        { "id": "stroke_of_luck", "trait": "training", "level": 20, "saves": ["dex"], "flat": 2 }
+        { "id": "stroke_of_luck", "trait": "training", "level": 20, "saves": ["dex"], "flat": 2 },
+        { "id": "rogue_weapon_mastery", "trait": "narrate", "level": 1, "note": "weapon mastery properties (cleave, graze, nick, push, sap, slow, topple, vex) are not in v1's weapon data yet" },
+        { "id": "thieves_cant", "trait": "narrate", "level": 1, "note": "a campaign can write lines only a rogue reads" },
+        { "id": "fast_hands", "trait": "narrate", "level": 3, "note": "Thief: Sleight of Hand, thieves' tools or an item on the bonus action; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "second_story_work", "trait": "narrate", "level": 3, "note": "Thief: climbing costs no extra movement; authored climbs can ask for it" },
+        { "id": "steady_aim", "trait": "narrate", "level": 3, "note": "advantage on your next attack if you have not moved; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "cunning_strike", "trait": "narrate", "level": 5, "note": "trade Sneak Attack dice for an effect (poison, trip, withdraw); not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "supreme_sneak", "trait": "narrate", "level": 9, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "improved_cunning_strike", "trait": "narrate", "level": 11, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "use_magic_device", "trait": "narrate", "level": 13, "note": "Thief: any magic item, more charges; v1's items already skip attunement" },
+        { "id": "devious_strikes", "trait": "narrate", "level": 14, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "slippery_mind", "trait": "training", "level": 15, "saves": ["wis", "cha"] },
+        { "id": "thiefs_reflexes", "trait": "narrate", "level": 17, "note": "Thief: two turns in the first round; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "elusive", "trait": "narrate", "level": 18, "note": "no attack roll has advantage against you while you are not Incapacitated; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" }
       ]
     },
 
@@ -111,12 +155,20 @@
         { "id": "pact_resilience", "trait": "resistance", "level": 3, "damage_type": "fire",
           "defense": "resistant",
           "note": "the Warlock's pact identity, folded into the merged Mage (v1_class_roster.md)" },
-        { "id": "potent_cantrip", "trait": "rider", "level": 6, "amount": "1d6",
+        { "id": "potent_cantrip", "trait": "rider", "level": 3, "amount": "1d6",
           "damage_type": "force", "when": "always" },
         { "id": "empowered_evocation", "trait": "rider", "level": 10, "amount": "1d8",
           "damage_type": "force", "when": "always" },
         { "id": "overchannel", "trait": "stance", "level": 14, "flat": 2, "touches": "damage",
-          "uses": 1, "duration": "encounter" }
+          "uses": 1, "duration": "encounter" },
+        { "id": "arcane_recovery", "trait": "narrate", "level": 1, "note": "a few slots back on a short rest; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "ritual_adept", "trait": "narrate", "level": 1, "note": "rituals are tagged narrative actions where a campaign opts in (v1_class_roster.md)" },
+        { "id": "scholar", "trait": "expertise", "level": 2, "count": 1 },
+        { "id": "evocation_savant", "trait": "narrate", "level": 3, "note": "Evoker: evocation spells come cheaper to learn; v1 has no spellbook to copy into" },
+        { "id": "memorize_spell", "trait": "narrate", "level": 5, "note": "swap a prepared spell on a short rest; v1's known model has no preparation" },
+        { "id": "sculpt_spells", "trait": "narrate", "level": 6, "note": "Evoker: allies spared from your evocations; a solo hero has none on the board" },
+        { "id": "spell_mastery", "trait": "narrate", "level": 18, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "signature_spells", "trait": "narrate", "level": 20, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" }
       ]
     },
 
@@ -135,7 +187,7 @@
       "features": [
         { "id": "divine_spellcasting", "trait": "spellcasting", "level": 1, "ability": "wis",
           "progression": "full" },
-        { "id": "disciple_of_life", "trait": "recovery", "level": 1, "amount": "1d4", "flat": 2,
+        { "id": "disciple_of_life", "trait": "recovery", "level": 3, "amount": "1d4", "flat": 2,
           "uses": 2 },
         { "id": "channel_divinity", "trait": "stance", "level": 2, "flat": 2,
           "touches": "attacks|saves", "uses": 2, "duration": "encounter" },
@@ -143,10 +195,18 @@
           "when": "always" },
         { "id": "blessed_healer", "trait": "recovery", "level": 6, "amount": "2d4", "flat": 2,
           "uses": 2 },
-        { "id": "divine_strike", "trait": "rider", "level": 8, "amount": "1d8",
+        { "id": "divine_strike", "trait": "rider", "level": 7, "amount": "1d8",
           "damage_type": "radiant", "when": "always" },
         { "id": "supreme_healing", "trait": "recovery", "level": 17, "amount": "4d4", "flat": 4,
-          "uses": 2 }
+          "uses": 2 },
+        { "id": "divine_order", "trait": "narrate", "level": 1, "note": "Protector (heavy armor, martial weapons) or Thaumaturge (a cantrip, Religion); not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "divine_spark", "trait": "narrate", "level": 2, "note": "Channel Divinity: heal or deal radiant/necrotic damage; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "life_domain_spells", "trait": "narrate", "level": 3, "note": "Life Domain: bless, cure wounds and the rest always known" },
+        { "id": "preserve_life", "trait": "recovery", "level": 3, "flat": 5, "uses": 1, "note": "Life Domain Channel Divinity: five times your level in hit points, spent a use at a time in v1" },
+        { "id": "sear_undead", "trait": "narrate", "level": 5, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "divine_intervention", "trait": "narrate", "level": 10, "note": "an authored miracle menu or campaign hook, not a freeform request (v1_class_roster.md)" },
+        { "id": "improved_blessed_strikes", "trait": "rider", "level": 14, "amount": "1d8", "damage_type": "radiant", "when": "always", "note": "Blessed Strikes' damage becomes 2d8" },
+        { "id": "greater_divine_intervention", "trait": "narrate", "level": 20, "note": "an authored miracle, as Divine Intervention" }
       ]
     },
 
@@ -168,9 +228,12 @@
           "note": "a pool of hit points equal to five per level; v1 spends it a use at a time" },
         { "id": "divine_smite", "trait": "rider", "level": 2, "amount": "2d8",
           "per_level": "1d8", "per_levels": 5, "damage_type": "radiant",
-          "when": "when_spent" },
+          "when": "when_spent",
+          "note": "SRD 5.2.1 makes this Paladin's Smite: the Divine Smite SPELL always prepared, one free cast per long rest. v1 still plays the 2014 rider - kept until Kathleen decides (RUN_LOG question)" },
         { "id": "oath_spellcasting", "trait": "spellcasting", "level": 2, "ability": "cha",
           "progression": "half" },
+        { "id": "paladin_extra_attack", "trait": "action_grant", "level": 5, "count": 1,
+          "note": "SRD Extra Attack, ported literally: a third action every round" },
         { "id": "sacred_weapon", "trait": "stance", "level": 3, "flat": 2, "touches": "attacks",
           "uses": 2, "duration": "encounter" },
         { "id": "aura_of_protection", "trait": "stance", "level": 6, "flat": 3,
@@ -178,7 +241,17 @@
           "note": "self-centred, not a party buff: a solo game has nobody standing in the aura (v1_class_roster.md)" },
         { "id": "aura_of_courage", "trait": "training", "level": 10, "saves": ["cha"], "flat": 2 },
         { "id": "improved_divine_smite", "trait": "rider", "level": 11, "amount": "1d8",
-          "damage_type": "radiant", "when": "always" }
+          "damage_type": "radiant", "when": "always" },
+        { "id": "paladin_weapon_mastery", "trait": "narrate", "level": 1, "note": "weapon mastery properties (cleave, graze, nick, push, sap, slow, topple, vex) are not in v1's weapon data yet" },
+        { "id": "paladin_fighting_style", "trait": "rider", "level": 2, "amount": "1", "when": "always", "note": "a Fighting Style, flattened to reliability as the Fighter's is" },
+        { "id": "paladin_channel_divinity", "trait": "narrate", "level": 3, "note": "Divine Sense, and the oath's Sacred Weapon (its own feature)" },
+        { "id": "faithful_steed", "trait": "narrate", "level": 5, "note": "authored travel access, not a controlled actor (v1_class_roster.md)" },
+        { "id": "aura_of_devotion", "trait": "narrate", "level": 7, "note": "Devotion: immune to Charmed; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "abjure_foes", "trait": "narrate", "level": 9, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "restoring_touch", "trait": "narrate", "level": 14, "note": "Lay on Hands also ends conditions; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "smite_of_protection", "trait": "narrate", "level": 15, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "aura_expansion", "trait": "narrate", "level": 18, "note": "a solo hero stands alone in the aura; the size changes nothing on the board" },
+        { "id": "holy_nimbus", "trait": "narrate", "level": 20, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" }
       ]
     },
 
@@ -200,13 +273,24 @@
           "progression": "full" },
         { "id": "wild_shape", "trait": "shape", "level": 2, "count": 4, "uses": 2,
           "note": "three to five curated form cards, not a beast-catalogue converter. the declared product constraint of v1_class_roster.md" },
-        { "id": "natural_recovery", "trait": "recovery", "level": 2, "amount": "1d8", "flat": 1,
+        { "id": "natural_recovery", "trait": "recovery", "level": 6, "amount": "1d8", "flat": 1,
           "uses": 1 },
         { "id": "lands_stride", "trait": "training", "level": 6, "skills": ["survival"],
-          "flat": 2 },
+          "flat": 2,
+          "note": "Land's Stride is not in SRD 5.2.1 - kept until Kathleen decides (RUN_LOG question)" },
         { "id": "natures_ward", "trait": "resistance", "level": 10, "damage_type": "poison",
           "defense": "immune" },
-        { "id": "archdruid", "trait": "training", "level": 18, "skills": ["nature"], "flat": 2 }
+        { "id": "archdruid", "trait": "training", "level": 20, "skills": ["nature"], "flat": 2 },
+        { "id": "druidic", "trait": "narrate", "level": 1, "note": "a campaign can write messages only a druid reads" },
+        { "id": "primal_order", "trait": "narrate", "level": 1, "note": "Magician (a cantrip, Arcana/Nature) or Warden (medium armor, martial weapons); not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "wild_companion", "trait": "narrate", "level": 2, "note": "stays narrative or a one-action effect, never a second combatant (v1_class_roster.md)" },
+        { "id": "circle_of_the_land_spells", "trait": "narrate", "level": 3, "note": "Circle of the Land: the land's spells always known" },
+        { "id": "lands_aid", "trait": "narrate", "level": 3, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "wild_resurgence", "trait": "narrate", "level": 5, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "elemental_fury", "trait": "rider", "level": 7, "amount": "1d8", "damage_type": "cold", "when": "always", "note": "Primal Strike: 1d8 on weapon hits (cold, fire, lightning or thunder; cold in v1)" },
+        { "id": "natures_sanctuary", "trait": "narrate", "level": 14, "note": "not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" },
+        { "id": "improved_elemental_fury", "trait": "rider", "level": 15, "amount": "1d8", "damage_type": "cold", "when": "always", "note": "Primal Strike becomes 2d8" },
+        { "id": "beast_spells", "trait": "narrate", "level": 18, "note": "cast while in a form card; not played in v1 fights yet - on the sheet and the level-up screen, for a campaign to use" }
       ]
     }
   ]

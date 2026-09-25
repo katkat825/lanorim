@@ -21,10 +21,12 @@ namespace Content.Dialogue
 
         readonly List<Said> _heard = new List<Said>();
 
-        // exactly one of these is set when the machine stops; both null means it is over
+        // exactly one of these is set when the machine stops; all null means it is over
         Said _saying;
 
         List<Choice> _choosing;
+
+        Request _pending;
 
         bool _stopped;
 
@@ -45,6 +47,7 @@ namespace Content.Dialogue
             _dialogue.OptionsHandler = OnOptions;
             _dialogue.CommandHandler = OnCommand;
             _dialogue.NodeCompleteHandler = _ => { };
+            _dialogue.NodeStartHandler = node => NodeStarted?.Invoke(node);
             _dialogue.DialogueCompleteHandler = () => _stopped = true;
 
             // Yarn writes to the console otherwise, and a campaign is not allowed to print
@@ -57,6 +60,10 @@ namespace Content.Dialogue
 
         public string Node => _dialogue.CurrentNode;
 
+        // a node begins - before anything in it has run, so a save can note the variables as the
+        // node found them
+        public Action<string> NodeStarted { get; set; }
+
         // the line waiting to be read, or null while a choice is open or the talk is over
         public Said Saying => _saying;
 
@@ -64,6 +71,12 @@ namespace Content.Dialogue
             (IReadOnlyList<Choice>)_choosing ?? Array.Empty<Choice>();
 
         public bool IsChoosing => _choosing != null;
+
+        // THE STORY HAS STOPPED TO ASK THE TABLE FOR SOMETHING - a check, a fight, a hidden roll.
+        // nothing goes on until Answer is called with what happened
+        public Request Pending => _pending;
+
+        public bool IsWaiting => _pending != null;
 
         public bool IsOver => _stopped;
 
@@ -82,6 +95,7 @@ namespace Content.Dialogue
             _stopped = false;
             _saying = null;
             _choosing = null;
+            _pending = null;
 
             _dialogue.SetNode(node);
 
@@ -92,6 +106,10 @@ namespace Content.Dialogue
         public bool Advance()
         {
             if (_stopped) return false;
+
+            // an unanswered ask holds the story where it is: stepping past a check would take the
+            // branch for a roll nobody made
+            if (_pending != null) return true;
 
             _saying = null;
             _choosing = null;
@@ -127,6 +145,47 @@ namespace Content.Dialogue
         // whether the last choice was answered; a caller that advances without choosing gets nowhere
         public bool Answered => _answered;
 
+        // what the table made of the ask. the answer goes into the variables the ask's kind
+        // writes (RequestVariables) and the story carries on from the line after the command
+        public bool Answer(Answer answer)
+        {
+            if (_pending == null || answer == null) return false;
+
+            IVariableStorage store = _dialogue.VariableStorage;
+
+            switch (_pending.Kind)
+            {
+                case RequestKind.Check:
+                case RequestKind.Save:
+                    store.SetValue(RequestVariables.Passed, answer.Passed);
+                    store.SetValue(RequestVariables.Total, (float)answer.Total);
+                    store.SetValue(RequestVariables.Natural, (float)answer.Natural);
+                    store.SetValue(RequestVariables.Consequence, answer.DrawsConsequence);
+                    break;
+
+                case RequestKind.Roll:
+                    store.SetValue(RequestVariables.Roll, (float)answer.Total);
+                    break;
+
+                case RequestKind.Encounter:
+                    store.SetValue(RequestVariables.Encounter, answer.Entry ?? "");
+                    store.SetValue(RequestVariables.EncounterFight, answer.StartsAFight);
+                    break;
+
+                case RequestKind.Fight:
+                    store.SetValue(RequestVariables.Fight, RequestVariables.Word(answer.Outcome));
+                    break;
+
+                case RequestKind.Loot:
+                    store.SetValue(RequestVariables.LootGold, (float)answer.Gold);
+                    break;
+            }
+
+            _pending = null;
+
+            return Advance();
+        }
+
 
         void OnLine(Line line)
         {
@@ -160,9 +219,20 @@ namespace Content.Dialogue
         // content is data, never code (CONVENTIONS section 2). A << >> the engine does not itself
         // define is recorded and stepped over - there is deliberately no hook by which a campaign
         // could make one mean something, because on a storefront that is a security boundary.
+        //
+        // THE ENGINE'S OWN VERBS ARE THE EXCEPTION (Asks.cs): <<check>>, <<fight>> and the rest stop
+        // the story and wait for the table. a verb written wrong is a complaint and is stepped
+        // over, the same as a command nobody defined - the branch after it reads the variable's
+        // default, which the author can see in a playthrough.
         void OnCommand(Command command)
         {
             Commands.Add(command.Text);
+
+            Request request = Request.Parse(command.Text, out string problem);
+
+            if (problem != null) Complained.Add(problem);
+
+            if (request != null) _pending = request;
         }
 
 
@@ -181,17 +251,26 @@ namespace Content.Dialogue
 
             public string Speaker => Line.Speaker;
 
+            // who says it with this companion at the table; a 'companion' line becomes theirs
+            public string SpeakerFor(string companion) => Line.SpeakerFor(companion);
+
             // Yarn's {0} interpolations, already rendered to strings by the runtime
             public IReadOnlyList<string> Substitutions { get; }
 
             // the one place a dialogue key becomes text, and it is the caller's localizer that does it
-            public string Text(ILocalizer text)
+            public string Text(ILocalizer text) => Text(text, null);
+
+            // the same, knowing whose companion is listening: their own row of a 'companion' line
+            // where the campaign wrote one, the generic row where it did not (DialogueLine.AnyCompanion)
+            public string Text(ILocalizer text, string companion)
             {
                 if (text == null) throw new ArgumentNullException(nameof(text));
 
+                string key = Line.KeyFor(companion, text.Has);
+
                 return Substitutions.Count == 0
-                    ? text.Get(Key)
-                    : text.Format(Key, Substitutions.Cast<object>().ToArray());
+                    ? text.Get(key)
+                    : text.Format(key, Substitutions.Cast<object>().ToArray());
             }
 
             public override string ToString() => Key;

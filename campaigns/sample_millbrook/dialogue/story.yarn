@@ -1,0 +1,110 @@
+title: old_mill
+speaker: dm
+---
+Millbrook is a village of one street, one well, and one mill that has stopped turning. #line:arrive
+The miller is waiting on the bridge, wringing a floury cap in both hands. #line:miller_waits
+Thank the stars. Something is in my cellar, and the grain is going missing by the sack. #line:oda_asks #speaker:oda
+Something with teeth, by the look of those sacks. #line:comp_teeth #speaker:companion
+-> What's in the cellar? #line:opt_whats_there
+    Rats. Big ones. And tracks out the back that no rat made. #line:oda_rats #speaker:oda
+-> I'll need supplies first. #line:opt_supplies
+    Hesk's store is across the street. Tell her I sent you. #line:oda_hesk #speaker:oda
+    <<shop millbrook_store>>
+    You step back out into the street, pack heavier than before. #line:after_shop
+-> Show me the door. #line:opt_go
+Oda leads you round to a low door under the millrace. #line:to_the_door
+<<jump cellar>>
+===
+title: cellar
+speaker: dm
+---
+The cellar door is swollen shut with damp. #line:door_stuck
+<<check athletics 12>>
+<<if $passed>>
+    It gives with a crack, and the smell of wet grain rolls out. #line:door_gives
+<<else>>
+    It will not budge. You find the coal chute instead and slither down into the dark. #line:coal_chute
+    <<save dex 10>>
+    <<if not $passed>>
+        You land badly among the sacks. Nothing broken, but everything in there heard you. #line:land_badly
+    <<endif>>
+<<endif>>
+Eyes in the lamplight. Two pairs, low down. #line:rat_eyes
+<<fight cellar_rats>>
+<<if $fight == "fled">>
+    You scramble back up into daylight. Oda looks at you, then at the door, and says nothing. #line:fled_rats
+    <<jump road>>
+<<endif>>
+The last rat goes still. Behind the grain bins, a nest of chewed sacking. #line:rats_done
+Something was feeding them. Those are goblin boots. #line:comp_boots #speaker:companion
+<<loot rat_nest>>
+<<if $loot_gold > 0>>
+    Somebody lost a purse down here, and the rats found it first. #line:rat_purse
+<<endif>>
+<<level 2>>
+<<rest short>>
+You catch your breath on the cellar steps and follow the tracks out onto the road. #line:follow_tracks
+<<jump road>>
+===
+title: road
+speaker: dm
+---
+The road north runs between hedges gone wild. #line:road_north
+<<encounter mill_road>>
+<<if $encounter_fight>>
+    Something moves in the clearing ahead. #line:ambush
+    <<fight {$encounter}>>
+    <<if $fight == "won">>
+        The road is quiet again. #line:road_quiet
+    <<endif>>
+<<elseif $encounter == "crows">>
+    A crowd of crows lifts off a dead ewe, complaining. Nothing else stirs. #line:crows
+<<else>>
+    The miles pass without trouble. #line:no_trouble
+<<endif>>
+<<roll 1d20>>
+<<if $roll >= 15>>
+    The sun comes out as you crest the hill, and the old mill yard is below you. #line:sun_out
+<<else>>
+    Rain sets in as you crest the hill, and the old mill yard is below you. #line:rain_in
+<<endif>>
+<<level 3>>
+<<rest short>>
+You rest in the lee of a wall before going down. #line:rest_before_camp
+<<jump camp>>
+===
+title: camp
+speaker: dm
+---
+Goblins have made a camp of the ruined mill: a cauldron, a stolen cart, and a big one in a stolen coat. #line:the_camp
+Just the big one. The rest must be out on the road. #line:comp_count #speaker:companion
+-> Creep closer along the ditch. #line:opt_creep
+    <<check stealth 13>>
+    <<if $passed>>
+        You are among the carts before anyone looks up. #line:creep_ok
+    <<else>>
+        A pot clatters under your boot. Every head turns. #line:creep_bad
+    <<endif>>
+-> Walk straight in. #line:opt_walk
+    The big one grins and draws a scimitar. #line:walk_in
+<<fight goblin_camp>>
+<<if $fight == "fled">>
+    You run, and the goblins' laughter follows you down the road. #line:fled_camp
+    <<jump the_end>>
+<<endif>>
+The goblin boss drops the coat, and Oda's grain money spills out of the lining. #line:boss_down
+<<loot goblin_chest>>
+<<level 4>>
+<<jump the_end>>
+===
+title: the_end
+speaker: dm
+---
+You walk back into Millbrook as the mill wheel creaks and turns again. #line:wheel_turns
+You'll eat with us tonight. And take this - it's not much. #line:oda_thanks #speaker:oda
+<<gold 25>>
+<<give potion_of_healing 1>>
+<<rest long>>
+Good bread. Good beds. I could get used to this. #line:comp_beds #speaker:companion
+This is the end of the test campaign. #line:test_over
+===

@@ -5,7 +5,7 @@
 Harvested from the original art direction (2026-08-02) and **updated for lanorim's confirmed direction.**
 What changed since the original: the table is now **table-only** — no 3D room, no DM hands; the GM screen is
 a **bent quad with a static parallax image** on the player side. Dice are **standard polyhedral (d20 + mods)**,
-not the old three-die "best-two" pool. The asset base is **Quaternius** (KayKit retired). **The visual
+not the old three-die "best-two" pool. The asset base is **Quaternius + KayKit** (KayKit brought back as a second base for kitbash — `decisions_checklist.md` §4). **The visual
 signature — one palette + the painted-miniature shader — is unchanged and carries over intact; it is the
 single most valuable thing to harvest from the old build.**
 

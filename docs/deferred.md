@@ -1,4 +1,6 @@
 # deferred to future features
+- feats (SRD "ASI or feat" levels give the ability score improvement only in v1; the player chooses where the +2 goes)
+
 - unprompted/freeform skill checks
 
 - possible encumberance (only if player-base really wants it. personally, I hate dealing with carrying-capacity issues)

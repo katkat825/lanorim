@@ -35,6 +35,13 @@ namespace Content.Campaigns
 
         public string Id { get; }
 
+        // WHICH GM SCREEN STANDS ON THE TABLE: one of the first-party screens (game/models/gm_screen).
+        // blank unless the campaign names another
+        public static readonly IReadOnlyList<string> GmScreens =
+            new[] { "blank", "cave", "dead-forest", "plains", "snowy-mountains" };
+
+        public string GmScreen { get; init; } = "blank";
+
         public PackKind Kind { get; }
 
         // campaign and mixed have chapters to play; a mini or class pack does not

@@ -68,14 +68,95 @@ namespace Content.Tests
         }
 
         [Fact]
+        public void TheShouldListIsThereWithTheTwoTheSrdDoesNotHaveUnderNewNames()
+        {
+            // the 69 SHOULD spells of v1_spell_list.md. Dissonant Whispers and Dragon's Breath are
+            // not in SRD 5.2.1; decisions_checklist.md section 1 (2026-09-24) keeps them as working
+            // spells under original names (Murmur of Dread, Wyrmbreath Boon) rather than dropping
+            // them
+            string[] should =
+            {
+                "produce_flame", "ray_of_frost", "shillelagh", "shocking_grasp",
+                "spare_the_dying", "thaumaturgy", "true_strike",
+
+                "chromatic_orb", "command", "divine_smite", "faerie_fire", "feather_fall",
+                "fog_cloud", "goodberry", "healing_word", "hellish_rebuke", "hideous_laughter",
+                "identify", "searing_smite", "silent_image", "speak_with_animals",
+
+                "aid", "blindness_deafness", "blur", "darkness", "darkvision", "enhance_ability",
+                "enlarge_reduce", "flaming_sphere", "heat_metal", "moonbeam",
+                "pass_without_trace", "spike_growth", "suggestion",
+
+                "call_lightning", "fear", "gaseous_form", "major_image", "remove_curse",
+                "sleet_storm", "speak_with_dead", "stinking_cloud",
+
+                "black_tentacles", "blight", "death_ward", "ice_storm", "polymorph", "stoneskin",
+                "vitriolic_sphere",
+
+                "cloudkill", "flame_strike", "raise_dead", "telekinesis",
+
+                "blade_barrier", "flesh_to_stone", "globe_of_invulnerability", "true_seeing",
+
+                "forcecage", "plane_shift", "reverse_gravity",
+
+                "antimagic_field", "earthquake", "maze", "power_word_stun",
+
+                "foresight", "shapechange", "true_polymorph",
+            };
+
+            Assert.Equal(67, should.Length);
+
+            string[] missing = should.Where(id => !Book.Has(id)).ToArray();
+
+            Assert.True(missing.Length == 0, "not in the spell files: " + string.Join(", ", missing));
+
+            Assert.Equal(62 + 69, Book.Count);
+            Assert.True(Book.Find("dissonant_whispers").NotInSrd);
+            Assert.True(Book.Find("dragons_breath").NotInSrd);
+        }
+
+        [Fact]
         public void OnlyTheFlaggedSpellsAreApproximations()
         {
-            // v1_spell_list.md budgeted about eight approximations across the whole 131. the 62
-            // MUST spells alone need 17, because v1 keeps one area shape and one reaction: every
-            // line and cone becomes a burst and every interrupt becomes a cast. that is a real
-            // divergence from the doc and this number is the tripwire for it - if it moves,
-            // somebody has changed how faithful v1 is and the doc needs the same edit.
-            Assert.Equal(17, Book.Approximations.Count());
+            // THE TRIPWIRE ON HOW FAITHFUL V1 IS. it used to say 17, and 17 was an undercount: it
+            // flagged the spells that were wrong because v1 had one shape and one reaction, and
+            // missed a dozen that were wrong for other reasons (a missing modifier, a missing
+            // choice, a condition v1 does not have). the 2026-09-23 audit checked every spell
+            // against SRD 5.2.1. lines, cones, cubes, a real reaction window, the new sway fields
+            // and zones that act made Lightning Bolt, Cone of Cold, Shield, Counterspell, Guiding
+            // Bolt, Hex, Invisibility, Spirit Guardians, Web and Entangle faithful. what is left is
+            // below, and every one of them ships under a new name
+            // (NoApproximationIsShownUnderAnSrdName). if this list moves, somebody changed how
+            // faithful v1 is and the build notes need the same edit.
+            //
+            // 2026-09-24 (the unattended run): new conditions, damage-triggered endings, escalating
+            // saves, hit-point and creature-type gates, modes, delayed damage and the rest made
+            // 17 more faithful - Hold Person, Hold Monster, Sunbeam, Sunburst, Charm Person, Sleep,
+            // Hypnotic Pattern, Hideous Laughter, Blindness/Deafness, Flesh to Stone, Power Word
+            // Stun, Aid, Death Ward, Raise Dead, True Seeing, Black Tentacles, Vitriolic Sphere;
+            // then obscuring zones, decoys, turn limits, weapon rewrites, the after-your-hit bonus
+            // action and the rest made 15 more - Mirror Image, Haste, Greater Restoration,
+            // Shillelagh, Spare the Dying, Divine Smite, Searing Smite, Fog Cloud, Darkness,
+            // Enlarge/Reduce, Remove Curse, Sleet Storm, Stinking Cloud, Cloudkill, Globe of
+            // Invulnerability
+            string[] must =
+            {
+                "find_familiar", "fly", "slow", "banishment", "wall_of_force", "teleport",
+                "dominate_monster", "wish",
+            };
+
+            string[] should =
+            {
+                "feather_fall", "heat_metal", "suggestion", "gaseous_form", "polymorph",
+                "plane_shift", "reverse_gravity", "antimagic_field", "earthquake", "maze",
+                "shapechange", "true_polymorph",
+            };
+
+            Assert.Equal(8, must.Length);
+            Assert.Equal(12, should.Length);
+
+            Assert.Equal(must.Concat(should).OrderBy(id => id),
+                         Book.Approximations.Select(s => s.Id).OrderBy(id => id));
         }
 
         // WHAT A SPELL COSTS IS NO LONGER A PROPERTY OF THE SPELL. It used to be its level, in
@@ -110,7 +191,8 @@ namespace Content.Tests
         {
             foreach (Spell spell in Book.All)
                 foreach (SpellEffect effect in spell.Effects.Where(e => e.Kind == Primitive.Damage))
-                    Assert.True(effect.DamageType != DamageType.None, spell.Id);
+                    Assert.True(effect.DamageType != DamageType.None || effect.ChosenDamageType,
+                                spell.Id);
         }
 
         [Fact]
@@ -169,13 +251,25 @@ namespace Content.Tests
         }
 
         [Fact]
-        public void RefusesAConditionTheEngineOwns()
+        public void UnconsciousMayBeNamedNowThatSleepPutsCreaturesThere()
+        {
+            // it used to be refused as the engine's own. SRD 5.2.1 Sleep puts a creature
+            // Unconscious without it dropping to 0, so content may name it (2026-09-24)
+            IReadOnlyList<string> problems = Problems(@"
+            {""spells"":[{""id"":""fine"",""level"":1,""effects"":[
+              {""primitive"":""afflict"",""condition"":""unconscious""}]}]}");
+
+            Assert.DoesNotContain(problems, p => p.Contains("condition"));
+        }
+
+        [Fact]
+        public void RefusesAConditionThatIsNotOne()
         {
             IReadOnlyList<string> problems = Problems(@"
             {""spells"":[{""id"":""bad"",""level"":1,""effects"":[
-              {""primitive"":""afflict"",""condition"":""unconscious""}]}]}");
+              {""primitive"":""afflict"",""condition"":""exhausted""}]}]}");
 
-            Assert.Contains(problems, p => p.Contains("engine's"));
+            Assert.Contains(problems, p => p.Contains("not a v1 condition"));
         }
 
         [Fact]
@@ -411,7 +505,7 @@ namespace Content.Tests
             Assert.True(ally.Boons.Has("bless"));
             Assert.Equal("bless", actor.Concentrating);
 
-            cast.Cast(mage, Book.Find("guidance"), Aim.At(ally));
+            cast.Cast(mage, Book.Find("guidance"), Aim.At(ally).Choosing(Skill.Perception));
 
             Assert.False(ally.Boons.Has("bless"));
             Assert.True(ally.Boons.Has("guidance"));
@@ -426,13 +520,15 @@ namespace Content.Tests
 
             Actor victim = Dummy("victim");
 
+            victim.Tag("humanoid");
+
             cast.Cast(mage, Book.Find("hold_person"), Aim.At(victim));
 
-            Assert.True(victim.Has(Condition.Stunned));
+            Assert.True(victim.Has(Condition.Paralyzed));
 
             cast.Release(actor);
 
-            Assert.False(victim.Has(Condition.Stunned));
+            Assert.False(victim.Has(Condition.Paralyzed));
             Assert.False(actor.IsConcentrating);
         }
 
@@ -443,6 +539,7 @@ namespace Content.Tests
             var cast = new Incantation(new StandardResolver(new ScriptedRng(1)));
 
             Actor victim = Dummy("victim");
+            victim.Tag("humanoid");
 
             cast.Cast(mage, Book.Find("hold_person"), Aim.At(victim));
 

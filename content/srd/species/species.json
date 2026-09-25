@@ -23,7 +23,7 @@
           "note": "no light model on the map in v1; authored dark places can ask for it" },
         { "id": "fey_ancestry", "trait": "training", "level": 1, "saves": ["cha"], "flat": 2 },
         { "id": "keen_senses", "trait": "training", "level": 1, "skills": ["perception"] },
-        { "id": "trance", "trait": "narrate", "level": 1,
+        { "id": "trance", "trait": "narrate", "level": 1, "tags": ["sleepless"],
           "note": "camp flavour and a small rest benefit, not a time simulation" }
       ]
     },

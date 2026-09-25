@@ -10,16 +10,32 @@ namespace Core.Characters
     {
         public Health(int maximum, Die hitDie = Die.None, int hitDice = 0)
         {
-            Maximum = Math.Max(1, maximum);
-            Current = Maximum;
+            _maximum = Math.Max(1, maximum);
+            _current = _maximum;
             HitDie = hitDie;
             HitDiceMax = Math.Max(0, hitDice);
             HitDice = HitDiceMax;
         }
 
-        public int Maximum { get; private set; }
+        int _maximum;
+        int _current;
 
-        public int Current { get; private set; }
+        // what raises the maximum for a while without changing the base - Aid. the owner hands
+        // this in (Actor reads it off its boons), so the maximum is asked, never stored twice
+        Func<int> _raise;
+
+        public void RaisedBy(Func<int> raise) => _raise = raise;
+
+        public int Raised => Math.Max(0, _raise?.Invoke() ?? 0);
+
+        public int Maximum => _maximum + Raised;
+
+        // clamped as it is read, so a maximum that falls (Aid ending) takes current down with it
+        public int Current
+        {
+            get => Math.Min(_current, Maximum);
+            private set => _current = value;
+        }
 
         // SRD: temporary HP is not healing, doesn't stack (the bigger pool wins) and is lost first
         public int Temporary { get; private set; }
@@ -38,9 +54,9 @@ namespace Core.Characters
 
         public void SetMaximum(int maximum)
         {
-            Maximum = Math.Max(1, maximum);
+            _maximum = Math.Max(1, maximum);
 
-            if (Current > Maximum) Current = Maximum;
+            if (_current > Maximum) _current = Maximum;
         }
 
         public void SetHitDiceMax(int dice)
@@ -50,10 +66,16 @@ namespace Core.Characters
             if (HitDice > HitDiceMax) HitDice = HitDiceMax;
         }
 
+        // a save putting back how many were left. clamped, because the maximum is the class's
+        // and a retuned class may hand out fewer than the save remembers
+        public void SetHitDice(int dice) => HitDice = Math.Clamp(dice, 0, HitDiceMax);
+
         // returns what was actually taken off hit points, which is what a "you took N" line reads
         public int Take(int damage)
         {
             if (damage <= 0) return 0;
+
+            Current = Current;
 
             int fromTemporary = Math.Min(Temporary, damage);
             Temporary -= fromTemporary;
@@ -69,6 +91,8 @@ namespace Core.Characters
 
         public int Heal(int amount)
         {
+            Current = Current;
+
             if (amount <= 0 || Current >= Maximum) return 0;
 
             int healed = Math.Min(amount, Maximum - Current);

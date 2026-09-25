@@ -7,6 +7,9 @@ using Core.Characters;
 using Core.Combat;
 using Core.Dice;
 using Core.Localization;
+using Core.Rules;
+using Core.Magic;
+using Content.Spells;
 
 namespace Content.Monsters
 {
@@ -83,6 +86,63 @@ namespace Content.Monsters
 
         public Die HitDie { get; }
 
+        // SRD size category; one square on the v1 board whatever it is
+        public Size Size { get; init; } = Size.Medium;
+
+        // conditions it cannot have: a skeleton's Poisoned, a zombie's
+        public IReadOnlyList<Condition> ConditionImmunities { get; init; } = Array.Empty<Condition>();
+
+        // SPECIAL ACTIONS: a breath, a web, a frightful roar - each one a spell made of the same
+        // primitives a hero's spells are, cast with the statblock's DC, and limited by a recharge
+        // or so many a day (decisions_checklist.md section 6: save-or-condition and recharge)
+        public IReadOnlyList<MonsterAction> Actions { get; init; } = Array.Empty<MonsterAction>();
+
+        // SPELLCASTING: the statblock's list, cast through the ordinary spell engine
+        public MonsterSpellcasting Spellcasting { get; init; }
+
+        public bool Casts => Actions.Count > 0 || Spellcasting != null;
+
+        // everything it can cast, ready to go: null for a monster that casts nothing. the SRD's
+        // own spells come off the book; a special action is its own spell
+        public Caster CasterFor(Actor actor, SpellBook book)
+        {
+            if (!Casts || actor == null) return null;
+
+            Ability ability = Spellcasting?.Ability ?? Ability.Charisma;
+
+            var caster = new Caster(actor, ability, new AtWill())
+            {
+                FixedDc = Spellcasting?.Dc,
+                FixedAttack = Spellcasting?.AttackBonus,
+            };
+
+            foreach (MonsterAction action in Actions)
+            {
+                caster.Learn(action.Spell);
+                caster.Limit(action.Spell.Id, new SpellUse(action.Recharge, action.PerDay));
+            }
+
+            if (Spellcasting != null && book != null)
+            {
+                foreach (string id in Spellcasting.AtWill)
+                    if (book.Find(id) is Spell spell) caster.Learn(spell);
+
+                foreach (KeyValuePair<string, int> daily in Spellcasting.PerDay)
+                    if (book.Find(daily.Key) is Spell spell)
+                    {
+                        caster.Learn(spell);
+                        caster.Limit(spell.Id, new SpellUse(0, daily.Value));
+                    }
+            }
+
+            return caster;
+        }
+
+        // a special action's DC is its own: the caster uses the spellcasting DC for spells, and
+        // an action carries its printed DC through this
+        public MonsterAction ActionFor(string spellId) =>
+            Actions.FirstOrDefault(a => a.Spell.Id == spellId);
+
         public string NameKey => KeyConventions.MonsterName(Id);
 
         public string DescriptionKey =>
@@ -116,10 +176,24 @@ namespace Content.Monsters
 
             foreach (Skill skill in Skills) actor.Train(skill);
 
+            // what kind of creature it is, for the spells that care (Hold Person, Divine Smite)
+            foreach (string tag in Tags) actor.Tag(tag);
+
+            actor.Size = Size;
+
+            foreach (Condition immune in ConditionImmunities) actor.MakeImmune(immune);
+
             return actor;
         }
 
         public ITactics Brain() => new BasicTactics(Attacks, Instinct);
+
+        // the full brain: attacks, and its special actions and spells when they are the better
+        // use of a turn (content/Combat/MonsterTactics)
+        public ITactics Brain(Caster caster, Incantation incantation) =>
+            incantation == null
+                ? Brain()
+                : new Combat.MonsterTactics(this, caster, incantation);
 
         // what it swings with when something runs out of its reach
         public Attack Opportunity =>
@@ -213,19 +287,103 @@ namespace Content.Monsters
 
                 Ability? ability = raw.Ability("ability", problems, id);
 
+                var riders = new List<Rider>();
+
+                if (raw.Has("on_hit"))
+                {
+                    JsonElement hit = raw.GetProperty("on_hit");
+                    Size? maxSize = null;
+
+                    if (!string.IsNullOrEmpty(hit.Text("max_size")))
+                    {
+                        if (Sizes.TryParse(hit.Text("max_size"), out Size read)) maxSize = read;
+                        else problems.Add($"{id}/{name}: '{hit.Text("max_size")}' is not a size");
+                    }
+
+                    var rider = new Rider(name + "_hit", hit.Dice("damage", problems, id),
+                                          hit.Damage("damage_type", problems, id),
+                                          hit.Condition("condition", problems, id))
+                    {
+                        Save = hit.Ability("save", problems, id),
+                        Dc = hit.Number("dc"),
+                        MaxSize = maxSize,
+                    };
+
+                    if (rider.Save.HasValue && rider.Dc <= 0)
+                        problems.Add($"{id}/{name}: an on-hit save with no 'dc'");
+
+                    if (rider.Damage.IsNothing && rider.Condition == Condition.None)
+                        problems.Add($"{id}/{name}: an 'on_hit' that adds nothing");
+
+                    riders.Add(rider);
+                }
+
                 attacks.Add(new Attack(name, damage, type,
                                        ability ?? Ability.Strength,
                                        true,
                                        raw.Number("reach", 1),
                                        raw.Number("range"),
                                        raw.Number("long_range"),
-                                       Hand.None,
+                                       // a weapon in hand can be dropped; a claw cannot
+                                       raw.Flag("held") ? Hand.Main : Hand.None,
                                        raw.Flag("finesse"),
                                        raw.Number("attack_bonus"),
-                                       raw.Number("damage_bonus")));
+                                       raw.Number("damage_bonus"))
+                            {
+                                OnHit = riders,
+                            });
             }
 
             if (attacks.Count == 0) problems.Add($"{id}: a monster with nothing to attack with");
+
+            // special actions: each an inline spell, with its limit and its DC
+            var actions = new List<MonsterAction>();
+
+            foreach (JsonElement raw in entry.Items("actions"))
+            {
+                if (!raw.Has("spell"))
+                {
+                    problems.Add($"{id}: an action is a 'spell' with a 'recharge' or a 'per_day'");
+                    continue;
+                }
+
+                var spellProblems = new List<string>();
+                Spell spell = SpellReader.ReadEntry(raw.GetProperty("spell"), spellProblems);
+
+                foreach (string p in spellProblems) problems.Add($"{id}: {p}");
+
+                if (spell == null) continue;
+
+                actions.Add(new MonsterAction(spell, raw.Number("recharge"), raw.Number("per_day"),
+                                              raw.Number("dc")));
+            }
+
+            MonsterSpellcasting casting = null;
+
+            if (entry.Has("spellcasting"))
+            {
+                JsonElement raw = entry.GetProperty("spellcasting");
+                Ability? castWith = raw.Ability("ability", problems, id);
+
+                var perDay = new Dictionary<string, int>();
+
+                if (raw.Has("per_day"))
+                    foreach (JsonProperty daily in raw.GetProperty("per_day").EnumerateObject())
+                        perDay[daily.Name] = daily.Value.TryGetInt32(out int n) ? n : 1;
+
+                casting = new MonsterSpellcasting(castWith ?? Ability.Charisma,
+                                                  raw.Number("dc", 10),
+                                                  raw.Number("attack_bonus", 2),
+                                                  raw.Strings("at_will"), perDay);
+            }
+
+            // an action's DC is the statblock's spellcasting DC unless it says its own
+            int actionDc = entry.Has("action_dc") ? entry.Number("action_dc") : casting?.Dc ?? 10;
+
+            if (actions.Count > 0 && casting == null)
+                casting = new MonsterSpellcasting(Ability.Charisma, actionDc, 2,
+                                                  Array.Empty<string>(),
+                                                  new Dictionary<string, int>());
 
             var defenses = new Dictionary<DamageType, Defense>();
 
@@ -274,12 +432,24 @@ namespace Content.Monsters
                     case "cautious": instinct |= Instinct.Cautious; break;
                     case "skirmisher": instinct |= Instinct.Skirmisher; break;
                     case "stubborn": instinct |= Instinct.Stubborn; break;
+                    case "craven": instinct |= Instinct.Craven; break;
                     default: problems.Add($"{id}: '{tag}' is not an instinct"); break;
                 }
             }
 
             if (!DieExtensions.TryParse(entry.Text("hit_die", "d8"), out Die hitDie))
                 problems.Add($"{id}: '{entry.Text("hit_die")}' is not a die");
+
+            if (!Sizes.TryParse(entry.Text("size", "medium"), out Size size))
+                problems.Add($"{id}: '{entry.Text("size")}' is not a size");
+
+            var immunities = new List<Condition>();
+
+            foreach (string word in entry.Strings("condition_immunities"))
+            {
+                if (Conditions.TryParse(word, out Condition read)) immunities.Add(read);
+                else problems.Add($"{id}: '{word}' in 'condition_immunities' is not a condition");
+            }
 
             int multiattack = entry.Number("multiattack", 1);
 
@@ -299,8 +469,68 @@ namespace Content.Monsters
                                defenses, saves, skills,
                                entry.Text("mini"),
                                entry.Strings("tags"),
-                               hitDie);
+                               hitDie)
+            {
+                Size = size,
+                ConditionImmunities = immunities,
+                Actions = actions,
+                Spellcasting = casting,
+            };
         }
+    }
+
+    // one special action on a statblock: what it does (a spell of primitives), and how often
+    public sealed class MonsterAction
+    {
+        public MonsterAction(Spell spell, int recharge = 0, int perDay = 0, int dc = 0)
+        {
+            Spell = spell ?? throw new ArgumentNullException(nameof(spell));
+            Recharge = Math.Clamp(recharge, 0, 6);
+            PerDay = Math.Max(0, perDay);
+            Dc = Math.Max(0, dc);
+        }
+
+        // its own printed DC; 0 is the statblock's spellcasting DC
+        public int Dc { get; }
+
+        public Spell Spell { get; }
+
+        // 5 is "Recharge 5-6"
+        public int Recharge { get; }
+
+        public int PerDay { get; }
+
+        public override string ToString() =>
+            Spell.Id + (Recharge > 0 ? $" (recharge {Recharge}-6)" : "") +
+            (PerDay > 0 ? $" ({PerDay}/day)" : "");
+    }
+
+    // a statblock's Spellcasting line: the ability, the DC and attack bonus it prints, and which
+    // SRD spells at will and which so many a day
+    public sealed class MonsterSpellcasting
+    {
+        public MonsterSpellcasting(Ability ability, int dc, int attackBonus,
+                                   IReadOnlyList<string> atWill,
+                                   IReadOnlyDictionary<string, int> perDay)
+        {
+            Ability = ability;
+            Dc = dc;
+            AttackBonus = attackBonus;
+            AtWill = atWill ?? Array.Empty<string>();
+            PerDay = perDay ?? new Dictionary<string, int>();
+        }
+
+        public Ability Ability { get; }
+
+        public int Dc { get; }
+
+        public int AttackBonus { get; }
+
+        public IReadOnlyList<string> AtWill { get; }
+
+        public IReadOnlyDictionary<string, int> PerDay { get; }
+
+        public IEnumerable<string> SpellIds => AtWill.Concat(PerDay.Keys);
     }
 
     public sealed class Bestiary

@@ -31,6 +31,9 @@ namespace Core.Combat
 
         // stands its ground: never moves away from a target it can already reach
         Stubborn = 1 << 3,
+
+        // bloodied, it runs: a Dash away from its enemies and nothing else (a bandit, a goblin)
+        Craven = 1 << 4,
     }
 
     // approach the best target and hit it until the actions run out. deliberately plain: enemy AI
@@ -63,6 +66,19 @@ namespace Core.Combat
 
             if (me.Has(Condition.Prone)) turn.StandUp();
 
+            // a creature with nothing in hand and nothing natural to fight with goes back for its
+            // weapon first
+            if (me.Disarmed && !Attacks.Any(a => a.Hand == Hand.None) && me.DroppedAt.HasValue)
+            {
+                fight.Walk(turn, me.DroppedAt.Value);
+
+                if (me.Disarmed)
+                {
+                    fight.EndTurn();
+                    return;
+                }
+            }
+
             // one target for the whole turn: switching mid-turn looks like indecision and makes
             // the fight harder to read
             Actor quarry = Choose(fight, me);
@@ -88,8 +104,10 @@ namespace Core.Combat
 
         Actor Choose(Encounter fight, Actor me)
         {
+            // a creature charmed by someone does not go for them (SRD 5.2.1 Charmed)
             List<Actor> candidates = fight.Field.Enemies(me)
                                           .Where(a => !a.IsDown)
+                                          .Where(a => !me.HasFrom(Condition.Charmed, a))
                                           .ToList();
 
             if (candidates.Count == 0) return null;
@@ -110,7 +128,8 @@ namespace Core.Combat
         // the attack that can be used from where it is standing; the biggest average damage among
         // those, so a monster with a bow and a bite uses the right one at the right distance
         Attack Best(Encounter fight, Actor me, Actor target) =>
-            Attacks.Where(a => fight.Field.InRange(me, target, a.Reaches))
+            Attacks.Where(a => me.CanUse(a))
+                   .Where(a => fight.Field.InRange(me, target, a.Reaches))
                    .Where(a => !Is(Instinct.Skirmisher) || !a.IsRanged ||
                                fight.Field.Distance(me, target) > 1)
                    .OrderByDescending(a => a.DamageFor(me).Average)

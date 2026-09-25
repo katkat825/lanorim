@@ -74,6 +74,16 @@ namespace Core.Magic
             return 0;
         }
 
+        // A SAVE PUTTING BACK WHAT WAS LEFT, and nothing else calls it. The maximum is never
+        // written to a save - it comes off the table - so what is left is clamped to it, and a
+        // retuned table that hands out fewer slots wins over the save that remembers more.
+        public void SetRemaining(int level, int remaining)
+        {
+            if (!SpellLevels.IsLeveled(level)) return;
+
+            _remaining[level] = Math.Clamp(remaining, 0, _maximum[level]);
+        }
+
         public void Restore(Rest rest)
         {
             // SHORT REST GIVES NOTHING BACK. decisions_checklist.md section 1 pins recovery to the

@@ -1,0 +1,44 @@
+{
+  "_": "The Druid's Wild Shape cards: SRD 5.2.1 beasts, CC-BY-4.0, cut to what a borrowed body changes - the physical scores, AC, speeds, skills and attacks. No hit points (SRD 5.2.1 keeps the druid's own and grants temporary ones) and no int/wis/cha (the mind stays the druid's). The level a card opens at is derived from challenge_times_ten and fly by the SRD's Wild Shape table, never written here. Attack bonuses are not written either: an attack rolls the form's ability plus the druid's proficiency, which is the statblock's own number at level 2. 'mini' is Kathleen's to fill.",
+
+  "forms": [
+    {
+      "id": "cat", "role": "scout", "challenge_times_ten": 0, "armor_class": 12,
+      "speed": 40, "climb": 40,
+      "scores": { "str": 3, "dex": 15, "con": 10 },
+      "skills": ["perception", "stealth"],
+      "attacks": [
+        { "id": "cat_scratch", "damage": "1", "damage_type": "slashing", "ability": "dex",
+          "finesse": true, "adds_ability": false }
+      ]
+    },
+    {
+      "id": "riding_horse", "role": "travel", "challenge_times_ten": 2, "armor_class": 11,
+      "speed": 60,
+      "scores": { "str": 16, "dex": 13, "con": 12 },
+      "attacks": [
+        { "id": "horse_hooves", "damage": "1d8", "damage_type": "bludgeoning", "ability": "str" }
+      ]
+    },
+    {
+      "id": "black_bear", "role": "combat", "challenge_times_ten": 5, "armor_class": 11,
+      "speed": 30, "climb": 30, "swim": 30,
+      "scores": { "str": 15, "dex": 12, "con": 14 },
+      "skills": ["perception"],
+      "attacks": [
+        { "id": "bear_rend", "damage": "1d6", "damage_type": "slashing", "ability": "str" }
+      ]
+    },
+    {
+      "id": "spider", "role": "utility", "challenge_times_ten": 0, "armor_class": 12,
+      "speed": 20, "climb": 20,
+      "scores": { "str": 2, "dex": 14, "con": 8 },
+      "skills": ["stealth"],
+      "attacks": [
+        { "id": "spider_bite", "damage": "1", "damage_type": "piercing", "ability": "dex",
+          "finesse": true, "adds_ability": false,
+          "rider": { "damage": "1d4", "damage_type": "poison" } }
+      ]
+    }
+  ]
+}

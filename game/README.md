@@ -3,13 +3,30 @@
 The only part of the project that touches Godot. Everything under `core/` and `content/` is pure
 C# and stays that way; this is where those become a table you can look at.
 
-Open it in Godot. The main scene is **`table.tscn`**.
+Open it in Godot. The main scene is **`launch.tscn`** (the title and the campaign book), which goes to **`table.tscn`** to play.
 
 ## What is here
 
 ```
+Campaigns/  finds campaign folders on disk and loads their locale; discovery only
+
+Screens/    every screen, built in code from containers and the theme (ui/lanorim_theme.tres)
+  Launch.cs       the main scene (launch.tscn): title, the campaign book, tutorials, settings, creation
+  CreationScreen  one page a creation step
+  TableScreens    the cards over the table: level-up, pack + merchant, sheet, menus, the Ask prompt
+  CombatHudUi     the turn strip, the action bar and pips, End Turn, the log
+  DialoguePopup   the story's card: who, the line, Continue or the choices
+
+Play/       the campaign at the table
+  GameState       what survives a scene change: campaigns, saves, settings, the run
+  PlayDirector    the story, fights, shops, level-ups, death and the end, on the table
+  CombatDirector  the fight: board steps paced at the enemy speed, the hero's hands
+  RulesThread     the rules on their own thread, so the tray can throw mid-attack
+  TrayDice        the hero's dice ARE the tray's
+
 Table/      the table itself
   Table.cs        the seam between the things on the table and the rules underneath
+  GmScreen.cs     the GM's screen beyond the board's far edge; the hidden rolls rattle behind it
   TableCamera.cs  three-quarter overhead, ninety-degree snaps, handheld drift
   TableView.cs    tilts a card with words on it toward the player
   Shot.cs         saves a picture of the table and quits
@@ -37,6 +54,9 @@ audio/      dice impacts driven by how hard they actually hit
 Access/     captions, contrast, legible text, the narrator, key bindings
 Localization/   the one place a key turns into text, and the probe that proves Godot has them
 shaders/    painted_miniature.gdshader - the visual signature, and painted.tres to drop on things
+models/     minis, the dice trays and the GM screens (see ../THIRD_PARTY.md for where each came from)
+textures/   table, tray, map and die materials
+fonts/ ui/  the fonts and the Kenney panels, and ui/lanorim_theme.tres - the project's theme
 ```
 
 ## The one thing to understand
@@ -76,9 +96,10 @@ every test still passes. `--locale` is the check that catches it.
 
 ## What is a stand-in
 
-Everything visual. The minis are white capsules, the tiles are boxes, the table is a brown quad
-and the lamp is a directional light. All of it is meant to be replaced, and none of it was judged
-by eye, because the person who wrote it cannot see.
+Most of the visuals. The board now stands real minis (the hero is `rogue_v2.glb`, the enemy
+`goblin_male.gltf`), the tray is the modeled one and the table has a wood material, but the tiles
+are still boxes and the lamp is a directional light. The GM-screen models are imported and not yet
+on the table. Anything not yet judged by eye in the editor should be treated as a stand-in.
 
 The shader is the exception: it is the real one, harvested whole, and every number in it is a dial
 meant to be turned against a screenshot.

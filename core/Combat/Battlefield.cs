@@ -109,8 +109,8 @@ namespace Core.Combat
         }
 
         // a radius AoE: every square whose centre is within the radius and which the burst's
-        // origin can see. one shape, and it is the only shape v1 has
-        // (decisions_checklist.md section 6, grid tactics).
+        // origin can see. the lines, cones and cubes below obey the same two rules - on the map,
+        // and in sight of where it came from (decisions_checklist.md section 6, grid tactics).
         public IEnumerable<Cell> Burst(Cell centre, int radiusSquares)
         {
             for (int y = centre.Y - radiusSquares; y <= centre.Y + radiusSquares; y++)
@@ -126,8 +126,30 @@ namespace Core.Combat
                 }
         }
 
+        // SRD: an area spreads from its point of origin, and a square with no clear line back to it
+        // is not in it - a fireball does not go round a wall
         public IEnumerable<Actor> Caught(Cell centre, int radiusSquares) =>
-            Burst(centre, radiusSquares).Select(At).Where(a => a != null);
+            Burst(centre, radiusSquares).Where(c => CanSee(centre, c)).Select(At)
+                                        .Where(a => a != null);
+
+        public IEnumerable<Cell> Line(Cell origin, Facing facing, int length, int width = 1) =>
+            Visible(origin, Template.Line(origin, facing, length, width));
+
+        public IEnumerable<Cell> Cone(Cell origin, Facing facing, int length) =>
+            Visible(origin, Template.Cone(origin, facing, length));
+
+        public IEnumerable<Cell> Cube(Cell origin, Facing facing, int side) =>
+            Visible(origin, Template.Cube(origin, facing, side));
+
+        public IEnumerable<Cell> Square(Cell centre, int side) =>
+            Visible(centre, Template.Square(centre, side));
+
+        // whoever is standing in a set of squares - any template's
+        public IEnumerable<Actor> Caught(IEnumerable<Cell> squares) =>
+            squares.Select(At).Where(a => a != null);
+
+        IEnumerable<Cell> Visible(Cell origin, IEnumerable<Cell> squares) =>
+            squares.Where(c => Map.Contains(c) && CanSee(origin, c));
 
         public IEnumerable<Actor> Adjacent(Cell cell) =>
             Burst(cell, 1).Where(c => c != cell).Select(At).Where(a => a != null);
@@ -138,9 +160,46 @@ namespace Core.Combat
         public IEnumerable<Actor> Allies(Actor of) =>
             Pieces.Where(a => !ReferenceEquals(a, of) && a.Side == of.Side && !a.IsDown);
 
+        // THE WAY OUT OF A FIGHT: a square on the edge of the map whose outer side has no wall on
+        // it. a room drawn with its outline closed has none, and cannot be fled - which is the
+        // author's call, made with the map builder by leaving a gap. a shut door is not a way out;
+        // an opened one is (OpenDoor swaps it for a gap).
+        public bool IsExit(Cell cell)
+        {
+            if (!Map.Contains(cell) || !Map.IsPassable(cell)) return false;
+
+            return cell.X == 0 && Map.At(Border.West(cell)).IsOpen() ||
+                   cell.X == Columns - 1 && Map.At(Border.East(cell)).IsOpen() ||
+                   cell.Y == 0 && Map.At(Border.North(cell)).IsOpen() ||
+                   cell.Y == Rows - 1 && Map.At(Border.South(cell)).IsOpen();
+        }
+
+        public IEnumerable<Cell> Exits => Map.Cells.Where(IsExit);
+
         // an open door is runtime state, not content: the map is immutable and this swaps in a new
         // one, so a save carries only the change (MapLayout's own comment)
         public void OpenDoor(Border border) => Map = Map.With(border, Edge.None);
+
+        // a spell's walls going up on the board (Forcecage): the edges it sets, and what was
+        // there before so taking them down puts it back
+        public IReadOnlyDictionary<Border, Edge> Raise(IEnumerable<Border> borders, Edge edge)
+        {
+            var was = new Dictionary<Border, Edge>();
+
+            foreach (Border border in borders.Where(Map.Contains).Distinct())
+            {
+                was[border] = Map.At(border);
+                Map = Map.With(border, edge);
+            }
+
+            return was;
+        }
+
+        public void Lower(IReadOnlyDictionary<Border, Edge> was)
+        {
+            foreach (KeyValuePair<Border, Edge> put in was ?? new Dictionary<Border, Edge>())
+                Map = Map.With(put.Key, put.Value);
+        }
 
         // the pieces grid was sized from the map, so a replacement has to be the same shape -
         // otherwise a piece would be standing off the edge of its own board

@@ -1,5 +1,5 @@
 {
-  "_": "SRD 5.2.1 level 3 spells, CC-BY-4.0. Ranges are in squares: one square is five feet.",
+  "_": "SRD 5.2.1 level 3 spells, CC-BY-4.0. Ranges are in squares: one square is five feet. A spell marked 'approximated' never ships under its SRD name.",
 
   "spells": [
     {
@@ -7,13 +7,16 @@
       "level": 3,
       "school": "abjuration",
       "range": 12,
+      "casting_time": "reaction",
+      "trigger": "cast",
       "classes": ["mage"],
-      "approximated": true,
       "effects": [
         {
-          "primitive": "dispel",
+          "primitive": "counter",
           "reach": "creature",
-          "note": "SRD interrupts a spell as it is cast. v1 has no interrupt reactions (decisions_checklist.md section 6), so it ends what the target is holding up instead"
+          "save": "con",
+          "on_save": "negates",
+          "note": "SRD 5.2.1: the caster makes a Constitution save; on a failure the spell fails, the action is wasted, and a slot it used is not expended"
         }
       ]
     },
@@ -26,7 +29,8 @@
       "effects": [
         {
           "primitive": "dispel",
-          "reach": "creature"
+          "reach": "creature",
+          "note": "SRD 5.2.1: spells of the dispel's level or lower end; higher ones need a spellcasting ability check against 10 + their level"
         }
       ]
     },
@@ -76,22 +80,9 @@
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {
-          "primitive": "sway",
-          "reach": "creature",
-          "sway": 2,
-          "touches": "armor_class",
-          "duration": "concentration"
-        },
-        {
-          "primitive": "sway",
-          "reach": "creature",
-          "sway": 2,
-          "touches": "saves",
-          "save": null,
-          "duration": "concentration",
-          "note": "SRD grants advantage on Dex saves and an extra action. the hero already has two actions (v1_class_roster.md), so the extra action is not ported and the bonus is spent on the save"
-        }
+        {"primitive": "sway", "reach": "creature", "speed_change": "double", "sway": 2, "touches": "armor_class", "leans": "advantage_on_saves", "leans_on": "dex", "limited_action": true, "duration": "concentration", "note": "SRD 5.2.1: speed doubled, +2 AC, advantage on Dex saves, and one extra action each turn for a single weapon attack, Dash, Disengage, Hide or Utilize (Utilize is an object interaction the fight does not model)"},
+        {"primitive": "afflict", "reach": "creature", "condition": "incapacitated", "duration": "next_turn_end", "on_end": true, "note": "when the spell ends: Incapacitated and a Speed of 0 until the end of its next turn"},
+        {"primitive": "sway", "reach": "creature", "speed_change": "zero", "duration": "next_turn_end", "on_end": true}
       ]
     },
     {
@@ -102,35 +93,28 @@
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {
-          "primitive": "afflict",
-          "reach": "burst",
-          "radius": 3,
-          "condition": "stunned",
-          "save": "wis",
-          "on_save": "negates",
-          "duration": "concentration"
-        }
+        {"primitive": "afflict", "reach": "square", "length": 6, "condition": "charmed", "save": "wis", "on_save": "negates", "ends_on_damage": "any", "shakeable": true, "needs_sight": true, "duration": "concentration", "note": "SRD 5.2.1: a 30-foot cube; a creature that can see it makes a Wis save or is Charmed - Incapacitated with a Speed of 0 - until it takes damage or someone uses an action to shake it"},
+        {"primitive": "afflict", "reach": "square", "length": 6, "condition": "incapacitated", "save": "wis", "on_save": "negates", "same_save": true, "needs_sight": true, "duration": "concentration"},
+        {"primitive": "sway", "reach": "square", "length": 6, "speed_change": "zero", "save": "wis", "on_save": "negates", "same_save": true, "needs_sight": true, "duration": "concentration"}
       ]
     },
     {
       "id": "lightning_bolt",
       "level": 3,
       "school": "evocation",
-      "range": 20,
+      "range": 0,
       "classes": ["mage"],
-      "approximated": true,
       "effects": [
         {
           "primitive": "damage",
-          "reach": "burst",
-          "radius": 3,
+          "reach": "line",
+          "length": 20,
+          "width": 1,
           "amount": "8d6",
           "per_extra_level": "1d6",
           "damage_type": "lightning",
           "save": "dex",
-          "on_save": "half",
-          "note": "SRD is a 100-foot line. v1 keeps one area shape - a burst (decisions_checklist.md section 6, grid tactics) - so the line ships as a burst of the same footprint"
+          "on_save": "half"
         }
       ]
     },
@@ -141,6 +125,7 @@
       "range": 24,
       "concentration": true,
       "classes": ["mage"],
+      "approximated": true,
       "effects": [
         {
           "primitive": "sway",
@@ -150,7 +135,8 @@
           "touches": "attacks|armor_class",
           "save": "wis",
           "on_save": "negates",
-          "duration": "concentration"
+          "duration": "concentration",
+          "note": "SRD halves speed, takes -2 AC and Dex saves, removes reactions, limits the turn, and allows a repeat save. v1 keeps only a penalty"
         }
       ]
     },
@@ -163,20 +149,24 @@
       "classes": ["cleric", "paladin"],
       "effects": [
         {
-          "primitive": "damage",
+          "primitive": "zone",
           "reach": "around",
           "radius": 3,
+          "rough": true,
+          "spares_allies": true,
+          "duration": "concentration",
+          "note": "SRD 5.2.1: a 15-foot emanation that moves with you; a creature you did not spare has its speed halved in it, which on the grid is difficult terrain"
+        },
+        {
+          "primitive": "damage",
+          "reach": "zone",
+          "pulses": "enter|end_turn",
           "amount": "3d8",
           "per_extra_level": "1d8",
           "damage_type": "radiant",
           "save": "wis",
-          "on_save": "half"
-        },
-        {
-          "primitive": "zone",
-          "reach": "place",
-          "radius": 3,
-          "duration": "concentration"
+          "on_save": "half",
+          "note": "SRD 5.2.1: when the emanation reaches a creature, or it enters or ends its turn there - once per turn. an evil caster's spirits deal necrotic instead; v1 reads it as radiant for everyone, flagged in the build notes"
         }
       ]
     }

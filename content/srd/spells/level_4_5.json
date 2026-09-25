@@ -1,5 +1,5 @@
 {
-  "_": "SRD 5.2.1 level 4 and 5 spells, CC-BY-4.0. Ranges are in squares: one square is five feet.",
+  "_": "SRD 5.2.1 level 4 and 5 spells, CC-BY-4.0. Ranges are in squares: one square is five feet. A spell marked 'approximated' never ships under its SRD name.",
 
   "spells": [
     {
@@ -31,11 +31,7 @@
       "range": 100,
       "classes": ["mage"],
       "effects": [
-        {
-          "primitive": "shift",
-          "reach": "caster",
-          "note": "teleport anywhere on the map the caster has seen"
-        }
+        {"primitive": "shift", "reach": "caster", "note": "teleport anywhere on the map the caster has seen", "teleports": true}
       ]
     },
     {
@@ -49,18 +45,9 @@
         {
           "primitive": "sway",
           "reach": "creature",
-          "sway": 5,
-          "touches": "checks",
-          "skill": "stealth",
-          "duration": "concentration"
-        },
-        {
-          "primitive": "sway",
-          "reach": "creature",
-          "sway": 2,
-          "sway_dice": "1d4",
-          "touches": "attacks",
-          "duration": "concentration"
+          "leans": "advantage_on_attacks|disadvantage_against",
+          "duration": "concentration",
+          "note": "SRD 5.2.1: the Invisible condition for the whole duration - attacking does not end it"
         }
       ]
     },
@@ -70,24 +57,13 @@
       "school": "evocation",
       "range": 24,
       "concentration": true,
+      "shapes": ["line", "ring"],
       "classes": ["mage", "druid"],
       "effects": [
-        {
-          "primitive": "damage",
-          "reach": "burst",
-          "radius": 2,
-          "amount": "5d8",
-          "per_extra_level": "1d8",
-          "damage_type": "fire",
-          "save": "dex",
-          "on_save": "half"
-        },
-        {
-          "primitive": "zone",
-          "reach": "place",
-          "radius": 2,
-          "duration": "concentration"
-        }
+        {"primitive": "zone", "reach": "wall", "length": 12, "ring_size": 4, "beside": 2, "obscures": "heavy", "each_time": true, "duration": "concentration", "note": "SRD 5.2.1: an opaque wall of fire up to 60 feet long, or a ring 20 feet across, on the ground within range; one side, picked at the cast, burns out to 10 feet"},
+        {"primitive": "damage", "reach": "zone", "pulses": "appear", "core_only": true, "amount": "5d8", "per_extra_level": "1d8", "damage_type": "fire", "save": "dex", "on_save": "half", "note": "when it appears, each creature in the wall makes a Dex save: 5d8 fire, half on a success"},
+        {"primitive": "damage", "reach": "zone", "pulses": "enter", "core_only": true, "amount": "5d8", "per_extra_level": "1d8", "damage_type": "fire", "note": "entering the wall for the first time on a turn: 5d8 fire, no save"},
+        {"primitive": "damage", "reach": "zone", "pulses": "end_turn", "amount": "5d8", "per_extra_level": "1d8", "damage_type": "fire", "note": "ending a turn in the wall or within 10 feet of its burning side: 5d8 fire, no save. the other side deals nothing"}
       ]
     },
 
@@ -95,20 +71,18 @@
       "id": "cone_of_cold",
       "level": 5,
       "school": "evocation",
-      "range": 12,
+      "range": 0,
       "classes": ["mage", "druid"],
-      "approximated": true,
       "effects": [
         {
           "primitive": "damage",
-          "reach": "burst",
-          "radius": 4,
+          "reach": "cone",
+          "length": 12,
           "amount": "8d8",
           "per_extra_level": "1d8",
           "damage_type": "cold",
           "save": "con",
-          "on_save": "half",
-          "note": "SRD is a 60-foot cone; v1's one area shape is a burst of the same footprint"
+          "on_save": "half"
         }
       ]
     },
@@ -119,30 +93,10 @@
       "range": 0,
       "classes": ["cleric", "druid"],
       "effects": [
-        {
-          "primitive": "relieve",
-          "reach": "creature",
-          "condition": "poisoned"
-        },
-        {
-          "primitive": "relieve",
-          "reach": "creature",
-          "condition": "frightened"
-        },
-        {
-          "primitive": "relieve",
-          "reach": "creature",
-          "condition": "stunned"
-        },
-        {
-          "primitive": "relieve",
-          "reach": "creature",
-          "condition": "restrained"
-        },
-        {
-          "primitive": "dispel",
-          "reach": "creature"
-        }
+        {"primitive": "relieve", "reach": "creature", "condition": "charmed", "mode": "charmed"},
+        {"primitive": "relieve", "reach": "creature", "condition": "petrified", "mode": "petrified"},
+        {"primitive": "dispel", "reach": "creature", "curses": true, "mode": "curse"},
+        {"primitive": "relieve", "reach": "creature", "restores_abilities": true, "mode": "abilities", "note": "SRD 5.2.1: removes one of: an Exhaustion level, Charmed or Petrified, a curse, a reduction to an ability score, a reduction to the HP maximum. v1 has no exhaustion and nothing that lowers a maximum, so those two are not offered"}
       ]
     },
     {
@@ -153,16 +107,7 @@
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {
-          "primitive": "afflict",
-          "reach": "creatures",
-          "targets": 1,
-          "extra_targets_per_level": 1,
-          "condition": "stunned",
-          "save": "wis",
-          "on_save": "negates",
-          "duration": "concentration"
-        }
+        {"primitive": "afflict", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "condition": "paralyzed", "save": "wis", "on_save": "negates", "repeat_save": true, "duration": "concentration", "note": "SRD 5.2.1: any creature you can see, Wis save or Paralyzed; it repeats the save at the end of each of its turns"}
       ]
     },
     {

@@ -132,7 +132,16 @@ namespace Content.Items
                                 boons,
                                 entry.Dice("heals", problems, id),
                                 entry.Text("casts"),
-                                entry.Number("uses"));
+                                entry.Number("uses"))
+            {
+                Vanishes = entry.Text("vanishes") == "long_rest",
+                UseTime = entry.Text("use_time", "bonus_action") == "action"
+                    ? Core.Combat.Spend.Action
+                    : Core.Combat.Spend.Bonus,
+            };
+
+            if (!string.IsNullOrEmpty(entry.Text("vanishes")) && entry.Text("vanishes") != "long_rest")
+                problems.Add($"{id}: 'vanishes' is 'long_rest' - the one time an item goes");
 
             Check(item, problems);
 

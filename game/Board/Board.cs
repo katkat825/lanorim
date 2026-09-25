@@ -100,6 +100,8 @@ namespace Game.Board
 
             foreach (Node child in _tileRoot.GetChildren()) child.QueueFree();
 
+            Undress();
+
             _tiles = new BoardTiles(Metrics)
             {
                 Wall = WallMaterial,
@@ -114,6 +116,58 @@ namespace Game.Board
             _tiles.Build(_tileRoot, map);
 
             LayTheMat();
+        }
+
+        // --- the props ---------------------------------------------------------------------------
+
+        Node3D _propRoot;
+
+        // what stands on the squares: the map builder's props (the barrel, the cauldron), each on its
+        // square, fitted to it, turned a quarter at a time, and painted like everything else. A prop
+        // whose model was never pulled stands as nothing - the map plays the same without it
+        public int Dress(System.Collections.Generic.IEnumerable<Content.Maps.Prop> props)
+        {
+            Undress();
+
+            if (props == null || Map == null) return 0;
+
+            _propRoot = new Node3D { Name = "Props" };
+            AddChild(_propRoot);
+
+            int stood = 0;
+
+            foreach (Content.Maps.Prop prop in props)
+            {
+                PackedScene scene = PropModels.For(prop.Id);
+
+                if (scene == null) continue;
+
+                var model = scene.Instantiate<Node3D>();
+                if (Paint != null) PaintedModel.Paint(model, Paint);
+
+                Aabb bounds = PaintedModel.Bounds(model);
+                float scale = PaintedModel.ToFitWidth(bounds, Metrics.CellSize * 0.85f);
+
+                var piece = new Node3D
+                {
+                    Name = $"{prop.Id}_{prop.Cell.X}_{prop.Cell.Y}",
+                    Position = Metrics.Centre(prop.Cell) - new Vector3(0f, bounds.Position.Y * scale, 0f),
+                    Rotation = new Vector3(0f, Mathf.Pi * 0.5f * prop.Turn, 0f),
+                    Scale = Vector3.One * scale,
+                };
+
+                piece.AddChild(model);
+                _propRoot.AddChild(piece);
+                stood++;
+            }
+
+            return stood;
+        }
+
+        void Undress()
+        {
+            _propRoot?.QueueFree();
+            _propRoot = null;
         }
 
         // the mat under the tiles - a plain quad, because the unexplored parts of a map are meant
@@ -249,6 +303,10 @@ namespace Game.Board
             return mini;
         }
 
+        // WHICH MODEL A PIECE IS, when something knows better than its allegiance: the fight asks the
+        // statblock's mini (MiniModels). Null, or an answer of null, and it is HeroFigure/EnemyFigure
+        public System.Func<Actor, (PackedScene Model, float Height)?> FigureFor { get; set; }
+
         public Mini Of(Actor actor) =>
             actor != null && _minis.TryGetValue(actor, out Mini mini) ? mini : null;
 
@@ -275,6 +333,12 @@ namespace Game.Board
             // figure it finds, so a model handed over after AddChild would be scaled off the
             // stand-in's height rather than its own
             mini.FigureModel = actor.Side == Allegiance.Hero ? HeroFigure : EnemyFigure;
+
+            if (FigureFor?.Invoke(actor) is { } figure)
+            {
+                mini.FigureModel = figure.Model;
+                mini.FigureHeight = figure.Height;
+            }
 
             _miniRoot.AddChild(mini);
 

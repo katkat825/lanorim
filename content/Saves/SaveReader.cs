@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text.Json;
 using Content.Items;
@@ -57,6 +58,25 @@ namespace Content.Saves
                     ActionsLeft = root.Number("actions", 0),
                 };
 
+                save.Slot = root.Number("slot", 0);
+                save.Label = root.Text("label");
+                save.Node = root.Text("node");
+
+                if (root.Has("kind") && Vocabulary.TryWord(root.Text("kind"), out SaveKind kind))
+                    save.Kind = kind;
+
+                if (root.Has("story") && root.GetProperty("story").ValueKind == JsonValueKind.Object)
+                    foreach (JsonProperty v in root.GetProperty("story").EnumerateObject())
+                        switch (v.Value.ValueKind)
+                        {
+                            case JsonValueKind.Number: save.Numbers[v.Name] = v.Value.GetSingle(); break;
+                            case JsonValueKind.String: save.Words[v.Name] = v.Value.GetString(); break;
+                            case JsonValueKind.True: save.Flags[v.Name] = true; break;
+                            case JsonValueKind.False: save.Flags[v.Name] = false; break;
+                        }
+
+                foreach (string step in root.Strings("steps")) save.Steps.Add(step);
+
                 if (save.Format == 0)
                     problems.Add(new ContentProblem(file, "format",
                         "this save does not say what format it is, so nothing can be assumed " +
@@ -104,12 +124,15 @@ namespace Content.Saves
                 Species = entry.Text("species"),
                 Lineage = entry.Text("lineage"),
                 Background = entry.Text("background"),
+                Alignment = entry.Text("alignment"),
                 Level = entry.Number("level", 1),
                 HitPoints = entry.Number("hp", -1),
                 TemporaryHitPoints = entry.Number("temp_hp", 0),
                 HitDice = entry.Number("hit_dice", -1),
                 Gold = entry.Number("gold", 0),
                 Points = entry.Number("spell_points", -1),
+                ExtraActions = entry.Number("extra_actions", -1),
+                Form = entry.Text("form"),
             };
 
             // a save that does not say gets slots, which is what a character created without an
@@ -132,20 +155,13 @@ namespace Content.Saves
                 if (one.ValueKind == JsonValueKind.Number)
                     hero.SpentHighLevels.Add(one.GetInt32());
 
-            if (entry.Has("scores"))
-                foreach (JsonProperty property in entry.GetProperty("scores").EnumerateObject())
-                {
-                    if (!Vocabulary.TryWord(property.Name, out Ability ability))
-                    {
-                        problems.Add(ContentProblem.Caution(file, "hero.scores",
-                            $"'{property.Name}' is not an ability - it is " +
-                            Vocabulary.Offer<Ability>()));
-                        continue;
-                    }
+            Scores(entry, "scores", 10, hero.Scores, file, problems);
+            Scores(entry, "background_spend", 0, hero.BackgroundSpend, file, problems);
 
-                    hero.Scores[ability] = property.Value.ValueKind == JsonValueKind.Number
-                        ? property.Value.GetInt32() : 10;
-                }
+            if (entry.Has("spent"))
+                foreach (JsonProperty property in entry.GetProperty("spent").EnumerateObject())
+                    if (property.Value.ValueKind == JsonValueKind.Number)
+                        hero.Spent[property.Name] = property.Value.GetInt32();
 
             foreach (Skill skill in Words<Skill>(entry, "skills", file, "hero.skills", problems))
                 hero.Skills.Add(skill);
@@ -154,6 +170,27 @@ namespace Content.Saves
                 hero.Expertise.Add(skill);
 
             foreach (string id in entry.Strings("known")) hero.Known.Add(id);
+
+            hero.ImprovementsRecorded = entry.Has("improvements");
+            hero.PendingImprovements = entry.Number("improvements_pending", 0);
+            hero.DiscardWarningDismissed = entry.Has("discard_warning_dismissed") &&
+                                           entry.GetProperty("discard_warning_dismissed").ValueKind == JsonValueKind.True;
+
+            // ["str"] is +2 Strength, ["dex", "con"] +1 to each
+            foreach (JsonElement one in entry.Items("improvements"))
+            {
+                if (one.ValueKind != JsonValueKind.Array)
+                {
+                    problems.Add(ContentProblem.Caution(file, "hero.improvements",
+                        "an improvement is a list of the abilities it raised - one is left to " +
+                        "spend again"));
+                    continue;
+                }
+
+                hero.Improvements.Add(string.Join("+", one.EnumerateArray()
+                                                          .Where(a => a.ValueKind == JsonValueKind.String)
+                                                          .Select(a => a.GetString())));
+            }
 
             foreach (Condition condition in Words<Condition>(entry, "conditions", file,
                                                              "hero.conditions", problems))
@@ -201,6 +238,29 @@ namespace Content.Saves
             (actor.X, actor.Y) = Where(entry);
 
             return actor;
+        }
+
+        // the scores and the background spend are the same shape - a number by ability - and an
+        // ability this build does not know is the same caution in both
+        static void Scores(JsonElement entry, string field, int otherwise,
+                           IDictionary<Ability, int> into, string file,
+                           List<ContentProblem> problems)
+        {
+            if (!entry.Has(field)) return;
+
+            foreach (JsonProperty property in entry.GetProperty(field).EnumerateObject())
+            {
+                if (!Vocabulary.TryWord(property.Name, out Ability ability))
+                {
+                    problems.Add(ContentProblem.Caution(file, "hero." + field,
+                        $"'{property.Name}' is not an ability - it is " +
+                        Vocabulary.Offer<Ability>()));
+                    continue;
+                }
+
+                into[ability] = property.Value.ValueKind == JsonValueKind.Number
+                    ? property.Value.GetInt32() : otherwise;
+            }
         }
 
         static IEnumerable<T> Words<T>(JsonElement entry, string field, string file, string where,

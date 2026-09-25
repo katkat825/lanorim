@@ -23,6 +23,10 @@ namespace Core.Combat
 
         void Opportunity(Actor attacker, Actor fleeing);
 
+        // somebody spent their reaction, on what, and at what moment. told before the reaction
+        // does anything, so the table can show the interruption before its dice
+        void Reacted(Actor reactor, string reaction, Moment moment);
+
         void ConditionChanged(Actor actor, Condition condition, bool applied);
 
         void Downed(Actor actor);
@@ -61,6 +65,8 @@ namespace Core.Combat
         public virtual void Struck(Blow blow) { }
 
         public virtual void Opportunity(Actor attacker, Actor fleeing) { }
+
+        public virtual void Reacted(Actor reactor, string reaction, Moment moment) { }
 
         public virtual void ConditionChanged(Actor actor, Condition condition, bool applied) { }
 
@@ -122,6 +128,9 @@ namespace Core.Combat
         public void Opportunity(Actor attacker, Actor fleeing) =>
             Each(w => w.Opportunity(attacker, fleeing));
 
+        public void Reacted(Actor reactor, string reaction, Moment moment) =>
+            Each(w => w.Reacted(reactor, reaction, moment));
+
         public void ConditionChanged(Actor actor, Condition condition, bool applied) =>
             Each(w => w.ConditionChanged(actor, condition, applied));
 
@@ -157,6 +166,9 @@ namespace Core.Combat
 
         public override void Opportunity(Actor attacker, Actor fleeing) =>
             _lines.Add($"{attacker.Id} takes a swing at {fleeing.Id} leaving its reach");
+
+        public override void Reacted(Actor reactor, string reaction, Moment moment) =>
+            _lines.Add($"{reactor.Id} reacts with {reaction} to {moment}");
 
         public override void ConditionChanged(Actor actor, Condition condition, bool applied) =>
             _lines.Add($"{actor.Id} is {(applied ? "now" : "no longer")} {condition.Id()}");

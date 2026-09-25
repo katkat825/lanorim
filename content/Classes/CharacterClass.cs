@@ -68,6 +68,15 @@ namespace Content.Classes
 
         public IEnumerable<Feature> By(int level) => Features.Where(f => f.Level <= level);
 
+        // THE LEVELS THAT BRING AN ABILITY SCORE IMPROVEMENT. SRD 5.2.1: 4, 8, 12, 16 and 19 (Epic
+        // Boon - a feat, and feats are deferred, so +2 like the rest); the Fighter adds 6 and 14 and
+        // the Rogue 10. Data, so the class says it
+        public static readonly IReadOnlyList<int> UsualImprovementLevels = new[] { 4, 8, 12, 16, 19 };
+
+        public IReadOnlyList<int> ImprovementLevels { get; init; } = UsualImprovementLevels;
+
+        public int ImprovementsBy(int level) => ImprovementLevels.Count(l => level >= l);
+
         public Feature Spellcasting => Features.FirstOrDefault(f => f.Trait == Trait.Spellcasting);
 
         public bool Casts => Spellcasting != null;
