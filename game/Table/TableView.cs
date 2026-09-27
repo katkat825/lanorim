@@ -8,7 +8,7 @@ namespace Game.Table
 {
     // WHICH WAY IS THE PLAYER LOOKING FROM.
     //
-    // The camera is fixed, at the 60 degrees off the felt idea_notes.txt asks for (table.tscn says
+    // The camera is fixed, at 45 degrees off the felt (idea_notes.txt asked for 60; lowered 2026-09-25 - table.tscn says
     // so at the line). Everything on this table is a physical object, and most of them do not care
     // - a die reads from anywhere and a mini is a mini. The things that DO care are the ones with
     // WORDS on them: a note, a bubble, a choice card, the initiative list down the side of the mat.
@@ -24,7 +24,7 @@ namespace Game.Table
     public static class TableView
     {
         // table.tscn's camera, for the headless case; the live camera is preferred wherever there is one
-        public const float PitchDegrees = 60f;
+        public const float PitchDegrees = 45f;
 
         // the rotation that squares a card in the XY plane (a QuadMesh, a Label3D) to the viewer
         public static Basis Facing(Node3D card)

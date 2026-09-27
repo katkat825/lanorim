@@ -8,8 +8,8 @@ namespace Game.Table
     // THE GM SCREEN (Tier 3d; decisions_checklist.md "table layout", updated_decisions.md). It stands on
     // the far side of the table, beyond the board's far edge, and the GM's hidden rolls rattle behind it.
     //
-    // WHERE, AND WHY THERE. The camera looks down at 60 degrees, so a thing of height h between it and
-    // the board hides a strip of board about 0.58 h deep. At the default camera the far side is behind
+    // WHERE, AND WHY THERE. The camera looks down at 45 degrees, so a thing of height h between it and
+    // the board hides a strip of board about h deep (it was 0.58 h at 60 degrees). At the default camera the far side is behind
     // the board and hides nothing; after a half turn it is the near side, so the screen stands back
     // from the edge by more than that strip (Gap) and never covers a square. It is placed after each
     // map is laid, because a map's depth decides where its far edge is.
@@ -25,7 +25,7 @@ namespace Game.Table
         [Export] public string Skin { get; set; } = "blank";
 
         // metres from the board's far edge to the screen's face
-        [Export] public float Gap { get; set; } = 0.14f;
+        [Export] public float Gap { get; set; } = 0.22f;
 
         // how wide the screen stands, as a share of the board's width
         [Export] public float WidthShare { get; set; } = 0.7f;

@@ -19,8 +19,8 @@ namespace Game.Table
         // what the camera looks at: the middle of the board. a Node3D, so the board can move it
         [Export] public NodePath SubjectPath { get; set; }
 
-        // degrees off the felt. 60 is the documented angle and what every headless check assumes
-        [Export] public float Pitch { get; set; } = 60f;
+        // degrees off the felt. 45 is the documented angle (Kathleen, 2026-09-25; it was 60) and what every headless check assumes
+        [Export] public float Pitch { get; set; } = 45f;
 
         // metres from the subject, at the two ends of the zoom
         [Export] public float Nearest { get; set; } = 0.55f;

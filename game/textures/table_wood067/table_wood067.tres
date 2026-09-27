@@ -22,7 +22,8 @@
 ; plane seen at 60 degrees is exactly where parallax swims as the camera drifts, so the
 ; displacement map is not even kept in the folder. The normal map does the work.
 ;
-; uv1_scale 8 puts a repeat every 0.5 m across the 4.0 m top, which reads as wide boards. The
+; uv1_scale (12, 21) keeps the old grain on the 6 x 6 m top: a repeat every 0.5 m across and 0.29 m
+; deep, which is what (8, 8) gave on the old 4.0 x 2.3 m top and reads as wide boards. The
 ; number is not the tray's 4 because the number is meaningless on its own - what matters is the
 ; PHYSICAL size of a repeat, and the tray's 4 across 0.53 m is a 0.13 m grain. A table has wider
 ; planks than a tray frame, so this is deliberately coarser than that, not finer.
@@ -38,4 +39,4 @@ roughness_texture = ExtResource("2_rough")
 roughness_texture_channel = 4
 normal_enabled = true
 normal_texture = ExtResource("3_normal")
-uv1_scale = Vector3(8, 8, 8)
+uv1_scale = Vector3(12, 21, 1)

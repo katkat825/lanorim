@@ -23,6 +23,7 @@ docs are the source of truth for what the game is and what gets built.
 - `updated_decisions.md` — UI/table layout, dialog, rest, campaign flow.
 - `combat_ux.md` — how a fight is played at the table: the HUD, a turn, reactions and the Ask prompt, enemy turns, dice, keys. *(2026-09-24)*
 - `how_to_play_combat.md` — the same, player-facing: what the tutorials and the help card say. *(2026-09-24)*
+- `spell_effect_reference.md` — every setting a spell effect can have, which spells use it, and an audit of the ones that say the same thing twice. *(2026-09-25)*
 - `ART_DIRECTION.md` — the visual bible: the be-a-tabletop thesis, the camera, minis-as-objects, the dice, and the **one-palette + painted-miniature-shader** signature that unifies the assets.
 - `deferred.md` — the parked pile: everything explicitly out of v1.
 

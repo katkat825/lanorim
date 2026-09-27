@@ -26,7 +26,7 @@
 ;     "small tray" that makes the small tray work.
 ;   - the GM screen, the companion, the help button.
 ;
-; The camera is at the documented 60 degrees off the felt and turns in ninety-degree snaps (Q and
+; The camera is at the documented 45 degrees off the felt (Kathleen, 2026-09-25; it was 60) and turns in ninety-degree snaps (Q and
 ; E; - and = zoom).
 
 [ext_resource type="Script" path="res://Table/Table.cs" id="1_table"]
@@ -36,7 +36,7 @@
 [ext_resource type="Material" path="res://textures/table_wood067/table_wood067.tres" id="5_wood"]
 
 [sub_resource type="PlaneMesh" id="Mesh_tabletop"]
-size = Vector2(4, 2.3)
+size = Vector2(6, 6)
 
 [sub_resource type="Environment" id="Env_table"]
 background_mode = 1
@@ -64,15 +64,15 @@ shadow_enabled = true
 ; ash - that gap is the whole reason they are two different woods, and table_wood067.tres has the
 ; measured numbers.
 ;
-; IT IS SIZED TO FILL THE FRAME, NOT TO BE A REAL TABLE. A camera looking down at 60 degrees sees
-; a trapezoid of ground that flares wide at the far edge - at this distance about 3.6 m across up
-; there against 2.5 m near the viewer - so a plane cut to a believable table size leaves black
-; triangles in the top corners, which is exactly what the review caught. 4.0 x 2.3 covers the
-; whole trapezoid, so every pixel behind the map and the tray is wood.
+; IT IS SIZED TO FILL THE FRAME, NOT TO BE A REAL TABLE. A camera looking down at 45 degrees sees
+; a trapezoid of ground that flares wide at the far edge and reaches about 2.1 m behind the middle
+; when zoomed all the way out, so a plane cut to a believable table size shows black beyond its far
+; edge. It is SQUARE because the camera turns in quarters and the far edge can be any of the four.
+; 6 x 6 covers every facing at every zoom; at 60 degrees 4.0 x 2.3 was enough, and at 45 it left a
+; black band across the top. The wood's uv1_scale was widened to match, so the boards keep their size.
 ;
 ; The trade is that the table's own edge is never in shot. If you want to SEE an edge, shrink this
-; toward 3.2 x 2.0 and accept a little darkness at the far corners, or raise Pitch so the camera
-; looks down more steeply and the flare narrows.
+; and accept darkness at the far side, or raise Pitch so the camera looks down more steeply.
 [node name="TableTop" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.004, 0)
 mesh = SubResource("Mesh_tabletop")
@@ -108,8 +108,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 0)
 ; reason - and it lets a 4 m plane cover the frame while the map stays square-ish across its width.
 ;
 ; Pitch, fov and the two zoom ends are one system: change any of them and the other three want
-; re-checking. At fov 40, pitch 60 and 2.06 m the camera sees about 2.65 m across the map's plane,
-; which holds the 2.17 m of map-plus-tray with a margin either side.
+; re-checking. At fov 40 and pitch 45 the map-plus-tray (2.17 m) still fits across the frame at the
+; starting zoom (checked by screenshot, 2026-09-25); at pitch 60 it was about 2.65 m across.
 ;
 ; Nearest 0.9 is "leaning over one mini" - about four squares across at this fov. Furthest 2.6 is
 ; the whole table. Zoom is the dial: 0 parks at Furthest, 1 at Nearest.
@@ -121,7 +121,7 @@ transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, -0.15, 1.7
 fov = 40.0
 script = ExtResource("2_camera")
 SubjectPath = NodePath("../Framing")
-Pitch = 60.0
+Pitch = 45.0
 Nearest = 0.9
 Furthest = 2.6
 Zoom = 0.32
