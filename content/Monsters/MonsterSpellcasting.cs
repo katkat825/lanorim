@@ -11,13 +11,13 @@ namespace Content.Monsters
     {
         public MonsterSpellcasting(Ability ability, int dc, int attackBonus,
                                    IReadOnlyList<string> atWill,
-                                   IReadOnlyDictionary<string, int> perDay)
+                                   IReadOnlyDictionary<string, int> uses)
         {
             Ability = ability;
             Dc = dc;
             AttackBonus = attackBonus;
             AtWill = atWill ?? Array.Empty<string>();
-            PerDay = perDay ?? new Dictionary<string, int>();
+            Uses = uses ?? new Dictionary<string, int>();
         }
 
         public Ability Ability { get; }
@@ -28,8 +28,9 @@ namespace Content.Monsters
 
         public IReadOnlyList<string> AtWill { get; }
 
-        public IReadOnlyDictionary<string, int> PerDay { get; }
+        // "3/day each": spell id to uses, back on a long rest
+        public IReadOnlyDictionary<string, int> Uses { get; }
 
-        public IEnumerable<string> SpellIds => AtWill.Concat(PerDay.Keys);
+        public IEnumerable<string> SpellIds => AtWill.Concat(Uses.Keys);
     }
 }

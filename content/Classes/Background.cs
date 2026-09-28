@@ -5,6 +5,7 @@ using System.Text.Json;
 using Content.Schema;
 using Core.Characters;
 using Core.Localization;
+using Core.Words;
 
 namespace Content.Classes
 {
@@ -34,6 +35,9 @@ namespace Content.Classes
         public IReadOnlyList<string> Gear { get; }
 
         public int Gold { get; }
+
+        // Lanorim's own, not the SRD's (Recluse): the word a spell that isn't the SRD's carries
+        public bool NotInSrd { get; init; }
 
         public string NameKey => KeyConventions.BackgroundName(Id);
 
@@ -105,6 +109,9 @@ namespace Content.Classes
 
     public static class BackgroundReader
     {
+        // every key a background takes
+        public static readonly IReadOnlyList<string> Keys = new[] { "id", "skills", "abilities", "gear", "gold", "not_in_srd" };
+
         public static bool TryRead(string text, out IReadOnlyList<Background> backgrounds,
                                    out IReadOnlyList<string> problems)
         {
@@ -132,32 +139,24 @@ namespace Content.Classes
                         continue;
                     }
 
-                    var skills = new List<Skill>();
+                    Keyed.OnlyKnown(entry, Keys, id, trouble);
 
-                    foreach (string skill in entry.Strings("skills"))
-                    {
-                        if (Core.Characters.Skills.TryParse(skill, out Skill read)) skills.Add(read);
-                        else trouble.Add($"{id}: '{skill}' is not a skill");
-                    }
+                    var skills = entry.SkillList("skills", trouble, id).ToList();
 
                     if (skills.Count != 2)
                         trouble.Add($"{id}: {skills.Count} skills - SRD gives a background two");
 
-                    var abilities = new List<Ability>();
-
-                    foreach (string ability in entry.Strings("abilities"))
-                    {
-                        if (Core.Characters.Abilities.TryParse(ability, out Ability read))
-                            abilities.Add(read);
-                        else trouble.Add($"{id}: '{ability}' is not an ability");
-                    }
+                    var abilities = entry.AbilityList("abilities", trouble, id).ToList();
 
                     if (abilities.Count != 3)
                         trouble.Add($"{id}: {abilities.Count} abilities - SRD names three to " +
                                     "spend the +2 and +1 on");
 
                     found.Add(new Background(id, skills, abilities,
-                                             entry.Strings("gear"), entry.Number("gold")));
+                                             entry.Strings("gear"), entry.Number("gold"))
+                    {
+                        NotInSrd = entry.Flag("not_in_srd"),
+                    });
                 }
 
                 if (found.Count == 0 && trouble.Count == 0)

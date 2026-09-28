@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Localization;
+using Core.Words;
 using Yarn;
 
 namespace Content.Dialogue
@@ -173,7 +174,7 @@ namespace Content.Dialogue
                     break;
 
                 case RequestKind.Fight:
-                    store.SetValue(RequestVariables.Fight, RequestVariables.Word(answer.Outcome));
+                    store.SetValue(RequestVariables.Fight, answer.Outcome.Id());
                     break;
 
                 case RequestKind.Loot:

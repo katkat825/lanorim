@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Content.Dialogue
 {
     // what the table just did, in the companion's hearing. Closed: a situation the engine cannot
@@ -42,28 +38,5 @@ namespace Content.Dialogue
 
         // the hero is on the floor. This is where a companion goes quiet, so most banks are short
         Down,
-    }
-
-    public static class Barks
-    {
-        public static string Word(this Bark situation) => situation.ToString().ToLowerInvariant();
-
-        public static IReadOnlyList<string> Words =>
-            Enum.GetValues<Bark>().Select(Word).ToArray();
-
-        public static bool TryWord(string word, out Bark situation)
-        {
-            situation = default;
-
-            if (string.IsNullOrWhiteSpace(word)) return false;
-
-            string trimmed = word.Trim();
-
-            // digits would let Enum.TryParse take "3" as the third member, and a reorder would re-file every bank
-            if (trimmed.Any(char.IsDigit)) return false;
-
-            return Enum.TryParse(trimmed, ignoreCase: true, out situation)
-                && Enum.IsDefined(typeof(Bark), situation);
-        }
     }
 }

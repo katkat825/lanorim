@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using Content.Schema;
 using Core.Dice;
@@ -15,40 +15,14 @@ namespace Content.Loot
         public static bool TryRead(string text, out IReadOnlyList<LootTable> tables,
                                    out IReadOnlyList<string> problems)
         {
-            var found = new List<LootTable>();
             var trouble = new List<string>();
+            List<LootTable> found = TableReader.Tables(text, "the loot file",
+                                                       (table, id) => ReadOne(table, id, trouble), trouble);
 
-            tables = found;
+            tables = found ?? new List<LootTable>();
             problems = trouble;
 
-            if (!Json.TryParse(text, out JsonDocument document, out string bad))
-            {
-                trouble.Add(bad);
-                return false;
-            }
-
-            using (document)
-            {
-                var seen = new HashSet<string>(StringComparer.Ordinal);
-
-                foreach (JsonElement entry in document.RootElement.Items("tables"))
-                {
-                    LootTable table = ReadOne(entry, trouble);
-
-                    if (table == null) continue;
-
-                    if (!seen.Add(table.Id))
-                    {
-                        trouble.Add($"there are two tables called '{table.Id}'");
-                        continue;
-                    }
-
-                    found.Add(table);
-                }
-
-                if (found.Count == 0 && trouble.Count == 0)
-                    trouble.Add("no tables in it - the file is an object with a 'tables' array");
-            }
+            if (found == null) return false;
 
             string loop = Loop(found);
 
@@ -71,106 +45,31 @@ namespace Content.Loot
                   "stop being opened";
         }
 
-        static LootTable ReadOne(JsonElement table, List<string> problems)
+        static LootTable ReadOne(JsonElement table, string id, List<string> problems)
         {
-            string id = table.Text("id");
-
-            if (!Json.IsId(id))
-            {
-                problems.Add($"'{id}' is not a table id - lowercase a-z, 0-9 and underscore only");
-                return null;
-            }
+            Keyed.OnlyKnown(table, new[] { "id", "rolled", "entries" }, id, problems);
 
             // behind the screen unless the table says otherwise, the same as an encounter
-            string rolled = table.Text("rolled", "hidden");
+            Visibility visibility = TableReader.Rolled(table, id, problems);
 
-            Visibility visibility = rolled == "shown" ? Visibility.Shown : Visibility.Hidden;
-
-            if (rolled != "hidden" && rolled != "shown")
-                problems.Add($"{id}: 'rolled' is '{rolled}', and it is 'hidden' or 'shown'");
-
-            var entries = new List<LootEntry>();
-            var seen = new HashSet<string>(StringComparer.Ordinal);
-
-            foreach (JsonElement each in table.Items("entries"))
-            {
-                LootEntry entry = ReadEntry(each, id, problems);
-
-                if (entry == null) continue;
-
-                if (!seen.Add(entry.Id))
-                {
-                    problems.Add($"{id}: the entry '{entry.Id}' is in the table twice - " +
-                                 "give it more weight instead");
-                    continue;
-                }
-
-                entries.Add(entry);
-            }
-
-            if (entries.Count == 0)
-                problems.Add($"{id}: an empty table - it needs at least one entry, and 'nothing' " +
-                             "is an entry if an empty chest is what you want");
+            List<LootEntry> entries = TableReader.Entries(table, id, ReadEntry, "an empty chest", problems);
 
             return new LootTable(id, entries, visibility);
         }
 
+        static readonly string[] EntryKeys = { "id", "kind", "weight", "items", "gold", "table", "line" };
+
         static LootEntry ReadEntry(JsonElement entry, string table, List<string> problems)
         {
+            string where = TableReader.Entry(entry, table, EntryKeys, problems, out LootKind kind);
+
+            if (where == null) return null;
+
             string id = entry.Text("id");
+            int weight = entry.Weight(where, problems);
 
-            if (!Json.IsId(id))
-            {
-                problems.Add($"{table}: '{id}' is not an entry id - lowercase a-z, 0-9 and " +
-                             "underscore only");
-                return null;
-            }
-
-            string where = $"{table}.{id}";
-
-            if (!TryKind(entry.Text("kind"), out LootKind kind))
-            {
-                problems.Add($"{where}: '{entry.Text("kind")}' is not a kind of entry " +
-                             "(nothing, find, table)");
-                return null;
-            }
-
-            int weight = entry.Number("weight", 1);
-
-            // read with a fallback of 0 so a weight that is not a number is caught with one below 1
-            if (entry.Has("weight") && entry.Number("weight", 0) < 1)
-            {
-                problems.Add($"{where}: a weight is a whole number, 1 or more");
-                weight = 1;
-            }
-
-            var items = new List<Lot>();
-
-            foreach (JsonElement one in entry.Items("items"))
-            {
-                string item = one.Text("item");
-
-                if (!Json.IsId(item))
-                {
-                    problems.Add($"{where}: '{item}' is not an item id");
-                    continue;
-                }
-
-                DiceRoll count = one.Has("count") ? one.Dice("count", problems, where)
-                                                  : DiceRoll.Flat(1);
-
-                if (one.Has("count") && count.IsNothing) continue;
-
-                // "1d4-1 torches" can be no torches, which is an item card with nothing on it
-                if (count.Minimum < 1)
-                {
-                    problems.Add($"{where}: {count} {item} can come to none - " +
-                                 "a count is always at least one");
-                    continue;
-                }
-
-                items.Add(new Lot(item, count));
-            }
+            List<Lot> items = TableReader.Counted(entry, "items", "item", "an item id", where, problems)
+                                         .Select(i => new Lot(i.Id, i.Count)).ToList();
 
             Purse gold = ReadGold(entry, where, problems);
 
@@ -218,6 +117,8 @@ namespace Content.Loot
 
             JsonElement gold = entry.GetProperty("gold");
 
+            Keyed.OnlyKnown(gold, new[] { "roll", "times" }, $"{where} gold", problems);
+
             // so dice that did not parse are said once, by the parser, and not again below
             int said = problems.Count;
 
@@ -262,18 +163,6 @@ namespace Content.Loot
                              "never in debt");
 
             return purse;
-        }
-
-        static bool TryKind(string id, out LootKind kind)
-        {
-            switch ((id ?? "").ToLowerInvariant())
-            {
-                case "nothing": kind = LootKind.Nothing; return true;
-                case "find": kind = LootKind.Find; return true;
-                case "table": kind = LootKind.Table; return true;
-
-                default: kind = LootKind.Nothing; return false;
-            }
         }
     }
 }

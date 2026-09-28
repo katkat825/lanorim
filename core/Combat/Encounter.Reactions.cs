@@ -109,7 +109,7 @@ namespace Core.Combat
             reaction.Cost == Spend.Bonus
                 ? Current != null && !Current.Ended && ReferenceEquals(Current.Actor, reactor) &&
                   Current.Can(Spend.Bonus)
-                : ReactionsLeft(reactor) > 0 && !reactor.Boons.NoReactions;
+                : ReactionsLeft(reactor) > 0 && !reactor.Boons.Forbids(Forbid.Reactions);
 
         bool Pay(Actor reactor, IReaction reaction) =>
             reaction.Cost == Spend.Bonus ? Current.Take(Spend.Bonus) : TakeReaction(reactor);
@@ -141,7 +141,7 @@ namespace Core.Combat
             if (turn.Actor.HasFrom(Condition.Charmed, target)) return null;
 
             // Gaseous Form: a misty cloud can't attack
-            if (turn.Actor.Boons.NoAttacks) return null;
+            if (turn.Actor.Boons.Forbids(Forbid.Attacks)) return null;
 
             // Slow's "only one attack", and Haste's extra action buying a single weapon attack
             if (!turn.TakeAttack(spend, attack)) return null;

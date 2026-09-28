@@ -34,8 +34,6 @@ namespace Content.Tests
             return hero;
         }
 
-        static Feature Of(Hero hero, string id) => hero.Features.First(f => f.Id == id);
-
         const string Hall = @"
 +-+-+-+-+-+-+-+
 |@ . . . . . .|
@@ -54,7 +52,7 @@ namespace Content.Tests
 
             goblin = new Actor("goblin", 1, new AbilityScores());
             goblin.SetHealth(new Health(500));
-            goblin.Armor = new ArmorProfile(ArmorWeight.Heavy, 5);
+            goblin.Armor = new ArmorProfile(ArmorCategory.Heavy, 5);
 
             fight.Enlist(hero.Actor, new Cell(1, 1), hero.Budget);
             fight.Enlist(goblin, new Cell(2, 1));
@@ -69,7 +67,7 @@ namespace Content.Tests
         public void RageResistsAndAdvantagesStrengthAndGrowsWithLevel()
         {
             Hero barbarian = Made("barbarian", 9);
-            Feature rage = Of(barbarian, "rage");
+            Feature rage = barbarian.FeatureCalled("rage");
 
             Assert.Equal(4, barbarian.UsesLeft(rage));
             Assert.True(barbarian.Invoke(rage));
@@ -88,7 +86,7 @@ namespace Content.Tests
         public void AShortRestGivesOneRageBack()
         {
             Hero barbarian = Made("barbarian", 3);
-            Feature rage = Of(barbarian, "rage");
+            Feature rage = barbarian.FeatureCalled("rage");
 
             Assert.True(barbarian.Invoke(rage));
             barbarian.EndStance(rage);
@@ -105,9 +103,9 @@ namespace Content.Tests
         public void RecklessAttackIsFreeAndCutsBothWays()
         {
             Hero barbarian = Made("barbarian", 2);
-            Feature reckless = Of(barbarian, "reckless_attack");
+            Feature reckless = barbarian.FeatureCalled("reckless_attack");
 
-            Assert.Equal(Spend.Free, reckless.Cost);
+            Assert.Equal(Spend.Free, reckless.UseTime);
             Assert.True(barbarian.Invoke(reckless));
 
             Attack axe = Srd.Items.Find("greataxe").Attack;
@@ -138,18 +136,18 @@ namespace Content.Tests
 
             Assert.DoesNotContain(berserker.RidersFor(true, attack: axe), r => r.Id == "frenzy");
 
-            berserker.Invoke(Of(berserker, "rage"));
-            berserker.Invoke(Of(berserker, "reckless_attack"));
+            berserker.Invoke(berserker.FeatureCalled("rage"));
+            berserker.Invoke(berserker.FeatureCalled("reckless_attack"));
 
             Rider frenzy = berserker.RidersFor(false, attack: axe).Single(r => r.Id == "frenzy");
-            Assert.Equal(new DiceRoll(2, Die.D6), frenzy.Damage);
+            Assert.Equal(new DiceRoll(2, Die.D6), frenzy.Amount);
         }
 
         [Fact]
         public void RelentlessRageIsAConstitutionSaveThatGetsHarder()
         {
             Hero barbarian = Made("barbarian", 11);
-            barbarian.Invoke(Of(barbarian, "rage"));
+            barbarian.Invoke(barbarian.FeatureCalled("rage"));
 
             // a 20 on the first DC 10 save: back on twice the level
             barbarian.Actor.Suffer(9999, DamageType.Slashing);
@@ -219,7 +217,7 @@ namespace Content.Tests
         public void SecondWindGrowsWithLevelAndComesBackOneAtATime()
         {
             Hero fighter = Made("fighter", 4);
-            Feature wind = Of(fighter, "second_wind");
+            Feature wind = fighter.FeatureCalled("second_wind");
 
             Assert.Equal(3, fighter.UsesLeft(wind));
             Assert.Equal(new DiceRoll(1, Die.D10, 4), wind.AmountAt(4));
@@ -334,10 +332,10 @@ namespace Content.Tests
         public void PreserveLifeSpendsChannelDivinityAndStopsAtHalf()
         {
             Hero cleric = Made("cleric", 3, Ability.Wisdom);
-            Feature preserve = Of(cleric, "preserve_life");
-            Feature channel = Of(cleric, "channel_divinity");
+            Feature preserve = cleric.FeatureCalled("preserve_life");
+            Feature channel = cleric.FeatureCalled("channel_divinity");
 
-            Assert.Equal(Spend.Action, preserve.Cost);
+            Assert.Equal(Spend.Action, preserve.UseTime);
             Assert.Equal(2, cleric.UsesLeft(channel));
 
             // not bloodied: nothing to do
@@ -392,8 +390,8 @@ namespace Content.Tests
         public void SacredWeaponSpendsTheOathsChannelDivinity()
         {
             Hero paladin = Made("paladin", 3, Ability.Strength);
-            Feature weapon = Of(paladin, "sacred_weapon");
-            Feature channel = Of(paladin, "paladin_channel_divinity");
+            Feature weapon = paladin.FeatureCalled("sacred_weapon");
+            Feature channel = paladin.FeatureCalled("paladin_channel_divinity");
 
             Assert.True(paladin.Invoke(weapon));
             Assert.Equal(1, paladin.UsesLeft(channel));
@@ -412,7 +410,7 @@ namespace Content.Tests
             Assert.True(druid.Caster.IsPrepared("speak_with_animals"));
             Assert.True(druid.Caster.IsPrepared("web"));
             Assert.DoesNotContain(druid.Features, f => f.Id == "lands_stride");
-            Assert.DoesNotContain(druid.Class.ArmorTraining, w => w == ArmorWeight.Medium);
+            Assert.DoesNotContain(druid.Class.ArmorTraining, w => w == ArmorCategory.Medium);
         }
 
 

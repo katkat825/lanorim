@@ -7,10 +7,13 @@ babysit — led through a branching campaign by a referee behind the screen, on 
 *Internal / working title: **Maps & Math Rocks**. The player-facing name is always **Lanorim**.*
 
 **Status:** pre-v1 — the design is settled. The rules engine (combat with reactions and line/cone areas,
-spells with a choice of slots or points, Wild Shape), the SRD data, the map model, saves, and the
-narrative layer (branching dialogue, hidden GM rolls, encounter and loot tables) are in and unit-tested.
-The table comes up in Godot with a map, a few real minis and a d20 tumbling in a tray; there are no
-screens (menu, sheet, inventory) yet. Start in `docs/`.
+123 SRD 5.2.1 spells with a choice of slots or points, Wild Shape), the SRD data checked against the SRD
+text, the map model, saves, and the narrative layer (branching dialogue, hidden GM rolls, encounter and
+loot tables) are in and unit-tested. Every screen is wired in Godot: the title and campaign book, character
+creation, the table with its map, minis, GM screen and dice tray, the dialogue card, the combat HUD, the
+sheet, pack and merchant, level-up, pause, death and the end. A sample test campaign plays from its first
+line to its last, headless, on the real table. What's left is mostly how it looks (layout, lighting,
+models), the map builder's screen, the Workshop, and the real campaigns. Start in `docs/`.
 
 ## Where things are
 
@@ -56,11 +59,12 @@ game/         the Godot 4 / .NET project. the only thing that touches Godot. see
   Table/      the table, the camera, and the ten lines that join dice to rules
   Campaigns/  finding campaign folders on disk and loading their locale
   audio/ Access/ Localization/ shaders/
-tools/        the palette bake, the model puller, the impact slicer
+tools/        the palette bake, the model puller, the impact slicer, the duplicate finder
+checks/       the check scripts, and _common.ps1, what they share
 core.tests/   xUnit
 content.tests/ xUnit
 sim/          the balance harness and the dev tools
-campaigns/    campaign packages, loose on disk so a Workshop author can edit them (not created yet)
+campaigns/    campaign packages, loose on disk so a Workshop author can edit them (sample_millbrook is the test one)
 ```
 
 **`core/` and `content/` never reference Godot.** That is what buys headless tests, an overnight balance
@@ -88,21 +92,21 @@ Plays fights headless and prints the win tables.
 The check scripts each **build first**, then print a one-line verdict:
 
 ```powershell
-.\check-locale.ps1     # does every key the engine emits have English
-.\check-content.ps1    # does every SRD file load, and match the design docs
-.\check-fairness.ps1   # are the dice uniform
-.\check-slice.ps1      # character -> your map -> goblin -> level up, plus the balance tables
+.\checks\check-locale.ps1     # does every key the engine emits have English
+.\checks\check-content.ps1    # does every SRD file load, and match the design docs
+.\checks\check-fairness.ps1   # are the dice uniform
+.\checks\check-slice.ps1      # character -> your map -> goblin -> level up, plus the balance tables
+.\checks\check-duplicates.ps1 # is any method written twice (Python; reads the source, builds nothing)
 ```
 
-`sim locale` rewrites `game/locale/game.csv`, keeping every row that already has text and scaffolding
-first-pass English for anything new.
+`game/locale/game.csv` is written by hand. `sim locale` only reads it and says which keys have no English.
 
 Three more need Godot, and find it themselves under `C:\Godot` (or `$env:GODOT_ROOT`):
 
 ```powershell
-.\check-table.ps1     # does the table come up, do the dice roll, does core read the felt
-.\check-play.ps1      # the whole game headless: launch -> table -> the sample campaign to its end, dice on the tray
-.\check-dice.ps1      # is the PHYSICS d20 fair - slow, minutes, run it after touching the dice
+.\checks\check-table.ps1     # does the table come up, do the dice roll, does core read the felt
+.\checks\check-play.ps1      # the whole game headless: launch -> table -> the sample campaign to its end, dice on the tray
+.\checks\check-dice.ps1      # is the PHYSICS d20 fair - slow, minutes, run it after touching the dice
 ```
 
 `dotnet run --project sim -- classes [runs] [class]` plays every class at levels 1-5 against the sample

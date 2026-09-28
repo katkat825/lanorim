@@ -51,33 +51,12 @@ namespace Game.Campaigns
                 shelf.Files.Add(file);
             }
 
-            // no shelf entry for an empty locale/, or Unregister would falsely report a removal
+            // no shelf entry for an empty locale/: nothing was registered
             if (shelf.Translations.Count == 0) return 0;
 
             Registered[key] = shelf;
 
             return shelf.Strings;
-        }
-
-        public static bool Unregister(string campaignFolder)
-        {
-            string key = Key(campaignFolder);
-
-            if (key == null || !Registered.TryGetValue(key, out Shelf shelf)) return false;
-
-            foreach (Translation translation in shelf.Translations)
-                TranslationServer.RemoveTranslation(translation);
-
-            Registered.Remove(key);
-
-            return true;
-        }
-
-        public static bool IsRegistered(string campaignFolder)
-        {
-            string key = Key(campaignFolder);
-
-            return key != null && Registered.ContainsKey(key);
         }
 
         // normalise so a trailing slash or relative path can't register the same campaign twice

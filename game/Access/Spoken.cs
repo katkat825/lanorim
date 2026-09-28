@@ -43,8 +43,6 @@ namespace Game.Access
 
         public static Spoken Of(params string[] lines) => Made(lines, false);
 
-        public static Spoken Urgently(params string[] lines) => Made(lines, true);
-
         // an empty or whitespace line is dropped rather than read as a pause: a blank sentence in a
         // reader is a silence the listener has to decide the meaning of
         static Spoken Made(IEnumerable<string> lines, bool interrupts)

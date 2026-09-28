@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Content.Classes;
-using Content.Items;
 using Content.Spells;
 using Core.Characters;
 using Core.Combat;

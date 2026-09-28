@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Core.Words;
 
 namespace Content.Saves
 {
@@ -66,7 +67,7 @@ namespace Content.Saves
             return path;
         }
 
-        static string Vocabulary(SaveKind kind) => Schema.Vocabulary.NameOf(kind);
+        static string Vocabulary(SaveKind kind) => EnumWords.Name(kind);
 
         void Prune(string campaign, int slot)
         {

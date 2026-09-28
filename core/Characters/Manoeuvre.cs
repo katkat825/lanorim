@@ -1,4 +1,5 @@
 using System;
+using Core.Words;
 
 namespace Core.Characters
 {
@@ -8,7 +9,7 @@ namespace Core.Characters
     [Flags]
     public enum Manoeuvre
     {
-        None = 0,
+        [Unread] None = 0,
         Dash = 1 << 0,
         Disengage = 1 << 1,
         Hide = 1 << 2,
@@ -17,21 +18,5 @@ namespace Core.Characters
     public static class Manoeuvres
     {
         public static readonly Manoeuvre[] All = { Manoeuvre.Dash, Manoeuvre.Disengage, Manoeuvre.Hide };
-
-        public static string Id(this Manoeuvre manoeuvre) => manoeuvre.ToString().ToLowerInvariant();
-
-        public static bool TryParse(string id, out Manoeuvre manoeuvre)
-        {
-            foreach (Manoeuvre m in All)
-            {
-                if (!string.Equals(m.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                manoeuvre = m;
-                return true;
-            }
-
-            manoeuvre = Manoeuvre.None;
-            return false;
-        }
     }
 }

@@ -76,6 +76,8 @@ namespace Content.Campaigns
 
                 foreach (JsonElement end in root.Items("ends"))
                 {
+                    Keyed.OnlyKnown(end, new[] { "campaign", "chapter" }, "a demo's end", trouble);
+
                     string campaign = end.Text("campaign");
                     string chapter = end.Text("chapter");
 

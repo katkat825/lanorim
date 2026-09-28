@@ -6,11 +6,14 @@ namespace Game.Dice
         readonly int _maxRethrows;
         readonly int _maxEscapes;
 
-        public NudgeThenRethrow(int maxNudges, int maxRethrows, int maxEscapes)
+        readonly int _maxRestless;
+
+        public NudgeThenRethrow(int maxNudges, int maxRethrows, int maxEscapes, int maxRestless = 3)
         {
             _maxNudges = maxNudges;
             _maxRethrows = maxRethrows;
             _maxEscapes = maxEscapes;
+            _maxRestless = maxRestless;
         }
 
         public DieRecoveryStep Cocked(in CockedDie die)
@@ -22,11 +25,17 @@ namespace Game.Dice
             return DieRecoveryStep.Accept;
         }
 
-        public DieRecoveryStep Escaped(in EscapedDie die)
-        {
-            if (die.EscapesSoFar > _maxEscapes) return DieRecoveryStep.Accept;
+        public DieRecoveryStep Escaped(in EscapedDie die) => Fading(die.EscapesSoFar, _maxEscapes);
 
-            return DieRecoveryStep.Rethrow(1f - (float)die.EscapesSoFar / _maxEscapes);
+        public DieRecoveryStep Restless(in RestlessDie die) => Fading(die.RethrowsSoFar, _maxRestless);
+
+        // the escape's answer, and a restless die's: thrown again with less energy each time, so the
+        // last one drops inside the tray, then accepted where it lies
+        static DieRecoveryStep Fading(int soFar, int most)
+        {
+            if (soFar > most) return DieRecoveryStep.Accept;
+
+            return DieRecoveryStep.Rethrow(1f - (float)soFar / most);
         }
     }
 }

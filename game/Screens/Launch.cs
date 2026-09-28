@@ -199,9 +199,7 @@ namespace Game.Screens
 
         void ShowSettings()
         {
-            var settings = new SettingsPanel();
-            settings.Done += ShowBook;
-            Show(Ui.Panel(Ui.Scroll(settings, 560)));
+            Show(Ui.Panel(SettingsPanel.Scrolled(ShowBook, 560)));
         }
 
         // --- a character -------------------------------------------------------------------------
@@ -230,15 +228,10 @@ namespace Game.Screens
         void Play(Package pack, Hero hero, int slot)
         {
             GameState.Begin(pack, hero, slot);
-            GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToFile, "res://table.tscn");
+            Scenes.Go(GetTree(), Scenes.Table);
         }
 
-        void Load(SaveShelf.Saved saved)
-        {
-            if (saved == null || GameState.Resume(saved.Game) == null) return;
-
-            GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToFile, "res://table.tscn");
-        }
+        void Load(SaveShelf.Saved saved) => Scenes.Resume(GetTree(), saved);
 
         // a character made with every default, for the headless checks
         void QuickStart(string campaign, string cls)

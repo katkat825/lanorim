@@ -1,0 +1,71 @@
+# Does the table actually come up, and does the whole stack meet on it?
+#
+# The engine tests prove the rules. This proves the thing the rules are wired to: Godot loads the
+# assemblies, reads the SRD data, imports the locale, builds a hero, throws a real d20 in a real
+# tray, and core reads the face off the felt.
+#
+# It also runs the LOCALE PROBE, which asks a question check-locale.ps1 cannot: Godot reads the
+# compiled .translation beside the CSV, so a key added and not re-imported is missing at runtime
+# while every test in the repo passes. That trap has caught this project before.
+
+param([string] $Godot)
+
+. (Join-Path $PSScriptRoot '_common.ps1')
+
+$Godot = Find-Godot $Godot
+
+Build-First game/Lanorim.csproj
+
+$log = Temp-Log 'table'
+
+Write-Host 'importing...' -ForegroundColor DarkGray
+Invoke-Godot $Godot @('--headless', '--path', 'game', '--import') $log
+
+# --- the words ---------------------------------------------------------------------------------
+
+Write-Host ''
+Write-Host 'the locale, as Godot sees it:' -ForegroundColor DarkGray
+
+Invoke-Godot $Godot @('--headless', '--path', 'game', 'res://table.tscn', '--', '--locale') $log
+
+$locale = Get-Content $log -Raw
+
+$locale -split "`n" | Where-Object { $_ -match '^locale ' } | ForEach-Object { Write-Host "  $_" }
+
+$wordsOk = $locale -match 'every key the game emits has words in it'
+
+# --- the table ---------------------------------------------------------------------------------
+
+Write-Host ''
+Write-Host 'the table, booted and thrown once:' -ForegroundColor DarkGray
+
+Invoke-Godot $Godot @('--headless', '--path', 'game', 'res://table.tscn', '--quit-after', '400') $log
+
+$table = Get-Content $log -Raw
+
+$table -split "`n" |
+    Where-Object { $_ -match '^(tray|table) ' } |
+    ForEach-Object { Write-Host "  $_" }
+
+Remove-Item $log -ErrorAction SilentlyContinue
+
+# a throw that resolved: the die settled AND core read it
+$threw = $table -match 'tray\s+Die1 d20 \d+' -and $table -match 'table\s+check: d20'
+
+# a raw key on screen means the .translation is stale
+$stale = $table -match 'LOCALE STALE' -or $table -match 'ability\.str\.name'
+
+Write-Host ''
+
+if ($wordsOk -and $threw -and -not $stale) { Pass 'the table comes up, the dice roll, and core reads the felt' }
+
+if (-not $wordsOk) {
+    Write-Host 'keys with no words in them. If the csv has them, re-import:' -ForegroundColor Red
+    Write-Host '  godot --headless --path game --import' -ForegroundColor DarkGray
+}
+
+if (-not $threw) { Write-Host 'no d20 reached the felt' -ForegroundColor Red }
+
+if ($stale) { Write-Host 'the .translation beside the csv is stale' -ForegroundColor Red }
+
+Fail

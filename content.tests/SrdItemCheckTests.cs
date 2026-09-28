@@ -68,7 +68,7 @@ namespace Content.Tests
         {
             var weak = new Actor("weak", 1, new AbilityScores()) { Speed = 30 };
 
-            weak.Armor = new ArmorProfile(ArmorWeight.Heavy, 18, strengthRequirement: 15);
+            weak.Armor = new ArmorProfile(ArmorCategory.Heavy, 18, strengthRequirement: 15);
             Assert.Equal(20, weak.Speed);
 
             weak.Armor = ArmorProfile.Unarmored;
@@ -85,10 +85,10 @@ namespace Content.Tests
 
             Assert.Equal(40, barbarian.Actor.Speed);
 
-            barbarian.Actor.Armor = new ArmorProfile(ArmorWeight.Heavy, 16);
+            barbarian.Actor.Armor = new ArmorProfile(ArmorCategory.Heavy, 16);
             Assert.Equal(30, barbarian.Actor.Speed);
 
-            barbarian.Actor.Armor = new ArmorProfile(ArmorWeight.Medium, 14);
+            barbarian.Actor.Armor = new ArmorProfile(ArmorCategory.Medium, 14);
             Assert.Equal(40, barbarian.Actor.Speed);
         }
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Dice;
-using Core.Localization;
+using Core.Words;
 
 namespace Core.Tables
 {
@@ -64,7 +64,7 @@ namespace Core.Tables
             IsEmpty ? "no gold" : Times == 1 ? $"{Dice} gold" : $"{Dice}x{Times} gold";
     }
 
-    public sealed class LootEntry
+    public sealed class LootEntry : ITableEntry
     {
         public LootEntry(string id, LootKind kind, int weight = 1, IReadOnlyList<Lot> items = null,
                          Purse gold = default, string table = null, bool speaks = false)
@@ -97,7 +97,7 @@ namespace Core.Tables
         public bool Speaks { get; }
 
         public override string ToString() =>
-            $"{Id} x{Weight} {Kind.ToString().ToLowerInvariant()}" +
+            $"{Id} x{Weight} {EnumWords.Name(Kind)}" +
             (Items.Count > 0 ? ": " + string.Join(", ", Items) : "") +
             (Gold.IsEmpty ? "" : $" + {Gold}") +
             (Table.Length > 0 ? $" -> {Table}" : "");
@@ -105,43 +105,23 @@ namespace Core.Tables
 
     // A LOOT TABLE: a weighted pick of what was found. It is data and nothing else, the same as an
     // EncounterTable - the GmScreen rolls it, and what the hero ends up carrying is the caller's.
-    public sealed class LootTable
+    //
+    // the narrator's line for a find sits beside the encounter lines rather than in a namespace of
+    // its own: it is the same voice behind the same screen, and the "loot" aspect keeps a loot table
+    // and an encounter table of one name from ever sharing a key
+    public sealed class LootTable : GmTable<LootEntry>
     {
         public LootTable(string id, IEnumerable<LootEntry> entries,
                          Visibility visibility = Visibility.Hidden)
+            : base(id, entries, visibility, "loot")
         {
-            Id = id ?? "";
-            Visibility = visibility;
-            Entries = (entries ?? Enumerable.Empty<LootEntry>()).Where(e => e != null).ToList();
         }
-
-        public string Id { get; }
-
-        public Visibility Visibility { get; }
-
-        public IReadOnlyList<LootEntry> Entries { get; }
-
-        public int TotalWeight => Entries.Sum(e => e.Weight);
 
         // the tables this one rolls on, for the cycle check and the package's "is there such a table"
         public IEnumerable<string> Rolls =>
             Entries.Where(e => e.Kind == LootKind.Table).Select(e => e.Table).Distinct();
 
-        // the narrator's line for a find. it sits beside the encounter lines rather than in a
-        // namespace of its own: it is the same voice behind the same screen, and the aspect keeps a
-        // loot table and an encounter table of one name from ever sharing a key
-        public static string LineKey(string table, string entry) =>
-            KeyConventions.Key(KeyConventions.EncounterNs, table, "loot", entry);
-
-        public string LineKey(LootEntry entry) =>
-            entry == null || !entry.Speaks ? "" : LineKey(Id, entry.Id);
-
-        public IEnumerable<string> Keys() =>
-            Entries.Where(e => e.Speaks).Select(e => LineKey(Id, e.Id));
-
-        public override string ToString() =>
-            $"{Id}: {Entries.Count} entries" +
-            (Visibility == Visibility.Shown ? ", rolled in the open" : "");
+        public override string ToString() => $"{Id}: {Entries.Count} entries" + RolledInTheOpen;
     }
 
     // every loot table a campaign ships, by id, so a table entry can find the one it names

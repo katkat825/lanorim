@@ -37,7 +37,7 @@
       "attacks": [
         { "id": "spider_bite", "damage": "1", "damage_type": "piercing", "ability": "dex",
           "finesse": true, "adds_ability": false,
-          "rider": { "damage": "1d4", "damage_type": "poison" } }
+          "on_hit": {"amount": "1d4", "damage_type": "poison"} }
       ]
     }
   ]

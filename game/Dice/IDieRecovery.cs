@@ -5,6 +5,9 @@ namespace Game.Dice
         DieRecoveryStep Cocked(in CockedDie die);
 
         DieRecoveryStep Escaped(in EscapedDie die);
+
+        // still moving after DieBody.MaxFlightSeconds: jittering against a wall or on a neighbour
+        DieRecoveryStep Restless(in RestlessDie die);
     }
 
     public enum DieRecoveryAction
@@ -70,6 +73,20 @@ namespace Game.Dice
         public EscapedDie(int escapesSoFar, double flightSeconds)
         {
             EscapesSoFar = escapesSoFar;
+            FlightSeconds = flightSeconds;
+        }
+    }
+
+    public readonly struct RestlessDie
+    {
+        // including this one - the first time a throw runs out of time is 1
+        public readonly int RethrowsSoFar;
+
+        public readonly double FlightSeconds;
+
+        public RestlessDie(int rethrowsSoFar, double flightSeconds)
+        {
+            RethrowsSoFar = rethrowsSoFar;
             FlightSeconds = flightSeconds;
         }
     }

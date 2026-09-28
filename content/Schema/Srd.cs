@@ -16,16 +16,22 @@ namespace Content.Schema
 
         static readonly Assembly Assembly = typeof(Srd).Assembly;
 
-        public static IEnumerable<string> Names =>
+        // read once: the assembly's resources can't change while it runs
+        static readonly string[] TheNames =
             Assembly.GetManifestResourceNames()
                     .Where(n => n.StartsWith(Prefix, StringComparison.Ordinal))
-                    .OrderBy(n => n, StringComparer.Ordinal);
+                    .OrderBy(n => n, StringComparer.Ordinal)
+                    .ToArray();
+
+        static readonly HashSet<string> NameSet = new(TheNames, StringComparer.Ordinal);
+
+        public static IEnumerable<string> Names => TheNames;
 
         // "spells/level_1.json" -> the embedded name the compiler gave it
         public static string NameOf(string path) =>
             Prefix + (path ?? "").Replace('/', '.').Replace('\\', '.');
 
-        public static bool Has(string path) => Names.Contains(NameOf(path));
+        public static bool Has(string path) => NameSet.Contains(NameOf(path));
 
         public static string Read(string path)
         {
@@ -55,6 +61,23 @@ namespace Content.Schema
 
                 yield return (name.Substring(Prefix.Length), reader.ReadToEnd());
             }
+        }
+
+        // everything every file in one folder holds, read by its reader. each problem is said with
+        // the file it came from; problems may be null for a caller that doesn't keep them
+        public static List<T> ReadAll<T>(string folder, ListReader<T> reader, List<string> problems)
+        {
+            var all = new List<T>();
+
+            foreach ((string path, string text) in ReadFolder(folder))
+            {
+                reader(text, out IReadOnlyList<T> read, out IReadOnlyList<string> trouble);
+
+                all.AddRange(read);
+                problems?.AddRange(trouble.Select(t => $"{path}: {t}"));
+            }
+
+            return all;
         }
     }
 }

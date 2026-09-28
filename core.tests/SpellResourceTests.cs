@@ -1,6 +1,4 @@
-using System.Linq;
 using Core.Magic;
-using Xunit;
 
 namespace Core.Tests
 {

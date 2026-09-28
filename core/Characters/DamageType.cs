@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using Core.Localization;
+using Core.Words;
 
 namespace Core.Characters
 {
@@ -8,7 +8,7 @@ namespace Core.Characters
     // multiplier, not a matrix - decisions_checklist.md section 6.
     public enum DamageType
     {
-        None = 0,
+        [Unread] None = 0,
 
         Bludgeoning,
         Piercing,
@@ -50,46 +50,8 @@ namespace Core.Characters
             DamageType.Bludgeoning, DamageType.Piercing, DamageType.Slashing,
         };
 
-        public static bool IsPhysical(this DamageType type) =>
-            type == DamageType.Bludgeoning || type == DamageType.Piercing ||
-            type == DamageType.Slashing;
-
-        public static string Id(this DamageType type) =>
-            type == DamageType.None ? "none" : type.ToString().ToLowerInvariant();
-
-        public static bool TryParse(string id, out DamageType type)
-        {
-            foreach (DamageType t in All)
-            {
-                if (!string.Equals(t.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                type = t;
-                return true;
-            }
-
-            type = DamageType.None;
-            return false;
-        }
-
         public static string NameKey(this DamageType type) =>
             KeyConventions.Key(KeyConventions.DamageNs, type.Id(), "name");
-
-        public static string Id(this Defense defense) => defense.ToString().ToLowerInvariant();
-
-        public static bool TryParse(string id, out Defense defense)
-        {
-            foreach (Defense d in new[]
-                     { Defense.Normal, Defense.Vulnerable, Defense.Resistant, Defense.Immune })
-            {
-                if (!string.Equals(d.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                defense = d;
-                return true;
-            }
-
-            defense = Defense.Normal;
-            return false;
-        }
 
         // SRD halves after every other modifier and rounds down; immunity wins over everything, so
         // a creature both vulnerable and immune takes nothing

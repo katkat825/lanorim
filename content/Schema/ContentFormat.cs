@@ -15,7 +15,7 @@ namespace Content.Schema
 
         public const int Oldest = 1;
 
-        public static bool CanRead(int format) => format >= Oldest && format <= Current;
+        public static readonly FormatVersion Range = new FormatVersion(Oldest, Current);
 
         // two directions that look the same to a version check but need different sentences
         public static string WhyNot(int format) =>

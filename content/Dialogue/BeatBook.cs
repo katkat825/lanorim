@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using Content.Campaigns;
 using Content.Schema;
+using Core.Words;
 
 namespace Content.Dialogue
 {
@@ -60,110 +60,23 @@ namespace Content.Dialogue
             && (written(beat.DmKey(Campaign))
                 || (voices ?? Array.Empty<string>()).All(v => written(beat.KeyFor(v, Campaign))));
 
-        // which voices are short of it, for a problem to name
-        public IEnumerable<string> Silent(Beat beat, IEnumerable<string> voices,
-                                          Func<string, bool> written) =>
-            beat == null || written == null
-                ? Array.Empty<string>()
-                : (voices ?? Array.Empty<string>()).Where(v => !written(beat.KeyFor(v, Campaign)));
-
 
         public static BeatBook Read(string folder, string campaign)
         {
             var book = new BeatBook(campaign);
 
-            if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder)) return book;
-
-            foreach (string path in Files(folder))
-            {
-                string name = Path.GetFileName(path);
-                string text;
-
-                try
-                {
-                    text = File.ReadAllText(path);
-                }
-                catch (Exception could)
-                {
-                    book._problems.Add(new ContentProblem(name, "", "could not be read - " + could.Message));
-                    continue;
-                }
-
-                book.Parse(text, name);
-            }
+            ListFile.ReadFolder(folder, Extension, "beats",
+                                "a beats file is a list of intents - " +
+                                "{ \"beats\": [ { \"id\": \"warn_bridge_trapped\", \"kind\": \"plot\" } ] }",
+                                "a beat", Fields, book._problems, book.One);
 
             return book;
-        }
-
-        void Parse(string json, string file)
-        {
-            JsonDocument document;
-
-            try
-            {
-                document = JsonDocument.Parse(json, new JsonDocumentOptions
-                {
-                    CommentHandling = JsonCommentHandling.Skip,
-                    AllowTrailingCommas = true,
-                });
-            }
-            catch (JsonException bad)
-            {
-                _problems.Add(new ContentProblem(
-                    file, "", "this is not JSON - " + bad.Message, (int)(bad.LineNumber ?? 0) + 1));
-                return;
-            }
-
-            using (document)
-            {
-                JsonElement root = document.RootElement;
-
-                if (root.ValueKind != JsonValueKind.Object)
-                {
-                    _problems.Add(new ContentProblem(
-                        file, "", $"a beats file is a JSON object and this is a {Named(root.ValueKind)}"));
-                    return;
-                }
-
-                foreach (JsonProperty property in root.EnumerateObject())
-                    if (property.Name != "beats")
-                        _problems.Add(new ContentProblem(
-                            file, property.Name,
-                            $"a beats file has no '{property.Name}' - it has beats, and nothing else"));
-
-                if (!root.TryGetProperty("beats", out JsonElement list) ||
-                    list.ValueKind != JsonValueKind.Array)
-                {
-                    _problems.Add(new ContentProblem(
-                        file, "beats",
-                        "a beats file is a list of intents - " +
-                        "{ \"beats\": [ { \"id\": \"warn_bridge_trapped\", \"kind\": \"plot\" } ] }"));
-                    return;
-                }
-
-                int at = 0;
-
-                foreach (JsonElement entry in list.EnumerateArray()) One(entry, file, $"beats[{at++}]");
-            }
         }
 
         static readonly string[] Fields = { "id", "kind", "note" };
 
         void One(JsonElement entry, string file, string where)
         {
-            if (entry.ValueKind != JsonValueKind.Object)
-            {
-                _problems.Add(new ContentProblem(
-                    file, where, $"a beat is an object and this is a {Named(entry.ValueKind)}"));
-                return;
-            }
-
-            foreach (JsonProperty property in entry.EnumerateObject())
-                if (Array.IndexOf(Fields, property.Name) < 0)
-                    _problems.Add(new ContentProblem(
-                        file, $"{where}.{property.Name}",
-                        $"a beat has no '{property.Name}' - it has {Vocabulary.Offer(Fields)}"));
-
             if (!entry.TryGetProperty("id", out JsonElement id) ||
                 id.ValueKind != JsonValueKind.String || !ContentId.IsLocal(id.GetString()))
             {
@@ -178,12 +91,12 @@ namespace Content.Dialogue
 
             if (entry.TryGetProperty("kind", out JsonElement word))
             {
-                if (word.ValueKind != JsonValueKind.String || !BeatKinds.TryWord(word.GetString(), out kind))
+                if (word.ValueKind != JsonValueKind.String || !EnumWords.TryParse(word.GetString(), out kind))
                 {
                     _problems.Add(new ContentProblem(
                         file, $"{where}.kind",
-                        $"'{Shown(word)}' is not a kind of beat - it is one of " +
-                        $"{Vocabulary.Offer(BeatKinds.Words)}"));
+                        $"'{PackJson.Shown(word)}' is not a kind of beat - it is one of " +
+                        $"{Vocabulary.Offer(EnumWords.Ids<BeatKind>())}"));
                     return;
                 }
             }
@@ -204,19 +117,6 @@ namespace Content.Dialogue
 
             _beats[id.GetString()] = new Beat(id.GetString(), kind, note);
         }
-
-        static IEnumerable<string> Files(string folder) =>
-            Directory.EnumerateFiles(folder, "*" + Extension, SearchOption.TopDirectoryOnly)
-                     .OrderBy(Path.GetFileName, StringComparer.Ordinal);
-
-        static string Shown(JsonElement value) => value.ValueKind switch
-        {
-            JsonValueKind.String => value.GetString(),
-            JsonValueKind.Undefined => "nothing",
-            _ => value.ToString(),
-        };
-
-        static string Named(JsonValueKind kind) => kind.ToString().ToLowerInvariant();
 
         public override string ToString() =>
             $"{_beats.Count} beats" + (_problems.Count > 0 ? $", {_problems.Count} problems" : "");

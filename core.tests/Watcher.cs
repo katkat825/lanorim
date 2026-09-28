@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Core.Characters;
 using Core.Combat;
-using Core.Resolution;
-using Core.Space;
+using Core.Words;
 
 namespace Core.Tests
 {

@@ -12,12 +12,12 @@ namespace Content.Tests
         static readonly Library Srd = Library.Srd();
 
         [Theory]
-        [InlineData("barbarian", "rage", "barbarian_unarmored_defense", "reckless_attack", "barbarian_weapon_mastery", "danger_sense")]
+        [InlineData("barbarian", "rage", "barbarian_unarmored_defense", "reckless_attack", "weapon_mastery", "danger_sense")]
         [InlineData("fighter", "fighting_style", "second_wind", "fighter_weapon_mastery", "improved_critical", "action_surge")]
         [InlineData("rogue", "expertise", "sneak_attack", "cunning_action", "uncanny_dodge", "evasion", "thieves_cant")]
         [InlineData("mage", "arcane_spellcasting", "ritual_adept")]
         [InlineData("cleric", "divine_spellcasting", "channel_divinity", "turn_undead", "preserve_life", "divine_strike")]
-        [InlineData("paladin", "lay_on_hands", "oath_spellcasting", "paladin_channel_divinity", "paladin_weapon_mastery", "paladins_smite")]
+        [InlineData("paladin", "lay_on_hands", "oath_spellcasting", "paladin_channel_divinity", "weapon_mastery", "paladins_smite")]
         [InlineData("druid", "primal_spellcasting", "wild_shape")]
         public void EveryFeatureTheRosterKeepsIsThere(string cls, params string[] features)
         {

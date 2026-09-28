@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Core.Words;
 
 namespace Game.Access
 {
@@ -119,9 +120,9 @@ namespace Game.Access
 
         public IEnumerable<string> Lines()
         {
-            yield return "lettering" + Between + Lettering.ToString().ToLowerInvariant();
+            yield return "lettering" + Between + EnumWords.Name(Lettering);
             yield return "contrast" + Between + Said(HighContrast);
-            yield return "speech" + Between + Speech.ToString().ToLowerInvariant();
+            yield return "speech" + Between + EnumWords.Name(Speech);
             yield return "captions" + Between + Said(Captions);
             yield return "read_aloud" + Between + Said(ReadAloud);
 
@@ -168,10 +169,10 @@ namespace Game.Access
 
         bool Took(string dial, string value) => dial switch
         {
-            "lettering" => Enum.TryParse(value, true, out Lettering lettering) &&
+            "lettering" => EnumWords.TryName(value, out Lettering lettering) &&
                            Set(() => Lettering = lettering),
             "contrast" => Yes(value, out bool contrast) && Set(() => HighContrast = contrast),
-            "speech" => Enum.TryParse(value, true, out Pace speech) && Set(() => Speech = speech),
+            "speech" => EnumWords.TryName(value, out Pace speech) && Set(() => Speech = speech),
             "captions" => Yes(value, out bool captions) && Set(() => Captions = captions),
             "read_aloud" => Yes(value, out bool aloud) && Set(() => ReadAloud = aloud),
             _ => false,

@@ -13,22 +13,14 @@ ability.wis.name,Wisdom
 ability.wis.short,WIS
 background.acolyte.description,"Trained in Insight and Religion; +2 and +1 to spend on Intelligence, Wisdom, Charisma; 8 gold to start."
 background.acolyte.name,Acolyte
-background.artisan.description,"Trained in Investigation and Persuasion; +2 and +1 to spend on Strength, Dexterity, Intelligence; 32 gold to start."
-background.artisan.name,Artisan
-background.charlatan.description,"Trained in Deception and Sleight of Hand; +2 and +1 to spend on Dexterity, Constitution, Charisma; 15 gold to start."
-background.charlatan.name,Charlatan
 background.criminal.description,"Trained in Sleight of Hand and Stealth; +2 and +1 to spend on Dexterity, Constitution, Intelligence; 16 gold to start."
 background.criminal.name,Criminal
-background.guard.description,"Trained in Athletics and Perception; +2 and +1 to spend on Strength, Intelligence, Wisdom; 12 gold to start."
-background.guard.name,Guard
-background.hermit.description,"Trained in Medicine and Religion; +2 and +1 to spend on Constitution, Wisdom, Charisma; 16 gold to start."
-background.hermit.name,Hermit
+background.recluse.description,"You spent a substantial amount of your life in the deep wilderness. Perhaps you tended a shrine far from any settlements or studied the natural world in the quiet solitude. Life away from the bustle of civilization has taught you the signs of illness and injury and led to a deeper understanding of the natural world around you."
+background.recluse.name,Recluse
 background.sage.description,"Trained in Arcana and History; +2 and +1 to spend on Constitution, Intelligence, Wisdom; 8 gold to start."
 background.sage.name,Sage
 background.soldier.description,"Trained in Athletics and Intimidation; +2 and +1 to spend on Strength, Dexterity, Constitution; 14 gold to start."
 background.soldier.name,Soldier
-background.wayfarer.description,"Trained in Insight and Stealth; +2 and +1 to spend on Dexterity, Wisdom, Charisma; 16 gold to start."
-background.wayfarer.name,Wayfarer
 class.barbarian.description,"Hit die d12; saves with Strength and Constitution; trained in light, medium armor and shields; 2 skills of your choosing."
 class.barbarian.name,Barbarian
 class.champion.name,Champion
@@ -153,12 +145,8 @@ feature.aura_of_devotion.description,You cannot be charmed.
 feature.aura_of_devotion.name,Aura of Devotion
 feature.aura_of_protection.description,"Add your Charisma modifier (at least +1) to your saving throws, unless you are incapacitated."
 feature.aura_of_protection.name,Aura of Protection
-feature.barbarian_extra_attack.description,An extra action every round.
-feature.barbarian_extra_attack.name,Extra Attack
 feature.barbarian_unarmored_defense.description,"With no armor on, your Armor Class is 10 plus Dexterity plus Constitution."
 feature.barbarian_unarmored_defense.name,Barbarian Unarmored Defense
-feature.barbarian_weapon_mastery.description,The mastery properties of two kinds of weapon you use.
-feature.barbarian_weapon_mastery.name,Weapon Mastery
 feature.beast_spells.description,Cast spells while in a wild shape.
 feature.beast_spells.name,Beast Spells
 feature.blessed_healer.description,Healing another creature with a slot heals you 2 plus the slot's level.
@@ -181,6 +169,10 @@ feature.cunning_strike.description,"Trade Sneak Attack dice to poison, trip or s
 feature.cunning_strike.name,Cunning Strike
 feature.danger_sense.description,"Advantage on Dexterity saving throws, unless you are incapacitated."
 feature.danger_sense.name,Danger Sense
+feature.darkvision_120.description,You see in the dark to 120 feet. The narrator decides what it reveals.
+feature.darkvision_120.name,Darkvision
+feature.darkvision_60.description,You see in the dark to 60 feet. The narrator decides what it reveals.
+feature.darkvision_60.name,Darkvision
 feature.devious_strikes.description,"Cunning strikes that daze, knock out or blind."
 feature.devious_strikes.name,Devious Strikes
 feature.disciple_of_life.description,A healing spell cast with a slot restores 2 plus the slot's level more hit points.
@@ -199,14 +191,10 @@ feature.draconic_flight.description,"A short ignore-terrain state on authored ma
 feature.draconic_flight.name,Draconic Flight
 feature.draconic_resistance.description,Resistance to your ancestry's damage type.
 feature.draconic_resistance.name,Draconic Resistance
-feature.dragonborn_darkvision.description,You see in the dark to 60 feet. The narrator decides what it reveals.
-feature.dragonborn_darkvision.name,Dragonborn Darkvision
 feature.drow_magic.description,"Faerie Fire at 3rd level and Darkness at 5th, each once a day without a slot."
 feature.drow_magic.name,Drow Magic
 feature.druidic.description,"The secret language of druids, and Speak with Animals always prepared."
 feature.druidic.name,Druidic
-feature.dwarf_darkvision.description,You see in the dark to 120 feet. The narrator decides what it reveals.
-feature.dwarf_darkvision.name,Dwarf Darkvision
 feature.dwarven_resilience.description,"Poison damage is halved, and advantage on saving throws against being Poisoned."
 feature.dwarven_resilience.name,Dwarven Resilience
 feature.dwarven_toughness.description,One more hit point every level.
@@ -225,6 +213,8 @@ feature.evocation_savant.description,Evocation spells come easily to you.
 feature.evocation_savant.name,Evocation Savant
 feature.expertise.description,Double your proficiency on 2 skills.
 feature.expertise.name,Expertise
+feature.extra_attack.description,An extra action every round.
+feature.extra_attack.name,Extra Attack
 feature.faithful_steed.description,A steed answers your call.
 feature.faithful_steed.name,Faithful Steed
 feature.fast_hands.description,"Pick a lock, disarm a trap or use an item with your bonus action."
@@ -235,8 +225,6 @@ feature.feral_instinct.description,Advantage on initiative.
 feature.feral_instinct.name,Feral Instinct
 feature.fey_ancestry.description,Advantage on saving throws against being Charmed.
 feature.fey_ancestry.name,Fey Ancestry
-feature.fighter_extra_attack.description,An extra action every round.
-feature.fighter_extra_attack.name,Extra Attack
 feature.fighter_weapon_mastery.description,The mastery properties of three kinds of weapon you use.
 feature.fighter_weapon_mastery.name,Weapon Mastery
 feature.fighting_style.description,Defense: +1 to Armor Class while you wear armor.
@@ -245,8 +233,6 @@ feature.frenzy.description,"Raging and attacking recklessly, the first creature 
 feature.frenzy.name,Frenzy
 feature.greater_divine_intervention.description,A greater miracle.
 feature.greater_divine_intervention.name,Greater Divine Intervention
-feature.greater_expertise.description,Double your proficiency on 2 skills.
-feature.greater_expertise.name,Expertise
 feature.halfling_luck.description,"REDESIGNED so it does not erase the nat-1 loop: once per rest, reroll a die showing a 1 OR downgrade a consequence to a cosmetic one (v1_species_roster.md)."
 feature.halfling_luck.name,Halfling Luck
 feature.halfling_nimbleness.description,You can move through the space of a bigger creature. The narrator decides what it allows.
@@ -301,8 +287,6 @@ feature.oath_of_devotion_spells.description,"Aid at 5th level, Dispel Magic at 9
 feature.oath_of_devotion_spells.name,Oath of Devotion Spells
 feature.oath_spellcasting.description,"You cast with Charisma, spending spell slots or spell points that come back on a long rest."
 feature.oath_spellcasting.name,Oath Spellcasting
-feature.orc_darkvision.description,You see in the dark to 120 feet. The narrator decides what it reveals.
-feature.orc_darkvision.name,Orc Darkvision
 feature.otherworldly_presence.description,You know the Thaumaturgy cantrip.
 feature.otherworldly_presence.name,Otherworldly Presence
 feature.overchannel.description,"Deal maximum damage with a spell of 1st to 5th level - free once a day, painful after. Told by the narrator for now."
@@ -311,12 +295,8 @@ feature.pact_resilience.description,Fire damage is halved.
 feature.pact_resilience.name,Pact Resilience
 feature.paladin_channel_divinity.description,"Divine Sense, and Sacred Weapon: 2 uses (3 at 11th level); a short rest gives one back."
 feature.paladin_channel_divinity.name,Channel Divinity
-feature.paladin_extra_attack.description,An extra action every round.
-feature.paladin_extra_attack.name,Extra Attack
 feature.paladin_fighting_style.description,Defense: +1 to Armor Class while you wear armor.
 feature.paladin_fighting_style.name,Fighting Style
-feature.paladin_weapon_mastery.description,The mastery properties of two kinds of weapon you use.
-feature.paladin_weapon_mastery.name,Weapon Mastery
 feature.paladins_smite.description,"Divine Smite always prepared, and once a long rest you can cast it without a slot."
 feature.paladins_smite.name,Paladin's Smite
 feature.persistent_rage.description,"Your rage lasts ten minutes, and once a day you regain all your rages as a fight begins."
@@ -355,8 +335,6 @@ feature.retaliation.description,"When a creature near you damages you, you can s
 feature.retaliation.name,Retaliation
 feature.ritual_adept.description,Cast your ritual spells without spending a slot.
 feature.ritual_adept.name,Ritual Adept
-feature.rogue_weapon_mastery.description,The mastery properties of two kinds of weapon you use.
-feature.rogue_weapon_mastery.name,Weapon Mastery
 feature.sacred_weapon.description,Spend Channel Divinity as you attack: your Charisma modifier (at least +1) to attack rolls for the fight.
 feature.sacred_weapon.name,Sacred Weapon
 feature.scholar.description,"Expertise in one of Arcana, History, Investigation, Medicine, Nature or Religion."
@@ -409,8 +387,6 @@ feature.thieves_cant.description,The secret speech and signs of thieves.
 feature.thieves_cant.name,Thieves' Cant
 feature.three_extra_attacks.description,"Your extra attacks, which Lanorim plays as one extra action."
 feature.three_extra_attacks.name,Three Extra Attacks
-feature.tiefling_darkvision.description,You see in the dark to 60 feet. The narrator decides what it reveals.
-feature.tiefling_darkvision.name,Tiefling Darkvision
 feature.trance.description,"You need no sleep, and magic cannot put you to sleep."
 feature.trance.name,Trance
 feature.turn_undead.description,"Spend Channel Divinity: undead within 30 feet make a Wisdom save or flee, frightened and incapacitated. Told by the narrator for now."
@@ -423,6 +399,8 @@ feature.use_magic_device.description,"Any magic item works for you, and wands la
 feature.use_magic_device.name,Use Magic Device
 feature.versatile.description,You are trained in Perception.
 feature.versatile.name,Versatile
+feature.weapon_mastery.description,The mastery properties of two kinds of weapon you use.
+feature.weapon_mastery.name,Weapon Mastery
 feature.wild_companion.description,"A spirit companion, summoned with a Wild Shape use."
 feature.wild_companion.name,Wild Companion
 feature.wild_resurgence.description,Trade between spell slots and Wild Shape uses.
@@ -1247,6 +1225,7 @@ ui.spell_resource.points.description,"One pool. Every spell level has a price, a
 ui.spell_resource.points.name,Spell points (simpler bookkeeping)
 ui.spell_resource.slots.description,"A grid of slots by level, refilled by a long rest. Cast a spell by spending a slot of its level or higher."
 ui.spell_resource.slots.name,Spell slots (classic D&D)
+ui.table.turn_hint,{0} and {1} turn the table
 ui.tutorial.advanced,Advanced
 ui.tutorial.advanced_blurb,"Positioning, concentration and resources over a long day."
 ui.tutorial.beginner,Beginner

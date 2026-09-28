@@ -5,7 +5,6 @@ using Content.Schema;
 using Core.Characters;
 using Core.Dice;
 using Core.Magic;
-using Xunit;
 
 namespace Content.Tests
 {
@@ -57,7 +56,13 @@ namespace Content.Tests
 
             save.Foes.Add(new SavedActor
             {
-                Id = "goblin", Ordinal = 2, HitPoints = 4, Seat = 1, Initiative = 12, X = 8, Y = 1,
+                Id = "goblin",
+                Ordinal = 2,
+                HitPoints = 4,
+                Seat = 1,
+                Initiative = 12,
+                X = 8,
+                Y = 1,
             });
 
             save.Felt.Add(new SavedDie(Die.D20, 17));

@@ -3,7 +3,6 @@ using System.Linq;
 using Content.Combat;
 using Content.Schema;
 using Content.Sheet;
-using Content.Spells;
 using Core.Characters;
 using Core.Combat;
 using Core.Dice;
@@ -11,6 +10,7 @@ using Core.Magic;
 using Core.Resolution;
 using Core.Rules;
 using Core.Space;
+using static Content.Tests.Fights;
 
 namespace Content.Tests
 {
@@ -18,38 +18,12 @@ namespace Content.Tests
     // differently from the SRD text, now done the SRD's way - each held to its page
     public class SrdSpellCheckTests
     {
-        static readonly SpellBook Book = SpellBook.Srd();
-
-        // eleven by five, all floor
-        const string Hall = @"
-+-+-+-+-+-+-+-+-+-+-+-+
-|@ . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+-+-+-+-+-+-+-+-+-+-+-+";
-
-        static IRng Script(params int[] rolls) =>
-            new ScriptedRng(rolls.Concat(Enumerable.Repeat(1, 400)).ToArray());
-
-        static Encounter Field(IRng rng)
-        {
-            Assert.True(MapReader.TryRead(Hall, out MapLayout map, out string problem), problem);
-
-            return new Encounter(new StandardResolver(rng), new Battlefield(map), new CombatLog());
-        }
-
         static Caster Wizard(out Actor actor, string id = "wizard", int level = 17,
                              Allegiance side = Allegiance.Hero)
         {
             actor = new Actor(id, level, new AbilityScores(10, 10, 14, 18, 10, 10), side);
             actor.SetHealth(new Health(80, Die.D6, level));
-            actor.Armor = new ArmorProfile(ArmorWeight.Heavy, 10);
+            actor.Armor = new ArmorProfile(ArmorCategory.Heavy, 10);
 
             var caster = new Caster(actor, Ability.Intelligence,
                                     SpellSlots.For(CasterProgression.Full, level));
@@ -57,18 +31,6 @@ namespace Content.Tests
             foreach (Spell spell in Book.All) caster.Learn(spell);
 
             return caster;
-        }
-
-        static Actor Goblin(string id = "goblin", int hp = 100, params string[] tags)
-        {
-            var goblin = new Actor(id, 1, new AbilityScores());
-            goblin.SetHealth(new Health(hp));
-            goblin.Armor = new ArmorProfile(ArmorWeight.Heavy, 10);
-            goblin.Speed = 30;
-
-            foreach (string tag in tags) goblin.Tag(tag);
-
-            return goblin;
         }
 
         // the wizard at (2,2) going first, the goblin at (x,2) going second
@@ -255,7 +217,7 @@ namespace Content.Tests
 
             Actor plain = Goblin("plain");
             Actor seer = Goblin("seer");
-            seer.Boons.Add(new Boon("true_seeing", "true_seeing", Duration.Encounter) { Truesight = true });
+            seer.Boons.Add(Boon.Of(new BoonSpec { Truesight = true }, "true_seeing", "true_seeing"));
 
             Assert.Equal(Advantage.Disadvantage, Strike.Lean(plain, me, true, true, true));
             Assert.Equal(Advantage.Flat, Strike.Lean(seer, me, true, true, true));
@@ -380,11 +342,11 @@ namespace Content.Tests
             Assert.True(cast.Cast(wizard, beam, Aim.On(new Cell(6, 2)), fight: fight).Cast);
 
             Assert.False(goblin.IsShifted);
-            Assert.True(goblin.Boons.NoShifting);
+            Assert.True(goblin.Boons.Forbids(Forbid.Shifting));
 
             // the beam moved off it: free to shift again
             Assert.True(cast.Again(wizard, beam, Aim.On(new Cell(9, 4)), fight: fight).Cast);
-            Assert.False(goblin.Boons.NoShifting);
+            Assert.False(goblin.Boons.Forbids(Forbid.Shifting));
         }
 
 

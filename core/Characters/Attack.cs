@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Core.Dice;
 using Core.Localization;
+using Core.Words;
 
 namespace Core.Characters
 {
@@ -68,7 +69,11 @@ namespace Core.Characters
                        LongRange, Hand, Finesse, AttackBonus, damageBonus ?? DamageBonus,
                        addsAbility ?? AddsAbilityToDamage)
             {
-                Thrown = Thrown, Light = Light, Heavy = Heavy, Versatile = Versatile, Category = Category,
+                Thrown = Thrown,
+                Light = Light,
+                Heavy = Heavy,
+                Versatile = Versatile,
+                Category = Category,
                 OnHit = OnHit,
             };
 
@@ -182,6 +187,6 @@ namespace Core.Characters
             $"{Id}: {Damage} {DamageType.Id()}" +
             (IsRanged ? $", range {Range}/{LongRange}" : $", reach {Reach}") +
             (Finesse ? ", finesse" : "") +
-            $", {Hand.ToString().ToLowerInvariant()} hand";
+            $", {EnumWords.Name(Hand)} hand";
     }
 }

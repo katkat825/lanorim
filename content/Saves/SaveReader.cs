@@ -7,6 +7,7 @@ using Content.Schema;
 using Core.Characters;
 using Core.Dice;
 using Core.Magic;
+using Core.Words;
 
 namespace Content.Saves
 {
@@ -25,26 +26,13 @@ namespace Content.Saves
         {
             var problems = new List<ContentProblem>();
 
-            JsonDocument document;
+            JsonDocument document = PackJson.ReadObject(json, file, "a save", out ContentProblem bad);
 
-            try
-            {
-                document = JsonDocument.Parse(json ?? "", Json.Options);
-            }
-            catch (JsonException bad)
-            {
-                return Read<SaveGame>.Bad(new ContentProblem(
-                    file, "", "this is not JSON - " + bad.Message, (int)(bad.LineNumber ?? 0) + 1));
-            }
+            if (document == null) return Read<SaveGame>.Bad(bad);
 
             using (document)
             {
                 JsonElement root = document.RootElement;
-
-                if (root.ValueKind != JsonValueKind.Object)
-                    return Read<SaveGame>.Bad(new ContentProblem(
-                        file, "", "a save is a JSON object and this is a " +
-                                  root.ValueKind.ToString().ToLowerInvariant()));
 
                 var save = new SaveGame
                 {
@@ -62,7 +50,7 @@ namespace Content.Saves
                 save.Label = root.Text("label");
                 save.Node = root.Text("node");
 
-                if (root.Has("kind") && Vocabulary.TryWord(root.Text("kind"), out SaveKind kind))
+                if (root.Has("kind") && EnumWords.TryName(root.Text("kind"), out SaveKind kind))
                     save.Kind = kind;
 
                 if (root.Has("story") && root.GetProperty("story").ValueKind == JsonValueKind.Object)
@@ -81,7 +69,7 @@ namespace Content.Saves
                     problems.Add(new ContentProblem(file, "format",
                         "this save does not say what format it is, so nothing can be assumed " +
                         "about the rest of it"));
-                else if (!SaveFormat.CanRead(save.Format))
+                else if (!SaveFormat.Range.CanRead(save.Format))
                     problems.Add(ContentProblem.Caution(file, "format",
                         SaveFormat.Unfamiliar(save.Format)));
 
@@ -115,6 +103,7 @@ namespace Content.Saves
             }
         }
 
+        // a hero, section by section as SaveWriter writes it; problems come in the same order as ever
         static SavedHero Hero(JsonElement entry, string file, List<ContentProblem> problems)
         {
             var hero = new SavedHero
@@ -135,11 +124,27 @@ namespace Content.Saves
                 Form = entry.Text("form"),
             };
 
+            ReadMagic(entry, hero, file, problems);
+            ReadChoices(entry, hero, file, problems);
+
+            foreach (Condition condition in Words<Condition>(entry, "conditions", file,
+                                                             "hero.conditions", problems))
+                hero.Conditions.Add(condition);
+
+            ReadGear(entry, hero, file, problems);
+
+            (hero.X, hero.Y) = Where(entry);
+
+            return hero;
+        }
+
+        static void ReadMagic(JsonElement entry, SavedHero hero, string file, List<ContentProblem> problems)
+        {
             // a save that does not say gets slots, which is what a character created without an
             // opinion has - and a mode this build does not know is a caution, not a refusal
             if (entry.Has("spell_resource"))
             {
-                if (Vocabulary.TryWord(entry.Text("spell_resource"), out SpellResourceMode mode))
+                if (EnumWords.TryName(entry.Text("spell_resource"), out SpellResourceMode mode))
                     hero.Resource = mode;
                 else
                     problems.Add(ContentProblem.Caution(file, "hero.spell_resource",
@@ -155,6 +160,13 @@ namespace Content.Saves
                 if (one.ValueKind == JsonValueKind.Number)
                     hero.SpentHighLevels.Add(one.GetInt32());
 
+            foreach (string id in entry.Strings("known")) hero.Known.Add(id);
+        }
+
+        // what the player chose: scores, the background's spend, skills, improvements - and what
+        // its features have spent
+        static void ReadChoices(JsonElement entry, SavedHero hero, string file, List<ContentProblem> problems)
+        {
             Scores(entry, "scores", 10, hero.Scores, file, problems);
             Scores(entry, "background_spend", 0, hero.BackgroundSpend, file, problems);
 
@@ -168,8 +180,6 @@ namespace Content.Saves
 
             foreach (Skill skill in Words<Skill>(entry, "expertise", file, "hero.expertise", problems))
                 hero.Expertise.Add(skill);
-
-            foreach (string id in entry.Strings("known")) hero.Known.Add(id);
 
             hero.ImprovementsRecorded = entry.Has("improvements");
             hero.PendingImprovements = entry.Number("improvements_pending", 0);
@@ -191,15 +201,14 @@ namespace Content.Saves
                                                           .Where(a => a.ValueKind == JsonValueKind.String)
                                                           .Select(a => a.GetString())));
             }
+        }
 
-            foreach (Condition condition in Words<Condition>(entry, "conditions", file,
-                                                             "hero.conditions", problems))
-                hero.Conditions.Add(condition);
-
+        static void ReadGear(JsonElement entry, SavedHero hero, string file, List<ContentProblem> problems)
+        {
             if (entry.Has("worn"))
                 foreach (JsonProperty property in entry.GetProperty("worn").EnumerateObject())
                 {
-                    if (!Vocabulary.TryWord(property.Name, out Slot slot))
+                    if (!EnumWords.TryName(property.Name, out Slot slot))
                     {
                         problems.Add(ContentProblem.Caution(file, "hero.worn",
                             $"'{property.Name}' is not a slot anything is worn in"));
@@ -213,10 +222,6 @@ namespace Content.Saves
             if (entry.Has("pack"))
                 foreach (JsonElement one in entry.GetProperty("pack").EnumerateArray())
                     hero.Pack.Add(new SavedStack(one.Text("item"), one.Number("count", 1)));
-
-            (hero.X, hero.Y) = Where(entry);
-
-            return hero;
         }
 
         static SavedActor Actor(JsonElement entry, string file, List<ContentProblem> problems)
@@ -250,7 +255,7 @@ namespace Content.Saves
 
             foreach (JsonProperty property in entry.GetProperty(field).EnumerateObject())
             {
-                if (!Vocabulary.TryWord(property.Name, out Ability ability))
+                if (!EnumWords.TryName(property.Name, out Ability ability))
                 {
                     problems.Add(ContentProblem.Caution(file, "hero." + field,
                         $"'{property.Name}' is not an ability - it is " +
@@ -268,7 +273,7 @@ namespace Content.Saves
         {
             foreach (string word in entry.Strings(field))
             {
-                if (Vocabulary.TryWord(word, out T value))
+                if (EnumWords.TryName(word, out T value))
                 {
                     yield return value;
                     continue;

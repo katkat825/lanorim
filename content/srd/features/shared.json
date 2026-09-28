@@ -1,0 +1,15 @@
+{
+  "_": "Features more than one class or species has, defined once (cc_task_godfiles-dupes-efficiency.md #9). A class or species lists one by its id and the level it arrives at, and nothing else: { \"id\": \"extra_attack\", \"level\": 5 }. One id means one locale name and description (feature.<id>.name). A feature here has no level of its own.",
+  "features": [
+    { "id": "extra_attack", "trait": "action_grant", "count": 1,
+      "note": "SRD Extra Attack, ported literally: a third action every round. SRD's later Two and Three Extra Attacks collapse into this single +1 in v1 (the Fighter's two_extra_attacks, three_extra_attacks). Barbarian, Fighter, Paladin" },
+    { "id": "weapon_mastery", "trait": "narrate",
+      "note": "two kinds of weapon (the Fighter's is three, its own fighter_weapon_mastery). weapon mastery properties (cleave, graze, nick, push, sap, slow, topple, vex) are not in v1's weapon data yet. Barbarian, Rogue, Paladin" },
+    { "id": "expertise", "trait": "expertise", "count": 2,
+      "note": "SRD 5.2.1 (p.61): the Rogue's Expertise, two skills at level 1 and two more at 6" },
+    { "id": "darkvision_60", "trait": "narrate",
+      "note": "Darkvision 60 feet. no light model on the map in v1; authored dark places can ask for it. Dragonborn, Tiefling" },
+    { "id": "darkvision_120", "trait": "narrate",
+      "note": "Darkvision 120 feet. no light model on the map in v1; authored dark places can ask for it. Dwarf, Orc" }
+  ]
+}

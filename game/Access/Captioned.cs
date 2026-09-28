@@ -110,22 +110,12 @@ namespace Game.Access
         {
             int told = 0;
 
-            foreach (Node node in Everywhere(root ?? this))
+            foreach (Node node in Nodes.Under(root ?? this))
             {
                 if (node is Game.Tray.DiceTray tray) { tray.Captions = this; told++; }
             }
 
             return told;
-        }
-
-        static IEnumerable<Node> Everywhere(Node node)
-        {
-            foreach (Node child in node.GetChildren())
-            {
-                yield return child;
-
-                foreach (Node under in Everywhere(child)) yield return under;
-            }
         }
 
         // the sound just happened. A caption for a sound nobody asked to see is not drawn and not

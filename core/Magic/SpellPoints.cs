@@ -51,8 +51,15 @@ namespace Core.Magic
         // price - which is the whole of upcasting in this mode.
         static readonly IReadOnlyDictionary<int, int> Prices = new Dictionary<int, int>
         {
-            [1] = 2, [2] = 3, [3] = 5, [4] = 6, [5] = 7,
-            [6] = 9, [7] = 10, [8] = 11, [9] = 13,
+            [1] = 2,
+            [2] = 3,
+            [3] = 5,
+            [4] = 6,
+            [5] = 7,
+            [6] = 9,
+            [7] = 10,
+            [8] = 11,
+            [9] = 13,
         };
 
         public static int CostOf(int spellLevel) =>

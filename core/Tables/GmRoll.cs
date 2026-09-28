@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Core.Words;
 
 namespace Core.Tables
 {
@@ -37,7 +38,7 @@ namespace Core.Tables
 
         public override string ToString() =>
             $"{(IsHidden ? "behind the screen" : "in the open")}: " +
-            $"{Purpose.ToString().ToLowerInvariant()} {Dice} = {Total}" +
+            $"{EnumWords.Name(Purpose)} {Dice} = {Total}" +
             (Table.Length > 0 ? $" ({Table})" : "");
     }
 }

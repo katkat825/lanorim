@@ -11,7 +11,7 @@
       "effects": [
         {
           "primitive": "zone",
-          "reach": "square",
+          "aim": "square",
           "length": 4,
           "rough": true,
           "duration": "concentration",
@@ -20,7 +20,7 @@
         },
         {
           "primitive": "damage",
-          "reach": "zone",
+          "aim": "zone",
           "pulses": "appear|enter|end_turn",
           "amount": "3d6",
           "damage_type": "bludgeoning",
@@ -30,13 +30,13 @@
         },
         {
           "primitive": "afflict",
-          "reach": "zone",
+          "aim": "zone",
           "pulses": "appear|enter|end_turn",
           "condition": "restrained",
           "save": "str",
           "on_save": "negates",
           "same_save": true,
-          "escape": "str",
+          "escape": {"ability": "str"},
           "duration": "concentration",
           "note": "an action and a Strength (Athletics) check against the spell's DC breaks free"
         }
@@ -51,13 +51,13 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "8d8",
-          "per_extra_level": "1d8",
+          "upcast": {"amount": "1d8"},
           "damage_type": "necrotic",
           "save": "con",
           "on_save": "half",
-          "auto_fail_tags": ["plant"]
+          "tag_rules": {"plant": "auto_fail"}
         }
       ]
     },
@@ -68,7 +68,7 @@
       "range": 0,
       "classes": ["cleric", "paladin"],
       "effects": [
-        {"primitive": "sway", "reach": "creature", "death_ward": true, "duration": "long_rest", "note": "SRD 5.2.1: for 8 hours (until the next long rest), the first drop to 0 HP is a drop to 1 instead, and an instant kill that deals no damage is negated; either ends the spell"}
+        {"primitive": "sway", "aim": "creature", "death_ward": true, "duration": "long_rest", "note": "SRD 5.2.1: for 8 hours (until the next long rest), the first drop to 0 HP is a drop to 1 instead, and an instant kill that deals no damage is negated; either ends the spell"}
       ]
     },
     {
@@ -80,17 +80,17 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 4,
           "amount": "2d10",
-          "per_extra_level": "1d10",
+          "upcast": {"amount": "1d10"},
           "damage_type": "bludgeoning",
           "save": "dex",
           "on_save": "half"
         },
         {
           "primitive": "damage",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 4,
           "amount": "4d6",
           "damage_type": "cold",
@@ -100,7 +100,7 @@
         },
         {
           "primitive": "zone",
-          "reach": "place",
+          "aim": "place",
           "radius": 4,
           "rough": true,
           "duration": "next_turn_end",
@@ -123,7 +123,7 @@
       "effects": [
         {
           "primitive": "ward",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "30",
           "duration": "concentration",
           "note": "proposed name: Borrowed Form. SRD 5.2.1: a creature (Wis save if unwilling) becomes a Beast of CR no higher than its level or CR, takes that stat block, and gains temporary HP equal to the form's HP; it ends when those are gone. v1 plans curated form cards (v1_spell_list.md) and has no stat-block swap and no hostile use; until the cards exist it grants a placeholder 30 temporary HP standing in for a form's HP"
@@ -143,8 +143,8 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "creature",
-          "resists": "bludgeoning|piercing|slashing",
+          "aim": "creature",
+          "defenses": {"bludgeoning": "resistant", "piercing": "resistant", "slashing": "resistant"},
           "duration": "concentration"
         }
       ]
@@ -156,8 +156,8 @@
       "range": 30,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "damage", "reach": "burst", "radius": 4, "amount": "10d4", "per_extra_level": "2d4", "damage_type": "acid", "save": "dex", "on_save": "half"},
-        {"primitive": "damage", "reach": "burst", "radius": 4, "amount": "5d4", "damage_type": "acid", "save": "dex", "on_save": "negates", "same_save": true, "delayed": true, "note": "SRD 5.2.1: on a failed save only, another 5d4 acid at the end of the target's next turn"}
+        {"primitive": "damage", "aim": "burst", "radius": 4, "amount": "10d4", "upcast": {"amount": "2d4"}, "damage_type": "acid", "save": "dex", "on_save": "half"},
+        {"primitive": "damage", "aim": "burst", "radius": 4, "amount": "5d4", "damage_type": "acid", "save": "dex", "on_save": "negates", "same_save": true, "lands": "next_turn_end", "note": "SRD 5.2.1: on a failed save only, another 5d4 acid at the end of the target's next turn"}
       ]
     },
     {
@@ -168,8 +168,8 @@
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "zone", "reach": "place", "radius": 4, "obscures": "heavy", "drifts": 2, "duration": "concentration", "note": "SRD 5.2.1: a 20-foot-radius sphere of heavily obscuring poison fog that moves 10 feet away from you at the start of each of your turns"},
-        {"primitive": "damage", "reach": "zone", "pulses": "appear|enter|end_turn", "amount": "5d8", "per_extra_level": "1d8", "damage_type": "poison", "save": "con", "on_save": "half", "note": "when it appears, when it moves over a creature, when a creature enters it or ends its turn there - once per turn: 5d8 poison, Con save for half"}
+        {"primitive": "zone", "aim": "place", "radius": 4, "obscures": "heavy", "drifts": 2, "duration": "concentration", "note": "SRD 5.2.1: a 20-foot-radius sphere of heavily obscuring poison fog that moves 10 feet away from you at the start of each of your turns"},
+        {"primitive": "damage", "aim": "zone", "pulses": "appear|enter|end_turn", "amount": "5d8", "upcast": {"amount": "1d8"}, "damage_type": "poison", "save": "con", "on_save": "half", "note": "when it appears, when it moves over a creature, when a creature enters it or ends its turn there - once per turn: 5d8 poison, Con save for half"}
       ]
     },
     {
@@ -183,20 +183,20 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 2,
           "amount": "5d6",
-          "per_extra_level": "1d6",
+          "upcast": {"amount": "1d6"},
           "damage_type": "fire",
           "save": "dex",
           "on_save": "half"
         },
         {
           "primitive": "damage",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 2,
           "amount": "5d6",
-          "per_extra_level": "1d6",
+          "upcast": {"amount": "1d6"},
           "damage_type": "radiant",
           "save": "dex",
           "on_save": "half",
@@ -214,20 +214,20 @@
       "effects": [
         {
           "primitive": "heal",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "1",
           "note": "proposed name: Rekindled Life. SRD 5.2.1: a 1-hour casting (500 gp diamond, consumed) returns a creature dead no more than 10 days, not undead, with 1 HP, neutralizes poisons and closes mortal wounds; the target takes -4 on D20 Tests, reduced by 1 each long rest. The 10-day and undead limits are the campaign's to enforce",
           "revives": true
         },
         {
           "primitive": "relieve",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "poisoned"
         },
         {
           "primitive": "sway",
-          "reach": "creature",
-          "sway": -4,
+          "aim": "creature",
+          "flat": -4,
           "touches": "attacks|saves|checks",
           "duration": "long_rest",
           "eases_per_long_rest": 1,
@@ -247,34 +247,33 @@
       "effects": [
         {
           "primitive": "shift",
-          "reach": "creature",
+          "aim": "creature",
           "length": 6,
           "save": "str",
           "on_save": "negates",
           "max_size": "huge",
-          "repeats": true,
+          "lands": "now_and_on_repeat",
           "switches": true,
           "mode": "creature",
           "note": "SRD 5.2.1: when cast and as a Magic action later: a Huge or smaller creature makes a Str save or is moved up to 30 feet within range and Restrained until the end of your next turn. lifting it into the air is the narrator's (no altitude on the board)"
         },
         {
           "primitive": "afflict",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "restrained",
           "save": "str",
           "on_save": "negates",
           "same_save": true,
           "max_size": "huge",
-          "duration": "next_turn_end",
-          "until": "caster",
-          "repeats": true,
+          "duration": "caster_next_turn_end",
+          "lands": "now_and_on_repeat",
           "switches": true,
           "mode": "creature"
         },
         {
           "primitive": "disarm",
-          "reach": "creature",
-          "repeats": true,
+          "aim": "creature",
+          "lands": "now_and_on_repeat",
           "switches": true,
           "mode": "object",
           "note": "SRD 5.2.1: an object a creature is wearing or carrying - it makes a Strength saving throw, or you pull the object away",
@@ -294,7 +293,7 @@
       "effects": [
         {
           "primitive": "zone",
-          "reach": "wall",
+          "aim": "wall",
           "length": 20,
           "ring_size": 12,
           "rough": true,
@@ -304,7 +303,7 @@
         },
         {
           "primitive": "damage",
-          "reach": "zone",
+          "aim": "zone",
           "pulses": "appear|enter|end_turn",
           "amount": "6d10",
           "damage_type": "force",
@@ -324,29 +323,25 @@
       "effects": [
         {
           "primitive": "afflict",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "restrained",
           "save": "con",
           "on_save": "negates",
-          "repeat_save": true,
-          "ends_after": 3,
-          "worsens": "petrified",
-          "worsens_after": 3,
-          "auto_save_tags": ["construct"],
+          "repeat_save": {"ability": "con", "ends_after": 3, "worsens": "petrified", "worsens_after": 3},
+          "tag_rules": {"construct": "auto_save"},
           "duration": "concentration",
           "note": "SRD 5.2.1: Con save or Restrained; it saves again at the end of each of its turns, three successes end the spell and three failures (the first save counts) Petrify it for the duration. a Construct succeeds automatically. Held the full minute (10 rounds), the Petrified condition stays until Greater Restoration ends it (permanent_after_rounds)",
           "permanent_after_rounds": 10
         },
         {
           "primitive": "sway",
-          "reach": "creature",
+          "aim": "creature",
           "speed_change": "zero",
           "save": "con",
           "on_save": "on_success",
           "same_save": true,
-          "auto_save_tags": ["construct"],
-          "duration": "next_turn",
-          "until": "caster",
+          "tag_rules": {"construct": "auto_save"},
+          "duration": "caster_next_turn",
           "note": "SRD 5.2.1: on a successful save, Speed 0 until the start of the caster's next turn"
         }
       ]
@@ -359,7 +354,7 @@
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "zone", "reach": "place", "radius": 2, "blocks_spells_up_to": 5, "duration": "concentration", "note": "SRD 5.2.1: an immobile 10-foot barrier around where you stand; a spell of level 5 or lower (one higher per slot level above 6) cast from outside cannot affect anything inside"}
+        {"primitive": "zone", "aim": "place", "radius": 2, "blocks_spells_up_to": 5, "upcast": {"blocks_spells_up_to": 1}, "duration": "concentration", "note": "SRD 5.2.1: an immobile 10-foot barrier around where you stand; a spell of level 5 or lower (one higher per slot level above 6) cast from outside cannot affect anything inside"}
       ]
     },
     {
@@ -369,7 +364,7 @@
       "range": 0,
       "classes": ["mage", "cleric"],
       "effects": [
-        {"primitive": "sway", "reach": "creature", "truesight": true, "duration": "rest", "note": "SRD 5.2.1: Truesight 120 feet for 1 hour - sees the Invisible and through magical darkness on the board; seeing through illusions, shapechanges and into the Ethereal is the narrator's"}
+        {"primitive": "sway", "aim": "creature", "truesight": true, "duration": "rest", "note": "SRD 5.2.1: Truesight 120 feet for 1 hour - sees the Invisible and through magical darkness on the board; seeing through illusions, shapechanges and into the Ethereal is the narrator's"}
       ]
     },
     {
@@ -381,7 +376,7 @@
       "effects": [
         {
           "primitive": "zone",
-          "reach": "square",
+          "aim": "square",
           "length": 4,
           "ring_size": 4,
           "encloses": "bars",
@@ -391,7 +386,7 @@
         },
         {
           "primitive": "zone",
-          "reach": "square",
+          "aim": "square",
           "length": 2,
           "ring_size": 2,
           "encloses": "solid",
@@ -413,11 +408,9 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "creature",
+          "aim": "creature",
           "banishes": true,
-          "escape": "int",
-          "escape_skill": "investigation",
-          "escape_dc": 20,
+          "escape": {"ability": "int", "skill": "investigation", "dc": 20},
           "duration": "concentration",
           "note": "SRD 5.2.1 (SRD p.148): no save. A creature you can see within 60 feet is banished into a labyrinthine demiplane (off the board, its mini beside the map) for the duration or until it escapes: a Study action and a DC 20 Intelligence (Investigation) check, and on a success it escapes and the spell ends. It reappears in the space it left or the nearest unoccupied one"
         }
@@ -430,8 +423,8 @@
       "range": 12,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "afflict", "reach": "creature", "condition": "stunned", "only_at_or_below": 150, "end_save": "con", "duration": "encounter", "note": "SRD 5.2.1: no save; a target with 150 HP or fewer is Stunned and makes a Con save at the end of each of its turns to end it"},
-        {"primitive": "sway", "reach": "creature", "speed_change": "zero", "only_above": 150, "duration": "next_turn", "until": "caster", "note": "SRD 5.2.1: a tougher target instead has a Speed of 0 until the start of the caster's next turn"}
+        {"primitive": "afflict", "aim": "creature", "condition": "stunned", "hit_points": {"at_or_below": 150}, "repeat_save": {"ability": "con"}, "duration": "encounter", "note": "SRD 5.2.1: no save; a target with 150 HP or fewer is Stunned and makes a Con save at the end of each of its turns to end it"},
+        {"primitive": "sway", "aim": "creature", "speed_change": "zero", "hit_points": {"above": 150}, "duration": "caster_next_turn", "note": "SRD 5.2.1: a tougher target instead has a Speed of 0 until the start of the caster's next turn"}
       ]
     },
     {
@@ -443,7 +436,7 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "creature",
+          "aim": "creature",
           "leans": "advantage_on_attacks|advantage_on_checks|advantage_on_saves|disadvantage_against",
           "duration": "long_rest",
           "note": "SRD 5.2.1: advantage on D20 tests, and attack rolls against the creature have disadvantage, for eight hours"
@@ -466,7 +459,7 @@
       "effects": [
         {
           "primitive": "ward",
-          "reach": "caster",
+          "aim": "caster",
           "amount": "100",
           "duration": "concentration",
           "note": "proposed name: Myriad Forms. SRD 5.2.1: the caster becomes any creature of CR up to their level they have seen, takes its stat block (keeping mental scores, class features and spellcasting), gains temporary HP equal to the form's HP, and can switch form as a bonus action. v1 plans curated high-level form cards with one swap per turn (v1_spell_list.md); until they exist it grants a placeholder 100 temporary HP standing in for a form's HP"

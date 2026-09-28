@@ -38,8 +38,6 @@ namespace Core.Dice
         // doubled so the half-face average stays exact; SRD rounds the halved result down
         public int Average => (RollsAnything ? Count * Die.TwiceAverage() / 2 : 0) + Modifier;
 
-        public DiceRoll WithModifier(int modifier) => new DiceRoll(Count, Die, modifier);
-
         public DiceRoll Plus(int extra) => new DiceRoll(Count, Die, Modifier + extra);
 
         // a critical hit doubles the dice, never the modifier - SRD 5.2.1, and the difference is

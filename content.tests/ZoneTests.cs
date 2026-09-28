@@ -6,8 +6,8 @@ using Core.Combat;
 using Core.Dice;
 using Core.Magic;
 using Core.Resolution;
-using Core.Rules;
 using Core.Space;
+using static Content.Tests.Fights;
 
 namespace Content.Tests
 {
@@ -15,30 +15,6 @@ namespace Content.Tests
     // Entangle, Moonbeam, Spike Growth and Ice Storm, held to what SRD 5.2.1 says they do
     public class ZoneTests
     {
-        static readonly SpellBook Book = SpellBook.Srd();
-
-        // eleven by five, all floor
-        const string Hall = @"
-+-+-+-+-+-+-+-+-+-+-+-+
-|@ . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+-+-+-+-+-+-+-+-+-+-+-+";
-
-        static Encounter Field(IRng rng, ICombatObserver observer = null)
-        {
-            Assert.True(MapReader.TryRead(Hall, out MapLayout map, out string problem), problem);
-
-            return new Encounter(new StandardResolver(rng), new Battlefield(map),
-                                 observer ?? new CombatLog());
-        }
-
         static Caster Cleric(out Actor actor, int level = 9)
         {
             actor = new Actor("cleric", level, new AbilityScores(10, 10, 14, 10, 18, 10),
@@ -75,13 +51,13 @@ namespace Content.Tests
 
             Assert.False(guardians.Approximated);
             Assert.Contains(guardians.Effects, e => e.Kind == Primitive.Zone &&
-                                                    e.SparesAllies && e.Reach == Reach.Around);
+                                                    e.Affects == Affects.Foes && e.AimKind == AimKind.Around);
             // "any other creature's Speed is halved in the Emanation" (SRD p.164) - an aura, not
             // difficult terrain
-            Assert.Contains(guardians.Effects, e => e.WhileInside && e.SpeedChange == SpeedChange.Half);
+            Assert.Contains(guardians.Effects, e => e.Linger.WhileInZone && e.Boon.SpeedChange == SpeedChange.Half);
             Assert.Contains(guardians.Effects, e => e.ChosenDamageType &&
                                                     e.DamageChoices.Contains(DamageType.Necrotic));
-            Assert.Contains(guardians.Effects, e => e.Reach == Reach.Zone &&
+            Assert.Contains(guardians.Effects, e => e.AimKind == AimKind.Zone &&
                                                     e.Pulses == (Pulses.Enter | Pulses.EndTurn));
         }
 
@@ -454,7 +430,7 @@ namespace Content.Tests
             new Incantation(new StandardResolver(new ScriptedRng(18, 4)))
                 .Cast(mage, Book.Find("shocking_grasp"), Aim.At(goblin));
 
-            Assert.True(goblin.Boons.NoOpportunityAttacks);
+            Assert.True(goblin.Boons.Forbids(Forbid.OpportunityAttacks));
 
             var swing = new OpportunityAttack(new Attack("claw", DiceRoll.Parse("1d4"),
                                                          DamageType.Slashing));
@@ -486,8 +462,8 @@ namespace Content.Tests
             Caster druid = Cleric(out Actor me);
             Actor hidden = Goblin("hidden");
 
-            hidden.Boons.Add(new Boon("invisibility", "invisibility", Duration.Encounter,
-                                      disadvantageAgainst: true));
+            hidden.Boons.Add(Boon.Of(new BoonSpec { Leans = Leans.DisadvantageAgainst },
+                                     "invisibility", "invisibility"));
 
             Assert.Equal(Advantage.Disadvantage, hidden.AdvantageAgainstMe);
 
@@ -506,8 +482,8 @@ namespace Content.Tests
         {
             SpellReader.TryRead(@"{""spells"":[{""id"":""test_hold"",""level"":2,
               ""school"":""enchantment"",""range"":12,""concentration"":true,""effects"":[
-              {""primitive"":""afflict"",""reach"":""creature"",""condition"":""stunned"",
-               ""save"":""wis"",""on_save"":""negates"",""repeat_save"":true,
+              {""primitive"":""afflict"",""aim"":""creature"",""condition"":""stunned"",
+               ""save"":""wis"",""on_save"":""negates"",""repeat_save"":{""ability"":""wis""},
                ""duration"":""concentration""}]}]}",
                                 out IReadOnlyList<Spell> read, out IReadOnlyList<string> problems);
 
@@ -540,11 +516,11 @@ namespace Content.Tests
         public void TheReaderWantsAZoneForAZoneEffectAndPulsesToSayWhen()
         {
             SpellReader.TryRead(@"{""spells"":[{""id"":""no_zone"",""level"":1,""effects"":[
-              {""primitive"":""damage"",""reach"":""zone"",""pulses"":""enter"",""amount"":""1d6"",
+              {""primitive"":""damage"",""aim"":""zone"",""pulses"":""enter"",""amount"":""1d6"",
                ""damage_type"":""fire""}]},
               {""id"":""no_when"",""level"":1,""concentration"":true,""effects"":[
-              {""primitive"":""zone"",""reach"":""place"",""radius"":2,""duration"":""concentration""},
-              {""primitive"":""damage"",""reach"":""zone"",""amount"":""1d6"",""damage_type"":""fire""}]}]}",
+              {""primitive"":""zone"",""aim"":""place"",""radius"":2,""duration"":""concentration""},
+              {""primitive"":""damage"",""aim"":""zone"",""amount"":""1d6"",""damage_type"":""fire""}]}]}",
                                 out _, out IReadOnlyList<string> problems);
 
             Assert.Contains(problems, p => p.StartsWith("no_zone") && p.Contains("makes no zone"));

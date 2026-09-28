@@ -290,7 +290,8 @@ namespace Core.Tests
         {
             Actor hero = Hero();
             hero.SetHealth(new Health(20));
-            hero.AddSaveBonus(Ability.Constitution, 10);
+            hero.Boons.Add(Boon.Of(new BoonSpec { Duration = Duration.Permanent, Flat = 10, Touches = Sways.Saves },
+                                  "lucky_charm"));
             hero.Suffer(50, DamageType.Slashing);
 
             // a 9 is a 9 - nothing on the sheet may push it to 10

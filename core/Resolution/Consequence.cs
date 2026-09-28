@@ -4,12 +4,14 @@ using System.Linq;
 using Core.Characters;
 using Core.Dice;
 using Core.Localization;
+using Core.Words;
 
 namespace Core.Resolution
 {
     // a natural 1 or 20 on a check changes something *whatever the numbers said*
     // (updated_decisions.md). the check still passes or fails on its total alone; this is the
     // side-effect, and it is the reason a check can hurt you outside combat.
+    [Fallback(ConsequenceKind.Flavour)]
     public enum ConsequenceKind
     {
         // lose (bane) or gain (boon) hit points
@@ -37,7 +39,7 @@ namespace Core.Resolution
         Boon,
     }
 
-    public sealed class Consequence
+    public sealed class Consequence : Core.Tables.IWeighted
     {
         public Consequence(string id, Polarity polarity, ConsequenceKind kind,
                            DiceRoll amount = default, Ability ability = Ability.Strength,
@@ -91,7 +93,7 @@ namespace Core.Resolution
         }
 
         public override string ToString() =>
-            $"{Id} [{Polarity.ToString().ToLowerInvariant()}] {Kind}" +
+            $"{Id} [{EnumWords.Name(Polarity)}] {Kind}" +
             (Amount.IsNothing ? "" : $" {Amount}") +
             (Kind == ConsequenceKind.AbilityShift ? $" to {Ability.Id()}" : "") +
             (Kind == ConsequenceKind.Condition ? $" {Condition.Id()}" : "") +
@@ -124,17 +126,9 @@ namespace Core.Resolution
 
             if (candidates.Count == 0) return null;
 
-            int total = candidates.Sum(c => c.Weight);
-            int ticket = rng.Roll(total);
+            int ticket = rng.Roll(Core.Tables.Weighted.TotalWeight(candidates));
 
-            foreach (Consequence c in candidates)
-            {
-                ticket -= c.Weight;
-
-                if (ticket <= 0) return c;
-            }
-
-            return candidates[candidates.Count - 1];
+            return Core.Tables.Weighted.Walk(candidates, ticket);
         }
 
         // the attempt decides whether anything is drawn at all, and which side of the pool

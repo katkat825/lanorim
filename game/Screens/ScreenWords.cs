@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Content.Creation;
 using Core.Localization;
+using Core.Words;
 
 namespace Game.Screens
 {
@@ -21,7 +22,7 @@ namespace Game.Screens
         public static readonly string Character = K("launch", "character");
         public static readonly string Retire = K("launch", "retire");
 
-        public static string StepKey(Step step) => K("create", "step_" + step.ToString().ToLowerInvariant());
+        public static string StepKey(Step step) => K("create", "step_" + EnumWords.Name(step));
 
         public static readonly string CreateTitle = K("create", "title");
         public static readonly string PointsLeft = K("create", "points_left");
@@ -43,6 +44,7 @@ namespace Game.Screens
         public static readonly string DemoEnd = K("end", "demo");
 
         public static readonly string ThrowPrompt = K("combat", "throw_prompt");
+        public static readonly string TurnHint = K("table", "turn_hint");
         public static readonly string YourTurn = K("combat", "your_turn");
         public static readonly string FightWon = K("combat", "won");
         public static readonly string FightFled = K("combat", "fled");
@@ -61,7 +63,7 @@ namespace Game.Screens
                 CreateTitle, PointsLeft, PicksLeft, NameHint, Suggested,
                 PauseTitle, Resume, Save, Saved, Load, Sheet, Pack, ToTheBook,
                 TheEnd, TheEndBlurb, DemoEnd,
-                ThrowPrompt, YourTurn, FightWon, FightFled,
+                ThrowPrompt, TurnHint, YourTurn, FightWon, FightFled,
                 SheetTitle, SheetLevel, SheetHp, SheetAc, SheetSpells, SheetFeatures,
                 AskCard.TurnsTheHitKey,
             }

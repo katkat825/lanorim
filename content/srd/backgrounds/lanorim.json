@@ -1,0 +1,8 @@
+{
+  "_": "Lanorim's own backgrounds - first-party, NOT SRD 5.2.1 and not WotC's; covered by the repo's LICENSE (all rights reserved). Each carries not_in_srd, the word a spell that isn't the SRD's carries. Recluse replaces the 2024 PHB's Hermit (Kathleen, REVIEW_backgrounds.md, 2026-09-25).",
+
+  "backgrounds": [
+    { "id": "recluse", "skills": ["medicine", "nature"], "abilities": ["con", "wis", "int"],
+      "gear": ["quarterstaff"], "gold": 16, "not_in_srd": true }
+  ]
+}

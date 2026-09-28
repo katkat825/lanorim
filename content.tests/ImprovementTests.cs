@@ -5,7 +5,6 @@ using Content.Saves;
 using Content.Schema;
 using Content.Sheet;
 using Core.Characters;
-using Xunit;
 
 namespace Content.Tests
 {
@@ -27,10 +26,10 @@ namespace Content.Tests
                                 scores, level);
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Strength] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Strength] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Athletics, Skill.Perception });
 
             return hero;

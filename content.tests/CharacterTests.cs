@@ -7,6 +7,7 @@ using Content.Schema;
 using Content.Sheet;
 using Content.Species;
 using Core.Characters;
+using Core.Combat;
 using Core.Dice;
 using Core.Magic;
 using Core.Resolution;
@@ -95,7 +96,7 @@ namespace Content.Tests
             foreach (string id in new[] { "barbarian", "fighter", "paladin" })
                 Assert.Contains(Srd.Class(id).Features,
                                 f => f.Trait == Trait.ActionGrant && f.Level == 5 &&
-                                     f.Uses == 0 && f.Grants == Grants.Action);
+                                     f.Uses == 0 && f.Grants == Spend.Action);
         }
 
         [Fact]
@@ -226,10 +227,10 @@ namespace Content.Tests
                                 Creation.Creation.Standard(Srd.Class("fighter")), level);
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Strength] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Strength] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Athletics, Skill.Perception },
                        null, Srd.Items);
 
@@ -275,14 +276,14 @@ namespace Content.Tests
         public void ABarbarianReadsItsArmorClassOffConstitution()
         {
             var hero = new Hero("Yrsa", Srd.Class("barbarian"), Srd.Kind("orc"),
-                                Srd.Background("guard"),
+                                Srd.Background("soldier"),
                                 new AbilityScores(15, 14, 15, 8, 12, 10));
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Strength] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Strength] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Athletics, Skill.Survival },
                        null, Srd.Items);
 
@@ -344,10 +345,10 @@ namespace Content.Tests
                                 Creation.Creation.Standard(Srd.Class("rogue")), 5);
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Dexterity] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Dexterity] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Stealth, Skill.Acrobatics, Skill.Perception,
                                Skill.Investigation },
                        new[] { Skill.Stealth },
@@ -364,21 +365,21 @@ namespace Content.Tests
 
             // 3d6 at level 5
             Assert.Equal(new DiceRoll(3, Die.D6),
-                         hero.RidersFor(true, attack: dagger).First(r => r.Id == "sneak_attack").Damage);
+                         hero.RidersFor(true, attack: dagger).First(r => r.Id == "sneak_attack").Amount);
         }
 
         [Fact]
         public void AStanceIsSwitchedOnAndOffAndRunsOut()
         {
             var hero = new Hero("Yrsa", Srd.Class("barbarian"), Srd.Kind("orc"),
-                                Srd.Background("guard"),
+                                Srd.Background("soldier"),
                                 Creation.Creation.Standard(Srd.Class("barbarian")));
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Strength] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Strength] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Athletics, Skill.Survival }, null, Srd.Items);
 
             Feature rage = hero.Activatable.First(f => f.Id == "rage");
@@ -405,14 +406,14 @@ namespace Content.Tests
         public void AnOrcStaysUpOnceBetweenRests()
         {
             var hero = new Hero("Yrsa", Srd.Class("barbarian"), Srd.Kind("orc"),
-                                Srd.Background("guard"),
+                                Srd.Background("soldier"),
                                 Creation.Creation.Standard(Srd.Class("barbarian")));
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Strength] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Strength] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Athletics, Skill.Survival }, null, Srd.Items);
 
             hero.Actor.Suffer(999, DamageType.Slashing);
@@ -452,10 +453,10 @@ namespace Content.Tests
                                 Creation.Creation.Standard(Srd.Class("mage")), 5);
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Intelligence] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Intelligence] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Arcana, Skill.History }, null, Srd.Items,
                        Srd.Spells.For("mage").Where(s => s.Level <= 3));
 
@@ -478,10 +479,10 @@ namespace Content.Tests
                                 Creation.Creation.Standard(Srd.Class("mage")));
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Intelligence] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Intelligence] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Arcana, Skill.History }, null, Srd.Items);
 
             Assert.Equal(Defense.Resistant, hero.Actor.DefenseAgainst(DamageType.Fire));

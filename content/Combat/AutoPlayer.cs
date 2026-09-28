@@ -175,25 +175,25 @@ namespace Content.Combat
                     break;
 
                 case Targeting.Square:
-                {
-                    var squares = session.Fight.Field.Enemies(session.Hero.Actor)
-                                         .Select(e => session.Fight.Field.Where(e))
-                                         .Where(c => c.HasValue && session.LegalSquares().Contains(c.Value))
-                                         .Select(c => c.Value)
-                                         .ToList();
-
-                    foreach (Cell square in squares)
                     {
-                        Preview preview = session.Preview(Array.Empty<Actor>(), square);
+                        var squares = session.Fight.Field.Enemies(session.Hero.Actor)
+                                             .Select(e => session.Fight.Field.Where(e))
+                                             .Where(c => c.HasValue && session.LegalSquares().Contains(c.Value))
+                                             .Select(c => c.Value)
+                                             .ToList();
 
-                        // a blast that would catch the hero is not worth it
-                        if (preview.Targets.Contains(session.Hero.Actor)) continue;
+                        foreach (Cell square in squares)
+                        {
+                            Preview preview = session.Preview(Array.Empty<Actor>(), square);
 
-                        yield return (null, square, session.Facing, preview.ExpectedDamage);
+                            // a blast that would catch the hero is not worth it
+                            if (preview.Targets.Contains(session.Hero.Actor)) continue;
+
+                            yield return (null, square, session.Facing, preview.ExpectedDamage);
+                        }
+
+                        break;
                     }
-
-                    break;
-                }
 
                 case Targeting.Direction:
                     foreach (Facing facing in Enum.GetValues<Facing>())

@@ -6,16 +6,16 @@ namespace Core.Tables
     // and it does show hidden numbers - that is what it is for
     public sealed class ScreenLog : ScreenObserver
     {
-        readonly List<string> _lines = new List<string>();
+        readonly LineLog<string> _log = new LineLog<string>();
 
-        public IReadOnlyList<string> Lines => _lines;
+        public IReadOnlyList<string> Lines => _log.Lines;
 
-        public override void Rolled(GmRoll roll) => _lines.Add(roll.ToString());
+        public override void Rolled(GmRoll roll) => _log.Add(roll.ToString());
 
-        public override void Consulted(TableRoll result) => _lines.Add("== " + result);
+        public override void Consulted(TableRoll result) => _log.Add("== " + result);
 
-        public override void Opened(LootRoll result) => _lines.Add("== " + result);
+        public override void Opened(LootRoll result) => _log.Add("== " + result);
 
-        public override string ToString() => string.Join("\n", _lines);
+        public override string ToString() => _log.ToString();
     }
 }

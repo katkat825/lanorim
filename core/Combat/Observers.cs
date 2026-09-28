@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
 using Core.Characters;
 using Core.Resolution;
 using Core.Rules;
 using Core.Space;
+using Core.Words;
 
 namespace Core.Combat
 {
@@ -42,14 +42,16 @@ namespace Core.Combat
         void Ended(Outcome outcome);
     }
 
+    // the words are what a .yarn file reads back in $fight: "won", "lost", "fled" - words rather
+    // than numbers, so the story reads as English
     public enum Outcome
     {
         // still going
-        Open,
+        [Word(""), Unread] Open,
 
-        HeroesWon,
+        [Word("won")] HeroesWon,
 
-        HeroesLost,
+        [Word("lost")] HeroesLost,
 
         // the hero left the fight rather than finishing it
         Fled,
@@ -85,40 +87,11 @@ namespace Core.Combat
         public virtual void Ended(Outcome outcome) { }
     }
 
-    // several at once, in the order they were added, and one that throws doesn't take the fight
-    // down with it - a broken narrator must not lose the player's combat
-    public sealed class Observers : ICombatObserver
+    // several at once (ObserverList): a broken narrator must not lose the player's combat
+    public sealed class Observers : ObserverList<ICombatObserver>, ICombatObserver
     {
-        readonly List<ICombatObserver> _watchers = new List<ICombatObserver>();
-
-        public Observers(params ICombatObserver[] watchers)
+        public Observers(params ICombatObserver[] watchers) : base(watchers)
         {
-            foreach (ICombatObserver watcher in watchers ?? Array.Empty<ICombatObserver>())
-                Add(watcher);
-        }
-
-        public void Add(ICombatObserver watcher)
-        {
-            if (watcher != null) _watchers.Add(watcher);
-        }
-
-        public IReadOnlyList<Exception> Failures => _failures;
-
-        readonly List<Exception> _failures = new List<Exception>();
-
-        void Each(Action<ICombatObserver> tell)
-        {
-            foreach (ICombatObserver watcher in _watchers)
-            {
-                try
-                {
-                    tell(watcher);
-                }
-                catch (Exception problem)
-                {
-                    _failures.Add(problem);
-                }
-            }
         }
 
         public void Began(IReadOnlyList<InitiativeRoll> order) => Each(w => w.Began(order));
@@ -155,43 +128,43 @@ namespace Core.Combat
     // player, so it is not localized
     public sealed class CombatLog : CombatObserver
     {
-        readonly List<string> _lines = new List<string>();
+        readonly LineLog<string> _log = new LineLog<string>();
 
-        public IReadOnlyList<string> Lines => _lines;
+        public IReadOnlyList<string> Lines => _log.Lines;
 
         public override void Began(IReadOnlyList<InitiativeRoll> order) =>
-            _lines.Add("initiative: " + string.Join(", ", order));
+            _log.Add("initiative: " + string.Join(", ", order));
 
-        public override void RoundBegan(int round) => _lines.Add($"-- round {round}");
+        public override void RoundBegan(int round) => _log.Add($"-- round {round}");
 
-        public override void TurnBegan(Turn turn) => _lines.Add($"{turn.Actor.Id} steps up");
+        public override void TurnBegan(Turn turn) => _log.Add($"{turn.Actor.Id} steps up");
 
         public override void Moved(Actor actor, IReadOnlyList<Cell> route) =>
-            _lines.Add($"{actor.Id} moves to {route[route.Count - 1]} " +
+            _log.Add($"{actor.Id} moves to {route[route.Count - 1]} " +
                        $"({route.Count - 1} squares)");
 
-        public override void Struck(Blow blow) => _lines.Add(blow.ToString());
+        public override void Struck(Blow blow) => _log.Add(blow.ToString());
 
         public override void Opportunity(Actor attacker, Actor fleeing) =>
-            _lines.Add($"{attacker.Id} takes a swing at {fleeing.Id} leaving its reach");
+            _log.Add($"{attacker.Id} takes a swing at {fleeing.Id} leaving its reach");
 
         public override void Reacted(Actor reactor, string reaction, Moment moment) =>
-            _lines.Add($"{reactor.Id} reacts with {reaction} to {moment}");
+            _log.Add($"{reactor.Id} reacts with {reaction} to {moment}");
 
         public override void ConditionChanged(Actor actor, Condition condition, bool applied) =>
-            _lines.Add($"{actor.Id} is {(applied ? "now" : "no longer")} {condition.Id()}");
+            _log.Add($"{actor.Id} is {(applied ? "now" : "no longer")} {condition.Id()}");
 
-        public override void Downed(Actor actor) => _lines.Add($"{actor.Id} goes down");
+        public override void Downed(Actor actor) => _log.Add($"{actor.Id} goes down");
 
         public override void Away(Actor actor, bool away) =>
-            _lines.Add($"{actor.Id} {(away ? "is taken off the board" : "comes back")}");
+            _log.Add($"{actor.Id} {(away ? "is taken off the board" : "comes back")}");
 
         public override void DeathSaved(Actor actor, Attempt attempt) =>
-            _lines.Add($"{actor.Id} death save {attempt.Total}: " +
+            _log.Add($"{actor.Id} death save {attempt.Total}: " +
                        (attempt.Succeeded ? "back up" : "dead"));
 
-        public override void Ended(Outcome outcome) => _lines.Add($"== {outcome}");
+        public override void Ended(Outcome outcome) => _log.Add($"== {outcome}");
 
-        public override string ToString() => string.Join("\n", _lines);
+        public override string ToString() => _log.ToString();
     }
 }

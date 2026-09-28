@@ -4,9 +4,11 @@ using System.Linq;
 using Core.Characters;
 using Core.Dice;
 using Core.Localization;
+using Core.Words;
 
 namespace Content.Items
 {
+    [Fallback(ItemKind.Treasure)]
     public enum ItemKind
     {
         Weapon,
@@ -32,7 +34,7 @@ namespace Content.Items
 
     public enum Slot
     {
-        None = 0,
+        [Unread] None = 0,
         MainHand,
         OffHand,
         TwoHand,
@@ -138,9 +140,9 @@ namespace Content.Items
              Classes.Contains(className, StringComparer.OrdinalIgnoreCase));
 
         public override string ToString() =>
-            $"{Id} [{Kind.ToString().ToLowerInvariant()}] {Cost}gp" +
+            $"{Id} [{EnumWords.Name(Kind)}] {Cost}gp" +
             (Stackable ? ", stacks" : "") +
-            (Slot == Slot.None ? "" : $", {Slot.ToString().ToLowerInvariant()}") +
+            (Slot == Slot.None ? "" : $", {EnumWords.Name(Slot)}") +
             (Classes.Count > 0 ? $", {string.Join("/", Classes)} only" : "") +
             (MinimumLevel > 1 ? $", level {MinimumLevel}+" : "");
     }
@@ -151,28 +153,6 @@ namespace Content.Items
         {
             Slot.MainHand, Slot.OffHand, Slot.TwoHand, Slot.Body, Slot.Shield, Slot.Trinket,
         };
-
-        public static string Id(this Slot slot) => slot switch
-        {
-            Slot.MainHand => "main_hand",
-            Slot.OffHand => "off_hand",
-            Slot.TwoHand => "two_hand",
-            _ => slot.ToString().ToLowerInvariant(),
-        };
-
-        public static bool TryParse(string id, out Slot slot)
-        {
-            foreach (Slot s in All)
-            {
-                if (!string.Equals(s.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                slot = s;
-                return true;
-            }
-
-            slot = Slot.None;
-            return false;
-        }
 
         // a two-handed weapon takes both hands: equipping one takes the other two off
         public static IEnumerable<Slot> Conflicts(this Slot slot) => slot switch
@@ -192,21 +172,5 @@ namespace Content.Items
             ItemKind.Weapon, ItemKind.Armor, ItemKind.Shield, ItemKind.Consumable,
             ItemKind.Trinket, ItemKind.Treasure, ItemKind.Quest, ItemKind.Tool,
         };
-
-        public static string Id(this ItemKind kind) => kind.ToString().ToLowerInvariant();
-
-        public static bool TryParse(string id, out ItemKind kind)
-        {
-            foreach (ItemKind k in All)
-            {
-                if (!string.Equals(k.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                kind = k;
-                return true;
-            }
-
-            kind = ItemKind.Treasure;
-            return false;
-        }
     }
 }

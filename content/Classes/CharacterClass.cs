@@ -5,6 +5,7 @@ using Core.Characters;
 using Core.Magic;
 using Core.Dice;
 using Core.Localization;
+using Core.Words;
 
 namespace Content.Classes
 {
@@ -17,7 +18,7 @@ namespace Content.Classes
                               IReadOnlyList<Ability> saves = null,
                               IReadOnlyList<Skill> skillChoices = null,
                               int skillPicks = 2,
-                              IReadOnlyList<ArmorWeight> armorTraining = null,
+                              IReadOnlyList<ArmorCategory> armorTraining = null,
                               bool shields = false,
                               IReadOnlyList<string> startingGear = null,
                               IReadOnlyList<Feature> features = null,
@@ -30,7 +31,7 @@ namespace Content.Classes
             Saves = saves ?? Array.Empty<Ability>();
             SkillChoices = skillChoices ?? Array.Empty<Skill>();
             SkillPicks = Math.Max(0, skillPicks);
-            ArmorTraining = armorTraining ?? Array.Empty<ArmorWeight>();
+            ArmorTraining = armorTraining ?? Array.Empty<ArmorCategory>();
             Shields = shields;
             StartingGear = startingGear ?? Array.Empty<string>();
             Features = features ?? Array.Empty<Feature>();
@@ -49,7 +50,7 @@ namespace Content.Classes
 
         public int SkillPicks { get; }
 
-        public IReadOnlyList<ArmorWeight> ArmorTraining { get; }
+        public IReadOnlyList<ArmorCategory> ArmorTraining { get; }
 
         public bool Shields { get; }
 
@@ -63,13 +64,13 @@ namespace Content.Classes
         public IReadOnlyList<string> Tools { get; init; } = Array.Empty<string>();
 
         // weapon training (SRD 5.2.1): "simple", "martial", or the Rogue's "martial_finesse_or_light"
-        public IReadOnlyList<string> Weapons { get; init; } = Array.Empty<string>();
+        public IReadOnlyList<string> WeaponProficiencies { get; init; } = Array.Empty<string>();
 
         // an attack the class is trained with; a weapon with no category is taken as trained
         public bool TrainedWith(Attack attack) =>
-            attack == null || attack.Category.Length == 0 || Weapons.Count == 0 ||
-            Weapons.Contains(attack.Category) ||
-            attack.Category == "martial" && Weapons.Contains("martial_finesse_or_light") &&
+            attack == null || attack.Category.Length == 0 || WeaponProficiencies.Count == 0 ||
+            WeaponProficiencies.Contains(attack.Category) ||
+            attack.Category == "martial" && WeaponProficiencies.Contains("martial_finesse_or_light") &&
             (attack.Finesse || attack.Light);
 
         public IReadOnlyList<Feature> Features { get; }

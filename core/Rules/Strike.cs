@@ -4,6 +4,7 @@ using System.Linq;
 using Core.Characters;
 using Core.Dice;
 using Core.Resolution;
+using Core.Words;
 
 namespace Core.Rules
 {
@@ -54,11 +55,11 @@ namespace Core.Rules
     // flaming sword, Hunter's Mark. the class layer declares them; core just adds them up.
     public sealed class Rider
     {
-        public Rider(string id, DiceRoll damage = default, DamageType type = DamageType.None,
+        public Rider(string id, DiceRoll amount = default, DamageType type = DamageType.None,
                      Condition condition = Condition.None, bool onlyOnCritical = false)
         {
             Id = id;
-            Damage = damage;
+            Amount = amount;
             Type = type;
             Condition = condition;
             OnlyOnCritical = onlyOnCritical;
@@ -66,7 +67,9 @@ namespace Core.Rules
 
         public string Id { get; }
 
-        public DiceRoll Damage { get; }
+        // the extra damage on a hit: Sneak Attack's dice, a spider's poison. 'amount' in a feature's
+        // data and in a statblock's on_hit, the word the effect vocabulary uses for damage
+        public DiceRoll Amount { get; }
 
         // None means "the same type the weapon deals" - a Sneak Attack is not its own damage type
         public DamageType Type { get; }
@@ -84,17 +87,22 @@ namespace Core.Rules
         // only a creature this size or smaller: the wolf's "if the target is Medium or smaller"
         public Size? MaxSize { get; init; }
 
-        // not on these: the Ghoul's claw paralyses "a creature that isn't an Undead or elf"
-        public IReadOnlyList<string> ExceptTags { get; init; } = Array.Empty<string>();
+        // what a creature's tags do to it, in the words a spell uses: the Ghoul's claw paralyses "a
+        // creature that isn't an Undead or elf" - both untouched
+        public IReadOnlyList<TagRule> TagRules { get; init; } = Array.Empty<TagRule>();
 
-        // the condition lasts "until the end of its next turn" (the target's), not for good: the
-        // fight keeps that book (Encounter.Hit)
-        public bool UntilTargetsNextTurn { get; init; }
+        // how long the condition lasts: NextTurnEnd is "until the end of its next turn" (the
+        // target's), which the fight keeps the book on (Encounter.Hit); anything else, until
+        // something ends it. the effect vocabulary's 'duration', where a statblock said
+        // 'until_next_turn' (cc_task_dedupe-leftovers.md #1)
+        public Duration Duration { get; init; } = Duration.Instant;
+
+        public bool UntilTargetsNextTurn => Duration == Duration.NextTurnEnd;
 
         public DamageType TypeOr(DamageType weapon) => Type == DamageType.None ? weapon : Type;
 
         public override string ToString() =>
-            Id + (Damage.IsNothing ? "" : $" {Damage}") +
+            Id + (Amount.IsNothing ? "" : $" {Amount}") +
             (Condition == Condition.None ? "" : $" {Condition.Id()}");
     }
 
@@ -226,13 +234,12 @@ namespace Core.Rules
 
             // Enlarge's +1d4 and Reduce's -1d4 on weapon damage, doubled on a critical like any
             // of the hit's dice; Reduce never takes it below 1
-            foreach (Boon grown in attacker?.Boons.WeaponDice ?? Enumerable.Empty<Boon>())
+            foreach (SignedDice grown in attacker?.Boons.WeaponDice ?? Enumerable.Empty<SignedDice>())
             {
-                int more = Math.Max(0, resolver.Roll(attempt.IsCritical
-                                                         ? grown.WeaponDice.Doubled()
-                                                         : grown.WeaponDice, attacker));
+                int more = Math.Max(0, resolver.Roll(attempt.IsCritical ? grown.Dice.Doubled() : grown.Dice,
+                                                     attacker));
 
-                rolled = grown.WeaponDiceLess ? Math.Max(1, rolled - more) : rolled + more;
+                rolled = grown.Less ? Math.Max(1, rolled - more) : rolled + more;
             }
 
             DamageType type = attack.DamageTypeFor(attacker, target);
@@ -247,10 +254,10 @@ namespace Core.Rules
             {
                 if (rider.OnlyOnCritical && !attempt.IsCritical) continue;
 
-                if (!rider.Damage.IsNothing)
+                if (!rider.Amount.IsNothing)
                 {
                     // a rider crits with the blow it rides on, dice doubled and modifier not
-                    DiceRoll dice = attempt.IsCritical ? rider.Damage.Doubled() : rider.Damage;
+                    DiceRoll dice = attempt.IsCritical ? rider.Amount.Doubled() : rider.Amount;
 
                     int extraRolled = Math.Max(0, resolver.Roll(dice, attacker));
 
@@ -262,10 +269,10 @@ namespace Core.Rules
 
                 if (rider.Condition != Condition.None &&
                     (!rider.MaxSize.HasValue || target.CurrentSize <= rider.MaxSize.Value) &&
-                    !rider.ExceptTags.Any(target.Is) &&
+                    rider.TagRules.Touch(target) &&
                     (!rider.Save.HasValue ||
                      Checks.Save(resolver, target, rider.Save.Value, rider.Dc,
-                                 target.HasAdvantage("save_vs:" + rider.Condition.Id())
+                                 target.AdvantageOnSaveAgainst(rider.Condition)
                                      ? Advantage.Advantage
                                      : Advantage.Flat).Failed))
                     target.Apply(rider.Condition, attacker);
@@ -276,11 +283,11 @@ namespace Core.Rules
             // Hex, Hunter's Mark: the target carries the attacker's mark, and a hit collects it
             foreach (Boon mark in target.Boons.MarksFrom(attacker).ToList())
             {
-                DiceRoll dice = attempt.IsCritical ? mark.Mark.Doubled() : mark.Mark;
+                DiceRoll dice = attempt.IsCritical ? mark.Spec.Mark.Dice.Doubled() : mark.Spec.Mark.Dice;
                 int extra = Math.Max(0, resolver.Roll(dice, attacker));
 
                 rolled += extra;
-                suffered += target.Suffer(extra, mark.MarkType);
+                suffered += target.Suffer(extra, mark.Spec.Mark.Type);
             }
 
             return new Blow(attacker, target, attack, attempt, rolled, suffered, landed);

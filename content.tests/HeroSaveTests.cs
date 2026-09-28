@@ -10,7 +10,6 @@ using Core.Characters;
 using Core.Dice;
 using Core.Magic;
 using Core.Resolution;
-using Xunit;
 
 namespace Content.Tests
 {
@@ -226,7 +225,7 @@ namespace Content.Tests
         [Fact]
         public void ADruidInTheCatComesBackInTheCatWithOneUseLeft()
         {
-            Hero druid = Made("druid", "hermit",
+            Hero druid = Made("druid", "recluse",
                               new Dictionary<Ability, int>
                               {
                                   [Ability.Wisdom] = 2,

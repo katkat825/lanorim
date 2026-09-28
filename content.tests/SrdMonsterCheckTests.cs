@@ -31,7 +31,7 @@ namespace Content.Tests
             ghoul = Srd.Bestiary.Find("ghoul").Spawn();
             hero = new Actor("hero", 1, new AbilityScores(), Allegiance.Hero);
             hero.SetHealth(new Health(100));
-            hero.Armor = new ArmorProfile(ArmorWeight.Heavy, 5);
+            hero.Armor = new ArmorProfile(ArmorCategory.Heavy, 5);
             hero.Tag("humanoid");
             if (elf) hero.Tag("elf");
 

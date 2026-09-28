@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Combat;
 using Core.Space;
+using Core.Words;
 
 namespace Core.Tests
 {
@@ -143,11 +144,11 @@ namespace Core.Tests
         {
             foreach (Facing facing in new[] { Facing.North, Facing.East, Facing.South, Facing.West })
             {
-                Assert.True(Template.TryParse(facing.Id(), out Facing back));
+                Assert.True(EnumWords.TryParse(facing.Id(), out Facing back));
                 Assert.Equal(facing, back);
             }
 
-            Assert.False(Template.TryParse("up", out _));
+            Assert.False(EnumWords.TryParse("up", out Facing _));
         }
     }
 }

@@ -5,6 +5,7 @@ using Content.Items;
 using Core.Characters;
 using Core.Combat;
 using Core.Magic;
+using Core.Words;
 
 namespace Content.Combat
 {
@@ -49,6 +50,6 @@ namespace Content.Combat
         public Item Item { get; init; }
 
         public override string ToString() =>
-            $"{Hotkey}: {Id} ({Cost.ToString().ToLowerInvariant()})" + (Enabled ? "" : $" - {WhyNotKey}");
+            $"{Hotkey}: {Id} ({EnumWords.Name(Cost)})" + (Enabled ? "" : $" - {WhyNotKey}");
     }
 }

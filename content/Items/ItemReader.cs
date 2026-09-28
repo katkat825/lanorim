@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Content.Schema;
 using Core.Characters;
-using Core.Dice;
+using Core.Words;
 
 namespace Content.Items
 {
@@ -27,6 +26,8 @@ namespace Content.Items
 
             using (document)
             {
+                Keyed.OnlyKnown(document.RootElement, new[] { "items" }, "the items file", trouble);
+
                 foreach (JsonElement entry in document.RootElement.Items("items"))
                 {
                     Item item = ReadOne(entry, trouble);
@@ -41,6 +42,21 @@ namespace Content.Items
             return trouble.Count == 0;
         }
 
+        // every key an item takes, and the keys of its weapon, its armor and each of its boons
+        // (a boon's own keys are BoonSpecReader.Keys)
+        public static readonly IReadOnlyList<string> Keys = new[]
+        {
+            "id", "kind", "cost", "stackable", "sell_percent", "slot", "weapon", "armor", "classes",
+            "minimum_level", "boons", "heals", "casts", "uses", "vanishes", "use_time",
+        };
+
+        // what a weapon is beside an attack (AttackReader.Keys): its category and its properties
+        public static readonly IReadOnlyList<string> WeaponKeys = new[] { "category", "light", "heavy", "versatile" };
+
+        public static readonly IReadOnlyList<string> ArmorKeys = new[] { "category", "base", "strength", "noisy" };
+
+        public static readonly IReadOnlyList<string> BoonKeys = new[] { "id", "duration" };
+
         static Item ReadOne(JsonElement entry, List<string> problems)
         {
             string id = entry.Text("id");
@@ -51,13 +67,15 @@ namespace Content.Items
                 return null;
             }
 
-            if (!ItemKinds.TryParse(entry.Text("kind"), out ItemKind kind))
+            Keyed.OnlyKnown(entry, Keys, id, problems);
+
+            if (!EnumWords.TryParse(entry.Text("kind"), out ItemKind kind))
             {
                 problems.Add($"{id}: '{entry.Text("kind")}' is not a kind of item");
                 return null;
             }
 
-            if (!Slots.TryParse(entry.Text("slot", "none"), out Slot slot) &&
+            if (!EnumWords.TryParse(entry.Text("slot", "none"), out Slot slot) &&
                 entry.Text("slot", "none") != "none")
                 problems.Add($"{id}: '{entry.Text("slot")}' is not an equipment slot");
 
@@ -68,35 +86,11 @@ namespace Content.Items
             {
                 JsonElement w = entry.GetProperty("weapon");
 
-                DiceRoll damage = w.Dice("damage", problems, id);
+                Keyed.OnlyKnown(w, WeaponKeys.Concat(AttackReader.Keys), $"{id} weapon", problems);
 
-                if (damage.IsNothing) problems.Add($"{id}: a weapon with no damage");
-
-                DamageType type = w.Damage("damage_type", problems, id);
-
-                if (type == DamageType.None)
-                    problems.Add($"{id}: a weapon with no damage_type");
-
-                Ability? ability = w.Ability("ability", problems, id);
-
-                attack = new Attack(id, damage, type,
-                                    ability ?? Ability.Strength,
-                                    true,
-                                    w.Number("reach", 1),
-                                    w.Number("range"),
-                                    w.Number("long_range"),
-                                    slot == Slot.TwoHand ? Hand.Two
-                                    : slot == Slot.OffHand ? Hand.Off : Hand.Main,
-                                    w.Flag("finesse"),
-                                    w.Number("attack_bonus"),
-                                    w.Number("damage_bonus"))
-                {
-                    Thrown = w.Flag("thrown"),
-                    Light = w.Flag("light"),
-                    Heavy = w.Flag("heavy"),
-                    Versatile = w.Has("versatile") ? w.Dice("versatile", problems, id) : default,
-                    Category = w.Text("category") ?? "",
-                };
+                attack = AttackReader.Read(w, id, slot == Slot.TwoHand ? Hand.Two
+                                                  : slot == Slot.OffHand ? Hand.Off : Hand.Main,
+                                           id, problems);
 
                 if (attack.Category.Length > 0 && attack.Category != "simple" && attack.Category != "martial")
                     problems.Add($"{id}: a weapon's category is simple or martial");
@@ -110,10 +104,12 @@ namespace Content.Items
             {
                 JsonElement a = entry.GetProperty("armor");
 
-                if (!ArmorWeights.TryParse(a.Text("weight", "none"), out ArmorWeight weight))
-                    problems.Add($"{id}: '{a.Text("weight")}' is not light, medium or heavy");
+                Keyed.OnlyKnown(a, ArmorKeys, $"{id} armor", problems);
 
-                armor = new ArmorProfile(weight, a.Number("base", 10),
+                if (!EnumWords.TryParse(a.Text("category", "none"), out ArmorCategory category))
+                    problems.Add($"{id}: '{a.Text("category")}' is not light, medium or heavy");
+
+                armor = new ArmorProfile(category, a.Number("base", 10),
                                          a.Number("strength"), a.Flag("noisy"));
             }
             else if (kind == ItemKind.Armor)
@@ -145,7 +141,8 @@ namespace Content.Items
                                 entry.Number("uses"))
             {
                 Vanishes = entry.Text("vanishes") == "long_rest",
-                UseTime = entry.Text("use_time", "bonus_action") == "action"
+                UseTime = EnumWords.TryParse(entry.Text("use_time", "bonus_action"), out Core.Combat.Spend use) &&
+                          use == Core.Combat.Spend.Action
                     ? Core.Combat.Spend.Action
                     : Core.Combat.Spend.Bonus,
             };
@@ -158,29 +155,19 @@ namespace Content.Items
             return item;
         }
 
+        // an item's boon: its own id and duration, and what the boon is in the one boon vocabulary
         static Boon ReadBoon(string itemId, JsonElement raw, List<string> problems)
         {
-            if (!Core.Magic.Primitives.TryParse(raw.Text("touches", "none"),
-                                                out Core.Magic.Sways touches))
-            {
-                problems.Add($"{itemId}: '{raw.Text("touches")}' is not a list of swayed rolls");
-                return null;
-            }
+            Keyed.OnlyKnown(raw, BoonKeys.Concat(BoonSpecReader.Keys), $"{itemId} boon", problems);
 
-            if (!Schools.TryParseDuration(raw.Text("duration", "rest"), out Duration duration))
+            if (!EnumWords.TryParse(raw.Text("duration", "rest"), out Duration duration))
                 problems.Add($"{itemId}: '{raw.Text("duration")}' is not a duration");
 
-            return new Boon(raw.Text("id", itemId), itemId, duration,
-                            raw.Number("flat"),
-                            raw.Dice("dice", problems, itemId),
-                            attacks: (touches & Core.Magic.Sways.Attacks) != 0,
-                            saves: (touches & Core.Magic.Sways.Saves) != 0,
-                            checks: (touches & Core.Magic.Sways.Checks) != 0,
-                            damage: (touches & Core.Magic.Sways.Damage) != 0,
-                            armorClass: (touches & Core.Magic.Sways.ArmorClass) != 0
-                                            ? raw.Number("flat") : 0,
-                            skill: raw.Skill("skill", problems, itemId),
-                            save: raw.Ability("save", problems, itemId));
+            BoonSpec spec = BoonSpecReader.Read(raw, duration, itemId, problems);
+
+            BoonSpecReader.Check(spec, itemId, problems, mustDoSomething: true);
+
+            return Boon.Of(spec, raw.Text("id", itemId), itemId);
         }
 
         static void Check(Item item, List<string> problems)
@@ -203,12 +190,5 @@ namespace Content.Items
                 problems.Add($"{item.Id}: an equippable item does not stack - the equipped icon " +
                              "would have to sit on one of ninety-nine thousand");
         }
-    }
-
-    // the Duration parser lives with the spells; items need it too, and a second copy would drift
-    static class Schools
-    {
-        public static bool TryParseDuration(string id, out Duration duration) =>
-            Core.Magic.Schools.TryParse(id, out duration);
     }
 }

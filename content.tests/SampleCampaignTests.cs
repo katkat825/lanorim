@@ -11,11 +11,9 @@ using Content.Play;
 using Content.Saves;
 using Content.Schema;
 using Content.Sheet;
-using Core.Characters;
 using Core.Combat;
 using Core.Dice;
 using Core.Resolution;
-using Core.Space;
 
 namespace Content.Tests
 {
@@ -129,74 +127,74 @@ namespace Content.Tests
                         break;
 
                     case Scene.Shop:
-                    {
-                        seen.Shops++;
-
-                        Merchant shop = run.Shop.Open(library.Items);
-                        Item potion = library.Items.Find("potion_of_healing");
-
-                        shop.Buy(run.Hero.Pack, potion, run.Hero.Actor, run.Hero.Class.Id);
-
-                        run.LeaveShop();
-                        break;
-                    }
-
-                    case Scene.Fight:
-                    {
-                        seen.Fights++;
-                        seen.Maps.Add(run.Fight.MapId);
-                        seen.Starts.Add($"{run.Fight.MapId}@{run.Hero.Actor.Health.Current}/{run.Hero.Actor.Health.Maximum}");
-
-                        Battle battle = run.BattleFor(new StandardResolver(rng));
-
-                        Assert.NotNull(battle);
-                        Assert.NotEmpty(battle.Monsters);
-
-                        Outcome outcome = Play(battle, library);
-
-                        run.EndFight(outcome == Outcome.Open ? Outcome.Fled : outcome);
-
-                        // save and load once, after the first fight: the story, the hero and
-                        // the variables come back and it plays on from the node it was on
-                        if (!seen.Saved && run.Now != Scene.Dead)
                         {
-                            seen.Saved = true;
+                            seen.Shops++;
 
-                            SaveGame game = run.Capture();
-                            Read<SaveGame> back = SaveReader.Parse(SaveWriter.Write(game));
+                            Merchant shop = run.Shop.Open(library.Items);
+                            Item potion = library.Items.Find("potion_of_healing");
 
-                            Assert.True(back.Ok, string.Join("\n", back.Problems));
+                            shop.Buy(run.Hero.Pack, potion, run.Hero.Actor, run.Hero.Class.Id);
 
-                            CampaignRun again = CampaignRun.Resume(back.Value, library, pack,
-                                new StandardResolver(rng), rng, saves, out var problems);
-
-                            Assert.NotNull(again);
-                            Assert.Empty(problems.Where(p => p.IsAFault));
-                            Assert.Equal(run.Hero.Level, again.Hero.Level);
-                            Assert.Equal(run.Hero.Pack.Gold, again.Hero.Pack.Gold);
-
-                            run = again;
-                            run.Continue();
+                            run.LeaveShop();
+                            break;
                         }
 
-                        break;
-                    }
+                    case Scene.Fight:
+                        {
+                            seen.Fights++;
+                            seen.Maps.Add(run.Fight.MapId);
+                            seen.Starts.Add($"{run.Fight.MapId}@{run.Hero.Actor.Health.Current}/{run.Hero.Actor.Health.Maximum}");
+
+                            Battle battle = run.BattleFor(new StandardResolver(rng));
+
+                            Assert.NotNull(battle);
+                            Assert.NotEmpty(battle.Monsters);
+
+                            Outcome outcome = Play(battle, library);
+
+                            run.EndFight(outcome == Outcome.Open ? Outcome.Fled : outcome);
+
+                            // save and load once, after the first fight: the story, the hero and
+                            // the variables come back and it plays on from the node it was on
+                            if (!seen.Saved && run.Now != Scene.Dead)
+                            {
+                                seen.Saved = true;
+
+                                SaveGame game = run.Capture();
+                                Read<SaveGame> back = SaveReader.Parse(SaveWriter.Write(game));
+
+                                Assert.True(back.Ok, string.Join("\n", back.Problems));
+
+                                CampaignRun again = CampaignRun.Resume(back.Value, library, pack,
+                                    new StandardResolver(rng), rng, saves, out var problems);
+
+                                Assert.NotNull(again);
+                                Assert.Empty(problems.Where(p => p.IsAFault));
+                                Assert.Equal(run.Hero.Level, again.Hero.Level);
+                                Assert.Equal(run.Hero.Pack.Gold, again.Hero.Pack.Gold);
+
+                                run = again;
+                                run.Continue();
+                            }
+
+                            break;
+                        }
 
                     case Scene.Dead:
-                    {
-                        seen.Deaths++;
+                        {
+                            seen.Deaths++;
 
-                        SaveShelf.Saved last = saves.ForReload(pack.Id, run.Slot);
+                            SaveShelf.Saved last = saves.ForReload(pack.Id, run.Slot);
 
-                        Assert.NotNull(last);
+                            Assert.NotNull(last);
 
 
-                        run = CampaignRun.Resume(last.Game, library, pack, new StandardResolver(rng),
-                                                 rng, saves, out _);
-                        seen.Reloads++;
-                        run.Continue();
-                        break;
-                    }
+                            run = CampaignRun.Resume(last.Game, library, pack, new StandardResolver(rng),
+                                                     rng, saves, out _);
+                            seen.Reloads++;
+                            run.Continue();
+                            break;
+                        }
 
                     case Scene.Over:
                         return run;
@@ -260,7 +258,7 @@ namespace Content.Tests
             Assert.Contains(all, s => s.Game.Kind == SaveKind.LevelUp);
             Assert.Contains(all, s => s.Game.Kind == SaveKind.Rest);
         }
-    
+
         [Fact]
         public void AShopAndARestAreStoryVerbs()
         {
@@ -315,5 +313,5 @@ namespace Content.Tests
             Assert.Equal("cellar", back.Talk.Node);
             Assert.Empty(back.Talk.Complained);
         }
-}
+    }
 }

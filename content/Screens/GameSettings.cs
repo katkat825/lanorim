@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using Content.Combat;
 using Content.Schema;
+using Core.Words;
 
 namespace Content.Screens
 {
@@ -53,7 +54,7 @@ namespace Content.Screens
             using (var json = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true }))
             {
                 json.WriteStartObject();
-                json.WriteString("enemy_speed", EnemySpeed.ToString().ToLowerInvariant());
+                json.WriteString("enemy_speed", EnumWords.Name(EnemySpeed));
                 json.WriteBoolean("skip_physical_dice", SkipPhysicalDice);
                 json.WriteBoolean("follow_enemies", FollowEnemies);
                 json.WriteBoolean("log_open", LogOpen);
@@ -91,7 +92,7 @@ namespace Content.Screens
 
                 if (root.Has("enemy_speed"))
                 {
-                    if (Enum.TryParse(root.Text("enemy_speed"), true, out CombatSpeed speed))
+                    if (EnumWords.TryName(root.Text("enemy_speed"), out CombatSpeed speed))
                         settings.EnemySpeed = speed;
                     else
                         found.Add($"'{root.Text("enemy_speed")}' is not a combat speed");
@@ -105,7 +106,7 @@ namespace Content.Screens
                     reactions.ValueKind == JsonValueKind.Object)
                     foreach (JsonProperty r in reactions.EnumerateObject())
                     {
-                        if (ReactionPolicies.TryParse(r.Value.GetString(), out ReactionPolicy policy))
+                        if (EnumWords.TryParse(r.Value.GetString(), out ReactionPolicy policy))
                             settings.Reactions.Set(r.Name, policy);
                         else
                             found.Add($"'{r.Value}' is not a reaction policy (for '{r.Name}')");
@@ -122,7 +123,7 @@ namespace Content.Screens
                 : otherwise;
 
         public static string SpeedKey(CombatSpeed speed) =>
-            ScreenKeys.Key("settings", "speed_" + speed.ToString().ToLowerInvariant());
+            ScreenKeys.Key("settings", "speed_" + EnumWords.Name(speed));
 
         public static readonly string TitleKey = ScreenKeys.Key("settings", "title");
         public static readonly string GameTabKey = ScreenKeys.Key("settings", "game");

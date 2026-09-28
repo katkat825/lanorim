@@ -17,7 +17,7 @@ namespace Game.Access
     // in quarters and zooms (ART_DIRECTION section 4), and a control the mouse can reach has to be
     // one the keyboard can reach too, or it is not a control - it is a mouse gesture.
     //
-    // These ARE the Input actions: Word() is the name in the InputMap, so throw_dice keeps the name
+    // These ARE the Input actions: Id() is the name in the InputMap, so throw_dice keeps the name
     // it has had since M1 and nothing has to be kept in step with project.godot by hand.
     public enum Act
     {
@@ -51,29 +51,11 @@ namespace Game.Access
 
     public static class Acts
     {
-        public static string Word(this Act act) => act switch
-        {
-            Act.Touch => "touch",
-            Act.ReachNext => "reach_next",
-            Act.ReachBack => "reach_back",
-            Act.ThrowDice => "throw_dice",
-            Act.WhereAreWe => "where_are_we",
-            Act.ReadAloud => "read_aloud",
-            Act.TurnLeft => "turn_left",
-            Act.TurnRight => "turn_right",
-            Act.ZoomIn => "zoom_in",
-            Act.ZoomOut => "zoom_out",
-            _ => act.ToString().ToLowerInvariant(),
-        };
-
-        public static IReadOnlyList<string> Words => Enum.GetValues<Act>().Select(Word).ToArray();
-
         public const string Subject = "act";
 
         // ui.act.reach_next.name - "Reach for the next thing - {0}", the key counted in, so the page
         // that lists the bindings reads as sentences rather than as a table of two columns
-        public static string NameKey(this Act act) =>
-            KeyConventions.Key(KeyConventions.UiNs, Subject, Word(act), "name");
+        public static string NameKey(this Act act) => act.UiNameKey(Subject);
 
         // what stands in the {0} while the page is waiting for you to press something
         public static string Waiting => KeyConventions.Key(KeyConventions.UiNs, Subject, "waiting");
@@ -119,24 +101,5 @@ namespace Game.Access
         // unbound would leave a keyboard player with no way back out of wherever they are
         public static bool Essential(this Act act) =>
             act is Act.Touch or Act.ReachNext or Act.ReachBack;
-
-        public static bool TryWord(string word, out Act act)
-        {
-            act = default;
-
-            if (string.IsNullOrWhiteSpace(word)) return false;
-
-            string trimmed = word.Trim().ToLowerInvariant();
-
-            foreach (Act one in Enum.GetValues<Act>())
-            {
-                if (Word(one) != trimmed) continue;
-
-                act = one;
-                return true;
-            }
-
-            return false;
-        }
     }
 }

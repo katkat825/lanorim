@@ -19,14 +19,14 @@ namespace Content.Tests
         static Hero Druid(int level = 2)
         {
             var hero = new Hero("Fen", Srd.Class("druid"), Srd.Kind("human"),
-                                Srd.Background("hermit"),
+                                Srd.Background("recluse"),
                                 Creation.Creation.Standard(Srd.Class("druid")), level);
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Wisdom] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Wisdom] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Nature, Skill.Survival }, null, Srd.Items,
                        Srd.Spells.For("druid").Where(s => s.Level <= 1));
 
@@ -70,8 +70,9 @@ namespace Content.Tests
 
             Form spider = Card("spider");
 
-            Assert.Equal(DamageType.Poison, spider.RiderFor(spider.Attacks.Single()).Type);
-            Assert.Null(bear.RiderFor(bear.Attacks.Single()));
+            // the venom is the bite's on_hit, the words a statblock's attack uses
+            Assert.Equal(DamageType.Poison, spider.Attacks.Single().OnHit.Single().Type);
+            Assert.Empty(bear.Attacks.Single().OnHit);
         }
 
 
@@ -118,7 +119,7 @@ namespace Content.Tests
         public void OnlyTheDruidShifts()
         {
             var hero = new Hero("Yrsa", Srd.Class("barbarian"), Srd.Kind("orc"),
-                                Srd.Background("guard"),
+                                Srd.Background("soldier"),
                                 Creation.Creation.Standard(Srd.Class("barbarian")), 8);
 
             hero.Build(null, new[] { Skill.Athletics, Skill.Survival }, null, Srd.Items);
@@ -408,7 +409,7 @@ namespace Content.Tests
             ""scores"": { ""str"": 14, ""dex"": 15, ""con"": 12 },
             ""attacks"": [ { ""id"": ""wolf_bite"", ""damage"": ""1d6"",
                               ""damage_type"": ""piercing"",
-                              ""rider"": { ""condition"": ""prone"" } } ] } ] }";
+                              ""on_hit"": { ""condition"": ""prone"" } } ] } ] }";
 
         [Fact]
         public void AGoodCardReads()
@@ -420,7 +421,7 @@ namespace Content.Tests
             Form wolf = forms.Single();
 
             Assert.Equal(2, wolf.MinimumLevel);
-            Assert.Equal(Condition.Prone, wolf.RiderFor(wolf.Attacks.Single()).Condition);
+            Assert.Equal(Condition.Prone, wolf.Attacks.Single().OnHit.Single().Condition);
         }
 
         [Fact]
@@ -443,7 +444,7 @@ namespace Content.Tests
         [InlineData(@"""dex"": 15, ", "", "no dex score")]
         [InlineData(@"""damage_type"": ""piercing""", @"""damage_type"": ""sharp""",
                     "not an SRD damage type")]
-        [InlineData(@"{ ""condition"": ""prone"" }", "{ }", "neither damage nor a condition")]
+        [InlineData(@"{ ""condition"": ""prone"" }", "{ }", "that adds nothing")]
         [InlineData(@"""armor_class"": 12,", "", "no armor_class")]
         public void ABadCardIsRefusedByName(string from, string to, string expected)
         {

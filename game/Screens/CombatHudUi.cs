@@ -8,14 +8,19 @@ using Godot;
 namespace Game.Screens
 {
     // THE COMBAT HUD ON SCREEN (combat_ux.md): the turn-order strip top centre, the action bar and
-    // pips bottom centre, End Turn bottom right, the log bottom left, a line for the preview. It is
+    // pips bottom centre, End Turn bottom right, the log top left, a line for the preview. It is
     // CombatHud (content/Screens) drawn; it decides nothing.
+    //
+    // 2026-09-28 (cc_ui_issues_9-25-2026.md): the log sat bottom left over the map, so it is top left
+    // and narrower; the bar wraps onto a second row instead of running under End Turn; and off the
+    // hero's turn the bar's panel is hidden rather than left as an empty block.
     public partial class CombatHudUi : Control
     {
         readonly CombatDirector _director;
 
         HBoxContainer _strip;
-        HBoxContainer _bar;
+        HFlowContainer _bar;
+        Control _barPanel;
         Label _pips;
         Label _preview;
         Label _status;
@@ -39,38 +44,64 @@ namespace Game.Screens
             top.AddChild(Ui.Panel(Ui.Column(4, _strip, _status = new Label { ThemeTypeVariation = "HudLabel", HorizontalAlignment = HorizontalAlignment.Center }), "DarkPanel"));
             AddChild(top);
 
-            _bar = Ui.Row(6);
+            // a flow, not a row: nine options and a Rage run past the screen's width, and a row would
+            // run them under End Turn
+            _bar = new HFlowContainer { Alignment = FlowContainer.AlignmentMode.Center };
+            _bar.AddThemeConstantOverride("h_separation", 6);
+            _bar.AddThemeConstantOverride("v_separation", 6);
             _pips = new Label { ThemeTypeVariation = "HudLabel", HorizontalAlignment = HorizontalAlignment.Center };
             _preview = new Label { ThemeTypeVariation = "HudLabel", HorizontalAlignment = HorizontalAlignment.Center };
 
-            var bottom = new CenterContainer
+            // the width left of End Turn's corner, and grown upwards from the bottom as the bar wraps
+            var bottom = new VBoxContainer
             {
-                AnchorTop = 1, AnchorRight = 1, AnchorBottom = 1, OffsetTop = -150, OffsetBottom = -12,
+                AnchorTop = 1,
+                AnchorRight = 1,
+                AnchorBottom = 1,
+                OffsetLeft = 16,
+                OffsetRight = -EndTurnWidth - 24,
+                OffsetBottom = -12,
+                GrowVertical = GrowDirection.Begin,
+                Alignment = BoxContainer.AlignmentMode.End,
                 MouseFilter = MouseFilterEnum.Ignore,
             };
-            bottom.AddChild(Ui.Column(4, _preview, Ui.Panel(Ui.Column(4, _bar, _pips), "DarkPanel")));
+            bottom.AddThemeConstantOverride("separation", 4);
+            bottom.AddChild(_preview);
+            bottom.AddChild(_barPanel = Ui.Panel(Ui.Column(4, _bar, _pips), "DarkPanel"));
+            _barPanel.Visible = false;
             AddChild(bottom);
 
             _endTurn = Ui.Button(CombatHud.EndTurnKey, () => _director.EndTurn());
             var corner = new MarginContainer
             {
-                AnchorLeft = 1, AnchorTop = 1, AnchorRight = 1, AnchorBottom = 1,
-                OffsetLeft = -200, OffsetTop = -80, OffsetRight = -16, OffsetBottom = -16,
+                AnchorLeft = 1,
+                AnchorTop = 1,
+                AnchorRight = 1,
+                AnchorBottom = 1,
+                OffsetLeft = -EndTurnWidth - 16,
+                OffsetTop = -80,
+                OffsetRight = -16,
+                OffsetBottom = -16,
             };
             corner.AddChild(_endTurn);
             AddChild(corner);
 
             _log = Ui.Column(2);
-            // bottom left, above the action bar's row so the two never overlap
+            // top left, beside the turn strip and clear of the board, which the camera centres
             var logPanel = new MarginContainer
             {
-                AnchorTop = 1, AnchorBottom = 1, OffsetLeft = 16, OffsetTop = -330, OffsetRight = 340, OffsetBottom = -150,
+                OffsetLeft = 16,
+                OffsetTop = 12,
+                OffsetRight = 16 + LogWidth,
                 MouseFilter = MouseFilterEnum.Ignore,
-                GrowVertical = GrowDirection.Begin,
             };
             logPanel.AddChild(Ui.Panel(Ui.Column(4, Ui.Button(CombatHud.LogKey, ToggleLog), _log), "DarkPanel"));
             AddChild(logPanel);
         }
+
+        const int EndTurnWidth = 184;
+
+        const int LogWidth = 260;
 
         void ToggleLog()
         {
@@ -139,8 +170,11 @@ namespace Game.Screens
                 if (!chip.Hero)
                     one.AddChild(new ProgressBar
                     {
-                        MinValue = 0, MaxValue = System.Math.Max(1, chip.MaxHitPoints), Value = System.Math.Max(0, chip.HitPoints),
-                        ShowPercentage = false, CustomMinimumSize = new Vector2(48, 12),
+                        MinValue = 0,
+                        MaxValue = System.Math.Max(1, chip.MaxHitPoints),
+                        Value = System.Math.Max(0, chip.HitPoints),
+                        ShowPercentage = false,
+                        CustomMinimumSize = new Vector2(48, 12),
                         SizeFlagsVertical = SizeFlags.ShrinkCenter,
                     });
 
@@ -188,6 +222,7 @@ namespace Game.Screens
                   Ui.Say(CombatHud.MovementKey, hud.SquaresLeft)
                 : "";
 
+            _barPanel.Visible = can;
             _endTurn.Disabled = !can;
 
             if (can) Ui.FocusFirst(_bar);

@@ -3,7 +3,6 @@ using System.Linq;
 using Content.Spells;
 using Core.Characters;
 using Core.Localization;
-using Core.Magic;
 using Core.Resolution;
 
 namespace Content.Schema
@@ -34,8 +33,8 @@ namespace Content.Schema
             foreach (Difficulty difficulty in Difficulties.Ladder)
                 yield return difficulty.NameKey();
 
-            foreach (ArmorWeight weight in new[]
-                     { ArmorWeight.None, ArmorWeight.Light, ArmorWeight.Medium, ArmorWeight.Heavy })
+            foreach (ArmorCategory weight in new[]
+                     { ArmorCategory.None, ArmorCategory.Light, ArmorCategory.Medium, ArmorCategory.Heavy })
                 yield return weight.NameKey();
 
             // the two ways of paying for a spell, as the creation screen offers them. Derived from

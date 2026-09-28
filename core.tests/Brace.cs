@@ -21,7 +21,12 @@ namespace Core.Tests
         public void Answer(Encounter fight, Actor reactor, Moment moment)
         {
             Answered++;
-            reactor.Boons.Add(new Boon("brace", "brace", Duration.NextTurn, armorClass: 5));
+            reactor.Boons.Add(Boon.Of(new BoonSpec
+            {
+                Duration = Duration.NextTurn,
+                Flat = 5,
+                Touches = Sways.ArmorClass
+            }, "brace", "brace"));
         }
     }
 }

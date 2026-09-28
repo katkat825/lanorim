@@ -4,7 +4,6 @@ using System.Linq;
 using Content.Combat;
 using Core.Dice;
 using Game.Tray;
-using Godot;
 
 namespace Game.Play
 {

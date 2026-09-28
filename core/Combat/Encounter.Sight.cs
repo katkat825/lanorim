@@ -37,8 +37,8 @@ namespace Core.Combat
         public bool Obscured(Cell from, Cell to, Actor looker = null)
         {
             List<IZone> blinding = _zones.Select(p => p.Zone)
-                                         .Where(z => z.Obscures == Obscurement.Heavy)
-                                         .Where(z => !(z.Magical && looker != null &&
+                                         .Where(z => z.Obscures.BlocksSight())
+                                         .Where(z => !(z.Obscures == Obscurement.MagicalDarkness && looker != null &&
                                                        looker.Boons.Truesight))
                                          .ToList();
 

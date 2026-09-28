@@ -4,7 +4,6 @@ using System.Linq;
 using Content.Monsters;
 using Core.Characters;
 using Core.Combat;
-using Core.Dice;
 using Core.Magic;
 using Core.Space;
 
@@ -80,12 +79,12 @@ namespace Content.Combat
                 // swing. a statblock's turn has one action (ActionBudget.Statblock), so casting
                 // is instead of attacking, as the SRD has it
                 while (!turn.Ended && !fight.Over && turn.Can(Spend.Action) &&
-                       CastBest(fight, turn, CastingTime.Action, tried))
+                       CastBest(fight, turn, Spend.Action, tried))
                 {
                 }
 
                 if (!turn.Ended && !fight.Over && turn.Can(Spend.Bonus))
-                    CastBest(fight, turn, CastingTime.BonusAction, tried);
+                    CastBest(fight, turn, Spend.Bonus, tried);
             }
 
             if (turn.Ended || fight.Over) return;
@@ -131,11 +130,11 @@ namespace Content.Combat
             public double Value;
         }
 
-        bool CastBest(Encounter fight, Turn turn, CastingTime time, HashSet<string> tried)
+        bool CastBest(Encounter fight, Turn turn, Spend time, HashSet<string> tried)
         {
             Actor me = turn.Actor;
 
-            double swing = time == CastingTime.Action ? BestSwing(fight, me) : 0;
+            double swing = time == Spend.Action ? BestSwing(fight, me) : 0;
 
             Plan best = null;
 
@@ -198,7 +197,7 @@ namespace Content.Combat
         {
             // a spell that needs a choice the monster cannot sensibly make is left alone
             if (spell.Modes.Count > 0 || spell.Strikes ||
-                spell.Effects.Any(e => e.ChosenSkill || e.ChosenAbility))
+                spell.Effects.Any(e => e.Boon.SkillChoices.Count > 0 || e.Boon.AbilityChoices.Count > 0))
                 return null;
 
             Cell? here = fight.Field.Where(me);
@@ -211,123 +210,116 @@ namespace Content.Combat
 
             int range = Math.Max(1, spell.RangeAt(me.Level));
 
-            // healing: the most hurt friend in reach, itself included, when anyone is bloodied
-            if (spell.Does(Primitive.Heal) && !spell.Does(Primitive.Damage))
-            {
-                Actor hurt = fight.Actors.Where(a => a.Side == me.Side && !a.IsDead &&
-                                                     a.Health.IsBloodied &&
-                                                     (ReferenceEquals(a, me) ||
-                                                      fight.Field.InRange(me, a, range)))
-                                  .OrderBy(a => a.Health.Current)
-                                  .ThenBy(a => a.Id, StringComparer.Ordinal)
-                                  .FirstOrDefault();
-
-                if (hurt == null) return null;
-
-                return new Plan
-                {
-                    Spell = spell,
-                    Aim = Aim.At(hurt),
-                    Value = Average(spell, Primitive.Heal) * 0.8,
-                };
-            }
+            if (spell.Does(Primitive.Heal) && !spell.Does(Primitive.Damage)) return HealPlan(fight, me, spell, range);
 
             double perTarget = Average(spell, Primitive.Damage) * 0.6 +
                                (spell.Does(Primitive.Afflict) ? 5 : 0);
 
             if (perTarget <= 0) return null;
 
-            SpellEffect shape = spell.Effects.FirstOrDefault(e => e.Reach.IsArea()) ??
+            SpellEffect shape = spell.Effects.FirstOrDefault(e => e.AimKind.IsArea()) ??
                                 spell.Effects.First();
 
-            switch (shape.Reach)
+            return shape.AimKind switch
             {
-                case Reach.Line:
-                case Reach.Cone:
-                case Reach.Cube:
+                AimKind.Line or AimKind.Cone or AimKind.Cube => SweepPlan(fight, me, spell, here.Value, shape, perTarget),
+                AimKind.Burst or AimKind.Square or AimKind.Place =>
+                    PlacePlan(fight, me, spell, here.Value, enemies, range, shape, perTarget),
+                AimKind.Around => new Plan
                 {
-                    Plan best = null;
+                    Spell = spell,
+                    Aim = Aim.Nothing,
+                    Value = Score(fight.Field.Caught(here.Value, shape.Radius)
+                                       .Where(a => !ReferenceEquals(a, me)).ToList(), me) * perTarget,
+                },
+                AimKind.Creature or AimKind.Creatures => TargetPlan(fight, me, spell, enemies, range, perTarget),
+                _ => null,
+            };
+        }
 
-                    foreach (Facing facing in new[] { Facing.North, Facing.East, Facing.South, Facing.West })
-                    {
-                        IEnumerable<Cell> swept = shape.Reach switch
-                        {
-                            Reach.Line => fight.Field.Line(here.Value, facing, shape.Length,
-                                                           Math.Max(1, shape.Width)),
-                            Reach.Cone => fight.Field.Cone(here.Value, facing, shape.Length),
-                            _ => fight.Field.Cube(here.Value, facing, shape.Length),
-                        };
+        // healing: the most hurt friend in reach, itself included, when anyone is bloodied
+        static Plan HealPlan(Encounter fight, Actor me, Spell spell, int range)
+        {
+            Actor hurt = fight.Actors.Where(a => a.Side == me.Side && !a.IsDead &&
+                                                 a.Health.IsBloodied &&
+                                                 (ReferenceEquals(a, me) ||
+                                                  fight.Field.InRange(me, a, range)))
+                              .OrderBy(a => a.Health.Current)
+                              .ThenBy(a => a.Id, StringComparer.Ordinal)
+                              .FirstOrDefault();
 
-                        double value = Score(fight.Field.Caught(swept).ToList(), me) * perTarget;
+            if (hurt == null) return null;
 
-                        if (best == null || value > best.Value)
-                            best = new Plan { Spell = spell, Aim = Aim.Toward(facing), Value = value };
-                    }
+            return new Plan
+            {
+                Spell = spell,
+                Aim = Aim.At(hurt),
+                Value = Average(spell, Primitive.Heal) * 0.8,
+            };
+        }
 
-                    return best;
-                }
+        // a line, a cone or a cube: the best of the four ways it could face
+        static Plan SweepPlan(Encounter fight, Actor me, Spell spell, Cell here, SpellEffect shape, double perTarget)
+        {
+            Plan best = null;
 
-                case Reach.Burst:
-                case Reach.Square:
-                case Reach.Place:
+            foreach (Facing facing in new[] { Facing.North, Facing.East, Facing.South, Facing.West })
+            {
+                IEnumerable<Cell> swept = shape.AimKind switch
                 {
-                    Plan best = null;
+                    AimKind.Line => fight.Field.Line(here, facing, shape.Length, Math.Max(1, shape.Width)),
+                    AimKind.Cone => fight.Field.Cone(here, facing, shape.Length),
+                    _ => fight.Field.Cube(here, facing, shape.Length),
+                };
 
-                    foreach (Actor enemy in enemies.OrderBy(a => a.Id, StringComparer.Ordinal))
-                    {
-                        if (!(fight.Field.Where(enemy) is Cell at)) continue;
+                double value = Score(fight.Field.Caught(swept).ToList(), me) * perTarget;
 
-                        if (Battlefield.Distance(here.Value, at) > range ||
-                            !fight.Field.CanSee(here.Value, at))
-                            continue;
-
-                        IEnumerable<Actor> caught = shape.Reach == Reach.Square
-                            ? fight.Field.Caught(fight.Field.Square(at, Math.Max(1, shape.Length)))
-                            : fight.Field.Caught(at, shape.Radius);
-
-                        double value = Score(caught.ToList(), me) * perTarget;
-
-                        if (best == null || value > best.Value)
-                            best = new Plan { Spell = spell, Aim = Aim.On(at), Value = value };
-                    }
-
-                    return best;
-                }
-
-                case Reach.Around:
-                {
-                    List<Actor> caught = fight.Field.Caught(here.Value, shape.Radius)
-                                              .Where(a => !ReferenceEquals(a, me)).ToList();
-
-                    return new Plan
-                    {
-                        Spell = spell,
-                        Aim = Aim.Nothing,
-                        Value = Score(caught, me) * perTarget,
-                    };
-                }
-
-                case Reach.Creature:
-                case Reach.Creatures:
-                {
-                    // the one it can reach: the weakest, when it is a finisher, else the nearest
-                    Actor target = enemies.Where(e => fight.Field.InRange(me, e, range) &&
-                                                      fight.Sees(me, e) &&
-                                                      !me.HasFrom(Condition.Charmed, e) &&
-                                                      !AlreadyHas(e, spell))
-                                          .OrderBy(e => Is(Instinct.Finisher) ? e.Health.Current : 0)
-                                          .ThenBy(e => fight.Field.Distance(me, e))
-                                          .ThenBy(e => e.Id, StringComparer.Ordinal)
-                                          .FirstOrDefault();
-
-                    if (target == null) return null;
-
-                    return new Plan { Spell = spell, Aim = Aim.At(target), Value = perTarget };
-                }
-
-                default:
-                    return null;
+                if (best == null || value > best.Value)
+                    best = new Plan { Spell = spell, Aim = Aim.Toward(facing), Value = value };
             }
+
+            return best;
+        }
+
+        // a burst, a square or a place: centred on the enemy that catches the most
+        static Plan PlacePlan(Encounter fight, Actor me, Spell spell, Cell here, List<Actor> enemies, int range,
+                              SpellEffect shape, double perTarget)
+        {
+            Plan best = null;
+
+            foreach (Actor enemy in enemies.OrderBy(a => a.Id, StringComparer.Ordinal))
+            {
+                if (!(fight.Field.Where(enemy) is Cell at)) continue;
+
+                if (Battlefield.Distance(here, at) > range || !fight.Field.CanSee(here, at))
+                    continue;
+
+                IEnumerable<Actor> caught = shape.AimKind == AimKind.Square
+                    ? fight.Field.Caught(fight.Field.Square(at, Math.Max(1, shape.Length)))
+                    : fight.Field.Caught(at, shape.Radius);
+
+                double value = Score(caught.ToList(), me) * perTarget;
+
+                if (best == null || value > best.Value)
+                    best = new Plan { Spell = spell, Aim = Aim.On(at), Value = value };
+            }
+
+            return best;
+        }
+
+        // the one it can reach: the weakest, when it is a finisher, else the nearest
+        Plan TargetPlan(Encounter fight, Actor me, Spell spell, List<Actor> enemies, int range, double perTarget)
+        {
+            Actor target = enemies.Where(e => fight.Field.InRange(me, e, range) &&
+                                              fight.Sees(me, e) &&
+                                              !me.HasFrom(Condition.Charmed, e) &&
+                                              !AlreadyHas(e, spell))
+                                  .OrderBy(e => Is(Instinct.Finisher) ? e.Health.Current : 0)
+                                  .ThenBy(e => fight.Field.Distance(me, e))
+                                  .ThenBy(e => e.Id, StringComparer.Ordinal)
+                                  .FirstOrDefault();
+
+            return target == null ? null : new Plan { Spell = spell, Aim = Aim.At(target), Value = perTarget };
         }
 
         // enemies caught count for it, friends caught against it - twice, so a monster does not

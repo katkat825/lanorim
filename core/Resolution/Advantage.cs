@@ -1,3 +1,5 @@
+using Core.Words;
+
 namespace Core.Resolution
 {
     // SRD: advantage and disadvantage don't stack and they cancel. any number of sources on one
@@ -12,7 +14,7 @@ namespace Core.Resolution
         // both have been seen: one die, like Flat - but unlike Flat, another advantage or
         // disadvantage can't tip it, because SRD 5.2.1 says any of each is neither (2026-09-25:
         // combining two already-cancelled values let a third source tip the roll)
-        Cancelled = 2,
+        [Word("flat"), Unread] Cancelled = 2,
     }
 
     public static class Advantages
@@ -40,12 +42,5 @@ namespace Core.Resolution
 
         public static int Dice(this Advantage a) =>
             a == Advantage.Advantage || a == Advantage.Disadvantage ? 2 : 1;
-
-        public static string Id(this Advantage a) => a switch
-        {
-            Advantage.Advantage => "advantage",
-            Advantage.Disadvantage => "disadvantage",
-            _ => "flat",
-        };
     }
 }

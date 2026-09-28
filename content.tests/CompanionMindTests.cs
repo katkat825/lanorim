@@ -15,7 +15,10 @@ namespace Content.Tests
         static Speaking Wolf() =>
             new BarkBank("wolf", new Dictionary<Bark, int>
             {
-                [Bark.Maxed] = 3, [Bark.Trouble] = 2, [Bark.Down] = 1, [Bark.Victory] = 2,
+                [Bark.Maxed] = 3,
+                [Bark.Trouble] = 2,
+                [Bark.Down] = 1,
+                [Bark.Victory] = 2,
             }).Open(new SeededRng(4));
 
         static Attempt Attack(int natural) =>

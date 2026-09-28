@@ -1,3 +1,4 @@
+using System.Linq;
 using Godot;
 using Core.Space;
 
@@ -51,26 +52,24 @@ namespace Game.Board
             if (Wall == null || Door == null || Rough == null)
                 GD.PushError("board: a tile kind has no material - that terrain will be untextured");
 
-            foreach (Cell at in map.Cells) Raise(under, map, at);
+            foreach (Cell at in map.Cells) Raise(under, Piece(map, at));
 
-            foreach (Border on in map.Borders) Raise(under, map, on);
+            foreach (Border on in map.Borders) Raise(under, Piece(map, on));
         }
 
-        // redraw one square from the map; the caller must have changed the map first
-        public void Update(Node3D under, MapLayout map, Cell at)
-        {
-            if (under == null || map == null) return;
-
-            Clear(under, NameFor(at));
-            Raise(under, map, at);
-        }
-
+        // redraw one line from the map - a door opened mid-fight; the caller must have changed the
+        // map first. squares never change in a fight, so there is no square to redraw
         public void Update(Node3D under, MapLayout map, Border on)
         {
             if (under == null || map == null) return;
 
             Clear(under, NameFor(on));
-            Raise(under, map, on);
+            Raise(under, Piece(map, on));
+        }
+
+        static void Raise(Node3D under, Node3D piece)
+        {
+            if (piece != null) under.AddChild(piece);
         }
 
         public void Clear(Node3D under, string named)
@@ -90,75 +89,69 @@ namespace Game.Board
         public static string NameFor(Border on) =>
             $"Line{on.Cell.X:00}x{on.Cell.Y:00}{(on.Vertical ? "V" : "H")}";
 
-        void Raise(Node3D under, MapLayout map, Cell at)
+        // what stands on a square or a line, or null for bare floor
+        Node3D Piece(MapLayout map, Cell at) => map.At(at) switch
         {
-            Node3D piece = map.At(at) switch
-            {
-                Tile.Void => WallModel != null ? Rock(at) : Block(at, RockHeight, _metrics.CellSize, Wall),
-                Tile.Rough => RubbleModel != null ? Rubble(at) : Block(at, RoughHeight,
-                                                                      _metrics.CellSize * RoughInset, Rough),
-                _ => null,
-            };
+            Tile.Void => WallModel != null ? Rock(at) : Block(at, RockHeight, _metrics.CellSize, Wall),
+            Tile.Rough => RubbleModel != null ? Rubble(at) : Block(at, RoughHeight,
+                                                                  _metrics.CellSize * RoughInset, Rough),
+            _ => null,
+        };
 
-            if (piece != null) under.AddChild(piece);
-        }
-
-        void Raise(Node3D under, MapLayout map, Border on)
+        Node3D Piece(MapLayout map, Border on) => map.At(on) switch
         {
-            Node3D piece = map.At(on) switch
-            {
-                Edge.Wall => WallModel != null ? Panel(on) : Slab(on, WallHeight, Wall),
-                Edge.Door => DoorwayModel != null ? Doorway(on) : Hang(on),
-                _ => null,
-            };
-
-            if (piece != null) under.AddChild(piece);
-        }
+            Edge.Wall => WallModel != null ? Panel(on) : Slab(on, WallHeight, Wall),
+            Edge.Door => DoorwayModel != null ? Doorway(on) : Hang(on),
+            _ => null,
+        };
 
         Vector3 Centre(Border on) => _metrics.Centre(on);
 
         static float Facing(Border on) => on.Vertical ? Mathf.Pi * 0.5f : 0f;
 
+        // a painted model scaled evenly to fit `width` across, standing on the board at `centre`: a
+        // wall panel, a rock, rubble (Panel, Rock and Rubble each did this)
+        Node3D Standing(PackedScene model, string name, Vector3 centre, float width, out Aabb bounds)
+        {
+            Node3D piece = Painted(model, name);
+            bounds = PaintedModel.Bounds(piece);
+
+            float scale = PaintedModel.ToFitWidth(bounds, width);
+
+            piece.Scale = Vector3.One * scale;
+            piece.Position = centre - new Vector3(0f, bounds.Position.Y * scale, 0f);
+
+            return piece;
+        }
+
+        // uniform scale: a modular kit's wall already fits a line, so nothing is stretched
         Node3D Panel(Border on)
         {
-            Node3D panel = Painted(WallModel, NameFor(on));
-            Aabb bounds = PaintedModel.Bounds(panel);
+            Node3D panel = Standing(WallModel, NameFor(on), Centre(on), _metrics.CellSize, out _);
 
-            float across = PaintedModel.ToFitWidth(bounds, _metrics.CellSize);
-
-            // uniform scale: a modular kit's wall already fits a line, so nothing is stretched
-            panel.Scale = Vector3.One * across;
             panel.Rotation = new Vector3(0f, Facing(on), 0f);
-            panel.Position = Centre(on) - new Vector3(0f, bounds.Position.Y * across, 0f);
 
             return panel;
         }
 
         Node3D Rock(Cell at)
         {
-            Node3D rock = Painted(WallModel, NameFor(at));
-            Aabb bounds = PaintedModel.Bounds(rock);
+            Node3D rock = Standing(WallModel, NameFor(at), _metrics.Centre(at), _metrics.CellSize, out Aabb bounds);
 
-            float across = PaintedModel.ToFitWidth(bounds, _metrics.CellSize);
+            float across = rock.Scale.X;
 
             // the one place a wall model is stretched: rock fills the square, depth pulled to full width, no rotation so no shear
             float deep = bounds.Size.Z > 0f ? _metrics.CellSize / bounds.Size.Z : across;
 
             rock.Scale = new Vector3(across, across, deep);
-            rock.Position = _metrics.Centre(at) - new Vector3(0f, bounds.Position.Y * across, 0f);
 
             return rock;
         }
 
         Node3D Rubble(Cell at)
         {
-            Node3D rubble = Painted(RubbleModel, NameFor(at));
-            Aabb bounds = PaintedModel.Bounds(rubble);
-
-            float scale = PaintedModel.ToFitWidth(bounds, _metrics.CellSize * RubbleSpread);
-
-            rubble.Scale = Vector3.One * scale;
-            rubble.Position = _metrics.Centre(at) - new Vector3(0f, bounds.Position.Y * scale, 0f);
+            Node3D rubble = Standing(RubbleModel, NameFor(at), _metrics.Centre(at),
+                                     _metrics.CellSize * RubbleSpread, out _);
 
             // deterministic yaw from the square's coordinates: same on reload, not wallpaper
             rubble.Rotation = new Vector3(0f, PaintedModel.SettledAngle(at.X, at.Y), 0f);
@@ -222,19 +215,8 @@ namespace Game.Board
         }
 
         // the leaf is the child whose name ends in _door (KayKit's convention)
-        static Node3D FindLeaf(Node node)
-        {
-            foreach (Node child in node.GetChildren())
-            {
-                if (child is Node3D found && child.Name.ToString().ToLower().EndsWith("_door")) return found;
-
-                Node3D deeper = FindLeaf(child);
-
-                if (deeper != null) return deeper;
-            }
-
-            return null;
-        }
+        static Node3D FindLeaf(Node node) =>
+            Nodes.Under<Node3D>(node).FirstOrDefault(n => n.Name.ToString().ToLower().EndsWith("_door"));
 
         // sits on the surface, so height is added as a half-offset, never subtracted
         MeshInstance3D Block(Cell at, float height, float across, Material material) => new MeshInstance3D

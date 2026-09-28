@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Space;
+using Core.Words;
 
 namespace Content.Maps
 {
@@ -133,7 +134,7 @@ namespace Content.Maps
         public static readonly IReadOnlyList<MapTool> Tools = Enum.GetValues<MapTool>();
 
         public static string ToolKey(MapTool tool) =>
-            Screens.ScreenKeys.Key("map", "tool_" + tool.ToString().ToLowerInvariant());
+            Screens.ScreenKeys.Key("map", "tool_" + EnumWords.Name(tool));
 
         public static IEnumerable<string> Keys() => Tools.Select(ToolKey);
     }

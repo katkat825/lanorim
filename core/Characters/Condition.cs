@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using Core.Localization;
+using Core.Words;
 
 namespace Core.Characters
 {
@@ -9,7 +9,7 @@ namespace Core.Characters
     // deferred. Unconscious is set by dropping to 0 HP, and a spell (Sleep) may set it too.
     public enum Condition
     {
-        None = 0,
+        [Unread] None = 0,
 
         Prone,
         Poisoned,
@@ -44,23 +44,6 @@ namespace Core.Characters
         };
 
         public static readonly IReadOnlyList<Condition> All = Appliable;
-
-        public static string Id(this Condition condition) =>
-            condition == Condition.None ? "none" : condition.ToString().ToLowerInvariant();
-
-        public static bool TryParse(string id, out Condition condition)
-        {
-            foreach (Condition c in All)
-            {
-                if (!string.Equals(c.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                condition = c;
-                return true;
-            }
-
-            condition = Condition.None;
-            return false;
-        }
 
         public static string NameKey(this Condition condition) =>
             KeyConventions.Key(KeyConventions.ConditionNs, condition.Id(), "name");
@@ -118,16 +101,12 @@ namespace Core.Characters
         // SRD: restrained has disadvantage on Dexterity saves
         public static bool SavesAtDisadvantage(this Condition condition, Ability ability) =>
             condition == Condition.Restrained && ability == Ability.Dexterity;
-
-        // getting up off the floor costs half your movement; grappled and restrained cost nothing
-        // to try but can't be shrugged off by moving
-        public static bool StandingCostsMovement(this Condition condition) =>
-            condition == Condition.Prone;
     }
 }
 
 namespace Core.Characters
 {
+    [Fallback(Size.Medium)]
     public enum Size
     {
         Tiny,
@@ -136,24 +115,5 @@ namespace Core.Characters
         Large,
         Huge,
         Gargantuan,
-    }
-
-    public static class Sizes
-    {
-        public static string Id(this Size size) => size.ToString().ToLowerInvariant();
-
-        public static bool TryParse(string id, out Size size)
-        {
-            foreach (Size s in Enum.GetValues(typeof(Size)))
-            {
-                if (!string.Equals(s.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                size = s;
-                return true;
-            }
-
-            size = Size.Medium;
-            return false;
-        }
     }
 }

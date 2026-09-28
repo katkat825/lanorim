@@ -119,20 +119,6 @@ namespace Content.Tests
         }
 
         [Fact]
-        public void AnEmptyTableIsRefused()
-        {
-            Assert.Contains(Problems(@"{ ""tables"": [ { ""id"": ""chest"", ""entries"": [] } ] }"),
-                            p => p.Contains("empty table"));
-        }
-
-        [Fact]
-        public void HiddenOrShownAndNothingElse()
-        {
-            Assert.Contains(Problems(One(extra: @"""rolled"": ""secret"",")),
-                            p => p.Contains("'hidden' or 'shown'"));
-        }
-
-        [Fact]
         public void ATableThatRollsItselfIsRefused()
         {
             Assert.Contains(Problems(One(@"{ ""id"": ""again"", ""kind"": ""table"",

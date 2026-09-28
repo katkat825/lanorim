@@ -24,3 +24,6 @@ _design_docs/
 # OS
 .DS_Store
 Thumbs.db
+
+# a snapshot test that fails writes what it saw beside its golden file; never commit it
+content.tests/Snapshots/*.actual.txt

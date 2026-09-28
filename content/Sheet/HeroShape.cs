@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Content.Classes;
 using Core.Combat;
-using Core.Rules;
 
 namespace Content.Sheet
 {
@@ -46,7 +45,7 @@ namespace Content.Sheet
             if (!Actor.CanAct) return "cannot act";
 
             // Moonbeam: a creature it turned back can't shift again until it leaves the beam
-            if (Actor.Boons.NoShifting) return "held in its true form";
+            if (Actor.Boons.Forbids(Core.Characters.Forbid.Shifting)) return "held in its true form";
 
             if (turn != null && !turn.Can(Spend.Bonus)) return "no bonus action left";
 
@@ -109,14 +108,6 @@ namespace Content.Sheet
             return true;
         }
 
-        // the spider's venom rides on the spider's bite and nothing else
-        IReadOnlyList<Rider> WithFormRider(IReadOnlyList<Rider> riders, Core.Characters.Attack attack)
-        {
-            Rider venom = Form?.RiderFor(attack);
-
-            return venom == null ? riders : riders.Append(venom).ToList();
-        }
-
         // everything per-rest comes back on a short rest except Wild Shape, which SRD 5.2.1
         // returns one use at a time - the rest wait for a long rest
         // SRD 5.2.1: what a short rest gives back - every use, one use (Rage, Second Wind,
@@ -125,7 +116,7 @@ namespace Content.Sheet
         {
             foreach (string id in _spent.Keys.ToList())
             {
-                Feature feature = Features.FirstOrDefault(f => f.Id == id);
+                Feature feature = FeatureCalled(id);
 
                 Recharge recharge = feature?.Recharge ?? Recharge.Short;
 

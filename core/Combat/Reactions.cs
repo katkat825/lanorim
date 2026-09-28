@@ -5,6 +5,7 @@ using Core.Characters;
 using Core.Resolution;
 using Core.Rules;
 using Core.Space;
+using Core.Words;
 
 namespace Core.Combat
 {
@@ -31,8 +32,9 @@ namespace Core.Combat
         Struck,
 
         // a named spell has just picked the reactor as a target and has not landed yet: SRD 5.2.1
-        // Shield's "or targeted by the Magic Missile spell" (2026-09-25)
-        Targeted,
+        // Shield's "or targeted by the Magic Missile spell" (2026-09-25). the engine raises it; a
+        // reaction's data never names it
+        [Unread] Targeted,
     }
 
     public static class Triggers
@@ -42,25 +44,6 @@ namespace Core.Combat
             Trigger.Hit, Trigger.Cast, Trigger.LeaveReach, Trigger.Damaged, Trigger.Struck,
         };
 
-        public static string Id(this Trigger trigger) => trigger switch
-        {
-            Trigger.LeaveReach => "leave_reach",
-            _ => trigger.ToString().ToLowerInvariant(),
-        };
-
-        public static bool TryParse(string id, out Trigger trigger)
-        {
-            foreach (Trigger t in All)
-            {
-                if (!string.Equals(t.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                trigger = t;
-                return true;
-            }
-
-            trigger = Trigger.Hit;
-            return false;
-        }
     }
 
     // one of those moments, with everything a reaction might want to know about it. the engine
@@ -129,7 +112,7 @@ namespace Core.Combat
         public Blow Blow { get; private set; }
 
         public override string ToString() =>
-            $"{Trigger.ToString().ToLowerInvariant()} by {Source?.Id}" +
+            $"{EnumWords.Name(Trigger)} by {Source?.Id}" +
             (Target != null ? $" on {Target.Id}" : "") +
             (Spell != null ? $" ({Spell})" : "") +
             (Stopped ? ", stopped" : "");
@@ -240,7 +223,7 @@ namespace Core.Combat
             (fight == null || fight.Sees(reactor, moment.Source));
 
         public void Answer(Encounter fight, Actor reactor, Moment moment) =>
-            reactor.Boons.Add(new Boon(Id, Id, Duration.Encounter) { HalvesNextHit = true });
+            reactor.Boons.Add(Boon.Of(new BoonSpec { HalvesNextHit = true }, Id, Id));
     }
 
     // the opportunity attack, as one reaction among several rather than the only one there is
@@ -264,7 +247,7 @@ namespace Core.Combat
             if (!ReferenceEquals(moment.Target, reactor)) return false;
 
             // Shocking Grasp
-            if (reactor.Boons.NoOpportunityAttacks) return false;
+            if (reactor.Boons.Forbids(Forbid.OpportunityAttacks)) return false;
 
             // a charmed creature does not swing at its charmer
             if (reactor.HasFrom(Condition.Charmed, moment.Source)) return false;

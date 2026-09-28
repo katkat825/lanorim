@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace Game.Audio
@@ -77,30 +78,8 @@ namespace Game.Audio
             if (Count == 0) GD.PushError($"impact pool: no samples in {folder} - hits there will be silent");
         }
 
-        // fold three spellings: x.wav with x.wav.import in source, only x.wav.remap in an export, or it breaks at export time
-        // subfolders skipped, keeping the slicer's _review/ quarantine out of the game
-        static SortedSet<string> Files(string folder)
-        {
-            var names = new SortedSet<string>();
-
-            using DirAccess dir = DirAccess.Open(folder);
-
-            if (dir == null)
-            {
-                GD.PushError($"impact pool: cannot open {folder} - {DirAccess.GetOpenError()}");
-                return names;
-            }
-
-            foreach (string entry in dir.GetFiles())
-            {
-                string name = entry;
-
-                if (name.EndsWith(".import") || name.EndsWith(".remap")) name = name.GetBaseName();
-
-                if (name.EndsWith(".wav")) names.Add(name);
-            }
-
-            return names;
-        }
+        // the samples, however the folder spells them (ResFolder), or it breaks at export time
+        static SortedSet<string> Files(string folder) =>
+            new SortedSet<string>(ResFolder.Files(folder, "impact pool").Where(n => n.EndsWith(".wav")));
     }
 }

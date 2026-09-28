@@ -92,17 +92,6 @@ namespace Game.Campaigns
             return library;
         }
 
-        // takes a campaign's words back off the TranslationServer. The content library is not
-        // unloaded because it was never mutated - dropping the reference is the whole of it.
-        public void Unload(string id)
-        {
-            Loaded one = Campaign(id);
-
-            if (one == null) return;
-
-            CampaignLocale.Unregister(one.Folder);
-        }
-
         public override string ToString() =>
             $"{InPlay.Count()} of {Campaigns.Count} campaigns in play" +
             (Shelf.Problems.Count > 0 ? $", {Shelf.Problems.Count} problems" : "");

@@ -155,49 +155,24 @@ namespace Content.Schema
             FormShelf forms = FormShelf.Srd();
             problems.AddRange(forms.Problems);
 
-            var consequences = new List<Core.Resolution.Consequence>();
+            var consequences = Schema.Srd.ReadAll<Core.Resolution.Consequence>(
+                "consequences", ConsequenceReader.TryRead, problems);
 
-            foreach ((string path, string text) in Schema.Srd.ReadFolder("consequences"))
-            {
-                ConsequenceReader.TryRead(text, out IReadOnlyList<Core.Resolution.Consequence> read,
-                                          out IReadOnlyList<string> trouble);
+            var classes = Schema.Srd.ReadAll<CharacterClass>(
+                "classes", ClassReader.TryRead, problems);
 
-                consequences.AddRange(read);
-                problems.AddRange(trouble.Select(t => $"{path}: {t}"));
-            }
+            var species = Schema.Srd.ReadAll<Kind>(
+                "species", SpeciesReader.TryRead, problems);
 
-            var classes = new List<CharacterClass>();
+            var backgrounds = Schema.Srd.ReadAll<Background>(
+                "backgrounds", BackgroundReader.TryRead, problems);
 
-            foreach ((string path, string text) in Schema.Srd.ReadFolder("classes"))
-            {
-                ClassReader.TryRead(text, out IReadOnlyList<CharacterClass> read,
-                                    out IReadOnlyList<string> trouble);
-
-                classes.AddRange(read);
-                problems.AddRange(trouble.Select(t => $"{path}: {t}"));
-            }
-
-            var species = new List<Kind>();
-
-            foreach ((string path, string text) in Schema.Srd.ReadFolder("species"))
-            {
-                SpeciesReader.TryRead(text, out IReadOnlyList<Kind> read,
-                                      out IReadOnlyList<string> trouble);
-
-                species.AddRange(read);
-                problems.AddRange(trouble.Select(t => $"{path}: {t}"));
-            }
-
-            var backgrounds = new List<Background>();
-
-            foreach ((string path, string text) in Schema.Srd.ReadFolder("backgrounds"))
-            {
-                BackgroundReader.TryRead(text, out IReadOnlyList<Background> read,
-                                         out IReadOnlyList<string> trouble);
-
-                backgrounds.AddRange(read);
-                problems.AddRange(trouble.Select(t => $"{path}: {t}"));
-            }
+            // a shared feature is written once and named by id (srd/features/shared.json): one that
+            // nothing names is dead data
+            problems.AddRange(SharedFeatures.Srd.Problems);
+            problems.AddRange(SharedFeatures.Srd.Unused(classes.SelectMany(c => c.Features)
+                                                               .Concat(species.SelectMany(s => s.Features)))
+                                            .Select(id => $"{SharedFeatures.File}: {id} is named by no class or species"));
 
             // the rosters are fixed by the design docs, so a missing one is a build error rather
             // than a quiet short list in the character creator

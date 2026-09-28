@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Words;
 using Godot;
 
 namespace Game.Access
@@ -156,7 +157,7 @@ namespace Game.Access
         public IEnumerable<string> Lines()
         {
             foreach (KeyValuePair<Act, Bound> one in All)
-                yield return one.Key.Word() + Between +
+                yield return one.Key.Id() + Between +
                              (one.Value.Any ? Enum.GetName(one.Value.Key).ToLowerInvariant() : "") +
                              (one.Value.Shift ? WithShift : "");
         }
@@ -173,7 +174,7 @@ namespace Game.Access
 
                 if (at <= 0) continue;
 
-                if (!Acts.TryWord(line.Substring(0, at), out Act act)) continue;
+                if (!EnumWords.TryParse(line.Substring(0, at), out Act act)) continue;
 
                 string said = line.Substring(at + 1).Trim().ToLowerInvariant();
 
@@ -197,7 +198,7 @@ namespace Game.Access
 
         // developer only, not localized, never reaches the screen
         public override string ToString() =>
-            $"keys: {string.Join(", ", All.Select(b => $"{b.Key.Word()}={b.Value}"))}" +
-            (Armed is { } armed ? $" (waiting on {armed.Word()})" : "");
+            $"keys: {string.Join(", ", All.Select(b => $"{b.Key.Id()}={b.Value}"))}" +
+            (Armed is { } armed ? $" (waiting on {armed.Id()})" : "");
     }
 }

@@ -81,135 +81,130 @@ namespace Content.Dialogue
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            switch (request.Kind)
+            return request.Kind switch
             {
-                case RequestKind.Check:
+                RequestKind.Check => Tested(request, request.Skill != Skill.None
+                                                         ? Checks.Check(_resolver, _hero.Actor, request.Skill, request.Dc)
+                                                         : Checks.Check(_resolver, _hero.Actor, request.Ability, request.Dc)),
+                RequestKind.Save => Tested(request, Checks.Save(_resolver, _hero.Actor, request.Ability, request.Dc)),
+                RequestKind.Roll => Rolled(request),
+                RequestKind.Encounter => Consulted(request),
+                RequestKind.Gold => Paid(request),
+                RequestKind.Give => Given(request),
+                RequestKind.Loot => Looted(request),
+                RequestKind.Rest => Rested(request),
+                RequestKind.Level => Levelled(request),
+                _ => new Settled(request, null),
+            };
+        }
+
+        static Settled Tested(Request request, Attempt attempt) =>
+            new Settled(request, Answer.Of(attempt)) { Attempt = attempt };
+
+        Settled Rolled(Request request)
+        {
+            GmRoll roll = _screen.Roll(request.Dice);
+
+            return new Settled(request, new Answer { Total = roll.Total }) { Roll = roll };
+        }
+
+        Settled Consulted(Request request)
+        {
+            EncounterTable table = _pack?.Encounter(request.Id);
+
+            if (table == null)
+                return new Settled(request, new Answer())
                 {
-                    Attempt attempt = request.Skill != Skill.None
-                        ? Checks.Check(_resolver, _hero.Actor, request.Skill, request.Dc)
-                        : Checks.Check(_resolver, _hero.Actor, request.Ability, request.Dc);
+                    Problem = $"no encounter table '{request.Id}' in this campaign",
+                };
 
-                    return new Settled(request, Answer.Of(attempt)) { Attempt = attempt };
-                }
+            TableRoll consulted = _screen.Consult(table);
 
-                case RequestKind.Save:
+            return new Settled(request, new Answer
+            {
+                Entry = consulted.Triggered ? consulted.Entry?.Id ?? "" : "",
+                StartsAFight = consulted.Fights,
+            })
+            {
+                Table = consulted,
+            };
+        }
+
+        Settled Paid(Request request)
+        {
+            // taking more than the hero has takes what there is: a toll does not go into debt
+            if (request.Amount >= 0) _hero.Pack.Earn(request.Amount);
+            else _hero.Pack.Spend(Math.Min(_hero.Pack.Gold, -request.Amount));
+
+            return new Settled(request, new Answer());
+        }
+
+        Settled Given(Request request)
+        {
+            Item item = _library.Items.Find(request.Id);
+
+            if (item == null)
+                return new Settled(request, new Answer())
                 {
-                    Attempt attempt = Checks.Save(_resolver, _hero.Actor, request.Ability, request.Dc);
+                    Problem = $"no item '{request.Id}' in the SRD or this campaign",
+                };
 
-                    return new Settled(request, Answer.Of(attempt)) { Attempt = attempt };
-                }
+            int left = _hero.Pack.Take(item, request.Amount);
 
-                case RequestKind.Roll:
+            return new Settled(request, new Answer())
+            {
+                Leftover = left > 0 ? item : null,
+                LeftoverCount = left,
+            };
+        }
+
+        Settled Looted(Request request)
+        {
+            LootTable table = _pack?.LootTable(request.Id);
+
+            if (table == null)
+                return new Settled(request, new Answer())
                 {
-                    GmRoll roll = _screen.Roll(request.Dice);
+                    Problem = $"no loot table '{request.Id}' in this campaign",
+                };
 
-                    return new Settled(request, new Answer { Total = roll.Total }) { Roll = roll };
-                }
+            // the same per-class rule the merchant keeps: nothing the hero could not use
+            LootRoll roll = _screen.Open(table, _pack.Loot, _library.Items, _hero.Class.Id, _hero.Level);
 
-                case RequestKind.Encounter:
-                {
-                    EncounterTable table = _pack?.Encounter(request.Id);
+            Haul haul = Spoils.Hand(_hero.Pack, roll, _library.Items);
 
-                    if (table == null)
-                        return new Settled(request, new Answer())
-                        {
-                            Problem = $"no encounter table '{request.Id}' in this campaign",
-                        };
+            return new Settled(request, new Answer { Gold = roll.Gold })
+            {
+                Loot = roll,
+                Haul = haul,
+            };
+        }
 
-                    TableRoll consulted = _screen.Consult(table);
+        Settled Rested(Request request)
+        {
+            if (request.Id == "long") _hero.LongRest();
+            else
+            {
+                // a story's short rest spends hit dice the way a player would: until the hero is
+                // whole or the dice run out (the rest screen can ask later)
+                Health health = _hero.Actor.Health;
 
-                    return new Settled(request, new Answer
-                    {
-                        Entry = consulted.Triggered ? consulted.Entry?.Id ?? "" : "",
-                        StartsAFight = consulted.Fights,
-                    })
-                    {
-                        Table = consulted,
-                    };
-                }
+                while (health.Current < health.Maximum && health.HitDice > 0)
+                    health.SpendHitDie(_resolver, _hero.Actor.AbilityModifier(Ability.Constitution));
 
-                case RequestKind.Gold:
-                {
-                    // taking more than the hero has takes what there is: a toll does not go into
-                    // debt
-                    if (request.Amount >= 0) _hero.Pack.Earn(request.Amount);
-                    else _hero.Pack.Spend(Math.Min(_hero.Pack.Gold, -request.Amount));
-
-                    return new Settled(request, new Answer());
-                }
-
-                case RequestKind.Give:
-                {
-                    Item item = _library.Items.Find(request.Id);
-
-                    if (item == null)
-                        return new Settled(request, new Answer())
-                        {
-                            Problem = $"no item '{request.Id}' in the SRD or this campaign",
-                        };
-
-                    int left = _hero.Pack.Take(item, request.Amount);
-
-                    return new Settled(request, new Answer())
-                    {
-                        Leftover = left > 0 ? item : null,
-                        LeftoverCount = left,
-                    };
-                }
-
-                case RequestKind.Loot:
-                {
-                    LootTable table = _pack?.LootTable(request.Id);
-
-                    if (table == null)
-                        return new Settled(request, new Answer())
-                        {
-                            Problem = $"no loot table '{request.Id}' in this campaign",
-                        };
-
-                    // the same per-class rule the merchant keeps: nothing the hero could not use
-                    LootRoll roll = _screen.Open(table, _pack.Loot, _library.Items, _hero.Class.Id,
-                                                 _hero.Level);
-
-                    Haul haul = Spoils.Hand(_hero.Pack, roll, _library.Items);
-
-                    return new Settled(request, new Answer { Gold = roll.Gold })
-                    {
-                        Loot = roll,
-                        Haul = haul,
-                    };
-                }
-
-                case RequestKind.Rest:
-                {
-                    if (request.Id == "long") _hero.LongRest();
-                    else
-                    {
-                        // a story's short rest spends hit dice the way a player would: until the
-                        // hero is whole or the dice run out (the rest screen can ask later)
-                        Health health = _hero.Actor.Health;
-
-                        while (health.Current < health.Maximum && health.HitDice > 0)
-                            health.SpendHitDie(_resolver, _hero.Actor.AbilityModifier(Ability.Constitution));
-
-                        _hero.ShortRest(_resolver);
-                    }
-
-                    return new Settled(request, new Answer());
-                }
-
-                case RequestKind.Level:
-                {
-                    // milestone levelling only goes up; a campaign that says <<level 3>> to a level
-                    // 5 hero is a campaign played out of order, not a demotion
-                    _hero.LevelTo(request.Amount);
-
-                    return new Settled(request, new Answer());
-                }
-
-                default:
-                    return new Settled(request, null);
+                _hero.ShortRest(_resolver);
             }
+
+            return new Settled(request, new Answer());
+        }
+
+        // milestone levelling only goes up; a campaign that says <<level 3>> to a level 5 hero is a
+        // campaign played out of order, not a demotion
+        Settled Levelled(Request request)
+        {
+            _hero.LevelTo(request.Amount);
+
+            return new Settled(request, new Answer());
         }
     }
 }

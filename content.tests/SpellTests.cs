@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Content.Schema;
 using Content.Spells;
 using Core.Characters;
 using Core.Combat;
@@ -259,14 +258,14 @@ namespace Content.Tests
         }
 
         [Fact]
-        public void RefusesCantripScalingOnALeveledSpell()
+        public void RefusesCantripGrowthOnALeveledSpell()
         {
             IReadOnlyList<string> problems = Problems(@"
             {""spells"":[{""id"":""bad"",""level"":3,""effects"":[
               {""primitive"":""damage"",""amount"":""8d6"",""damage_type"":""fire"",
-               ""cantrip_scaling"":true}]}]}");
+               ""cantrip_growth"":""dice""}]}]}");
 
-            Assert.Contains(problems, p => p.Contains("cantrip_scaling"));
+            Assert.Contains(problems, p => p.Contains("cantrip_growth"));
         }
 
         [Fact]
@@ -296,7 +295,7 @@ namespace Content.Tests
         {
             IReadOnlyList<string> problems = Problems(@"
             {""spells"":[{""id"":""bad"",""level"":1,""effects"":[
-              {""primitive"":""sway"",""sway"":2}]}]}");
+              {""primitive"":""sway"",""flat"":2}]}]}");
 
             Assert.Contains(problems, p => p.Contains("touches nothing"));
         }
@@ -350,7 +349,7 @@ namespace Content.Tests
         {
             var actor = new Actor(id);
             actor.SetHealth(new Health(hp));
-            actor.Armor = new ArmorProfile(ArmorWeight.Heavy, ac);
+            actor.Armor = new ArmorProfile(ArmorCategory.Heavy, ac);
             return actor;
         }
 

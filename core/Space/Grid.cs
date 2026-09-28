@@ -5,9 +5,11 @@ namespace Core.Space
     // generic in its occupant - Core.Space can't name an Actor; game/ and the sim each pick their own
     public sealed class Grid<TOccupant> where TOccupant : class
     {
-        public int Columns { get; }
+        readonly Extent _extent;
 
-        public int Rows { get; }
+        public int Columns => _extent.Columns;
+
+        public int Rows => _extent.Rows;
 
         // occupancy both ways, kept in step by a single write path
         // reference identity, not Equals - two equal-looking pieces are still two pieces
@@ -16,26 +18,13 @@ namespace Core.Space
         readonly Dictionary<TOccupant, Cell> _byOccupant =
             new Dictionary<TOccupant, Cell>(ReferenceEqualityComparer.Instance);
 
-        public Grid(int columns, int rows)
-        {
-            Columns = columns < 0 ? 0 : columns;
-            Rows = rows < 0 ? 0 : rows;
-        }
+        public Grid(int columns, int rows) => _extent = new Extent(columns, rows);
 
-        public int Count => Columns * Rows;
+        public int Count => _extent.Count;
 
-        public IEnumerable<Cell> Cells
-        {
-            get
-            {
-                for (int y = 0; y < Rows; y++)
-                    for (int x = 0; x < Columns; x++)
-                        yield return new Cell(x, y);
-            }
-        }
+        public IEnumerable<Cell> Cells => _extent.Cells;
 
-        public bool Contains(Cell cell) =>
-            cell.X >= 0 && cell.X < Columns && cell.Y >= 0 && cell.Y < Rows;
+        public bool Contains(Cell cell) => _extent.Contains(cell);
 
         public TOccupant At(Cell cell) =>
             _byCell.TryGetValue(cell, out TOccupant occupant) ? occupant : null;

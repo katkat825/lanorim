@@ -92,8 +92,12 @@ namespace Content.Combat
 
             Rolled?.Invoke(new Throw
             {
-                Roller = roller, Kind = kind, Dice = new DiceRoll(roll.Faces.Count, Die.D20, modifier),
-                Faces = roll.Faces, Total = roll.Total, OnTheTable = physical,
+                Roller = roller,
+                Kind = kind,
+                Dice = new DiceRoll(roll.Faces.Count, Die.D20, modifier),
+                Faces = roll.Faces,
+                Total = roll.Total,
+                OnTheTable = physical,
             });
 
             return new Attempt(kind, roll, against);
@@ -123,7 +127,11 @@ namespace Content.Combat
 
             Rolled?.Invoke(new Throw
             {
-                Roller = roller, Dice = dice, Faces = faces, Total = total, OnTheTable = physical,
+                Roller = roller,
+                Dice = dice,
+                Faces = faces,
+                Total = total,
+                OnTheTable = physical,
             });
 
             return total;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core.Localization;
 using Game.Localization;
 using Godot;
@@ -60,12 +61,24 @@ namespace Game.Screens
             return column;
         }
 
+        // A LABEL IN A ROW DOES NOT WRAP unless it is given the row's room. A wrapping label has no
+        // width of its own, so a row squeezed it to nothing and it wrapped a letter to a line -
+        // creation's ability names read S / t / r / e... (cc_ui_issues_9-25-2026.md). One set to
+        // expand keeps its wrap and takes the space left over
         public static HBoxContainer Row(int gap = 8, params Control[] children)
         {
             var row = new HBoxContainer();
             row.AddThemeConstantOverride("separation", gap);
 
-            foreach (Control child in children) if (child != null) row.AddChild(child);
+            foreach (Control child in children)
+            {
+                if (child == null) continue;
+
+                if (child is Label label && !label.SizeFlagsHorizontal.HasFlag(Control.SizeFlags.Expand))
+                    label.AutowrapMode = TextServer.AutowrapMode.Off;
+
+                row.AddChild(child);
+            }
 
             return row;
         }
@@ -124,20 +137,9 @@ namespace Game.Screens
             first?.CallDeferred(Control.MethodName.GrabFocus);
         }
 
-        static Control FirstFocusable(Node node)
-        {
-            foreach (Node child in node.GetChildren())
-            {
-                if (child is Control { Visible: true } control && control.FocusMode == Control.FocusModeEnum.All &&
-                    !(control is BaseButton { Disabled: true }))
-                    return control;
-
-                Control deeper = FirstFocusable(child);
-                if (deeper != null) return deeper;
-            }
-
-            return null;
-        }
+        static Control FirstFocusable(Node node) =>
+            Nodes.Under<Control>(node).FirstOrDefault(c => c.Visible && c.FocusMode == Control.FocusModeEnum.All &&
+                                                           !(c is BaseButton { Disabled: true }));
 
         public static IEnumerable<T> Each<T>(IEnumerable<T> things) => things ?? Array.Empty<T>();
     }

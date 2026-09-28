@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Core.Dice;
+using Core.Words;
 
 namespace Core.Resolution
 {

@@ -68,6 +68,9 @@ namespace Content.Maps
             return _srd = catalogue;
         }
 
+        // every key a palette entry takes
+        public static readonly IReadOnlyList<string> EntryKeys = new[] { "id", "category", "pack", "model", "blocks" };
+
         public static bool TryRead(string text, out PropCatalogue catalogue, out IReadOnlyList<string> problems)
         {
             var found = new List<string>();
@@ -92,6 +95,8 @@ namespace Content.Maps
                 {
                     string id = raw.Text("id");
                     string category = raw.Text("category");
+
+                    Keyed.OnlyKnown(raw, EntryKeys, id, found);
 
                     if (!Json.IsId(id)) found.Add($"'{id}' is not a prop id");
                     else if (!seen.Add(id)) found.Add($"'{id}' is in the palette twice");

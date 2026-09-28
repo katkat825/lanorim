@@ -172,7 +172,7 @@ namespace Core.Combat
 
             // the squares it could stand in this turn, nearest-to-the-target first. a skirmisher
             // wants to be exactly at its range band, not in the target's face
-            int wanted = Wanted(me, target, fight);
+            int wanted = Wanted();
 
             IReadOnlyDictionary<Cell, int> reachable =
                 fight.Field.Reachable(me, turn.SquaresLeft);
@@ -205,7 +205,7 @@ namespace Core.Combat
             fight.Walk(turn, best.Value);
         }
 
-        int Wanted(Actor me, Actor target, Encounter fight)
+        int Wanted()
         {
             if (!Is(Instinct.Skirmisher)) return 1;
 

@@ -12,7 +12,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 5,
           "duration": "encounter",
           "note": "SRD 5.2.1: a reaction when you or a creature within 60 ft falls - up to five falling creatures descend 60 ft per round for 1 minute and take no falling damage. v1 has no falling and no 'falls' trigger, so it is cast as an action and the campaign's authored falls answer it"
@@ -33,21 +33,20 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "2d8",
-          "per_extra_level": "1d8",
+          "upcast": {"amount": "1d8"},
           "damage_type": "fire",
-          "repeats": true,
+          "lands": "now_and_on_repeat",
           "note": "SRD 5.2.1 targets a manufactured metal object, burning whoever touches it for 2d8 fire with no save when cast and again by bonus action on later turns. v1 aims at the creature holding or wearing it; items carry no 'metal' flag, so the target is not checked"
         },
         {
           "primitive": "sway",
-          "reach": "creature",
+          "aim": "creature",
           "follows": true,
           "leans": "disadvantage_on_attacks|disadvantage_on_checks",
-          "duration": "next_turn",
-          "until": "caster",
-          "repeats": true,
+          "duration": "caster_next_turn",
+          "lands": "now_and_on_repeat",
           "note": "SRD 5.2.1: a creature holding or wearing the object that takes the damage makes a Constitution save or drops it if it can; if it does not drop it, it has disadvantage on attack rolls and ability checks until the start of the caster's next turn. v1 cannot make a creature drop an item, so the save and the drop are gone and it always takes the disadvantage"
         }
       ],
@@ -64,7 +63,7 @@
       "effects": [
         {
           "primitive": "shift",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 9,
           "note": "proposed name: Worldwalk. SRD 5.2.1: the caster and up to eight willing creatures linking hands go to another plane (a tuning fork attuned to it); or a melee spell attack then a Cha save banishes an unwilling creature. v1 travels to a campaign-authored place only, and the banishing use - removing a creature from the fight - has no primitive"
         }
@@ -83,7 +82,7 @@
       "effects": [
         {
           "primitive": "afflict",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 10,
           "condition": "restrained",
           "save": "dex",
@@ -93,7 +92,7 @@
         },
         {
           "primitive": "zone",
-          "reach": "place",
+          "aim": "place",
           "radius": 10,
           "duration": "concentration"
         }
@@ -112,13 +111,13 @@
       "effects": [
         {
           "primitive": "dispel",
-          "reach": "around",
+          "aim": "around",
           "radius": 2,
           "note": "proposed name: Null Sphere. SRD 5.2.1: a 10-foot emanation that suppresses (does not end) spells, magic items, magical attacks and summoned creatures inside it, the caster included, for as long as they are inside. v1 has no suppression, so it dispels what is around the caster when cast and marks the field"
         },
         {
           "primitive": "zone",
-          "reach": "caster",
+          "aim": "caster",
           "radius": 2,
           "duration": "concentration"
         }
@@ -138,17 +137,17 @@
       "effects": [
         {
           "primitive": "afflict",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 20,
           "condition": "prone",
           "save": "dex",
           "on_save": "negates",
-          "repeats": true,
+          "lands": "now_and_on_repeat",
           "note": "proposed name: Rending Quake. SRD 5.2.1: a 100-foot-radius tremor; when cast and at the end of each of the caster's turns, creatures on the ground make a Dex save or fall Prone, concentrators make a Con save or lose it, fissures open and swallow, structures take 50 bludgeoning and may collapse, and the ground is difficult terrain. v1 re-shakes only when the caster spends an action (not free at turn end), and has no concentration-breaking, fissures, structure damage or difficult terrain (v1_spell_list.md: hazard pulses and authored destructible tags)"
         },
         {
           "primitive": "zone",
-          "reach": "place",
+          "aim": "place",
           "radius": 20,
           "duration": "concentration"
         }
@@ -167,7 +166,7 @@
       "effects": [
         {
           "primitive": "afflict",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "stunned",
           "save": "wis",
           "on_save": "negates",

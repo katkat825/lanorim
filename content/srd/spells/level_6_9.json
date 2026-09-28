@@ -11,9 +11,9 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 4,
-          "extra_targets_per_level": 1,
+          "upcast": {"targets": 1},
           "amount": "10d8",
           "damage_type": "lightning",
           "save": "dex",
@@ -32,9 +32,9 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "10d6+40",
-          "per_extra_level": "3d6",
+          "upcast": {"amount": "3d6"},
           "damage_type": "force",
           "save": "dex",
           "on_save": "negates",
@@ -44,7 +44,7 @@
         },
         {
           "primitive": "dispel",
-          "reach": "place",
+          "aim": "place",
           "ends_force": true,
           "mode": "force",
           "note": "or a creation of magical force, such as Wall of Force: it is disintegrated"
@@ -60,23 +60,23 @@
       "effects": [
         {
           "primitive": "heal",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "70",
-          "per_extra_level": "10"
+          "upcast": {"amount": "10"}
         },
         {
           "primitive": "relieve",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "poisoned"
         },
         {
           "primitive": "relieve",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "blinded"
         },
         {
           "primitive": "relieve",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "deafened"
         }
       ]
@@ -90,9 +90,9 @@
       "repeat": "action",
       "classes": ["mage", "cleric", "druid"],
       "effects": [
-        {"primitive": "damage", "reach": "line", "length": 12, "width": 1, "amount": "6d8", "damage_type": "radiant", "save": "con", "on_save": "half", "repeats": true},
-        {"primitive": "afflict", "reach": "line", "length": 12, "width": 1, "condition": "blinded", "save": "con", "on_save": "negates", "same_save": true, "duration": "next_turn", "until": "caster", "repeats": true, "note": "SRD 5.2.1: a failed save is also Blinded until the start of the caster's next turn"},
-        {"primitive": "illuminate", "reach": "caster", "radius": 6, "duration": "concentration", "note": "the mote of sunlight: bright light 30 feet and dim light 30 feet beyond"}
+        {"primitive": "damage", "aim": "line", "length": 12, "width": 1, "amount": "6d8", "damage_type": "radiant", "save": "con", "on_save": "half", "lands": "now_and_on_repeat"},
+        {"primitive": "afflict", "aim": "line", "length": 12, "width": 1, "condition": "blinded", "save": "con", "on_save": "negates", "same_save": true, "duration": "caster_next_turn", "lands": "now_and_on_repeat", "note": "SRD 5.2.1: a failed save is also Blinded until the start of the caster's next turn"},
+        {"primitive": "illuminate", "aim": "caster", "radius": 6, "duration": "concentration", "note": "the mote of sunlight: bright light 30 feet and dim light 30 feet beyond"}
       ]
     },
 
@@ -105,13 +105,12 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "7d8+30",
           "damage_type": "necrotic",
           "save": "con",
           "on_save": "half",
-          "raises_as": "zombie",
-          "raises_tag": "humanoid",
+          "raises": {"as": "zombie", "tag_rules": {"humanoid": "only"}},
           "note": "SRD 5.2.1: Con save, 7d8 + 30 Necrotic, half on a success. A Humanoid killed by it rises at the start of your next turn as a Zombie that follows your orders - on your side, fighting your enemies"
         }
       ]
@@ -126,7 +125,7 @@
       "effects": [
         {
           "primitive": "shift",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 4,
           "note": "choose a discovered place; the mishap table is kept only for unvisited destinations (v1_spell_list.md)"
         }
@@ -144,7 +143,7 @@
       "effects": [
         {
           "primitive": "afflict",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "stunned",
           "save": "wis",
           "on_save": "negates",
@@ -162,7 +161,7 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 12,
           "amount": "12d6",
           "damage_type": "radiant",
@@ -172,13 +171,13 @@
         },
         {
           "primitive": "afflict",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 12,
           "condition": "blinded",
           "save": "con",
           "on_save": "negates",
           "same_save": true,
-          "repeat_save": true,
+          "repeat_save": {"ability": "con"},
           "duration": "encounter",
           "note": "SRD 5.2.1: Blinded for 1 minute on a failed save, repeating the save at the end of each of its turns; the minute is the fight"
         }
@@ -194,7 +193,7 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 8,
           "points": 4,
           "amount": "20d6",
@@ -204,7 +203,7 @@
         },
         {
           "primitive": "damage",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 8,
           "points": 4,
           "amount": "20d6",
@@ -225,7 +224,7 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "12d12",
           "damage_type": "psychic",
           "slays_at_or_below": 100,
@@ -243,7 +242,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "caster",
+          "aim": "caster",
           "note": "duplicate a spell of level 8 or lower, or pick from a small authored menu. no free-text reality alteration (v1_spell_list.md)"
         }
       ]

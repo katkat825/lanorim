@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace Game.Tray
@@ -40,29 +41,8 @@ namespace Game.Tray
         }
 
         // every skin by bare name, sorted; the folder is the list, so adding a tray is dropping a .tres in
-        // two spellings, like ImpactPool: x.tres in source, x.tres.remap in an export
-        public static SortedSet<string> All()
-        {
-            var names = new SortedSet<string>();
-
-            using DirAccess dir = DirAccess.Open(Folder);
-
-            if (dir == null)
-            {
-                GD.PushError($"tray skin: cannot open {Folder} - {DirAccess.GetOpenError()}");
-                return names;
-            }
-
-            foreach (string entry in dir.GetFiles())
-            {
-                string name = entry;
-
-                if (name.EndsWith(".remap")) name = name.GetBaseName();
-
-                if (name.EndsWith(".tres")) names.Add(name.GetBaseName());
-            }
-
-            return names;
-        }
+        public static SortedSet<string> All() =>
+            new SortedSet<string>(ResFolder.Files(Folder, "tray skin")
+                                           .Where(n => n.EndsWith(".tres")).Select(n => n.GetBaseName()));
     }
 }

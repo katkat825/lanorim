@@ -14,8 +14,8 @@ namespace Core.Tests
             var target = Combatants.Goblin();
 
             // put on during the caster's own turn: that turn's end is not the one that counts
-            target.Boons.Add(new Boon("glimmer", "glimmer", Duration.NextTurnEnd,
-                                      advantageAgainst: true) { Owner = caster });
+            target.Boons.Add(Boon.Of(new BoonSpec { Duration = Duration.NextTurnEnd, Leans = Leans.AdvantageAgainst },
+                                     "glimmer", "glimmer", caster));
 
             target.Boons.TurnEnding(caster, target);
             Assert.True(target.Boons.Has("glimmer"));
@@ -38,8 +38,8 @@ namespace Core.Tests
             var attacker = Combatants.Hero();
             var target = Combatants.Goblin();
 
-            target.Boons.Add(new Boon("glimmer", "glimmer", Duration.Encounter,
-                                      advantageAgainst: true) { Once = true });
+            target.Boons.Add(Boon.Of(new BoonSpec { Leans = Leans.AdvantageAgainst, Once = true },
+                                     "glimmer", "glimmer"));
 
             Assert.Equal(Advantage.Advantage, target.AdvantageAgainstMe);
 
@@ -57,12 +57,11 @@ namespace Core.Tests
             var target = Combatants.Goblin(hp: 100);
             target.SetHealth(new Health(100));
 
-            target.Boons.Add(new Boon("hex", "hex", Duration.Concentration)
+            target.Boons.Add(Boon.Of(new BoonSpec
             {
-                Owner = owner,
-                Mark = DiceRoll.Parse("1d6"),
-                MarkType = DamageType.Necrotic,
-            });
+                Duration = Duration.Concentration,
+                Mark = new Mark(DiceRoll.Parse("1d6"), DamageType.Necrotic),
+            }, "hex", "hex", owner));
 
             // a hit for 5 on the longsword, and 6 on the mark
             Blow marked = Strike.Make(new StandardResolver(new ScriptedRng(19, 5, 6)), owner,

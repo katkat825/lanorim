@@ -1,8 +1,13 @@
 using System;
 using Core.Characters;
+using Core.Words;
 
 namespace Core.Combat
 {
+    // the words for Spend in the data: a spell's 'casting_time' and 'repeat', an item's and a
+    // feature's 'use_time', a feature's 'grants'. one enum where a spell had CastingTime and a
+    // feature had Grants, each a copy of three of these (cc_task_dedupe-leftovers.md #13)
+    [Fallback(Spend.Action)]
     public enum Spend
     {
         // costs nothing: dropping a weapon, speaking, ending concentration
@@ -10,7 +15,7 @@ namespace Core.Combat
 
         Action,
 
-        Bonus,
+        [Word("bonus_action")] Bonus,
 
         Reaction,
 
@@ -148,9 +153,9 @@ namespace Core.Combat
         public bool Can(Spend spend, int amount = 1) => spend switch
         {
             Spend.Free => true,
-            Spend.Action => Actor.CanAct && !Actor.Boons.NoActions && Actions >= amount &&
+            Spend.Action => Actor.CanAct && !Actor.Boons.Forbids(Forbid.Actions) && Actions >= amount &&
                             !(Actor.Boons.ActionOrBonus && (_tookAction || _tookBonus)),
-            Spend.Bonus => Actor.CanAct && !Actor.Boons.NoActions && BonusActions >= amount &&
+            Spend.Bonus => Actor.CanAct && !Actor.Boons.Forbids(Forbid.Actions) && BonusActions >= amount &&
                            !(Actor.Boons.ActionOrBonus && (_tookAction || _tookBonus)),
             Spend.Reaction => Actor.CanAct,
             Spend.Movement => !Actor.IsRooted && Movement >= amount,
@@ -180,7 +185,7 @@ namespace Core.Combat
 
         public bool TakeLimited()
         {
-            if (Limited <= 0 || !Actor.CanAct || Actor.Boons.NoActions) return false;
+            if (Limited <= 0 || !Actor.CanAct || Actor.Boons.Forbids(Forbid.Actions)) return false;
 
             Limited--;
             return true;
@@ -194,7 +199,7 @@ namespace Core.Combat
             if (spend == Spend.Action && Actor.Boons.ActionOrBonus && _attacked) return false;
 
             // the rest of a Multiattack already paid for
-            if (spend == Spend.Action && _volley != null && Actor.CanAct && !Actor.Boons.NoActions &&
+            if (spend == Spend.Action && _volley != null && Actor.CanAct && !Actor.Boons.Forbids(Forbid.Actions) &&
                 _volley.Take(attack?.Id))
                 return true;
 
@@ -227,7 +232,7 @@ namespace Core.Combat
 
         // whether it can attack now: the rest of a Multiattack, or an action to start one
         public bool CanAttack =>
-            AttacksLeft > 0 && Actor.CanAct && !Actor.Boons.NoActions ||
+            AttacksLeft > 0 && Actor.CanAct && !Actor.Boons.Forbids(Forbid.Actions) ||
             Can(Spend.Action);
 
         // whether this attack can be the next: any attack starts an action, but the rest of a

@@ -1,6 +1,5 @@
 using Content.Dialogue;
 using Core.Characters;
-using Core.Combat;
 
 namespace Content.Tests
 {

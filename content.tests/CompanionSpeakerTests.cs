@@ -4,7 +4,6 @@ using Content.Classes;
 using Content.Dialogue;
 using Content.Schema;
 using Core.Localization;
-using Xunit;
 
 namespace Content.Tests
 {

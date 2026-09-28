@@ -1,11 +1,12 @@
-using System;
 using System.Collections.Generic;
 using Core.Localization;
+using Core.Words;
 
 namespace Core.Resolution
 {
     // the SRD 5.2.1 DC ladder. a campaign names a rung or gives a custom number
     // (updated_decisions.md, skill checks).
+    [Fallback(Difficulty.Medium)]
     public enum Difficulty
     {
         VeryEasy = 5,
@@ -25,31 +26,6 @@ namespace Core.Resolution
         };
 
         public static int Dc(this Difficulty difficulty) => (int)difficulty;
-
-        public static string Id(this Difficulty difficulty) => difficulty switch
-        {
-            Difficulty.VeryEasy => "very_easy",
-            Difficulty.Easy => "easy",
-            Difficulty.Medium => "medium",
-            Difficulty.Hard => "hard",
-            Difficulty.VeryHard => "very_hard",
-            Difficulty.NearlyImpossible => "nearly_impossible",
-            _ => throw new ArgumentOutOfRangeException(nameof(difficulty), difficulty, null),
-        };
-
-        public static bool TryParse(string id, out Difficulty difficulty)
-        {
-            foreach (Difficulty d in Ladder)
-            {
-                if (!string.Equals(d.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                difficulty = d;
-                return true;
-            }
-
-            difficulty = Difficulty.Medium;
-            return false;
-        }
 
         public static string NameKey(this Difficulty difficulty) =>
             KeyConventions.Key(KeyConventions.DifficultyNs, difficulty.Id(), "name");

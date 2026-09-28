@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Content.Dialogue;
 using Content.Schema;
 using Content.Sheet;
@@ -66,10 +65,10 @@ The road goes on. #line:road
                                 Creation.Creation.Standard(Srd.Class("fighter")), 3);
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Strength] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Strength] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Athletics, Skill.Perception }, null, Srd.Items);
 
             return hero;

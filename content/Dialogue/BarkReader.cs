@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Content.Campaigns;
 using Content.Schema;
+using Core.Words;
 
 namespace Content.Dialogue
 {
@@ -15,30 +16,13 @@ namespace Content.Dialogue
         {
             var problems = new List<ContentProblem>();
 
-            JsonDocument document;
+            JsonDocument document = PackJson.ReadObject(json, file, "a bark bank", out ContentProblem bad);
 
-            try
-            {
-                document = JsonDocument.Parse(json, new JsonDocumentOptions
-                {
-                    CommentHandling = JsonCommentHandling.Skip,
-                    AllowTrailingCommas = true,
-                });
-            }
-            catch (JsonException bad)
-            {
-                return Read<BarkBank>.Bad(new ContentProblem(
-                    file, "", "this is not JSON - " + bad.Message, (int)(bad.LineNumber ?? 0) + 1));
-            }
+            if (document == null) return Read<BarkBank>.Bad(bad);
 
             using (document)
             {
                 JsonElement root = document.RootElement;
-
-                if (root.ValueKind != JsonValueKind.Object)
-                    return Read<BarkBank>.Bad(new ContentProblem(
-                        file, "",
-                        $"a bark bank is a JSON object and this is a {Named(root.ValueKind)}"));
 
                 Unknown(root, file, problems);
 
@@ -52,7 +36,7 @@ namespace Content.Dialogue
                     return Read<BarkBank>.Bad(new ContentProblem(
                         file, "banks",
                         $"'{speaker}' has no barks at all, so it is a voice that never speaks - " +
-                        $"give it a bank ({string.Join(", ", Barks.Words)}), or delete the file"));
+                        $"give it a bank ({string.Join(", ", EnumWords.Ids<Bark>())}), or delete the file"));
 
                 return Read<BarkBank>.Good(new BarkBank(speaker, banks, reads));
             }
@@ -107,12 +91,12 @@ namespace Content.Dialogue
             {
                 string where = "banks." + property.Name;
 
-                if (!Content.Dialogue.Barks.TryWord(property.Name, out Bark situation))
+                if (!EnumWords.TryParse(property.Name, out Bark situation))
                 {
                     problems.Add(new ContentProblem(
                         file, where,
                         $"'{property.Name}' is not something the table can do - it is one of " +
-                        $"{Vocabulary.Offer(Content.Dialogue.Barks.Words)}. The list is the " +
+                        $"{Vocabulary.Offer(EnumWords.Ids<Bark>())}. The list is the " +
                         "engine's, because a situation nothing raises is a bark nothing says"));
                     continue;
                 }
@@ -120,7 +104,7 @@ namespace Content.Dialogue
                 if (banks.ContainsKey(situation))
                 {
                     problems.Add(new ContentProblem(
-                        file, where, $"'{situation.Word()}' is counted twice in this file"));
+                        file, where, $"'{situation.Id()}' is counted twice in this file"));
                     continue;
                 }
 
@@ -129,7 +113,7 @@ namespace Content.Dialogue
                 {
                     problems.Add(new ContentProblem(
                         file, where,
-                        $"'{Shown(property.Value)}' is not a count - a bank says how many lines " +
+                        $"'{PackJson.Shown(property.Value)}' is not a count - a bank says how many lines " +
                         "the locale holds for it, as a whole number"));
                     continue;
                 }
@@ -158,19 +142,10 @@ namespace Content.Dialogue
 
             problems.Add(new ContentProblem(
                 file, "reads_the_throw",
-                $"'{Shown(value)}' is not true or false - it says whether this voice, rather than " +
+                $"'{PackJson.Shown(value)}' is not true or false - it says whether this voice, rather than " +
                 "the DM, tells you what the dice came to"));
 
             return false;
         }
-
-        static string Shown(JsonElement value) => value.ValueKind switch
-        {
-            JsonValueKind.String => value.GetString(),
-            JsonValueKind.Undefined => "nothing",
-            _ => value.ToString(),
-        };
-
-        static string Named(JsonValueKind kind) => kind.ToString().ToLowerInvariant();
     }
 }

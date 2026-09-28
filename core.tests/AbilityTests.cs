@@ -1,5 +1,6 @@
 using System.Linq;
 using Core.Characters;
+using Core.Words;
 
 namespace Core.Tests
 {
@@ -92,7 +93,7 @@ namespace Core.Tests
         {
             foreach (Ability ability in Abilities.All)
             {
-                Assert.True(Abilities.TryParse(ability.Id(), out Ability read));
+                Assert.True(EnumWords.TryParse(ability.Id(), out Ability read));
                 Assert.Equal(ability, read);
             }
         }
@@ -147,7 +148,7 @@ namespace Core.Tests
             {
                 Assert.Contains(skill.Governs(), Abilities.All);
 
-                Assert.True(Skills.TryParse(skill.Id(), out Skill read));
+                Assert.True(EnumWords.TryParse(skill.Id(), out Skill read));
                 Assert.Equal(skill, read);
             }
         }

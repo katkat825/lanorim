@@ -4,6 +4,7 @@ using System.Linq;
 using Content.Campaigns;
 using Content.Saves;
 using Core.Localization;
+using Core.Words;
 
 namespace Content.Screens
 {
@@ -137,8 +138,6 @@ namespace Content.Screens
 
         public IReadOnlyList<BookPage> Tutorials { get; }
 
-        public BookPage Page(string id) => Pages.Concat(Tutorials).FirstOrDefault(p => p.Id == id);
-
         public SaveShelf.Saved Continue { get; }
 
         public bool CanContinue => Continue != null;
@@ -192,7 +191,7 @@ namespace Content.Screens
     {
         public const string TagPrefix = "tutorial_";
 
-        public static string Tag(TutorialLevel level) => TagPrefix + level.ToString().ToLowerInvariant();
+        public static string Tag(TutorialLevel level) => TagPrefix + EnumWords.Name(level);
 
         public static TutorialLevel? LevelOf(Manifest manifest)
         {
@@ -233,10 +232,10 @@ namespace Content.Screens
         public IReadOnlyList<BookPage> Tests { get; }
 
         public static string NameKey(TutorialLevel level) =>
-            ScreenKeys.Key("tutorial", level.ToString().ToLowerInvariant());
+            ScreenKeys.Key("tutorial", EnumWords.Name(level));
 
         public static string BlurbKey(TutorialLevel level) =>
-            ScreenKeys.Key("tutorial", level.ToString().ToLowerInvariant() + "_blurb");
+            ScreenKeys.Key("tutorial", EnumWords.Name(level) + "_blurb");
 
         public static readonly string NotYetKey = ScreenKeys.Key("tutorial", "not_yet");
         public static readonly string TestsKey = ScreenKeys.Key("tutorial", "tests");

@@ -1,19 +1,21 @@
 using System;
 using System.Collections.Generic;
 using Core.Localization;
+using Core.Words;
 
 namespace Core.Characters
 {
     // the six SRD 5.2.1 ability scores. the order is the sheet's order and the point-buy order;
-    // nothing reads the numeric value except the array index, so it may not be reordered.
+    // nothing reads the numeric value except the array index, so it may not be reordered. the
+    // word a data file writes, and the key segment, is "str", not "strength" (EnumWords.Id)
     public enum Ability
     {
-        Strength = 0,
-        Dexterity = 1,
-        Constitution = 2,
-        Intelligence = 3,
-        Wisdom = 4,
-        Charisma = 5,
+        [Word("str")] Strength = 0,
+        [Word("dex")] Dexterity = 1,
+        [Word("con")] Constitution = 2,
+        [Word("int")] Intelligence = 3,
+        [Word("wis")] Wisdom = 4,
+        [Word("cha")] Charisma = 5,
     }
 
     public static class Abilities
@@ -31,32 +33,6 @@ namespace Core.Characters
         public const int PointBuyCeiling = 15;
         public const int Ceiling = 20;
         public const int Floor = 1;
-
-        // the id a data file writes, and the key segment - "str", not "Strength"
-        public static string Id(this Ability ability) => ability switch
-        {
-            Ability.Strength => "str",
-            Ability.Dexterity => "dex",
-            Ability.Constitution => "con",
-            Ability.Intelligence => "int",
-            Ability.Wisdom => "wis",
-            Ability.Charisma => "cha",
-            _ => throw new ArgumentOutOfRangeException(nameof(ability), ability, null),
-        };
-
-        public static bool TryParse(string id, out Ability ability)
-        {
-            foreach (Ability a in All)
-            {
-                if (!string.Equals(a.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                ability = a;
-                return true;
-            }
-
-            ability = Ability.Strength;
-            return false;
-        }
 
         public static string NameKey(this Ability ability) =>
             KeyConventions.Key(KeyConventions.AbilityNs, ability.Id(), "name");

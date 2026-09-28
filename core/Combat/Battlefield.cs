@@ -100,31 +100,31 @@ namespace Core.Combat
 
         // every square the actor can reach this turn, with what it costs to get there. used by the
         // UI to light the board up and by the AI to pick where to stand.
+        // one flood from where it stands (Route.Reach), each step costed as CostOf costs a route
         public IReadOnlyDictionary<Cell, int> Reachable(Actor actor, int budgetSquares)
         {
-            var reached = new Dictionary<Cell, int>();
-
             Cell? from = Where(actor);
 
-            if (!from.HasValue || budgetSquares <= 0) return reached;
+            if (!from.HasValue || budgetSquares <= 0) return new Dictionary<Cell, int>();
+
+            Dictionary<Cell, int> flood = Route.Reach(Map, from.Value, c => Occupies(c, actor), c => StepCost(actor, c),
+                                                      budgetSquares);
+
+            // in the map's own order, not the flood's: the AI takes the first of equally good
+            // squares, so the order is part of what a fight does
+            var reached = new Dictionary<Cell, int>();
 
             foreach (Cell cell in Map.Cells)
-            {
-                if (cell == from.Value || Occupies(cell, actor) || !Map.IsPassable(cell)) continue;
-
-                if (CloserToFear(actor, from.Value, cell)) continue;
-
-                IReadOnlyList<Cell> route = RouteFor(actor, cell);
-
-                if (route == null) continue;
-
-                int cost = CostOf(route, actor);
-
-                if (cost <= budgetSquares) reached[cell] = cost;
-            }
+                if (cell != from.Value && flood.TryGetValue(cell, out int cost) && !CloserToFear(actor, from.Value, cell))
+                    reached[cell] = cost;
 
             return reached;
         }
+
+        // what one step onto a square costs this mover: a square a square flying, difficult ground
+        // double on foot, one more crawling (SRD 5.2.1 Crawling)
+        int StepCost(Actor mover, Cell to) =>
+            mover.IsFlying ? 1 : Map.At(to).MoveCost() + (mover.Has(Condition.Prone) ? 1 : 0);
 
         // a radius AoE: every square whose centre is within the radius and which the burst's
         // origin can see. the lines, cones and cubes below obey the same two rules - on the map,
@@ -217,20 +217,6 @@ namespace Core.Combat
         {
             foreach (KeyValuePair<Border, Edge> put in was ?? new Dictionary<Border, Edge>())
                 Map = Map.With(put.Key, put.Value);
-        }
-
-        // the pieces grid was sized from the map, so a replacement has to be the same shape -
-        // otherwise a piece would be standing off the edge of its own board
-        public void Reshape(MapLayout map)
-        {
-            if (map == null) throw new ArgumentNullException(nameof(map));
-
-            if (map.Columns != Columns || map.Rows != Rows)
-                throw new ArgumentException(
-                    $"the battlefield is {Columns} x {Rows} and the new map is " +
-                    $"{map.Columns} x {map.Rows}; reshaping cannot change the size", nameof(map));
-
-            Map = map;
         }
 
         public override string ToString() =>

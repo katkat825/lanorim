@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Core.Localization;
 
 namespace Game.Audio
@@ -42,16 +41,11 @@ namespace Game.Audio
 
     public static class Sounds
     {
-        public static string Word(this Sound sound) => sound.ToString().ToLowerInvariant();
-
-        public static IReadOnlyList<string> Words => Enum.GetValues<Sound>().Select(Word).ToArray();
-
         public const string Subject = "caption";
 
         // ui.*, because the sounds are the engine's: a campaign that ships its own ambience ships its
         // own captions for it in its own locale, the way it ships its monsters' names
-        public static string CaptionKey(this Sound sound) =>
-            KeyConventions.Key(KeyConventions.UiNs, Subject, Word(sound), "name");
+        public static string CaptionKey(this Sound sound) => sound.UiNameKey(Subject);
 
         public static IEnumerable<string> Keys()
         {
@@ -74,30 +68,5 @@ namespace Game.Audio
         // hear needs to be told the GM rolled something behind the screen whether or not there is
         // a sound of it. Recorded() below is how a check tells the two apart.
         public const string Gm = "res://audio/samples/gm/";
-
-        // A CAPTION FOR A FOLDER WITH NOTHING IN IT IS A LIE. The GM's audio ships as a system
-        // with no recordings in it and will until somebody sits down with a microphone, so a check
-        // can say which captions describe a silence today without either failing the build or
-        // pretending they do not.
-        public static bool Recorded(this Sound sound) => ImpactPool.Has(Folder(sound));
-
-        public static bool TryWord(string word, out Sound sound)
-        {
-            sound = default;
-
-            if (string.IsNullOrWhiteSpace(word)) return false;
-
-            string trimmed = word.Trim().ToLowerInvariant();
-
-            foreach (Sound one in Enum.GetValues<Sound>())
-            {
-                if (Word(one) != trimmed) continue;
-
-                sound = one;
-                return true;
-            }
-
-            return false;
-        }
     }
 }

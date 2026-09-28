@@ -17,7 +17,8 @@ namespace Game.Access
     // IT KEEPS A TRANSCRIPT, and that is not a debugging convenience: "a screen reader narrates the
     // room, the sheet, a fight and a conversation with nothing silent" is AX2's verify line, and a
     // machine can only hold that if what was said is readable back. A headless machine has no voices
-    // at all, so the transcript is also the only thing check-access.ps1 can measure.
+    // at all, so the transcript is also the only thing a headless check could measure (the old
+    // build's check-access.ps1 did; this build has none yet).
     [GlobalClass]
     public partial class Narrator : Node
     {

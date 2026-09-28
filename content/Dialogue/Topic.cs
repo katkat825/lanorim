@@ -32,26 +32,8 @@ namespace Content.Dialogue
 
     public static class Topics
     {
-        public static string Word(this Topic topic) => topic.ToString().ToLowerInvariant();
-
-        public static IReadOnlyList<string> Words => Enum.GetValues<Topic>().Select(Word).ToArray();
-
         // worst first, so a night with several answers gets the one worth talking about
         public static IReadOnlyList<Topic> WorstFirst =>
             Enum.GetValues<Topic>().OrderBy(t => (int)t).ToArray();
-
-        public static bool TryWord(string word, out Topic topic)
-        {
-            topic = default;
-
-            if (string.IsNullOrWhiteSpace(word)) return false;
-
-            string trimmed = word.Trim();
-
-            if (trimmed.Any(char.IsDigit)) return false;
-
-            return Enum.TryParse(trimmed, ignoreCase: true, out topic)
-                && Enum.IsDefined(typeof(Topic), topic);
-        }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Characters;
+using Core.Words;
 
 namespace Core.Magic
 {
@@ -64,7 +65,7 @@ namespace Core.Magic
 
         // casts at the spell's own level that cost no slot or points, so many each long rest:
         // Paladin's Smite's one Divine Smite (SRD 5.2.1 p.54)
-        readonly Dictionary<string, (int PerDay, int Left)> _free = new(StringComparer.Ordinal);
+        readonly Dictionary<string, (int Uses, int Left)> _free = new(StringComparer.Ordinal);
 
         public void GrantFree(string spellId, int perLongRest)
         {
@@ -112,8 +113,8 @@ namespace Core.Magic
         // the start of its turn: each spent recharge rolls its d6
         public void Recharge(Core.Resolution.IResolver resolver)
         {
-            foreach (SpellUse use in _uses.Values.Where(u => u.Recharge > 0 && !u.Ready))
-                if (resolver.Roll(new Core.Dice.DiceRoll(1, Core.Dice.Die.D6), Actor) >= use.Recharge)
+            foreach (SpellUse use in _uses.Values.Where(u => u.RechargeOn > 0 && !u.Ready))
+                if (resolver.Roll(new Core.Dice.DiceRoll(1, Core.Dice.Die.D6), Actor) >= use.RechargeOn)
                     use.Ready = true;
         }
 
@@ -130,7 +131,7 @@ namespace Core.Magic
             if (Actor.IsShifted) return false;
 
             // Gaseous Form: a misty cloud casts nothing
-            if (Actor.Boons.NoCasting) return false;
+            if (Actor.Boons.Forbids(Forbid.Casting)) return false;
 
             // a statblock's recharge or daily use
             if (UseOf(spell.Id) is SpellUse use && !use.CanUse) return false;
@@ -160,7 +161,7 @@ namespace Core.Magic
             if (!spell.IsCantrip && castAt == spell.Level && FreeLeft(spell.Id) > 0)
             {
                 var f = _free[spell.Id];
-                _free[spell.Id] = (f.PerDay, f.Left - 1);
+                _free[spell.Id] = (f.Uses, f.Left - 1);
                 use?.Spend();
                 return true;
             }
@@ -180,7 +181,7 @@ namespace Core.Magic
             {
                 foreach (SpellUse use in _uses.Values) use.Refill();
 
-                foreach (string id in _free.Keys.ToList()) _free[id] = (_free[id].PerDay, _free[id].PerDay);
+                foreach (string id in _free.Keys.ToList()) _free[id] = (_free[id].Uses, _free[id].Uses);
             }
         }
 
@@ -193,35 +194,35 @@ namespace Core.Magic
     // one statblock limit on one spell or action: a recharge on a d6, or so many a day
     public sealed class SpellUse
     {
-        public SpellUse(int recharge = 0, int perDay = 0)
+        public SpellUse(int rechargeOn = 0, int uses = 0)
         {
-            Recharge = Math.Clamp(recharge, 0, 6);
-            PerDay = Math.Max(0, perDay);
-            Left = PerDay;
+            RechargeOn = Math.Clamp(rechargeOn, 0, 6);
+            Uses = Math.Max(0, uses);
+            Left = Uses;
             Ready = true;
         }
 
         // 5 is "Recharge 5-6": spent, it comes back on a d6 of 5 or 6 at the start of a turn
-        public int Recharge { get; }
+        public int RechargeOn { get; }
 
-        // 0 is not limited by the day
-        public int PerDay { get; }
+        // so many, back on a long rest; 0 is not limited by the day
+        public int Uses { get; }
 
         public int Left { get; private set; }
 
         public bool Ready { get; set; }
 
-        public bool CanUse => Ready && (PerDay == 0 || Left > 0);
+        public bool CanUse => Ready && (Uses == 0 || Left > 0);
 
         public void Spend()
         {
-            if (Recharge > 0) Ready = false;
-            if (PerDay > 0) Left--;
+            if (RechargeOn > 0) Ready = false;
+            if (Uses > 0) Left--;
         }
 
         public void Refill()
         {
-            Left = PerDay;
+            Left = Uses;
             Ready = true;
         }
     }

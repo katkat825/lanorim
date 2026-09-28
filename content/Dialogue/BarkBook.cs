@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Content.Schema;
 
@@ -42,24 +41,8 @@ namespace Content.Dialogue
         {
             var book = new BarkBook();
 
-            if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder)) return book;
-
-            foreach (string path in Files(folder))
+            foreach ((string name, string _, string text) in PackFolder.Read(folder, Extension, null, book._problems))
             {
-                string name = Path.GetFileName(path);
-                string text;
-
-                try
-                {
-                    text = File.ReadAllText(path);
-                }
-                catch (Exception could)
-                {
-                    book._problems.Add(new ContentProblem(
-                        name, "", "could not be read - " + could.Message));
-                    continue;
-                }
-
                 Read<BarkBank> read = BarkReader.Parse(text, name);
 
                 if (!read.Ok)
@@ -87,10 +70,6 @@ namespace Content.Dialogue
 
             _banks[bank.Speaker] = bank;
         }
-
-        static IEnumerable<string> Files(string folder) =>
-            Directory.EnumerateFiles(folder, "*" + Extension, SearchOption.TopDirectoryOnly)
-                     .OrderBy(Path.GetFileName, StringComparer.Ordinal);
 
         public override string ToString() =>
             $"{_banks.Count} voices, {Lines} barks" +

@@ -155,7 +155,7 @@ namespace Core.Combat
                 // of them can drop the creature before it acts
                 TurnStarting?.Invoke(Current);
 
-                PulseWhereItStands(actor, Pulse.StartTurn);
+                PulseWhereItStands(actor, Pulses.StartTurn);
 
                 // sent away for good as its turn began (Banishment's full minute)
                 if (actor.IsDown || _gone.Contains(actor))
@@ -275,7 +275,7 @@ namespace Core.Combat
 
             Lapsing(turn.Actor);
 
-            PulseWhereItStands(turn.Actor, Pulse.EndTurn);
+            PulseWhereItStands(turn.Actor, Pulses.EndTurn);
 
             TurnEnding?.Invoke(turn);
 

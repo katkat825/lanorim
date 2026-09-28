@@ -1,8 +1,6 @@
 using System;
-using System.Linq;
 using Content.Combat;
 using Content.Inventory;
-using Content.Items;
 using Content.Screens;
 using Content.Sheet;
 using Content.Spells;

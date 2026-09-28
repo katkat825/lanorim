@@ -17,7 +17,7 @@ namespace Content.Monsters
     {
         public Monster(string id, int hitPoints, int armorClass, AbilityScores scores,
                        IReadOnlyList<Attack> attacks = null,
-                       ArmorWeight armorWeight = ArmorWeight.None,
+                       ArmorCategory armorCategory = ArmorCategory.None,
                        int speed = 30, double challenge = 0,
                        Multiattack multiattack = null,
                        Instinct instinct = Instinct.None,
@@ -30,7 +30,7 @@ namespace Content.Monsters
             Id = id ?? throw new ArgumentNullException(nameof(id));
             HitPoints = Math.Max(1, hitPoints);
             ArmorClass = armorClass;
-            ArmorWeight = armorWeight;
+            ArmorCategory = armorCategory;
             Scores = scores ?? new AbilityScores();
             Attacks = attacks ?? Array.Empty<Attack>();
             Speed = Math.Max(0, speed);
@@ -51,7 +51,7 @@ namespace Content.Monsters
 
         public int ArmorClass { get; }
 
-        public ArmorWeight ArmorWeight { get; }
+        public ArmorCategory ArmorCategory { get; }
 
         public AbilityScores Scores { get; }
 
@@ -80,7 +80,7 @@ namespace Content.Monsters
             ActionBudget.Statblock(Multiattack,
                                    BonusManoeuvres != Manoeuvre.None ||
                                    caster != null &&
-                                   caster.Known.Any(s => s.CastingTime == CastingTime.BonusAction));
+                                   caster.Known.Any(s => s.CastingTime == Spend.Bonus));
 
         public Instinct Instinct { get; }
 
@@ -105,7 +105,7 @@ namespace Content.Monsters
         public Size Size { get; init; } = Size.Medium;
 
         // conditions it cannot have: a skeleton's Poisoned, a zombie's
-        public IReadOnlyList<Condition> ConditionImmunities { get; init; } = Array.Empty<Condition>();
+        public IReadOnlyList<Condition> ImmuneTo { get; init; } = Array.Empty<Condition>();
 
         // SPECIAL ACTIONS: a breath, a web, a frightful roar - each one a spell made of the same
         // primitives a hero's spells are, cast with the statblock's DC, and limited by a recharge
@@ -134,7 +134,7 @@ namespace Content.Monsters
             foreach (MonsterAction action in Actions)
             {
                 caster.Learn(action.Spell);
-                caster.Limit(action.Spell.Id, new SpellUse(action.Recharge, action.PerDay));
+                caster.Limit(action.Spell.Id, new SpellUse(action.RechargeOn, action.Uses));
             }
 
             if (Spellcasting != null && book != null)
@@ -142,7 +142,7 @@ namespace Content.Monsters
                 foreach (string id in Spellcasting.AtWill)
                     if (book.Find(id) is Spell spell) caster.Learn(spell);
 
-                foreach (KeyValuePair<string, int> daily in Spellcasting.PerDay)
+                foreach (KeyValuePair<string, int> daily in Spellcasting.Uses)
                     if (book.Find(daily.Key) is Spell spell)
                     {
                         caster.Learn(spell);
@@ -181,7 +181,7 @@ namespace Content.Monsters
 
             // the statblock's AC is a number, not a suit of armor: giving it as heavy armor makes
             // it exactly that number whatever the creature's Dexterity is
-            actor.Armor = new ArmorProfile(ArmorWeight.Heavy, ArmorClass);
+            actor.Armor = new ArmorProfile(ArmorCategory.Heavy, ArmorClass);
             actor.Speed = Speed;
 
             foreach (KeyValuePair<DamageType, Defense> defense in Defenses)
@@ -199,7 +199,7 @@ namespace Content.Monsters
 
             actor.Size = Size;
 
-            foreach (Condition immune in ConditionImmunities) actor.MakeImmune(immune);
+            foreach (Condition immune in ImmuneTo) actor.MakeImmune(immune);
 
             actor.QuickOnBonus = BonusManoeuvres;
 

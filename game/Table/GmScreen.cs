@@ -25,13 +25,18 @@ namespace Game.Table
         [Export] public string Skin { get; set; } = "blank";
 
         // metres from the board's far edge to the screen's face
-        [Export] public float Gap { get; set; } = 0.22f;
+        [Export] public float Gap { get; set; } = 0.3f;
 
         // how wide the screen stands, as a share of the board's width
-        [Export] public float WidthShare { get; set; } = 0.7f;
+        [Export] public float WidthShare { get; set; } = 1.0f;
 
-        // the tallest it may stand, whatever the model's proportions
-        [Export] public float MostHeight { get; set; } = 0.2f;
+        // the tallest it may stand, whatever the model's proportions. 0.2 m stood it lower than a
+        // tall mini on 60 mm squares, "wayy too small" (cc_ui_issues_9-25-2026.md)
+        [Export] public float MostHeight { get; set; } = 0.3f;
+
+        // which way the model faces, in degrees about the table's up: its art is on its back, so it
+        // is turned to show the players the art and the GM (beyond the board) the inside
+        [Export] public float TurnDegrees { get; set; } = 180f;
 
         Node3D _model;
         AudioStreamPlayer3D _rattle;
@@ -86,6 +91,7 @@ namespace Game.Table
 
             // measured at its own size, so laying a second map doesn't scale the scaled model
             _model.Scale = Vector3.One;
+            _model.RotationDegrees = new Vector3(0f, TurnDegrees, 0f);
             Aabb box = Bounds(_model);
 
             if (box.Size.X > 0.0001f)
@@ -94,6 +100,9 @@ namespace Game.Table
                 _model.Scale = Vector3.One * scale;
                 box = new Aabb(box.Position * scale, box.Size * scale);
             }
+
+            // Bounds is in the model's own space; turned, it is where it stands in this node's
+            box = new Transform3D(new Basis(Vector3.Up, Mathf.DegToRad(TurnDegrees)), Vector3.Zero) * box;
 
             // board-local far edge (-Z), then into the table's space; the model's own front face is
             // put on that line, its base on the mat
@@ -114,7 +123,7 @@ namespace Game.Table
         {
             Aabb? all = null;
 
-            foreach (MeshInstance3D mesh in Meshes(root))
+            foreach (MeshInstance3D mesh in Nodes.Under<MeshInstance3D>(root))
             {
                 Transform3D toRoot = root.GlobalTransform.AffineInverse() * mesh.GlobalTransform;
                 Aabb local = toRoot * mesh.GetAabb();
@@ -122,16 +131,6 @@ namespace Game.Table
             }
 
             return all ?? new Aabb(Vector3.Zero, Vector3.Zero);
-        }
-
-        static System.Collections.Generic.IEnumerable<MeshInstance3D> Meshes(Node node)
-        {
-            foreach (Node child in node.GetChildren())
-            {
-                if (child is MeshInstance3D mesh) yield return mesh;
-
-                foreach (MeshInstance3D deeper in Meshes(child)) yield return deeper;
-            }
         }
     }
 }

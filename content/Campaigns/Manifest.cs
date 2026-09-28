@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Core.Localization;
+using Core.Words;
 
 namespace Content.Campaigns
 {
@@ -83,7 +84,7 @@ namespace Content.Campaigns
         }
 
         public override string ToString() =>
-            $"{Id} [{Kind.ToString().ToLowerInvariant()}] format {Format}, engine {Engine}" +
+            $"{Id} [{EnumWords.Name(Kind)}] format {Format}, engine {Engine}" +
             (IsPlayable
                 ? $", {Chapters.Count} chapters, starts at " + (Start.Length > 0 ? Start : "nothing")
                 : "") +

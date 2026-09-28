@@ -7,27 +7,25 @@
       "school": "conjuration",
       "range": 12,
       "casting_time": "bonus_action",
-      "lasts": "encounter",
+      "duration": "encounter",
       "repeat": "action",
       "classes": ["druid"],
       "effects": [
         {
           "primitive": "illuminate",
-          "reach": "caster",
+          "aim": "caster",
           "radius": 4,
           "duration": "encounter",
-          "note": "SRD 5.2.1: a flame in your hand for 10 minutes (v1: the fight): bright light 20 feet and dim light 20 feet beyond",
-          "dim_radius": 4
+          "note": "SRD 5.2.1: a flame in your hand for 10 minutes (v1: the fight): bright light 20 feet and dim light 20 feet beyond"
         },
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "1d8",
           "damage_type": "fire",
           "attack_roll": true,
-          "cantrip_scaling": true,
-          "repeats": true,
-          "repeat_only": true,
+          "cantrip_growth": "dice",
+          "lands": "on_repeat",
           "note": "until it ends, a Magic action hurls fire at a creature within 60 feet: a ranged spell attack, 1d8 fire, a die more at 5, 11 and 17"
         }
       ]
@@ -43,19 +41,18 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "1d8",
           "damage_type": "cold",
           "attack_roll": true,
-          "cantrip_scaling": true
+          "cantrip_growth": "dice"
         },
         {
           "primitive": "sway",
-          "reach": "creature",
-          "speed": -10,
+          "aim": "creature",
+          "speed_change": -10,
           "follows": true,
-          "duration": "next_turn",
-          "until": "caster",
+          "duration": "caster_next_turn",
           "note": "SRD 5.2.1: on a hit, the target's speed is 10 feet less until the start of your next turn"
         }
       ]
@@ -68,7 +65,7 @@
       "casting_time": "bonus_action",
       "classes": ["druid"],
       "effects": [
-        {"primitive": "sway", "reach": "caster", "weapons": ["club", "quarterstaff"], "rewrite_die_tiers": ["1d8", "1d10", "1d12", "2d6"], "rewrite_damage_type": "force", "duration": "encounter", "note": "SRD 5.2.1: for 1 minute (the fight) a club or quarterstaff you hold may use your spellcasting ability for attack and damage, rolls a d8 (d10 at 5, d12 at 11, 2d6 at 17), and may deal force damage - v1 takes whichever of each is better for you"}
+        {"primitive": "sway", "aim": "caster", "rewrite": {"weapons": ["club", "quarterstaff"], "die_tiers": ["1d8", "1d10", "1d12", "2d6"], "damage_type": "force"}, "duration": "encounter", "note": "SRD 5.2.1: for 1 minute (the fight) a club or quarterstaff you hold may use your spellcasting ability for attack and damage, rolls a d8 (d10 at 5, d12 at 11, 2d6 at 17), and may deal force damage - v1 takes whichever of each is better for you"}
       ]
     },
     {
@@ -82,16 +79,16 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "1d8",
           "damage_type": "lightning",
           "attack_roll": true,
-          "cantrip_scaling": true
+          "cantrip_growth": "dice"
         },
         {
           "primitive": "sway",
-          "reach": "creature",
-          "no_opportunity_attacks": true,
+          "aim": "creature",
+          "forbids": ["opportunity_attacks"],
           "follows": true,
           "duration": "next_turn",
           "note": "SRD 5.2.1: on a hit, the target can't make opportunity attacks until the start of its next turn"
@@ -106,7 +103,7 @@
       "range_scales": true,
       "classes": ["cleric", "druid"],
       "effects": [
-        {"primitive": "stabilize", "reach": "creature", "note": "SRD 5.2.1: a creature within 15 feet at 0 HP and not dead becomes Stable; the range doubles at 5, 11 and 17"}
+        {"primitive": "stabilize", "aim": "creature", "note": "SRD 5.2.1: a creature within 15 feet at 0 HP and not dead becomes Stable; the range doubles at 5, 11 and 17"}
       ]
     },
     {
@@ -120,7 +117,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "place",
+          "aim": "place",
           "duration": "encounter",
           "note": "minor wonders - a booming voice, flickering flames, tremors, a slammed door, altered eyes - for up to 1 minute. narrative by nature: authored interactables and dialogue answer it"
         }
@@ -133,7 +130,7 @@
       "range": 0,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "strike", "reach": "creature", "rewrite_damage_type": "radiant", "damage_type": "radiant", "extra_tiers": ["", "1d6", "2d6", "3d6"], "note": "SRD 5.2.1: one attack with the weapon used in the casting, using your spellcasting ability for attack and damage, dealing radiant or the weapon's type (v1 takes the better); +1d6 radiant on a hit at 5, 2d6 at 11, 3d6 at 17"}
+        {"primitive": "strike", "aim": "creature", "damage_type": "radiant", "extra_tiers": ["", "1d6", "2d6", "3d6"], "note": "SRD 5.2.1: one attack with the weapon used in the casting, using your spellcasting ability for attack and damage, dealing radiant or the weapon's type (v1 takes the better); +1d6 radiant on a hit at 5, 2d6 at 11, 3d6 at 17"}
       ]
     },
     {
@@ -143,7 +140,7 @@
       "range": 18,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "damage", "reach": "creature", "amount": "3d8", "per_extra_level": "1d8", "damage_type": "chosen", "damage_choices": ["acid", "cold", "fire", "lightning", "poison", "thunder"], "attack_roll": true, "leaps": 6, "note": "SRD 5.2.1: a ranged spell attack for 3d8 of the type you choose; if two of the d8s match it leaps to another creature within 30 feet of the target, with a new attack and damage roll, once per slot level, never to the same creature twice"}
+        {"primitive": "damage", "aim": "creature", "amount": "3d8", "upcast": {"amount": "1d8"}, "damage_choices": ["acid", "cold", "fire", "lightning", "poison", "thunder"], "attack_roll": true, "leaps": 6, "note": "SRD 5.2.1: a ranged spell attack for 3d8 of the type you choose; if two of the d8s match it leaps to another creature within 30 feet of the target, with a new attack and damage roll, once per slot level, never to the same creature twice"}
       ]
     },
     {
@@ -153,11 +150,11 @@
       "range": 12,
       "classes": ["mage", "cleric", "paladin"],
       "effects": [
-        {"primitive": "direct", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "command": "approach", "mode": "approach", "save": "wis", "on_save": "negates", "note": "SRD 5.2.1: a Wis save or the creature follows the word on its next turn. Approach: toward you by the shortest route, ending its turn within 5 feet. Drop: drops what it holds and ends its turn (picked up again for free next turn if it is still there). Flee: its turn is a Dash away from you. Grovel: Prone, and its turn ends. Halt: no move, no action, no bonus action. One more creature per slot level above 1"},
-        {"primitive": "direct", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "command": "drop", "mode": "drop", "save": "wis", "on_save": "negates"},
-        {"primitive": "direct", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "command": "flee", "mode": "flee", "save": "wis", "on_save": "negates"},
-        {"primitive": "direct", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "command": "grovel", "mode": "grovel", "save": "wis", "on_save": "negates"},
-        {"primitive": "direct", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "command": "halt", "mode": "halt", "save": "wis", "on_save": "negates"}
+        {"primitive": "direct", "aim": "creatures", "targets": 1, "upcast": {"targets": 1}, "command": "approach", "mode": "approach", "save": "wis", "on_save": "negates", "note": "SRD 5.2.1: a Wis save or the creature follows the word on its next turn. Approach: toward you by the shortest route, ending its turn within 5 feet. Drop: drops what it holds and ends its turn (picked up again for free next turn if it is still there). Flee: its turn is a Dash away from you. Grovel: Prone, and its turn ends. Halt: no move, no action, no bonus action. One more creature per slot level above 1"},
+        {"primitive": "direct", "aim": "creatures", "targets": 1, "upcast": {"targets": 1}, "command": "drop", "mode": "drop", "save": "wis", "on_save": "negates"},
+        {"primitive": "direct", "aim": "creatures", "targets": 1, "upcast": {"targets": 1}, "command": "flee", "mode": "flee", "save": "wis", "on_save": "negates"},
+        {"primitive": "direct", "aim": "creatures", "targets": 1, "upcast": {"targets": 1}, "command": "grovel", "mode": "grovel", "save": "wis", "on_save": "negates"},
+        {"primitive": "direct", "aim": "creatures", "targets": 1, "upcast": {"targets": 1}, "command": "halt", "mode": "halt", "save": "wis", "on_save": "negates"}
       ]
     },
     {
@@ -169,7 +166,7 @@
       "trigger": "struck",
       "classes": ["paladin"],
       "effects": [
-        {"primitive": "damage", "reach": "creature", "amount": "2d8", "per_extra_level": "1d8", "damage_type": "radiant", "extra_against": ["fiend", "undead"], "extra_amount": "1d8", "note": "SRD 5.2.1: a bonus action right after you hit with a melee weapon or unarmed strike: 2d8 radiant more from that hit, +1d8 against a Fiend or Undead, +1d8 per slot level above 1. a critical doubles the dice"}
+        {"primitive": "damage", "aim": "creature", "amount": "2d8", "upcast": {"amount": "1d8"}, "damage_type": "radiant", "extra_dice": {"dice": "1d8", "tag_rules": {"fiend": "only", "undead": "only"}}, "note": "SRD 5.2.1: a bonus action right after you hit with a melee weapon or unarmed strike: 2d8 radiant more from that hit, +1d8 against a Fiend or Undead, +1d8 per slot level above 1. a critical doubles the dice"}
       ]
     },
     {
@@ -182,7 +179,7 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "square",
+          "aim": "square",
           "length": 4,
           "leans": "advantage_against",
           "exposes": true,
@@ -202,7 +199,7 @@
       "concentration": true,
       "classes": ["mage", "druid"],
       "effects": [
-        {"primitive": "zone", "reach": "place", "radius": 4, "radius_per_extra_level": 4, "obscures": "heavy", "duration": "concentration", "note": "SRD 5.2.1: a 20-foot-radius sphere of heavily obscuring fog for up to an hour, 20 feet wider per slot level above 1. a strong wind is the narrator's"}
+        {"primitive": "zone", "aim": "place", "radius": 4, "upcast": {"radius": 4}, "obscures": "heavy", "duration": "concentration", "note": "SRD 5.2.1: a 20-foot-radius sphere of heavily obscuring fog for up to an hour, 20 feet wider per slot level above 1. a strong wind is the narrator's"}
       ]
     },
     {
@@ -212,7 +209,7 @@
       "range": 0,
       "classes": ["druid"],
       "effects": [
-        {"primitive": "conjure", "reach": "caster", "item": "goodberry", "count": 10, "note": "SRD 5.2.1: ten berries for 24 hours (until the next long rest); a creature eats one as a bonus action to regain 1 HP, and one is a day's food"}
+        {"primitive": "conjure", "aim": "caster", "item": {"id": "goodberry", "count": 10}, "note": "SRD 5.2.1: ten berries for 24 hours (until the next long rest); a creature eats one as a bonus action to regain 1 HP, and one is a day's food"}
       ]
     },
     {
@@ -229,9 +226,9 @@
       "effects": [
         {
           "primitive": "heal",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "2d4",
-          "per_extra_level": "2d4",
+          "upcast": {"amount": "2d4"},
           "add_modifier": true
         }
       ]
@@ -249,9 +246,9 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "2d10",
-          "per_extra_level": "1d10",
+          "upcast": {"amount": "1d10"},
           "damage_type": "fire",
           "save": "dex",
           "on_save": "half",
@@ -269,28 +266,28 @@
       "effects": [
         {
           "primitive": "afflict",
-          "reach": "creatures",
+          "aim": "creatures",
           "condition": "prone",
           "save": "wis",
           "on_save": "negates",
-          "repeat_save": true,
-          "save_on_damage": true,
+          "repeat_save": {"ability": "wis"},
+          "on_damage": "saves_again",
           "pinned": true,
           "duration": "concentration",
           "note": "SRD 5.2.1: Wis save or Prone and Incapacitated for the duration, unable to stand; it saves again at the end of each of its turns and whenever it takes damage (with advantage then), and a success ends the spell",
           "targets": 1,
-          "extra_targets_per_level": 1
+          "upcast": {"targets": 1}
         },
         {
           "primitive": "afflict",
-          "reach": "creatures",
+          "aim": "creatures",
           "condition": "incapacitated",
           "save": "wis",
           "on_save": "negates",
           "same_save": true,
           "duration": "concentration",
           "targets": 1,
-          "extra_targets_per_level": 1
+          "upcast": {"targets": 1}
         }
       ]
     },
@@ -304,7 +301,7 @@
       "effects": [
         {
           "primitive": "reveal",
-          "reach": "place",
+          "aim": "place",
           "note": "the touched object's magical properties, attunement, charges and the spells affecting it. information by nature: the campaign supplies what is learned"
         }
       ],
@@ -319,8 +316,8 @@
       "trigger": "struck",
       "classes": ["paladin"],
       "effects": [
-        {"primitive": "damage", "reach": "creature", "amount": "1d6", "per_extra_level": "1d6", "damage_type": "fire", "note": "SRD 5.2.1: a bonus action right after a melee hit: 1d6 fire more from that hit"},
-        {"primitive": "damage", "reach": "creature", "amount": "1d6", "per_extra_level": "1d6", "damage_type": "fire", "recurs": true, "end_save": "con", "duration": "encounter", "note": "and at the start of each of its turns for 1 minute (the fight) it takes 1d6 fire and then makes a Con save, a success ending the spell. all the damage grows by 1d6 per slot level above 1"}
+        {"primitive": "damage", "aim": "creature", "amount": "1d6", "upcast": {"amount": "1d6"}, "damage_type": "fire", "note": "SRD 5.2.1: a bonus action right after a melee hit: 1d6 fire more from that hit"},
+        {"primitive": "damage", "aim": "creature", "amount": "1d6", "upcast": {"amount": "1d6"}, "damage_type": "fire", "lands": "each_turn", "repeat_save": {"ability": "con"}, "duration": "encounter", "note": "and at the start of each of its turns for 1 minute (the fight) it takes 1d6 fire and then makes a Con save, a success ending the spell. all the damage grows by 1d6 per slot level above 1"}
       ]
     },
     {
@@ -335,7 +332,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "place",
+          "aim": "place",
           "duration": "concentration",
           "note": "a soundless image up to a 15-foot cube, movable as a Magic action, seen through with an Investigation check. authored interactables answer it; there is no illusion sandbox, as with Minor Illusion"
         }
@@ -354,7 +351,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "caster",
+          "aim": "caster",
           "duration": "encounter",
           "note": "10 minutes of speech with Beasts. dialogue by nature: authored animal conversations answer it"
         }
@@ -370,9 +367,9 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "3d6",
-          "per_extra_level": "1d6",
+          "upcast": {"amount": "1d6"},
           "damage_type": "psychic",
           "save": "wis",
           "on_save": "half",

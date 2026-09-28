@@ -95,21 +95,5 @@ namespace Core.Space
             Facing.South => new Cell(origin.X - across, origin.Y + along),
             _ => new Cell(origin.X - along, origin.Y - across),
         };
-
-        public static string Id(this Facing facing) => facing.ToString().ToLowerInvariant();
-
-        public static bool TryParse(string id, out Facing facing)
-        {
-            foreach (Facing f in new[] { Facing.North, Facing.East, Facing.South, Facing.West })
-            {
-                if (!string.Equals(f.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                facing = f;
-                return true;
-            }
-
-            facing = Facing.North;
-            return false;
-        }
     }
 }

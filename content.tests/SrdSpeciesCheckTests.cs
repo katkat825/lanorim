@@ -27,8 +27,6 @@ namespace Content.Tests
             return hero;
         }
 
-        static Feature Of(Hero hero, string id) => hero.Features.First(f => f.Id == id);
-
         [Fact]
         public void TheWoodElfMovesThirtyFiveFeetNotForty()
         {
@@ -41,7 +39,7 @@ namespace Content.Tests
         {
             Hero elf = Made("elf", 1, "elf_high");
 
-            Assert.True(elf.Actor.HasAdvantage("save_vs:charmed"));
+            Assert.True(elf.Actor.AdvantageOnSaveAgainst(Condition.Charmed));
             Assert.Equal(Made("human", 1).Actor.SaveModifier(Ability.Charisma),
                          elf.Actor.SaveModifier(Ability.Charisma));
         }
@@ -49,11 +47,11 @@ namespace Content.Tests
         [Fact]
         public void BraveAndDwarvenResilienceAreAdvantageOnTheirConditions()
         {
-            Assert.True(Made("halfling", 1).Actor.HasAdvantage("save_vs:frightened"));
+            Assert.True(Made("halfling", 1).Actor.AdvantageOnSaveAgainst(Condition.Frightened));
 
             Hero dwarf = Made("dwarf", 1);
 
-            Assert.True(dwarf.Actor.HasAdvantage("save_vs:poisoned"));
+            Assert.True(dwarf.Actor.AdvantageOnSaveAgainst(Condition.Poisoned));
             Assert.Equal(Defense.Resistant, dwarf.Actor.DefenseAgainst(DamageType.Poison));
         }
 
@@ -75,12 +73,12 @@ namespace Content.Tests
             Assert.Equal(Ability.Constitution, breath.DcAbility);
             Assert.All(breath.Effects, e => Assert.Equal(DamageType.Fire, e.DamageType));
             Assert.True(red.Caster.CanCast(breath, 0));
-            Assert.Equal(2, red.Caster.UseOf("breath_weapon_fire").PerDay);
+            Assert.Equal(2, red.Caster.UseOf("breath_weapon_fire").Uses);
             Assert.Equal(Defense.Resistant, red.Actor.DefenseAgainst(DamageType.Fire));
 
             Hero white = Made("dragonborn", 5, "dragonborn_cold");
 
-            Assert.Equal(3, white.Caster.UseOf("breath_weapon_cold").PerDay);
+            Assert.Equal(3, white.Caster.UseOf("breath_weapon_cold").Uses);
             Assert.Equal(Defense.Resistant, white.Actor.DefenseAgainst(DamageType.Cold));
             Assert.NotEqual(Defense.Resistant, white.Actor.DefenseAgainst(DamageType.Fire));
         }
@@ -123,13 +121,13 @@ namespace Content.Tests
         public void AdrenalineRushIsProficiencyBonusUsesOfTemporaryHitPoints()
         {
             Hero orc = Made("orc", 1);
-            Feature rush = Of(orc, "adrenaline_rush");
+            Feature rush = orc.FeatureCalled("adrenaline_rush");
 
             Assert.Equal(2, orc.UsesLeft(rush));
             Assert.True(orc.Invoke(rush));
             Assert.Equal(orc.Actor.ProficiencyBonus, orc.Actor.Health.Temporary);
             Assert.Equal(1, orc.UsesLeft(rush));
-            Assert.Equal(Recharge.Long, Of(orc, "relentless_endurance").Recharge);
+            Assert.Equal(Recharge.Long, orc.FeatureCalled("relentless_endurance").Recharge);
         }
 
         [Fact]

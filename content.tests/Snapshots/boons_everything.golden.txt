@@ -1,0 +1,24 @@
+== feature barbarian/rage boons=rage<rage>Encounter check leans=Advantage check leans athletics=Advantage check leans str=Advantage defense bludgeoning=Resistant defense piercing=Resistant defense slashing=Resistant flat on str damage=4 save leans str=Advantage staff=str 1d6+5 bludgeoning 4
+== feature barbarian/reckless_attack attack leans str=(True, False) boons=reckless_attack<reckless_attack>NextTurn leans against close=(True, False) leans against far=(True, False) leans against seen=(True, False) leans against unseen=(True, False)
+== feature barbarian/danger_sense save leans dex=Advantage
+== feature barbarian/fast_movement moves=40
+== feature fighter/fighting_style ac=15
+== feature fighter/remarkable_athlete check leans=Advantage check leans athletics=Advantage initiative advantage=True
+== feature rogue/slippery_mind save modifier cha=3 save modifier wis=3
+== feature mage/pact_resilience defense fire=Resistant
+== feature paladin/sacred_weapon boons=sacred_weapon<sacred_weapon>Encounter flat on attacks=1 staff=str 1d6+1 bludgeoning 5
+== feature paladin/aura_of_protection save modifier cha=1 save modifier con=2 save modifier dex=2 save modifier int=1 save modifier str=2 save modifier wis=1
+== feature paladin/aura_of_courage immune frightened=yes
+== feature paladin/paladin_fighting_style ac=15
+== feature druid/natures_ward defense poison=Resistant immune poisoned=yes
+== feature elf/fey_ancestry save against charmed=advantage
+== feature dragonborn_acid/draconic_resistance defense acid=Resistant
+== feature dragonborn_cold/draconic_resistance defense cold=Resistant
+== feature dragonborn_fire/draconic_resistance defense fire=Resistant
+== feature dragonborn_lightning/draconic_resistance defense lightning=Resistant
+== feature dragonborn_poison/draconic_resistance defense poison=Resistant
+== feature tiefling/infernal_legacy defense fire=Resistant
+== feature dwarf/dwarven_resilience defense poison=Resistant save against poisoned=advantage
+== feature halfling/brave save against frightened=advantage
+== item cloak_of_the_quiet_step ac=11 boons=cloak_of_the_quiet_step<equipment>Rest flat on stealth=2
+== item ring_of_protection ac=12 boon ac=1 boons=ring_of_protection<equipment>Rest flat on cha saves=1 flat on con saves=1 flat on dex saves=1 flat on int saves=1 flat on str saves=1 flat on wis saves=1 save modifier cha=1 save modifier con=2 save modifier dex=2 save modifier int=1 save modifier str=2 save modifier wis=1

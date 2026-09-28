@@ -12,6 +12,7 @@ using Core.Magic;
 using Core.Resolution;
 using Core.Rules;
 using Core.Space;
+using static Content.Tests.Fights;
 
 namespace Content.Tests
 {
@@ -20,8 +21,6 @@ namespace Content.Tests
     // SRD name (_design_docs/cc_task_shapes-reactions-actions.md)
     public class ShapesAndReactionsTests
     {
-        static readonly SpellBook Book = SpellBook.Srd();
-
         // eleven squares by three
         const string Hall = @"
 +-+-+-+-+-+-+-+-+-+-+-+
@@ -32,12 +31,7 @@ namespace Content.Tests
 |. . . . . . . . . . .|
 +-+-+-+-+-+-+-+-+-+-+-+";
 
-        static Encounter Field(IRng rng)
-        {
-            Assert.True(MapReader.TryRead(Hall, out MapLayout map, out string problem), problem);
-
-            return new Encounter(new StandardResolver(rng), new Battlefield(map), new CombatLog());
-        }
+        static Encounter Field(IRng rng) => Fights.Field(rng, Hall);
 
         // a level 5 mage with slots: four 1st, three 2nd, two 3rd
         static Caster Mage(out Actor actor, string id = "mage", int level = 5,
@@ -61,7 +55,7 @@ namespace Content.Tests
         {
             var actor = new Actor(id, 1, new AbilityScores(), side);
             actor.SetHealth(new Health(hp));
-            actor.Armor = new ArmorProfile(ArmorWeight.Heavy, ac);
+            actor.Armor = new ArmorProfile(ArmorCategory.Heavy, ac);
             return actor;
         }
 
@@ -75,7 +69,7 @@ namespace Content.Tests
             SpellEffect effect = bolt.Effects.Single();
 
             Assert.False(bolt.Approximated);
-            Assert.Equal(Reach.Line, effect.Reach);
+            Assert.Equal(AimKind.Line, effect.AimKind);
             Assert.Equal(20, effect.Length);
             Assert.Equal(1, effect.Width);
             Assert.True(bolt.NeedsADirection);
@@ -88,7 +82,7 @@ namespace Content.Tests
             SpellEffect effect = cone.Effects.Single();
 
             Assert.False(cone.Approximated);
-            Assert.Equal(Reach.Cone, effect.Reach);
+            Assert.Equal(AimKind.Cone, effect.AimKind);
             Assert.Equal(12, effect.Length);
             Assert.Equal(DiceRoll.Parse("8d8"), effect.Amount);
         }
@@ -96,10 +90,10 @@ namespace Content.Tests
         [Fact]
         public void BurningHandsAndThunderwaveAreTheirRealShapes()
         {
-            Assert.Equal(Reach.Cone, Book.Find("burning_hands").Effects[0].Reach);
+            Assert.Equal(AimKind.Cone, Book.Find("burning_hands").Effects[0].AimKind);
             Assert.Equal(3, Book.Find("burning_hands").Effects[0].Length);
 
-            Assert.Equal(Reach.Cube, Book.Find("thunderwave").Effects[0].Reach);
+            Assert.Equal(AimKind.Cube, Book.Find("thunderwave").Effects[0].AimKind);
             Assert.Equal(3, Book.Find("thunderwave").Effects[0].Length);
         }
 
@@ -202,7 +196,7 @@ namespace Content.Tests
         public void TheReaderWantsALengthForALineAndAWidthToo()
         {
             SpellReader.TryRead(@"{""spells"":[{""id"":""bad"",""level"":1,""effects"":[
-              {""primitive"":""damage"",""reach"":""line"",""amount"":""1d6"",
+              {""primitive"":""damage"",""aim"":""line"",""amount"":""1d6"",
                ""damage_type"":""fire""}]}]}", out _, out IReadOnlyList<string> problems);
 
             Assert.Contains(problems, p => p.Contains("'length'"));
@@ -213,7 +207,7 @@ namespace Content.Tests
         public void TheReaderRefusesAConeThatBorrowsARadius()
         {
             SpellReader.TryRead(@"{""spells"":[{""id"":""bad"",""level"":1,""effects"":[
-              {""primitive"":""damage"",""reach"":""cone"",""length"":3,""radius"":3,
+              {""primitive"":""damage"",""aim"":""cone"",""length"":3,""radius"":3,
                ""amount"":""1d6"",""damage_type"":""fire""}]}]}", out _,
                                 out IReadOnlyList<string> problems);
 
@@ -229,7 +223,7 @@ namespace Content.Tests
             Spell shield = Book.Find("shield");
 
             Assert.False(shield.Approximated);
-            Assert.Equal(CastingTime.Reaction, shield.CastingTime);
+            Assert.Equal(Spend.Reaction, shield.CastingTime);
             Assert.Equal(Trigger.Hit, shield.Trigger);
             Assert.Equal(Duration.NextTurn, shield.Effects.Single().Duration);
         }
@@ -255,7 +249,7 @@ namespace Content.Tests
             cast = new Incantation(fight.Resolver);
 
             mage = Mage(out me);
-            me.Armor = new ArmorProfile(ArmorWeight.Light, 12); // armor class 14 with Dex
+            me.Armor = new ArmorProfile(ArmorCategory.Light, 12); // armor class 14 with Dex
 
             goblin = Dummy("goblin");
             goblin.Scores.Raise(Ability.Dexterity, 4); // +2, and +2 proficiency
@@ -337,7 +331,7 @@ namespace Content.Tests
             var cast = new Incantation(fight.Resolver);
 
             Caster mage = Mage(out Actor me);
-            me.Armor = new ArmorProfile(ArmorWeight.Light, 12);
+            me.Armor = new ArmorProfile(ArmorCategory.Light, 12);
 
             Caster enemy = Mage(out Actor them, "enemy", side: Allegiance.Enemy);
 
@@ -432,10 +426,10 @@ namespace Content.Tests
 
             // the same reaction with a one-square reach does not get offered at ten
             var shortReach = new Spell("short_counter", 3, School.Abjuration,
-                                       new[] { new SpellEffect(Primitive.Counter, Reach.Creature,
+                                       new[] { new SpellEffect(Primitive.Counter, AimKind.Creature,
                                                                save: Ability.Constitution,
                                                                onSave: OnSave.Negates) },
-                                       range: 1, castingTime: CastingTime.Reaction,
+                                       range: 1, castingTime: Spend.Reaction,
                                        trigger: Trigger.Cast);
 
             hero.Learn(shortReach);
@@ -459,7 +453,7 @@ namespace Content.Tests
         public void TheReaderRefusesACounterThatIsNotAReactionToACast()
         {
             SpellReader.TryRead(@"{""spells"":[{""id"":""bad"",""level"":3,""effects"":[
-              {""primitive"":""counter"",""reach"":""creature""}]}]}", out _,
+              {""primitive"":""counter"",""aim"":""creature""}]}]}", out _,
                                 out IReadOnlyList<string> problems);
 
             Assert.Contains(problems, p => p.Contains("counter"));
@@ -470,9 +464,9 @@ namespace Content.Tests
         {
             SpellReader.TryRead(@"{""spells"":[{""id"":""bad"",""level"":1,
               ""casting_time"":""reaction"",""effects"":[
-              {""primitive"":""sway"",""reach"":""caster"",""sway"":5,""touches"":""armor_class""}]},
+              {""primitive"":""sway"",""aim"":""caster"",""flat"":5,""touches"":""armor_class""}]},
               {""id"":""worse"",""level"":1,""trigger"":""hit"",""effects"":[
-              {""primitive"":""sway"",""reach"":""caster"",""sway"":5,""touches"":""armor_class""}]}]}",
+              {""primitive"":""sway"",""aim"":""caster"",""flat"":5,""touches"":""armor_class""}]}]}",
                                 out _, out IReadOnlyList<string> problems);
 
             Assert.Contains(problems, p => p.StartsWith("bad:") && p.Contains("trigger"));
@@ -596,7 +590,7 @@ namespace Content.Tests
             Assert.Equal(15, me.ArmorClass);
 
             // and in armor it does nothing, which is SRD's rule
-            me.Armor = new ArmorProfile(ArmorWeight.Heavy, 16);
+            me.Armor = new ArmorProfile(ArmorCategory.Heavy, 16);
             Assert.Equal(16, me.ArmorClass);
         }
 
@@ -740,7 +734,7 @@ namespace Content.Tests
         {
             foreach (string id in new[] { "hex", "hunters_mark", "misty_step", "spiritual_weapon",
                                           "lesser_restoration" })
-                Assert.Equal(CastingTime.BonusAction, Book.Find(id).CastingTime);
+                Assert.Equal(Spend.Bonus, Book.Find(id).CastingTime);
         }
 
 
@@ -849,10 +843,10 @@ namespace Content.Tests
                                 Creation.Creation.Standard(Srd.Class(cls)), level);
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Srd.Class(cls).Priority[0]] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Srd.Class(cls).Priority[0]] = 2,
+                [Ability.Constitution] = 1,
+            },
                        skills, null, Srd.Items);
 
             return hero;
@@ -884,7 +878,7 @@ namespace Content.Tests
 
             foreach (CharacterClass cls in Srd.Classes.Where(c => c.Casts && c.Id != "paladin"))
                 Assert.DoesNotContain(cls.Features, f => f.Trait == Trait.ActionGrant &&
-                                                         f.Uses == 0 && f.Grants == Grants.Action);
+                                                         f.Uses == 0 && f.Grants == Spend.Action);
         }
 
         [Fact]

@@ -110,15 +110,7 @@ namespace Game.Access
 
         // every word under a node, however deep. A label is a label whether it is on a card, on the
         // sheet, or lettered beside a die
-        public static IEnumerable<Label3D> Words(Node node)
-        {
-            foreach (Node child in node.GetChildren())
-            {
-                if (child is Label3D label) yield return label;
-
-                foreach (Label3D deeper in Words(child)) yield return deeper;
-            }
-        }
+        public static IEnumerable<Label3D> Words(Node node) => Nodes.Under<Label3D>(node);
 
         // a label that has gone away leaves its authored size behind it; a long sitting lays out
         // thousands of cards, and an instance id is never reused for a live node

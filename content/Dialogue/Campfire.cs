@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Dice;
+using Core.Words;
 
 namespace Content.Dialogue
 {
@@ -12,8 +13,6 @@ namespace Content.Dialogue
     // Pure, so a campaign's whole camp schedule can be walked headless before anybody sits down.
     public sealed class Campfire
     {
-        readonly DialogueBook _book;
-
         readonly IRng _rng;
 
         readonly Dictionary<Topic, ShuffleBag> _bags = new Dictionary<Topic, ShuffleBag>();
@@ -23,7 +22,7 @@ namespace Content.Dialogue
 
         public Campfire(DialogueBook book, IRng rng)
         {
-            _book = book ?? throw new ArgumentNullException(nameof(book));
+            if (book == null) throw new ArgumentNullException(nameof(book));
             _rng = rng ?? throw new ArgumentNullException(nameof(rng));
 
             foreach (string node in book.CampNodes)
@@ -79,6 +78,6 @@ namespace Content.Dialogue
         public override string ToString() =>
             _scenes.Count == 0
                 ? "no camp scenes"
-                : string.Join(", ", Knows.Select(t => $"{t.Word()} x{ScenesFor(t)}"));
+                : string.Join(", ", Knows.Select(t => $"{t.Id()} x{ScenesFor(t)}"));
     }
 }

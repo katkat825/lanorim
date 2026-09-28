@@ -55,7 +55,7 @@ namespace Core.Tables
             GmRoll pick = Pick(table);
             rolls.Add(pick);
 
-            EncounterEntry entry = Entry(table, pick.Total);
+            EncounterEntry entry = table.Entries.Walk(pick.Total);
 
             var group = new List<Mustered>();
 
@@ -83,7 +83,8 @@ namespace Core.Tables
             return Tell(new TableRoll(table, true, trigger, pick, entry, group, rolls));
         }
 
-        // one draw across the weights - the same walk the consequence pool does
+        // one draw across the weights (Weighted.Walk, which the loot table and the consequence
+        // pool use too)
         GmRoll Pick(EncounterTable table)
         {
             int total = table.TotalWeight;
@@ -93,17 +94,6 @@ namespace Core.Tables
                                    table.Visibility, table.Id));
         }
 
-        static EncounterEntry Entry(EncounterTable table, int ticket)
-        {
-            foreach (EncounterEntry entry in table.Entries)
-            {
-                ticket -= entry.Weight;
-
-                if (ticket <= 0) return entry;
-            }
-
-            return table.Entries[table.Entries.Count - 1];
-        }
 
         // OPENING A LOOT TABLE. usable says which item ids this hero could be given; an entry that
         // would give them something they cannot use is weighted out before the dice are thrown, so
@@ -153,7 +143,7 @@ namespace Core.Tables
                                           table.Visibility, table.Id));
             rolls.Add(pick);
 
-            LootEntry chosen = Walk(offered, ticket);
+            LootEntry chosen = offered.Walk(ticket);
 
             var found = new List<Found>();
             int gold = 0;
@@ -232,17 +222,6 @@ namespace Core.Tables
             }
         }
 
-        static LootEntry Walk(IReadOnlyList<LootEntry> entries, int ticket)
-        {
-            foreach (LootEntry entry in entries)
-            {
-                ticket -= entry.Weight;
-
-                if (ticket <= 0) return entry;
-            }
-
-            return entries[entries.Count - 1];
-        }
 
         LootRoll Tell(LootRoll result)
         {

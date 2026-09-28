@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Core.Characters;
 using Core.Space;
 
@@ -9,7 +7,9 @@ namespace Core.Combat
     // the moments a zone does something to a creature. SRD 5.2.1's persistent spells all use the
     // same handful of words - "when the area appears", "when a creature enters it for the first
     // time on a turn", "starts its turn there", "ends its turn there", "for every 5 feet it
-    // travels there" - so those are the whole list.
+    // travels there" - so those are the whole list. a zone's are several bits; the moment that is
+    // happening, handed to IZone.Act, is one bit set (there was a second enum, Pulse, for that, and a
+    // bridge between the two: cc_task_dedupe-leftovers.md #10)
     [Flags]
     public enum Pulses
     {
@@ -32,17 +32,6 @@ namespace Core.Combat
         Ram = 1 << 5,
     }
 
-    // which moment a pulse is. a single value of Pulses, named for the call
-    public enum Pulse
-    {
-        Appear,
-        Enter,
-        StartTurn,
-        EndTurn,
-        EachSquare,
-        Ram,
-    }
-
     // what a zone does to sight. SRD 5.2.1: a lightly obscured area gives disadvantage on
     // Wisdom (Perception) checks that rely on sight; a heavily obscured one blocks vision entirely
     public enum Obscurement
@@ -50,6 +39,18 @@ namespace Core.Combat
         None,
         Light,
         Heavy,
+
+        // heavily obscured, and magical: Truesight sees through it, Darkvision does not - Darkness.
+        // a third value where there used to be a flag beside 'heavy' (cc_task_dedupe-effects.md,
+        // 3a #11)
+        MagicalDarkness,
+    }
+
+    public static class Obscurements
+    {
+        // nothing is seen through it: heavy, or magical darkness
+        public static bool BlocksSight(this Obscurement obscures) =>
+            obscures == Obscurement.Heavy || obscures == Obscurement.MagicalDarkness;
     }
 
     // A PERSISTENT AREA ON THE BOARD - the zone primitive of v1_spell_list.md, which until now was
@@ -72,18 +73,15 @@ namespace Core.Combat
         // it is on the ground - grease, spikes, grasping weeds: a flyer passes over it untouched
         bool Ground => false;
 
-        // the owner's side is left alone - "creatures of your choice", which in a solo game is
-        // everybody on the other side
-        bool SparesAllies { get; }
+        // which creatures it touches: its owner's foes ("creatures of your choice", Spirit
+        // Guardians), its owner's side (Pass without Trace), or everybody. the area's own word,
+        // where the zone used to carry two flags (cc_task_dedupe-leftovers.md #5)
+        Affects Affects { get; }
 
-        // what it does to sight: fog, sleet, magical darkness
+        // what it does to sight: fog, sleet, magical darkness (heavy, and Truesight sees
+        // through it) - the area's own value, where magical darkness used to come back as heavy
+        // plus a flag
         Obscurement Obscures { get; }
-
-        // magical darkness: Darkvision does not see through it, Truesight does
-        bool Magical { get; }
-
-        // only the owner's side - an aura for friends (Pass without Trace)
-        bool AlliesOnly { get; }
 
         // spells of this level or lower cast from outside it cannot touch anything inside.
         // 0 is a zone that blocks nothing
@@ -107,46 +105,6 @@ namespace Core.Combat
         // SRD's "once per turn" does not hold for it: it acts at every moment it names
         bool EachTime => false;
 
-        void Act(Encounter fight, Actor creature, Pulse pulse);
-    }
-
-    public static class ZonePulses
-    {
-        public static bool Has(this Pulses pulses, Pulse pulse) =>
-            (pulses & (Pulses)(1 << (int)pulse)) != 0;
-
-        static readonly (Pulses pulse, string id)[] Ids =
-        {
-            (Pulses.Appear, "appear"),
-            (Pulses.Enter, "enter"),
-            (Pulses.StartTurn, "start_turn"),
-            (Pulses.EndTurn, "end_turn"),
-            (Pulses.EachSquare, "each_square"),
-            (Pulses.Ram, "ram"),
-        };
-
-        public static string Id(this Pulses pulses) =>
-            pulses == Pulses.None
-                ? "none"
-                : string.Join("|", Ids.Where(p => (pulses & p.pulse) != 0).Select(p => p.id));
-
-        public static bool TryParse(string id, out Pulses pulses)
-        {
-            pulses = Pulses.None;
-
-            if (string.IsNullOrWhiteSpace(id) || id == "none") return true;
-
-            foreach (string part in id.Split('|'))
-            {
-                string wanted = part.Trim().ToLowerInvariant();
-                (Pulses pulse, string id) match = Ids.FirstOrDefault(p => p.id == wanted);
-
-                if (match.id == null) return false;
-
-                pulses |= match.pulse;
-            }
-
-            return true;
-        }
+        void Act(Encounter fight, Actor creature, Pulses pulse);
     }
 }

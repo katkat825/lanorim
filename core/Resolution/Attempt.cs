@@ -1,4 +1,5 @@
 using System;
+using Core.Words;
 
 namespace Core.Resolution
 {
@@ -100,7 +101,7 @@ namespace Core.Resolution
         public Attempt Critical() => new Attempt(Kind, Roll, Against, true, Diverted, CritsOn);
 
         public override string ToString() =>
-            $"{Kind.ToString().ToLowerInvariant()}: {Roll} vs {Against} - " +
+            $"{EnumWords.Name(Kind)}: {Roll} vs {Against} - " +
             (Succeeded ? "success" : "failure") +
             (IsCritical ? ", critical" : IsCriticalMiss ? ", critical miss" : "");
     }

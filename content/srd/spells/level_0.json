@@ -11,12 +11,12 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 1,
           "amount": "1d10",
           "damage_type": "force",
           "attack_roll": true,
-          "cantrip_beams": true,
+          "cantrip_growth": "beams",
           "note": "SRD 5.2.1: more beams at 5, 11 and 17, each its own attack roll, at the same or different targets"
         }
       ]
@@ -30,11 +30,11 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "1d10",
           "damage_type": "fire",
           "attack_roll": true,
-          "cantrip_scaling": true
+          "cantrip_growth": "dice"
         }
       ]
     },
@@ -48,10 +48,10 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "creature",
-          "sway_dice": "1d4",
+          "aim": "creature",
+          "dice": "1d4",
           "touches": "checks",
-          "skill": "chosen",
+          "skill_choices": ["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"],
           "duration": "concentration",
           "note": "SRD 5.2.1: the caster chooses a skill, and the 1d4 is for checks with that skill"
         }
@@ -66,10 +66,9 @@
       "effects": [
         {
           "primitive": "illuminate",
-          "reach": "place",
+          "aim": "place",
           "radius": 4,
-          "duration": "rest",
-          "dim_radius": 4
+          "duration": "rest"
         }
       ]
     },
@@ -82,7 +81,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "place",
+          "aim": "place",
           "duration": "encounter",
           "note": "a spectral hand that moves and manipulates. the campaign decides what it can reach"
         }
@@ -97,7 +96,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "place",
+          "aim": "place",
           "duration": "encounter",
           "note": "a sound or an image. authored interactables answer it; there is no illusion sandbox"
         }
@@ -112,7 +111,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "place",
+          "aim": "place",
           "duration": "rest",
           "note": "the small tricks. narrative only, by design"
         }
@@ -127,12 +126,12 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "1d8",
           "damage_type": "radiant",
           "save": "dex",
           "on_save": "negates",
-          "cantrip_scaling": true
+          "cantrip_growth": "dice"
         }
       ]
     },
@@ -145,16 +144,16 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "1d6",
           "damage_type": "psychic",
           "save": "wis",
           "on_save": "negates",
-          "cantrip_scaling": true
+          "cantrip_growth": "dice"
         },
         {
           "primitive": "sway",
-          "reach": "creature",
+          "aim": "creature",
           "leans": "disadvantage_on_attacks",
           "once": true,
           "save": "wis",

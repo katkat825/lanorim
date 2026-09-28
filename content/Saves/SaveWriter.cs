@@ -8,6 +8,7 @@ using Content.Items;
 using Content.Schema;
 using Core.Characters;
 using Core.Magic;
+using Core.Words;
 
 namespace Content.Saves
 {
@@ -39,7 +40,7 @@ namespace Content.Saves
                 json.WriteString("chapter", save.Chapter ?? "");
                 json.WriteString("map", save.Map ?? "");
 
-                json.WriteString("kind", Vocabulary.NameOf(save.Kind));
+                json.WriteString("kind", EnumWords.Name(save.Kind));
                 json.WriteNumber("slot", save.Slot);
 
                 if (!string.IsNullOrEmpty(save.Label)) json.WriteString("label", save.Label);
@@ -99,10 +100,26 @@ namespace Content.Saves
             return Encoding.UTF8.GetString(buffer.ToArray());
         }
 
+        // a hero, section by section in the order the file has always had them
         static void WriteHero(Utf8JsonWriter json, SavedHero hero)
         {
             json.WriteStartObject();
 
+            WriteIdentity(json, hero);
+            WriteChoices(json, hero);
+            WriteHealth(json, hero);
+            WriteMagic(json, hero);
+            Words(json, "conditions", hero.Conditions.Select(EnumWords.Name));
+            WriteFeatures(json, hero);
+            WriteGear(json, hero);
+            Where(json, hero.X, hero.Y);
+
+            json.WriteEndObject();
+        }
+
+        // who: name, class, species, background, alignment, level
+        static void WriteIdentity(Utf8JsonWriter json, SavedHero hero)
+        {
             json.WriteString("name", hero.Name ?? "");
             json.WriteString("class", hero.Class ?? "");
             json.WriteString("species", hero.Species ?? "");
@@ -113,13 +130,17 @@ namespace Content.Saves
 
             if (!string.IsNullOrEmpty(hero.Alignment)) json.WriteString("alignment", hero.Alignment);
             json.WriteNumber("level", hero.Level);
+        }
 
+        // what the player chose: scores, the background's spend, skills, improvements
+        static void WriteChoices(Utf8JsonWriter json, SavedHero hero)
+        {
             json.WritePropertyName("scores");
             json.WriteStartObject();
 
             foreach (Ability ability in Enum.GetValues<Ability>().OrderBy(a => (int)a))
                 if (hero.Scores.TryGetValue(ability, out int score))
-                    json.WriteNumber(Vocabulary.NameOf(ability), score);
+                    json.WriteNumber(EnumWords.Name(ability), score);
 
             json.WriteEndObject();
 
@@ -130,13 +151,13 @@ namespace Content.Saves
 
                 foreach (Ability ability in Enum.GetValues<Ability>().OrderBy(a => (int)a))
                     if (hero.BackgroundSpend.TryGetValue(ability, out int spend))
-                        json.WriteNumber(Vocabulary.NameOf(ability), spend);
+                        json.WriteNumber(EnumWords.Name(ability), spend);
 
                 json.WriteEndObject();
             }
 
-            Words(json, "skills", hero.Skills.Select(Vocabulary.NameOf));
-            Words(json, "expertise", hero.Expertise.Select(Vocabulary.NameOf));
+            Words(json, "skills", hero.Skills.Select(EnumWords.Name));
+            Words(json, "expertise", hero.Expertise.Select(EnumWords.Name));
 
             if (hero.DiscardWarningDismissed) json.WriteBoolean("discard_warning_dismissed", true);
 
@@ -156,7 +177,10 @@ namespace Content.Saves
             json.WriteEndArray();
 
             json.WriteNumber("improvements_pending", hero.PendingImprovements);
+        }
 
+        static void WriteHealth(Utf8JsonWriter json, SavedHero hero)
+        {
             json.WriteNumber("hp", hero.HitPoints);
 
             if (hero.TemporaryHitPoints != 0)
@@ -164,10 +188,13 @@ namespace Content.Saves
 
             json.WriteNumber("hit_dice", hero.HitDice);
             json.WriteNumber("gold", hero.Gold);
+        }
 
+        static void WriteMagic(Utf8JsonWriter json, SavedHero hero)
+        {
             // the mode first, then only the state that mode has: writing both shapes every time
             // would put a slot grid in every points save and mean nothing by it
-            json.WriteString("spell_resource", Vocabulary.NameOf(hero.Resource));
+            json.WriteString("spell_resource", EnumWords.Name(hero.Resource));
 
             if (hero.Resource == SpellResourceMode.Points)
             {
@@ -195,8 +222,11 @@ namespace Content.Saves
             }
 
             Words(json, "known", hero.Known);
-            Words(json, "conditions", hero.Conditions.Select(Vocabulary.NameOf));
+        }
 
+        // what its features have spent, a surge left, a shape worn
+        static void WriteFeatures(Utf8JsonWriter json, SavedHero hero)
+        {
             if (hero.Spent.Count > 0)
             {
                 json.WritePropertyName("spent");
@@ -211,14 +241,17 @@ namespace Content.Saves
             if (hero.ExtraActions >= 0) json.WriteNumber("extra_actions", hero.ExtraActions);
 
             if (!string.IsNullOrEmpty(hero.Form)) json.WriteString("form", hero.Form);
+        }
 
+        static void WriteGear(Utf8JsonWriter json, SavedHero hero)
+        {
             if (hero.Worn.Count > 0)
             {
                 json.WritePropertyName("worn");
                 json.WriteStartObject();
 
                 foreach (Slot slot in hero.Worn.Keys.OrderBy(s => (int)s))
-                    json.WriteString(Vocabulary.NameOf(slot), hero.Worn[slot] ?? "");
+                    json.WriteString(EnumWords.Name(slot), hero.Worn[slot] ?? "");
 
                 json.WriteEndObject();
             }
@@ -238,10 +271,6 @@ namespace Content.Saves
 
                 json.WriteEndArray();
             }
-
-            Where(json, hero.X, hero.Y);
-
-            json.WriteEndObject();
         }
 
         static void WriteActor(Utf8JsonWriter json, SavedActor actor)
@@ -260,7 +289,7 @@ namespace Content.Saves
             json.WriteNumber("seat", actor.Seat);
             json.WriteNumber("initiative", actor.Initiative);
 
-            Words(json, "conditions", actor.Conditions.Select(Vocabulary.NameOf));
+            Words(json, "conditions", actor.Conditions.Select(EnumWords.Name));
 
             Where(json, actor.X, actor.Y);
 

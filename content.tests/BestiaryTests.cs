@@ -173,11 +173,56 @@ namespace Content.Tests
         [Fact]
         public void TagsAreThereForTurnUndeadToRead()
         {
-            string[] undead = Srd.Bestiary.Tagged("undead").Select(m => m.Id).ToArray();
+            string[] undead = Srd.Bestiary.All.Where(m => m.Tags.Contains("undead")).Select(m => m.Id).ToArray();
 
             Assert.Contains("skeleton", undead);
             Assert.Contains("zombie", undead);
             Assert.DoesNotContain("goblin", undead);
+        }
+
+        // cc_task_godfiles-dupes-efficiency.md #10: a statblock's attack names the weapon and
+        // writes only what differs
+        [Fact]
+        public void AStatblockAttackThatNamesAWeaponIsThatWeapon()
+        {
+            Attack bow = Srd.Bestiary.Find("goblin").Attacks.Single(a => a.Id == "goblin_shortbow");
+            Attack shelf = Srd.Items.Find("shortbow").Attack;
+
+            Assert.Equal(shelf.Damage, bow.Damage);
+            Assert.Equal(shelf.DamageType, bow.DamageType);
+            Assert.Equal(shelf.Range, bow.Range);
+            Assert.Equal(shelf.LongRange, bow.LongRange);
+            Assert.Equal(Ability.Dexterity, bow.Ability);
+            Assert.Equal(Hand.Main, bow.Hand);
+
+            Attack scimitar = Srd.Bestiary.Find("goblin").Attacks.Single(a => a.Id == "scimitar");
+            Assert.True(scimitar.Finesse);
+        }
+
+        [Fact]
+        public void WhatAStatblockWritesBeatsTheWeapon()
+        {
+            const string json = @"{""monsters"": [{""id"": ""hill_brute"", ""hit_points"": 30,
+              ""attacks"": [{""weapon"": ""javelin"", ""damage"": ""2d6"", ""held"": true}]}]}";
+
+            Assert.True(MonsterReader.TryRead(json, out IReadOnlyList<Monster> read, out IReadOnlyList<string> problems),
+                        string.Join("\n", problems));
+
+            Attack javelin = read[0].Attacks.Single();
+            Assert.Equal("javelin", javelin.Id);
+            Assert.Equal("2d6", javelin.Damage.ToString());
+            Assert.Equal(Srd.Items.Find("javelin").Attack.Range, javelin.Range);
+        }
+
+        [Fact]
+        public void AWeaponThatIsNoSrdWeaponIsRefused()
+        {
+            const string json = @"{""monsters"": [{""id"": ""rat"", ""hit_points"": 1,
+              ""attacks"": [{""weapon"": ""laser_sword""}]}]}";
+
+            MonsterReader.TryRead(json, out _, out IReadOnlyList<string> problems);
+
+            Assert.Contains(problems, p => p.Contains("'laser_sword' isn't one"));
         }
     }
 }

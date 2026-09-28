@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Characters;
 using Core.Localization;
+using Core.Words;
 
 namespace Content.Sheet
 {
@@ -28,6 +29,21 @@ namespace Content.Sheet
         public static AbilityImprovement OneEach(Ability first, Ability second) =>
             new AbilityImprovement(first, second);
 
+        // THE OLD RULE, KEPT AS A SUGGESTION: +2 on the class's first priority while it has room,
+        // then the next; with everything at 19 or 20, +1 to two that are at 19. one rule for
+        // creation and level-up, each passing in how it reads the scores
+        public static AbilityImprovement Suggested(IEnumerable<Ability> priority, Func<Ability, int> score)
+        {
+            List<Ability> order = (priority ?? Array.Empty<Ability>()).Concat(Abilities.All).Distinct().ToList();
+
+            foreach (Ability ability in order)
+                if (score(ability) <= Abilities.Ceiling - 2) return Two(ability);
+
+            List<Ability> nineteen = order.Where(a => score(a) < Abilities.Ceiling).ToList();
+
+            return nineteen.Count >= 2 ? OneEach(nineteen[0], nineteen[1]) : Two(order[0]);
+        }
+
         // what it adds, score by score
         public IEnumerable<(Ability ability, int points)> Points =>
             Second.HasValue
@@ -46,14 +62,14 @@ namespace Content.Sheet
 
             string[] parts = word.Split('+');
 
-            if (parts.Length == 1 && Abilities.TryParse(parts[0], out Ability only))
+            if (parts.Length == 1 && EnumWords.TryParse(parts[0], out Ability only))
             {
                 improvement = Two(only);
                 return true;
             }
 
-            if (parts.Length == 2 && Abilities.TryParse(parts[0], out Ability a) &&
-                Abilities.TryParse(parts[1], out Ability b) && a != b)
+            if (parts.Length == 2 && EnumWords.TryParse(parts[0], out Ability a) &&
+                EnumWords.TryParse(parts[1], out Ability b) && a != b)
             {
                 improvement = OneEach(a, b);
                 return true;
@@ -94,6 +110,15 @@ namespace Content.Sheet
                     KeyConventions.Key(KeyConventions.UiNs, "improvement", "suggested", "name"),
                 });
 
+        // the key for why this one can't be spent now, or null when it can: none pending, or the rule
+        // below. one check for creation and level-up, each passing in its count and its scores
+        public static string WhyNot(int pending, AbilityImprovement choice, Func<Ability, int> score)
+        {
+            string why = pending <= 0 ? NonePending : Check(choice, score);
+
+            return why == null ? null : Key(why);
+        }
+
         // the rule, for a set of scores: +2/+0 or +1/+1, two different abilities for +1/+1, and
         // nothing past 20. null when it is fine
         public static string Check(AbilityImprovement choice, Func<Ability, int> score)
@@ -125,21 +150,9 @@ namespace Content.Sheet
         // bonuses and the spell DC read the scores live already
         public bool Improve(AbilityImprovement choice, out string whyNotKey)
         {
-            whyNotKey = null;
+            whyNotKey = ImprovementRefusals.WhyNot(PendingImprovements, choice, a => Actor.Scores.Base(a));
 
-            if (PendingImprovements <= 0)
-            {
-                whyNotKey = ImprovementRefusals.Key(ImprovementRefusals.NonePending);
-                return false;
-            }
-
-            string why = ImprovementRefusals.Check(choice, a => Actor.Scores.Base(a));
-
-            if (why != null)
-            {
-                whyNotKey = ImprovementRefusals.Key(why);
-                return false;
-            }
+            if (whyNotKey != null) return false;
 
             Apply(choice);
             _improvements.Add(choice);
@@ -157,24 +170,11 @@ namespace Content.Sheet
                 Actor.Scores.Raise(ability, points);
         }
 
-        // THE OLD RULE, KEPT AS A SUGGESTION: +2 on the class's first priority while it has room,
-        // then the next. the level-up screen pre-fills it; the sim and any hero the player does not
-        // drive spend it (ImproveAsSuggested). never applied to the player's hero on its own
-        public AbilityImprovement Suggested()
-        {
-            List<Ability> order = Class.Priority.Concat(Abilities.All).Distinct().ToList();
-
-            foreach (Ability ability in order)
-                if (Actor.Scores.Base(ability) <= Abilities.Ceiling - 2)
-                    return AbilityImprovement.Two(ability);
-
-            // everything is at 19 or 20: +1 to two that are at 19, if there are two
-            List<Ability> nineteen = order.Where(a => Actor.Scores.Base(a) < Abilities.Ceiling).ToList();
-
-            return nineteen.Count >= 2
-                ? AbilityImprovement.OneEach(nineteen[0], nineteen[1])
-                : AbilityImprovement.Two(order[0]);
-        }
+        // the suggestion (AbilityImprovement.Suggested) on this hero's scores. the level-up screen
+        // pre-fills it; the sim and any hero the player does not drive spend it
+        // (ImproveAsSuggested). never applied to the player's hero on its own
+        public AbilityImprovement Suggested() =>
+            AbilityImprovement.Suggested(Class.Priority, a => Actor.Scores.Base(a));
 
         // for the sim, and any hero nobody is choosing for: spend every pending one as suggested
         public int ImproveAsSuggested()
@@ -210,8 +210,7 @@ namespace Content.Sheet
 
             foreach (AbilityImprovement choice in spent ?? Enumerable.Empty<AbilityImprovement>())
             {
-                if (PendingImprovements <= 0 ||
-                    ImprovementRefusals.Check(choice, a => Actor.Scores.Base(a)) != null)
+                if (ImprovementRefusals.WhyNot(PendingImprovements, choice, a => Actor.Scores.Base(a)) != null)
                 {
                     refused.Add(choice);
                     continue;

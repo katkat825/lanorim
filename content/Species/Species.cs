@@ -95,6 +95,8 @@ namespace Content.Species
 
             using (document)
             {
+                Keyed.OnlyKnown(document.RootElement, new[] { "species" }, "the species file", trouble);
+
                 foreach (JsonElement entry in document.RootElement.Items("species"))
                 {
                     Kind kind = ReadOne(entry, trouble);
@@ -117,6 +119,12 @@ namespace Content.Species
             return trouble.Count == 0;
         }
 
+        // every key a species takes (its features' are FeatureReader.Keys)
+        public static readonly IReadOnlyList<string> Keys = new[]
+        {
+            "id", "speed", "bumps", "features", "lineages", "lineage_of",
+        };
+
         static Kind ReadOne(JsonElement entry, List<string> problems)
         {
             string id = entry.Text("id");
@@ -127,18 +135,9 @@ namespace Content.Species
                 return null;
             }
 
-            var bumps = new Dictionary<Ability, int>();
+            Keyed.OnlyKnown(entry, Keys, id, problems);
 
-            if (entry.Has("bumps"))
-                foreach (JsonProperty bump in entry.GetProperty("bumps").EnumerateObject())
-                {
-                    if (Abilities.TryParse(bump.Name, out Ability ability) &&
-                        bump.Value.TryGetInt32(out int by))
-                        bumps[ability] = by;
-                    else
-                        problems.Add($"{id}: '{bump.Name}' is not an ability, or its bump is not " +
-                                     "a number");
-                }
+            Dictionary<Ability, int> bumps = entry.AbilityRecord("bumps", problems, id);
 
             var features = new List<Feature>();
 
@@ -149,7 +148,7 @@ namespace Content.Species
                 if (feature != null) features.Add(feature);
             }
 
-            return new Kind(id, entry.Number("speed", 30), bumps, features,
+            return new Kind(id, entry.WalkingSpeed(id, problems), bumps, features,
                             entry.Strings("lineages"), entry.Text("lineage_of"));
         }
     }

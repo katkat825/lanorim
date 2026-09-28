@@ -5,7 +5,7 @@ using Core.Characters;
 using Core.Combat;
 using Core.Localization;
 using Core.Magic;
-using Core.Resolution;
+using Core.Words;
 
 namespace Content.Combat
 {
@@ -27,24 +27,7 @@ namespace Content.Combat
             ReactionPolicy.Auto, ReactionPolicy.Always, ReactionPolicy.Ask, ReactionPolicy.Never,
         };
 
-        public static string Id(this ReactionPolicy policy) => policy.ToString().ToLowerInvariant();
-
-        public static bool TryParse(string id, out ReactionPolicy policy)
-        {
-            foreach (ReactionPolicy p in All)
-            {
-                if (!string.Equals(p.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                policy = p;
-                return true;
-            }
-
-            policy = ReactionPolicy.Auto;
-            return false;
-        }
-
-        public static string NameKey(this ReactionPolicy policy) =>
-            KeyConventions.Key(KeyConventions.UiNs, "reaction_policy", policy.Id(), "name");
+        public static string NameKey(this ReactionPolicy policy) => policy.UiNameKey("reaction_policy");
 
         public static IEnumerable<string> Keys() =>
             All.Select(NameKey).Concat(ReactionQuestion.Keys());
@@ -180,13 +163,13 @@ namespace Content.Combat
                         return option;
 
                     case ReactionPolicy.Ask:
-                    {
-                        var question = new ReactionQuestion(reactor, option, moment);
-                        _asked.Add(question);
+                        {
+                            var question = new ReactionQuestion(reactor, option, moment);
+                            _asked.Add(question);
 
-                        if (_asker.Ask(question)) return option;
-                        continue;
-                    }
+                            if (_asker.Ask(question)) return option;
+                            continue;
+                        }
 
                     default:
                         if (ReferenceEquals(option, auto)) return option;

@@ -20,10 +20,10 @@ namespace Content.Tests
                                 Srd.Kind("elf_wood"));
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Dexterity] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Dexterity] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Stealth, Skill.Acrobatics, Skill.Perception,
                                Skill.Investigation },
                        null, Srd.Items);

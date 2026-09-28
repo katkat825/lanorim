@@ -52,20 +52,6 @@ namespace Core.Characters
 
         public int Missing => Maximum - Current;
 
-        public void SetMaximum(int maximum)
-        {
-            _maximum = Math.Max(1, maximum);
-
-            if (_current > Maximum) _current = Maximum;
-        }
-
-        public void SetHitDiceMax(int dice)
-        {
-            HitDiceMax = Math.Max(0, dice);
-
-            if (HitDice > HitDiceMax) HitDice = HitDiceMax;
-        }
-
         // a save putting back how many were left. clamped, because the maximum is the class's
         // and a retuned class may hand out fewer than the save remembers
         public void SetHitDice(int dice) => HitDice = Math.Clamp(dice, 0, HitDiceMax);

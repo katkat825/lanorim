@@ -10,6 +10,7 @@ using Core.Localization;
 using Core.Magic;
 using Core.Resolution;
 using Core.Space;
+using Core.Words;
 
 namespace Content.Tests
 {
@@ -29,10 +30,10 @@ namespace Content.Tests
             };
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Strength] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Strength] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Athletics, Skill.Perception }, null, Srd.Items);
 
             return hero;
@@ -44,10 +45,10 @@ namespace Content.Tests
                                 Creation.Creation.Standard(Srd.Class("mage")), level, null, mode);
 
             hero.Build(new Dictionary<Ability, int>
-                       {
-                           [Ability.Intelligence] = 2,
-                           [Ability.Constitution] = 1,
-                       },
+            {
+                [Ability.Intelligence] = 2,
+                [Ability.Constitution] = 1,
+            },
                        new[] { Skill.Arcana, Skill.History }, null, Srd.Items,
                        new[] { Srd.Spells.Find("fire_bolt"), Srd.Spells.Find("magic_missile"),
                                Srd.Spells.Find("shield"), Srd.Spells.Find("fireball"),
@@ -281,7 +282,7 @@ namespace Content.Tests
         {
             foreach (Alignment alignment in Alignments.All)
             {
-                Assert.True(Alignments.TryParse(alignment.Id(), out Alignment back));
+                Assert.True(EnumWords.TryParse(alignment.Id(), out Alignment back));
                 Assert.Equal(alignment, back);
                 Assert.True(KeyConventions.IsWellFormed(alignment.NameKey()));
             }

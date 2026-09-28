@@ -71,3 +71,8 @@
     - Antimagic Field (level 8): suppressing every spell and magic item inside it is a large engine change.
     - Earthquake (level 8): no fissures, collapsing structures or physics sandbox.
     - True Polymorph (level 9): curated forms and authored hooks only, not free transformation.
+
+- dim light (2026-09-27, `cc_task_dedupe-effects.md` Phase 2). Light is told, not played, in a fight, so nothing in the engine read the spells' `dim_radius` and it was deleted. When dim light is played, these are the numbers to bring back (each is "Dim Light for an additional 20 feet", 4 squares, beyond the bright radius):
+    - Light (cantrip): 4 squares. SRD 5.2.1 p.144.
+    - Produce Flame (cantrip): 4 squares. SRD 5.2.1 p.156.
+    - Flaming Sphere (level 2): 4 squares. SRD 5.2.1 p.132.

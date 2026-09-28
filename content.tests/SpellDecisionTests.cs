@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Content.Schema;
-using Content.Spells;
 using Core.Characters;
 using Core.Combat;
 using Core.Dice;
-using Core.Localization;
 using Core.Magic;
 using Core.Resolution;
 using Core.Space;
+using static Content.Tests.Fights;
 
 namespace Content.Tests
 {
@@ -17,8 +16,6 @@ namespace Content.Tests
     // Banishment and Maze take a creature off the board and bring it back
     public class SpellDecisionTests
     {
-        static readonly SpellBook Book = SpellBook.Srd();
-
         // eleven by five; the middle row is difficult ground from x = 3 to x = 7
         const string Hall = @"
 +-+-+-+-+-+-+-+-+-+-+-+
@@ -33,42 +30,7 @@ namespace Content.Tests
 |. . . . . . . . . . .|
 +-+-+-+-+-+-+-+-+-+-+-+";
 
-        // the two initiative rolls, then whatever else, then ones for ever after
-        static IRng Script(params int[] rolls) =>
-            new ScriptedRng(rolls.Concat(Enumerable.Repeat(1, 400)).ToArray());
-
-        static Encounter Field(IRng rng)
-        {
-            Assert.True(MapReader.TryRead(Hall, out MapLayout map, out string problem), problem);
-
-            return new Encounter(new StandardResolver(rng), new Battlefield(map), new CombatLog());
-        }
-
-        static Caster Wizard(out Actor actor, int level = 17)
-        {
-            actor = new Actor("wizard", level, new AbilityScores(10, 10, 14, 18, 10, 10),
-                              Allegiance.Hero);
-            actor.SetHealth(new Health(80, Die.D6, level));
-
-            var caster = new Caster(actor, Ability.Intelligence,
-                                    SpellSlots.For(CasterProgression.Full, level));
-
-            foreach (Spell spell in Book.All) caster.Learn(spell);
-
-            return caster;
-        }
-
-        static Actor Goblin(string id = "goblin", int hp = 100, params string[] tags)
-        {
-            var goblin = new Actor(id, 1, new AbilityScores());
-            goblin.SetHealth(new Health(hp));
-            goblin.Armor = new ArmorProfile(ArmorWeight.Heavy, 10);
-            goblin.Speed = 30;
-
-            foreach (string tag in tags) goblin.Tag(tag);
-
-            return goblin;
-        }
+        static Encounter Field(IRng rng) => Fights.Field(rng, Hall);
 
         // the wizard at (1,2) going first, the goblin at (x,2) going second
         static Encounter Duel(IRng rng, out Caster wizard, out Actor me, out Actor goblin,
@@ -156,7 +118,7 @@ namespace Content.Tests
             var inside = new Cell(5, 1);
             Assert.True(fight.IsRough(inside, goblin));
 
-            me.Boons.Add(new Boon("fly", "fly", Duration.Encounter) { FlySpeed = 60 });
+            me.Boons.Add(Boon.Of(new BoonSpec { FlySpeed = 60 }, "fly", "fly"));
             Assert.False(fight.IsRough(inside, me));
         }
 
@@ -178,7 +140,7 @@ namespace Content.Tests
 
             Assert.Equal(10, me.Moves);
             Assert.True(me.IsFlying);
-            Assert.True(me.Boons.Resist(DamageType.Slashing));
+            Assert.Contains(Defense.Resistant, me.Boons.DefensesAgainst(DamageType.Slashing));
             Assert.True(me.Boons.AdvantageOnSave(Ability.Constitution));
             Assert.False(me.Boons.AdvantageOnSave(Ability.Wisdom));
 
@@ -244,7 +206,7 @@ namespace Content.Tests
             Actor one = slowed[0];
             Assert.Equal(15, one.Moves);
             Assert.Equal(8, one.ArmorClass);
-            Assert.True(one.Boons.NoReactions);
+            Assert.True(one.Boons.Forbids(Forbid.Reactions));
             Assert.True(one.Boons.ActionOrBonus);
         }
 
@@ -431,7 +393,7 @@ namespace Content.Tests
 
             SpellEffect cube = Book.Find("wall_of_force").Effects.Single();
             Assert.Equal(Edge.Bars, cube.Encloses);
-            Assert.Equal(Reach.Square, cube.Reach);
+            Assert.Equal(AimKind.Square, cube.AimKind);
         }
     }
 }

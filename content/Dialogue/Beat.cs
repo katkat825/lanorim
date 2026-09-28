@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Core.Words;
 
 namespace Content.Dialogue
 {
@@ -51,7 +49,7 @@ namespace Content.Dialogue
         public string DmKey(string campaign) => DialogueKeys.Beat(TheDm, campaign, Id);
 
         public override string ToString() =>
-            $"{Id} [{Kind.ToString().ToLowerInvariant()}]" + (Note.Length > 0 ? $" - {Note}" : "");
+            $"{Id} [{EnumWords.Name(Kind)}]" + (Note.Length > 0 ? $" - {Note}" : "");
     }
 
     public enum BeatKind
@@ -65,26 +63,5 @@ namespace Content.Dialogue
 
         // texture. The Goose Incident lives here, and a voice with no opinion about it is fine
         Colour,
-    }
-
-    public static class BeatKinds
-    {
-        public static string Word(this BeatKind kind) => kind.ToString().ToLowerInvariant();
-
-        public static IReadOnlyList<string> Words => Enum.GetValues<BeatKind>().Select(Word).ToArray();
-
-        public static bool TryWord(string word, out BeatKind kind)
-        {
-            kind = default;
-
-            if (string.IsNullOrWhiteSpace(word)) return false;
-
-            string trimmed = word.Trim();
-
-            if (trimmed.Any(char.IsDigit)) return false;
-
-            return Enum.TryParse(trimmed, ignoreCase: true, out kind)
-                && Enum.IsDefined(typeof(BeatKind), kind);
-        }
     }
 }

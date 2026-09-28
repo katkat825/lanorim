@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Core.Characters;
 using Core.Combat;
 using Core.Rules;
+using Core.Words;
 
 namespace Content.Dialogue
 {
@@ -175,6 +176,6 @@ namespace Content.Dialogue
             (WentDown ? ", and the hero on the floor" : "") +
             (KilledABoss ? ", a boss among them" : "") +
             $"; hp down to {Lowest:0%}, {DeathSaves} death saves, " +
-            $"{_took.Count} conditions - {About().Word()}";
+            $"{_took.Count} conditions - {About().Id()}";
     }
 }

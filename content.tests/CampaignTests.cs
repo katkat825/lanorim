@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Content.Campaigns;
 using Content.Schema;
-using Xunit;
 
 namespace Content.Tests
 {
@@ -50,14 +48,18 @@ namespace Content.Tests
             Assert.Contains(read.Problems, p => p.What.Contains("folder"));
         }
 
-        [Fact]
-        public void ANameInTheManifestIsToldWhereNamesLive()
+        // one field that a manifest may not say, and what the refusal points at: a name belongs in
+        // the locale, a pack can't need itself, and the start has to be one of its chapters
+        [Theory]
+        [InlineData(@", ""name"": ""The Ash Yard""", "locale")]
+        [InlineData(@", ""dependencies"": [ ""ash_yard"" ]", "cannot depend on itself")]
+        [InlineData(@", ""start"": ""nowhere""", "no such chapter")]
+        public void AManifestFaultIsRefusedAndSaysWhere(string extra, string said)
         {
-            Read<Manifest> read = ManifestReader.Parse(
-                Pack(extra: @", ""name"": ""The Ash Yard"""), ManifestReader.PackFileName);
+            Read<Manifest> read = ManifestReader.Parse(Pack(extra: extra), ManifestReader.PackFileName);
 
             Assert.False(read.Ok);
-            Assert.Contains(read.Problems, p => p.What.Contains("locale"));
+            Assert.Contains(read.Problems, p => p.What.Contains(said));
         }
 
         [Fact]
@@ -70,26 +72,6 @@ namespace Content.Tests
 
             Assert.False(read.Ok);
             Assert.Contains(read.Problems, p => p.What.Contains("update the game"));
-        }
-
-        [Fact]
-        public void APackCannotDependOnItself()
-        {
-            Read<Manifest> read = ManifestReader.Parse(
-                Pack(extra: @", ""dependencies"": [ ""ash_yard"" ]"), ManifestReader.PackFileName);
-
-            Assert.False(read.Ok);
-            Assert.Contains(read.Problems, p => p.What.Contains("cannot depend on itself"));
-        }
-
-        [Fact]
-        public void StartingAtAChapterThatIsNotThereIsRefused()
-        {
-            Read<Manifest> read = ManifestReader.Parse(
-                Pack(extra: @", ""start"": ""nowhere"""), ManifestReader.PackFileName);
-
-            Assert.False(read.Ok);
-            Assert.Contains(read.Problems, p => p.What.Contains("no such chapter"));
         }
 
         [Fact]

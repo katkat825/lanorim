@@ -28,7 +28,7 @@ namespace Core.Combat
         readonly List<Placed> _zones = new();
 
         // who a zone has already done its once-a-turn thing to this turn
-        readonly HashSet<(IZone, Actor, Pulse?)> _pulsedThisTurn = new();
+        readonly HashSet<(IZone, Actor, Pulses?)> _pulsedThisTurn = new();
 
         public IReadOnlyList<IZone> Zones => _zones.Select(p => p.Zone).ToList();
 
@@ -40,10 +40,10 @@ namespace Core.Combat
 
             _zones.Add(new Placed(zone, duration));
 
-            if (!zone.Pulses.Has(Pulse.Appear)) return;
+            if (!zone.Pulses.HasFlag(Pulses.Appear)) return;
 
             foreach (Actor creature in CaughtIn(zone).ToList())
-                Once(zone, creature, Pulse.Appear);
+                Once(zone, creature, Pulses.Appear);
         }
 
         // one zone gone, whatever made it - a Sunburst burning away a Darkness
@@ -73,8 +73,13 @@ namespace Core.Combat
         public bool Affects(IZone zone, Actor creature) =>
             creature != null && !creature.IsDown &&
             !(zone.Ground && creature.IsFlying) &&
-            !(zone.SparesAllies && zone.Owner != null && creature.Side == zone.Owner.Side) &&
-            !(zone.AlliesOnly && zone.Owner != null && creature.Side != zone.Owner.Side);
+            (zone.Owner == null || zone.Affects switch
+            {
+                Core.Combat.Affects.Foes => creature.Side != zone.Owner.Side,
+                Core.Combat.Affects.Allies => creature.Side == zone.Owner.Side,
+                Core.Combat.Affects.NotCaster => creature != zone.Owner,
+                _ => true,
+            });
 
         public IEnumerable<Actor> CaughtIn(IZone zone) =>
             Field.Pieces.Where(a => Field.Where(a) is Cell c && zone.Covers(Field, c) &&
@@ -92,26 +97,26 @@ namespace Core.Combat
             var before = new HashSet<Actor>(wereIn ?? Enumerable.Empty<Actor>());
 
             foreach (Actor creature in CaughtIn(zone).Where(a => !before.Contains(a)).ToList())
-                if (zone.Pulses.Has(Pulse.Enter)) Once(zone, creature, Pulse.Enter);
+                if (zone.Pulses.HasFlag(Pulses.Enter)) Once(zone, creature, Pulses.Enter);
         }
 
         // SRD's "only once per turn": Appear, Enter, StartTurn and EndTurn share it. EachSquare
         // does not, because Spike Growth's whole point is that every step hurts. a zone that acts
         // EachTime counts each kind of moment once a turn instead - Wall of Fire's "enters it for
         // the first time on a turn or ends its turn there" is two burns, not one and not three
-        void Once(IZone zone, Actor creature, Pulse pulse)
+        void Once(IZone zone, Actor creature, Pulses pulse)
         {
-            if (!_pulsedThisTurn.Add((zone, creature, zone.EachTime ? pulse : (Pulse?)null))) return;
+            if (!_pulsedThisTurn.Add((zone, creature, zone.EachTime ? pulse : (Pulses?)null))) return;
 
             zone.Act(this, creature, pulse);
         }
 
-        void PulseWhereItStands(Actor creature, Pulse pulse)
+        void PulseWhereItStands(Actor creature, Pulses pulse)
         {
             if (!(Field.Where(creature) is Cell here)) return;
 
             foreach (Placed placed in _zones.ToList())
-                if (placed.Zone.Pulses.Has(pulse) && placed.Zone.Covers(Field, here) &&
+                if (placed.Zone.Pulses.HasFlag(pulse) && placed.Zone.Covers(Field, here) &&
                     Affects(placed.Zone, creature))
                     Once(placed.Zone, creature, pulse);
         }
@@ -124,10 +129,10 @@ namespace Core.Combat
 
                 if (!zone.Covers(Field, to) || !Affects(zone, mover)) continue;
 
-                if (zone.Pulses.Has(Pulse.EachSquare)) zone.Act(this, mover, Pulse.EachSquare);
+                if (zone.Pulses.HasFlag(Pulses.EachSquare)) zone.Act(this, mover, Pulses.EachSquare);
 
-                if (zone.Pulses.Has(Pulse.Enter) && !zone.Covers(Field, from))
-                    Once(zone, mover, Pulse.Enter);
+                if (zone.Pulses.HasFlag(Pulses.Enter) && !zone.Covers(Field, from))
+                    Once(zone, mover, Pulses.Enter);
 
                 if (mover.IsDown) return;
             }

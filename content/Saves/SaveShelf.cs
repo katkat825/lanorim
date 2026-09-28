@@ -78,27 +78,9 @@ namespace Content.Saves
         {
             var shelf = new SaveShelf(folder);
 
-            if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder)) return shelf;
-
-            foreach (string path in Directory.EnumerateFiles(folder, "*" + Extension)
-                                             .OrderBy(f => f, StringComparer.Ordinal))
+            foreach ((string name, string path, string text) in PackFolder.Read(folder, Extension, null, shelf._problems))
             {
-                string name = Path.GetFileName(path);
-
-                string text;
-                DateTime written;
-
-                try
-                {
-                    text = File.ReadAllText(path);
-                    written = File.GetLastWriteTimeUtc(path);
-                }
-                catch (IOException bad)
-                {
-                    shelf._problems.Add(new ContentProblem(name, "",
-                        "could not be read - " + bad.Message));
-                    continue;
-                }
+                DateTime written = File.GetLastWriteTimeUtc(path);
 
                 Read<SaveGame> read = SaveReader.Parse(text, name);
 

@@ -22,7 +22,7 @@
       "features": [
         { "id": "elf_darkvision", "trait": "narrate", "level": 1,
           "note": "Darkvision 60 feet (120 for a Drow). no light model on the map in v1; authored dark places can ask for it" },
-        { "id": "fey_ancestry", "trait": "narrate", "level": 1, "advantage_on": ["save_vs:charmed"] },
+        { "id": "fey_ancestry", "trait": "narrate", "level": 1, "boons": [{"leans": "advantage_on_saves", "against": "charmed"}] },
         { "id": "keen_senses", "trait": "training", "level": 1, "skills": ["perception"],
           "note": "SRD: Insight, Perception or Survival, the player's choice. Creation has no species skill pick yet" },
         { "id": "trance", "trait": "narrate", "level": 1, "tags": ["sleepless"],
@@ -62,7 +62,7 @@
       "speed": 30,
       "lineages": ["dragonborn_acid", "dragonborn_cold", "dragonborn_fire", "dragonborn_lightning", "dragonborn_poison"],
       "features": [
-        { "id": "dragonborn_darkvision", "trait": "narrate", "level": 1, "note": "Darkvision 60 feet" },
+        { "id": "darkvision_60", "level": 1 },
         { "id": "draconic_flight", "trait": "narrate", "level": 5,
           "note": "a short ignore-terrain state on authored maps, not general 3D flight (v1_species_roster.md)" }
       ]
@@ -70,86 +70,81 @@
     {
       "id": "dragonborn_acid", "lineage_of": "dragonborn", "speed": 30,
       "features": [
-        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long",
+        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long_rest",
           "note": "SRD 5.2.1 p.84: replaces one attack of the Attack action; v1 spends the action on it",
           "spell": { "id": "breath_weapon_acid", "level": 0, "school": "evocation", "range": 0, "classes": [],
                      "dc_ability": "con",
                      "effects": [
-                       { "primitive": "damage", "reach": "cone", "length": 3, "amount": "1d10", "cantrip_scaling": true,
+                       { "primitive": "damage", "aim": "cone", "length": 3, "amount": "1d10", "cantrip_growth": "dice",
                          "damage_type": "acid", "save": "dex", "on_save": "half", "mode": "cone" },
-                       { "primitive": "damage", "reach": "line", "length": 6, "width": 1, "amount": "1d10",
-                         "cantrip_scaling": true, "damage_type": "acid", "save": "dex", "on_save": "half", "mode": "line" }
+                       { "primitive": "damage", "aim": "line", "length": 6, "width": 1, "amount": "1d10",
+                         "cantrip_growth": "dice", "damage_type": "acid", "save": "dex", "on_save": "half", "mode": "line" }
                      ] } },
-        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "acid",
-          "defense": "resistant" }
+        { "id": "draconic_resistance", "trait": "narrate", "level": 1, "boons": [{"defenses": {"acid": "resistant"}}] }
       ]
     },
     {
       "id": "dragonborn_cold", "lineage_of": "dragonborn", "speed": 30,
       "features": [
-        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long",
+        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long_rest",
           "note": "SRD 5.2.1 p.84: replaces one attack of the Attack action; v1 spends the action on it",
           "spell": { "id": "breath_weapon_cold", "level": 0, "school": "evocation", "range": 0, "classes": [],
                      "dc_ability": "con",
                      "effects": [
-                       { "primitive": "damage", "reach": "cone", "length": 3, "amount": "1d10", "cantrip_scaling": true,
+                       { "primitive": "damage", "aim": "cone", "length": 3, "amount": "1d10", "cantrip_growth": "dice",
                          "damage_type": "cold", "save": "dex", "on_save": "half", "mode": "cone" },
-                       { "primitive": "damage", "reach": "line", "length": 6, "width": 1, "amount": "1d10",
-                         "cantrip_scaling": true, "damage_type": "cold", "save": "dex", "on_save": "half", "mode": "line" }
+                       { "primitive": "damage", "aim": "line", "length": 6, "width": 1, "amount": "1d10",
+                         "cantrip_growth": "dice", "damage_type": "cold", "save": "dex", "on_save": "half", "mode": "line" }
                      ] } },
-        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "cold",
-          "defense": "resistant" }
+        { "id": "draconic_resistance", "trait": "narrate", "level": 1, "boons": [{"defenses": {"cold": "resistant"}}] }
       ]
     },
     {
       "id": "dragonborn_fire", "lineage_of": "dragonborn", "speed": 30,
       "features": [
-        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long",
+        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long_rest",
           "note": "SRD 5.2.1 p.84: replaces one attack of the Attack action; v1 spends the action on it",
           "spell": { "id": "breath_weapon_fire", "level": 0, "school": "evocation", "range": 0, "classes": [],
                      "dc_ability": "con",
                      "effects": [
-                       { "primitive": "damage", "reach": "cone", "length": 3, "amount": "1d10", "cantrip_scaling": true,
+                       { "primitive": "damage", "aim": "cone", "length": 3, "amount": "1d10", "cantrip_growth": "dice",
                          "damage_type": "fire", "save": "dex", "on_save": "half", "mode": "cone" },
-                       { "primitive": "damage", "reach": "line", "length": 6, "width": 1, "amount": "1d10",
-                         "cantrip_scaling": true, "damage_type": "fire", "save": "dex", "on_save": "half", "mode": "line" }
+                       { "primitive": "damage", "aim": "line", "length": 6, "width": 1, "amount": "1d10",
+                         "cantrip_growth": "dice", "damage_type": "fire", "save": "dex", "on_save": "half", "mode": "line" }
                      ] } },
-        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "fire",
-          "defense": "resistant" }
+        { "id": "draconic_resistance", "trait": "narrate", "level": 1, "boons": [{"defenses": {"fire": "resistant"}}] }
       ]
     },
     {
       "id": "dragonborn_lightning", "lineage_of": "dragonborn", "speed": 30,
       "features": [
-        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long",
+        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long_rest",
           "note": "SRD 5.2.1 p.84: replaces one attack of the Attack action; v1 spends the action on it",
           "spell": { "id": "breath_weapon_lightning", "level": 0, "school": "evocation", "range": 0, "classes": [],
                      "dc_ability": "con",
                      "effects": [
-                       { "primitive": "damage", "reach": "cone", "length": 3, "amount": "1d10", "cantrip_scaling": true,
+                       { "primitive": "damage", "aim": "cone", "length": 3, "amount": "1d10", "cantrip_growth": "dice",
                          "damage_type": "lightning", "save": "dex", "on_save": "half", "mode": "cone" },
-                       { "primitive": "damage", "reach": "line", "length": 6, "width": 1, "amount": "1d10",
-                         "cantrip_scaling": true, "damage_type": "lightning", "save": "dex", "on_save": "half", "mode": "line" }
+                       { "primitive": "damage", "aim": "line", "length": 6, "width": 1, "amount": "1d10",
+                         "cantrip_growth": "dice", "damage_type": "lightning", "save": "dex", "on_save": "half", "mode": "line" }
                      ] } },
-        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "lightning",
-          "defense": "resistant" }
+        { "id": "draconic_resistance", "trait": "narrate", "level": 1, "boons": [{"defenses": {"lightning": "resistant"}}] }
       ]
     },
     {
       "id": "dragonborn_poison", "lineage_of": "dragonborn", "speed": 30,
       "features": [
-        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long",
+        { "id": "breath_weapon", "trait": "narrate", "level": 1, "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long_rest",
           "note": "SRD 5.2.1 p.84: replaces one attack of the Attack action; v1 spends the action on it",
           "spell": { "id": "breath_weapon_poison", "level": 0, "school": "evocation", "range": 0, "classes": [],
                      "dc_ability": "con",
                      "effects": [
-                       { "primitive": "damage", "reach": "cone", "length": 3, "amount": "1d10", "cantrip_scaling": true,
+                       { "primitive": "damage", "aim": "cone", "length": 3, "amount": "1d10", "cantrip_growth": "dice",
                          "damage_type": "poison", "save": "dex", "on_save": "half", "mode": "cone" },
-                       { "primitive": "damage", "reach": "line", "length": 6, "width": 1, "amount": "1d10",
-                         "cantrip_scaling": true, "damage_type": "poison", "save": "dex", "on_save": "half", "mode": "line" }
+                       { "primitive": "damage", "aim": "line", "length": 6, "width": 1, "amount": "1d10",
+                         "cantrip_growth": "dice", "damage_type": "poison", "save": "dex", "on_save": "half", "mode": "line" }
                      ] } },
-        { "id": "draconic_resistance", "trait": "resistance", "level": 1, "damage_type": "poison",
-          "defense": "resistant" }
+        { "id": "draconic_resistance", "trait": "narrate", "level": 1, "boons": [{"defenses": {"poison": "resistant"}}] }
       ]
     },
 
@@ -157,12 +152,11 @@
       "id": "tiefling",
       "speed": 30,
       "features": [
-        { "id": "infernal_legacy", "trait": "resistance", "level": 1, "damage_type": "fire",
-          "defense": "resistant",
+        { "id": "infernal_legacy", "trait": "narrate", "level": 1, "boons": [{"defenses": {"fire": "resistant"}}],
           "spells": {"1": ["fire_bolt"], "3": ["hellish_rebuke"], "5": ["darkness"]},
           "free_casts": {"hellish_rebuke": 1, "darkness": 1}, "spell_abilities": ["int", "wis", "cha"],
           "note": "Infernal is the launch legacy; Abyssal and Chthonic wait on Poison Spray, Chill Touch, Ray of Sickness, False Life, Hold Person and Ray of Enfeeblement" },
-        { "id": "tiefling_darkvision", "trait": "narrate", "level": 1, "note": "Darkvision 60 feet" },
+        { "id": "darkvision_60", "level": 1 },
         { "id": "otherworldly_presence", "trait": "narrate", "level": 1, "spells": {"1": ["thaumaturgy"]} }
       ]
     },
@@ -171,10 +165,9 @@
       "id": "dwarf",
       "speed": 30,
       "features": [
-        { "id": "dwarven_resilience", "trait": "resistance", "level": 1, "damage_type": "poison",
-          "defense": "resistant", "advantage_on": ["save_vs:poisoned"] },
+        { "id": "dwarven_resilience", "trait": "narrate", "level": 1, "boons": [{"defenses": {"poison": "resistant"}, "leans": "advantage_on_saves", "against": "poisoned"}] },
         { "id": "dwarven_toughness", "trait": "narrate", "level": 1, "max_hp_per_level": 1 },
-        { "id": "dwarf_darkvision", "trait": "narrate", "level": 1, "note": "Darkvision 120 feet" },
+        { "id": "darkvision_120", "level": 1 },
         { "id": "stonecunning", "trait": "narrate", "level": 1,
           "note": "a step up on authored stone secrets and hazards, not a tremorsense simulation (v1_species_roster.md)" }
       ]
@@ -184,7 +177,7 @@
       "id": "halfling",
       "speed": 30,
       "features": [
-        { "id": "brave", "trait": "narrate", "level": 1, "advantage_on": ["save_vs:frightened"] },
+        { "id": "brave", "trait": "narrate", "level": 1, "boons": [{"leans": "advantage_on_saves", "against": "frightened"}] },
         { "id": "halfling_nimbleness", "trait": "narrate", "level": 1,
           "note": "SRD: move through the space of a creature a size larger, but not stop there. v1's board does not model size yet" },
         { "id": "halfling_luck", "trait": "narrate", "level": 1, "uses": 1,
@@ -198,11 +191,11 @@
       "id": "orc",
       "speed": 30,
       "features": [
-        { "id": "adrenaline_rush", "trait": "boost", "level": 1, "cost": "bonus",
-          "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "short" },
-        { "id": "orc_darkvision", "trait": "narrate", "level": 1, "note": "Darkvision 120 feet" },
-        { "id": "relentless_endurance", "trait": "death_intercept", "level": 1, "flat": 1,
-          "uses": 1, "recharge": "long",
+        { "id": "adrenaline_rush", "trait": "boost", "level": 1, "use_time": "bonus_action",
+          "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "short_rest" },
+        { "id": "darkvision_120", "level": 1 },
+        { "id": "relentless_endurance", "trait": "death_intercept", "level": 1, "stays_up_at": {"hit_points": 1},
+          "uses": 1, "recharge": "long_rest",
           "note": "at 0 hit points, spend the use to stay up on 1 instead. the reusable death-intercept this validates is what the Barbarian's Relentless Rage reuses" }
       ]
     }

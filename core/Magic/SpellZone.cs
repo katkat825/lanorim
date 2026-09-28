@@ -4,6 +4,7 @@ using System.Linq;
 using Core.Characters;
 using Core.Combat;
 using Core.Space;
+using Core.Words;
 
 namespace Core.Magic
 {
@@ -33,7 +34,7 @@ namespace Core.Magic
             CastAt = castAt;
             Centre = centre;
 
-            Acts = spell.Effects.Where(e => e.Reach == Reach.Zone).ToList();
+            Acts = spell.Effects.Where(e => e.AimKind == AimKind.Zone).ToList();
             Pulses = Acts.Aggregate(Pulses.None, (all, e) => all | e.Pulses);
         }
 
@@ -61,27 +62,25 @@ namespace Core.Magic
 
         public bool Ground => Area.Ground;
 
-        public bool SparesAllies => Area.SparesAllies;
+        public Affects Affects => Area.Affects;
 
         public Obscurement Obscures => Area.Obscures;
 
-        public bool Magical => Area.MagicalDarkness;
-
-        public bool AlliesOnly => Area.AlliesOnly;
-
         // the sways it lays on whoever stands inside
-        public IEnumerable<SpellEffect> Auras => Acts.Where(e => e.WhileInside);
+        public IEnumerable<SpellEffect> Auras =>
+            Acts.Where(e => e.Kind == Primitive.Sway && e.Linger.WhileInZone);
 
+        // Globe of Invulnerability's 5, and its upcast's one more per slot level
         public int BlocksSpellsUpTo =>
             Area.BlocksSpellsUpTo > 0
-                ? Area.BlocksSpellsUpTo + Math.Max(0, CastAt - Spell.Level)
+                ? Area.BlocksSpellsUpTo + Area.Upcast.BlocksSpellsUpTo * Math.Max(0, CastAt - Spell.Level)
                 : 0;
 
         public bool FollowsOwner => !Centre.HasValue;
 
         // Fog Cloud grows by 20 feet a slot level
         public int Radius =>
-            Math.Max(0, Area.Radius + Area.RadiusPerExtraLevel * Math.Max(0, CastAt - Spell.Level));
+            Math.Max(0, Area.Radius + Area.Upcast.Radius * Math.Max(0, CastAt - Spell.Level));
 
         // how a wall was put down: the way it runs, the side that is its business, and whether it
         // is a ring rather than straight
@@ -93,13 +92,13 @@ namespace Core.Magic
 
         public IEnumerable<Cell> Squares(Battlefield field)
         {
-            if (Area.Reach == Reach.Wall) return WallSquares(field).Concat(BesideSquares(field));
+            if (Area.AimKind == AimKind.Wall) return WallSquares(field).Concat(BesideSquares(field));
 
             Cell? at = Centre ?? field.Where(Owner);
 
             if (!at.HasValue) return Enumerable.Empty<Cell>();
 
-            return Area.Reach == Reach.Square
+            return Area.AimKind == AimKind.Square
                 ? field.Square(at.Value, Math.Max(1, Area.Length))
                 : field.Burst(at.Value, Radius);
         }
@@ -107,7 +106,7 @@ namespace Core.Magic
         public bool Covers(Battlefield field, Cell cell) => Squares(field).Contains(cell);
 
         public bool Core(Battlefield field, Cell cell) =>
-            Area.Reach == Reach.Wall ? WallSquares(field).Contains(cell) : Covers(field, cell);
+            Area.AimKind == AimKind.Wall ? WallSquares(field).Contains(cell) : Covers(field, cell);
 
         public int Cover => Area.Cover;
 
@@ -178,7 +177,7 @@ namespace Core.Magic
         public bool EachTime => Area.EachTime;
 
         // the squares strictly inside a ring
-        public bool Inside(Battlefield field, Cell cell)
+        public bool Inside(Cell cell)
         {
             if (!Centre.HasValue) return false;
 
@@ -201,7 +200,7 @@ namespace Core.Magic
             {
                 foreach (Cell w in wall)
                     foreach (Cell near in field.Burst(w, Area.Beside))
-                        if (!wall.Contains(near) && Inside(field, near) == (Side == Side.Left))
+                        if (!wall.Contains(near) && Inside(near) == (Side == Side.Left))
                             beside.Add(near);
 
                 return beside;
@@ -252,7 +251,7 @@ namespace Core.Magic
             _was = null;
         }
 
-        public void Act(Encounter fight, Actor creature, Pulse pulse) =>
+        public void Act(Encounter fight, Actor creature, Pulses pulse) =>
             _incantation.Pulse(this, fight, creature, pulse);
 
         internal void MoveTo(Cell cell) => Centre = cell;

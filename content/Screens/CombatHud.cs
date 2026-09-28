@@ -91,12 +91,6 @@ namespace Content.Screens
         public ActionOption Hotkey(int key) =>
             key < 1 || key > 9 ? null : Bar.FirstOrDefault(o => o.Hotkey == key);
 
-        // the log, newest last; the panel shows the last few and opens to the rest
-        public IReadOnlyList<LogLine> LastLines(int count) =>
-            Log == null
-                ? Array.Empty<LogLine>()
-                : Log.Lines.Skip(Math.Max(0, Log.Lines.Count - count)).ToList();
-
         public static readonly string EndTurnKey = ScreenKeys.Key("combat", "end_turn");
         public static readonly string ActionsKey = ScreenKeys.Key("combat", "actions");
         public static readonly string BonusKey = ScreenKeys.Key("combat", "bonus_action");

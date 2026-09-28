@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using Core.Characters;
 using Core.Combat;
 using Core.Localization;
@@ -33,9 +34,9 @@ namespace Content.Combat
     // is logged as "the GM rolls" with no numbers; one on the table shows its faces and total
     public sealed class FightLog : CombatObserver
     {
-        readonly List<LogLine> _lines = new List<LogLine>();
+        readonly LineLog<LogLine> _log = new LineLog<LogLine>();
 
-        public IReadOnlyList<LogLine> Lines => _lines;
+        public IReadOnlyList<LogLine> Lines => _log.Lines;
 
         public event Action<LogLine> Wrote;
 
@@ -50,7 +51,7 @@ namespace Content.Combat
         void Add(string key, params object[] args)
         {
             var line = new LogLine(K(key), args);
-            _lines.Add(line);
+            _log.Add(line);
             Wrote?.Invoke(line);
         }
 
@@ -113,6 +114,6 @@ namespace Content.Combat
         public override void Ended(Outcome outcome) =>
             Add(outcome == Outcome.HeroesWon ? "won" : outcome == Outcome.Fled ? "fled" : "lost");
 
-        public override string ToString() => string.Join("\n", _lines);
+        public override string ToString() => _log.ToString();
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Core.Characters;
 using Core.Combat;
+using Core.Words;
 
 namespace Core.Magic
 {
@@ -35,14 +36,13 @@ namespace Core.Magic
         public Trigger Trigger => Spell.Trigger.Value;
 
         // a smite is a bonus action taken in answer to your own hit; everything else a reaction
-        public Spend Cost => Spell.CastingTime == CastingTime.BonusAction ? Spend.Bonus : Spend.Reaction;
+        public Spend Cost => Spell.CastingTime == Spend.Bonus ? Spend.Bonus : Spend.Reaction;
 
         // armor class the spell puts on its own caster: Shield's five. read off the primitives,
         // not the spell's name
         public int Deflects =>
-            Spell.Effects.Where(e => e.Kind == Primitive.Sway && e.Reach == Reach.Caster &&
-                                     (e.Touches & Sways.ArmorClass) != 0)
-                 .Sum(e => e.Sway);
+            Spell.Effects.Where(e => e.Kind == Primitive.Sway && e.AimKind == AimKind.Caster)
+                 .Sum(e => e.Boon.ArmorClass);
 
         public bool AlsoAnswers(Moment moment) =>
             moment != null && moment.Trigger == Trigger.Targeted && Spell.AnswersSpell.Length > 0 &&
@@ -84,7 +84,7 @@ namespace Core.Magic
 
             // a spell that reaches something other than its caster has to reach the one who
             // caused the moment: Counterspell's sixty feet, Hellish Rebuke's sixty feet
-            bool outward = Spell.Effects.Any(e => e.Reach != Reach.Caster);
+            bool outward = Spell.Effects.Any(e => e.AimKind != AimKind.Caster);
 
             if (outward && fight != null &&
                 !fight.Field.InRange(reactor, moment.Source, Math.Max(1, Spell.Range)))
@@ -100,6 +100,6 @@ namespace Core.Magic
         public void Answer(Encounter fight, Actor reactor, Moment moment) =>
             Last = _incantation.Answer(_caster, Spell, moment, fight);
 
-        public override string ToString() => $"{Id} ({Trigger.ToString().ToLowerInvariant()})";
+        public override string ToString() => $"{Id} ({EnumWords.Name(Trigger)})";
     }
 }

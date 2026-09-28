@@ -6,11 +6,11 @@ namespace Content.Monsters
     // one special action on a statblock: what it does (a spell of primitives), and how often
     public sealed class MonsterAction
     {
-        public MonsterAction(Spell spell, int recharge = 0, int perDay = 0, int dc = 0)
+        public MonsterAction(Spell spell, int rechargeOn = 0, int uses = 0, int dc = 0)
         {
             Spell = spell ?? throw new ArgumentNullException(nameof(spell));
-            Recharge = Math.Clamp(recharge, 0, 6);
-            PerDay = Math.Max(0, perDay);
+            RechargeOn = Math.Clamp(rechargeOn, 0, 6);
+            Uses = Math.Max(0, uses);
             Dc = Math.Max(0, dc);
         }
 
@@ -19,13 +19,14 @@ namespace Content.Monsters
 
         public Spell Spell { get; }
 
-        // 5 is "Recharge 5-6"
-        public int Recharge { get; }
+        // "recharge": {"d6": 5} is "Recharge 5-6"
+        public int RechargeOn { get; }
 
-        public int PerDay { get; }
+        // so many uses, back on a long rest - a feature's 'uses', the same word
+        public int Uses { get; }
 
         public override string ToString() =>
-            Spell.Id + (Recharge > 0 ? $" (recharge {Recharge}-6)" : "") +
-            (PerDay > 0 ? $" ({PerDay}/day)" : "");
+            Spell.Id + (RechargeOn > 0 ? $" (recharge {RechargeOn}-6)" : "") +
+            (Uses > 0 ? $" ({Uses}/day)" : "");
     }
 }

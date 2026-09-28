@@ -6,7 +6,6 @@ using Content.Campaigns;
 using Content.Encounters;
 using Core.Localization;
 using Core.Tables;
-using Xunit;
 
 namespace Content.Tests
 {
@@ -112,20 +111,6 @@ namespace Content.Tests
         public void ABadEntryIsRefused(string entry, string said)
         {
             Assert.Contains(Problems(One(entry: entry)), p => p.Contains(said));
-        }
-
-        [Fact]
-        public void AnEmptyTableIsRefused()
-        {
-            Assert.Contains(Problems(@"{ ""tables"": [ { ""id"": ""north_road"", ""entries"": [] } ] }"),
-                            p => p.Contains("empty table"));
-        }
-
-        [Fact]
-        public void HiddenOrShownAndNothingElse()
-        {
-            Assert.Contains(Problems(One(extra: @"""rolled"": ""secret"",")),
-                            p => p.Contains("'hidden' or 'shown'"));
         }
 
         [Fact]

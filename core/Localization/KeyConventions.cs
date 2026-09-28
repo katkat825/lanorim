@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Words;
 
 namespace Core.Localization
 {
@@ -56,6 +57,11 @@ namespace Core.Localization
 
         public static string Key(string ns, string subject, string aspect, params string[] qualifiers) =>
             string.Join(".", new[] { ns, subject, aspect }.Concat(qualifiers ?? Array.Empty<string>()));
+
+        // ui.<subject>.<the value's word>.name: a setting's choices, an act, a caption - an enum the
+        // engine names on screen, one key per value
+        public static string UiNameKey<T>(this T value, string subject) where T : struct, Enum =>
+            Key(UiNs, subject, value.Id(), "name");
 
         public static string Indexed(string ns, string subject, string aspect, string qualifier, int index) =>
             $"{ns}.{subject}.{aspect}.{qualifier}.{index:000}";

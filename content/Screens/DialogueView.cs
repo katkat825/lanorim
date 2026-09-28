@@ -55,12 +55,12 @@ namespace Content.Screens
 
         public IReadOnlyList<ChoiceRow> Choices =>
             Talk.Choosing.Select((c, i) => new ChoiceRow
-                {
-                    Option = i,
-                    Key = c.Key,
-                    Substitutions = c.Substitutions,
-                    Offered = c.Offered,
-                })
+            {
+                Option = i,
+                Key = c.Key,
+                Substitutions = c.Substitutions,
+                Offered = c.Offered,
+            })
                 .ToList();
 
         public bool CanContinue => Run.Now == Scene.Line;

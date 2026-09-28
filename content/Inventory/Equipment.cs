@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Content.Items;
 using Core.Characters;
+using Core.Words;
 
 namespace Content.Inventory
 {
@@ -105,12 +106,9 @@ namespace Content.Inventory
         // a spell's boons are untouched
         public const string Source = "equipment";
 
-        static Boon Restamped(Boon boon) =>
-            new Boon(boon.Id, Source, boon.Duration, boon.Flat, boon.Dice,
-                     boon.Attacks, boon.Saves, boon.Checks, boon.Damage, boon.ArmorClass,
-                     boon.Skill, boon.Save,
-                     boon.AdvantageOnChecks, boon.DisadvantageOnChecks,
-                     boon.AdvantageOnAttacks, boon.DisadvantageOnAttacks);
+        // the whole spec comes along: this used to be a hand copy of the constructor's first
+        // sixteen arguments, which dropped everything after them (cc_task_dedupe-effects.md, Lead 1)
+        static Boon Restamped(Boon boon) => Boon.Of(boon.Spec, boon.Id, Source);
 
         public override string ToString() =>
             _worn.Count == 0

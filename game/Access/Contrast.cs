@@ -14,8 +14,8 @@ namespace Game.Access
     // the ratio is worth computing rather than asserting. It says what the ordinary table manages,
     // and high contrast is what it changes to when the ordinary table is not enough.
     //
-    // Godot-free apart from Color, which is a struct, so the sweep in check-access.ps1 and the unit
-    // tests measure the same numbers the running game does.
+    // Godot-free apart from Color, which is a struct, so a headless check can measure the same
+    // numbers the running game does. (The old build's check-access.ps1 did; this build has none yet.)
     public static class Contrast
     {
         // WCAG AA for body text
@@ -48,9 +48,6 @@ namespace Game.Access
 
             return (Mathf.Max(a, b) + 0.05f) / (Mathf.Min(a, b) + 0.05f);
         }
-
-        public static bool Enough(Color ink, Color paper, float ratio = Body) =>
-            Between(ink, paper) >= ratio;
 
         // THE INK THIS PAPER CAN CARRY. Black or white, whichever wins - and it is genuinely one or
         // the other: anything in between is a compromise nobody asked for when they asked for high

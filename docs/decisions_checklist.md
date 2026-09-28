@@ -100,7 +100,7 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED] Races/ancestries** — **7 v1 species: Human, Elf, Dragonborn, Tiefling, Dwarf, Halfling,
   Orc** (`v1_species_roster.md`); Gnome/Goliath deferred. Light to implement; minis reusable; v1 may
   ignore species for the mini. The cost knee is the visual pipeline, not the mechanics.
-- **[DECIDED, approach] Backgrounds** — SRD; light (skills/flavor). *(2026-09-24: 5 of the 9 in the data may not be SRD 5.2.1 — a review list is being produced; decision pending.)* *(2026-09-25: confirmed against the SRD text: only Acolyte, Criminal, Sage and Soldier are SRD 5.2.1 (SRD p.83). The removals are `cc_task_review-naming-and-backgrounds.md`'s.)*
+- **[DECIDED, approach] Backgrounds** — SRD; light (skills/flavor). *(2026-09-24: 5 of the 9 in the data may not be SRD 5.2.1 — a review list is being produced; decision pending.)* *(2026-09-25: confirmed against the SRD text: only Acolyte, Criminal, Sage and Soldier are SRD 5.2.1 (SRD p.83). The removals are `cc_task_review-naming-and-backgrounds.md`'s.)* *(2026-09-28: applied. Five backgrounds: the four SRD ones and **Recluse**, Lanorim's own, first-party and marked `not_in_srd`, in its own file beside the SRD's.)*
 - **[DECIDED, approach] Monsters** — full SRD pool + custom per campaign. Statblocks are
   cheap; *special abilities are the cost* (§6).
 - **[DECIDED] Level range & leveling** — milestone leveling, up to level 20; XP deferred (allowing both,

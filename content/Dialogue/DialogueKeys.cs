@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Localization;
+using Core.Words;
 
 namespace Content.Dialogue
 {
@@ -28,11 +29,11 @@ namespace Content.Dialogue
             KeyConventions.Key(KeyConventions.DialogueNs, speaker, BeatAspect, campaign, id);
 
         public static string Readout(string speaker, Readout which) =>
-            KeyConventions.Key(KeyConventions.DialogueNs, speaker, ReadoutAspect, which.Word());
+            KeyConventions.Key(KeyConventions.DialogueNs, speaker, ReadoutAspect, which.Id());
 
         // the bark bank is the engine's own shape; this only names it beside the rest
         public static string Bark(string speaker, Bark situation, int index) =>
-            KeyConventions.Bark(speaker, situation.Word(), index);
+            KeyConventions.Bark(speaker, situation.Id(), index);
 
         // 1-based, because a bank of forty barks is numbered one to forty on paper
         public static IEnumerable<string> Barks(string speaker, Bark situation, int count)
@@ -50,8 +51,6 @@ namespace Content.Dialogue
             yarnId != null && yarnId.StartsWith(YarnPrefix, StringComparison.Ordinal)
                 ? yarnId.Substring(YarnPrefix.Length)
                 : null;
-
-        public static string YarnIdFor(string local) => YarnPrefix + local;
     }
 
     // What a voice can read back off the felt; closed, because each one takes its own numbers.
@@ -69,8 +68,6 @@ namespace Content.Dialogue
 
     public static class Readouts
     {
-        public static string Word(this Readout which) => which.ToString().ToLowerInvariant();
-
         public static int Numbers(this Readout which) => which switch
         {
             Readout.Hit => 3,

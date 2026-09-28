@@ -12,10 +12,10 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 3,
-          "extra_targets_per_level": 1,
-          "sway_dice": "1d4",
+          "upcast": {"targets": 1},
+          "dice": "1d4",
           "touches": "attacks|saves",
           "duration": "concentration"
         }
@@ -30,10 +30,10 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "cone",
+          "aim": "cone",
           "length": 3,
           "amount": "3d6",
-          "per_extra_level": "1d6",
+          "upcast": {"amount": "1d6"},
           "damage_type": "fire",
           "save": "dex",
           "on_save": "half"
@@ -47,7 +47,7 @@
       "range": 6,
       "classes": ["mage", "druid"],
       "effects": [
-        {"primitive": "afflict", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "condition": "charmed", "save": "wis", "on_save": "negates", "only_tags": ["humanoid"], "advantage_if_fought": true, "ends_on_damage": "caster_side", "duration": "rest", "note": "SRD 5.2.1: a Humanoid, Wis save (with advantage if you or your allies are fighting it) or Charmed for 1 hour, ended early if you or your allies damage it. being Friendly to the caster is the campaign's to play"}
+        {"primitive": "afflict", "aim": "creatures", "targets": 1, "upcast": {"targets": 1}, "condition": "charmed", "save": "wis", "on_save": "negates", "tag_rules": {"humanoid": "only"}, "advantage_if_fought": true, "on_damage": "ends_if_caster_side", "duration": "rest", "note": "SRD 5.2.1: a Humanoid, Wis save (with advantage if you or your allies are fighting it) or Charmed for 1 hour, ended early if you or your allies damage it. being Friendly to the caster is the campaign's to play"}
       ]
     },
     {
@@ -59,9 +59,9 @@
       "effects": [
         {
           "primitive": "heal",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "2d8",
-          "per_extra_level": "2d8",
+          "upcast": {"amount": "2d8"},
           "add_modifier": true
         }
       ]
@@ -77,7 +77,7 @@
       "effects": [
         {
           "primitive": "reveal",
-          "reach": "around",
+          "aim": "around",
           "radius": 6,
           "duration": "concentration"
         }
@@ -92,7 +92,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "caster",
+          "aim": "caster",
           "duration": "rest",
           "note": "authored dialogue reacts to the disguise; there is no general appearance system"
         }
@@ -108,19 +108,19 @@
       "effects": [
         {
           "primitive": "afflict",
-          "reach": "square",
+          "aim": "square",
           "length": 4,
           "condition": "restrained",
           "save": "str",
           "on_save": "negates",
-          "escape": "str",
+          "escape": {"ability": "str"},
           "duration": "concentration",
           "note": "SRD 5.2.1: everyone in the 20-foot square when it is cast saves or is restrained until the spell ends, and can spend an action on a Strength (Athletics) check to break free",
-          "spares_caster": true
+          "affects": "not_caster"
         },
         {
           "primitive": "zone",
-          "reach": "square",
+          "aim": "square",
           "length": 4,
           "rough": true,
           "duration": "concentration",
@@ -140,7 +140,7 @@
       "effects": [
         {
           "primitive": "summon",
-          "reach": "place",
+          "aim": "place",
           "duration": "rest",
           "note": "fixed familiar archetypes and a scouting command menu; no freeform animal simulation (v1_spell_list.md)"
         }
@@ -156,20 +156,19 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "amount": "4d6",
-          "per_extra_level": "1d6",
+          "upcast": {"amount": "1d6"},
           "damage_type": "radiant",
           "attack_roll": true
         },
         {
           "primitive": "sway",
-          "reach": "creature",
+          "aim": "creature",
           "leans": "advantage_against",
           "once": true,
           "follows": true,
-          "duration": "next_turn_end",
-          "until": "caster",
+          "duration": "caster_next_turn_end",
           "note": "SRD 5.2.1: on a hit, the next attack roll against the target before the end of your next turn has advantage"
         }
       ]
@@ -185,20 +184,19 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "creature",
-          "mark": "1d6",
-          "damage_type": "necrotic",
+          "aim": "creature",
+          "mark": {"dice": "1d6", "damage_type": "necrotic"},
           "duration": "concentration",
-          "repeats": true
+          "lands": "now_and_on_repeat"
         },
         {
           "primitive": "sway",
-          "reach": "creature",
+          "aim": "creature",
           "leans": "disadvantage_on_checks",
-          "ability": "chosen",
+          "ability_choices": ["str", "dex", "con", "int", "wis", "cha"],
           "duration": "concentration",
           "note": "SRD 5.2.1 (SRD p.140): when the target drops to 0 Hit Points, a bonus action on a later turn moves the curse to a new creature (moves_when_down)",
-          "repeats": true
+          "lands": "now_and_on_repeat"
         }
       ],
       "curse": true,
@@ -216,12 +214,11 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "creature",
-          "mark": "1d6",
-          "damage_type": "force",
+          "aim": "creature",
+          "mark": {"dice": "1d6", "damage_type": "force"},
           "duration": "concentration",
           "note": "SRD 5.2.1: +1d6 Force on each of your hits against the marked creature; if it drops to 0 Hit Points, a Bonus Action moves the mark to a new creature you can see within range. Its Advantage on Wisdom (Perception or Survival) checks to find the quarry is the narrator's - finding is exploration, not the fight",
-          "repeats": true
+          "lands": "now_and_on_repeat"
         }
       ],
       "repeat": "bonus_action",
@@ -236,7 +233,7 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "creature",
+          "aim": "creature",
           "unarmored_base": 13,
           "duration": "long_rest",
           "note": "SRD 5.2.1: base armor class 13 + Dex while the target wears no armor"
@@ -252,9 +249,9 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 3,
-          "extra_targets_per_level": 1,
+          "upcast": {"targets": 1},
           "amount": "1d4+1",
           "damage_type": "force"
         }
@@ -271,8 +268,8 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "caster",
-          "sway": 5,
+          "aim": "caster",
+          "flat": 5,
           "touches": "armor_class",
           "duration": "next_turn",
           "note": "SRD 5.2.1: a reaction when you are hit by an attack roll or targeted by Magic Missile. Until the start of your next turn, +5 AC - against the triggering attack too - and no damage from Magic Missile",
@@ -291,18 +288,16 @@
       "effects": [
         {
           "primitive": "afflict",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 1,
           "condition": "incapacitated",
           "save": "wis",
           "on_save": "negates",
-          "repeat_save": true,
-          "worsens": "unconscious",
-          "worsens_after": 2,
-          "ends_on_damage": "any",
+          "repeat_save": {"ability": "wis", "worsens": "unconscious", "worsens_after": 2},
+          "on_damage": "ends",
           "shakeable": true,
-          "except_tags": ["sleepless"],
-          "spares_allies": true,
+          "tag_rules": {"sleepless": "untouched"},
+          "affects": "foes",
           "duration": "concentration",
           "note": "SRD 5.2.1: creatures of your choice in a 5-foot-radius sphere, Wis save or Incapacitated; the save is repeated at the end of its next turn and a second failure is Unconscious for the duration. damage or a shake from within 5 feet ends it. creatures that don't sleep (an elf's Trance, the exhaustion-immune) are unaffected"
         }
@@ -315,8 +310,8 @@
       "range": 0,
       "classes": ["mage", "druid"],
       "effects": [
-        {"primitive": "damage", "reach": "cube", "length": 3, "amount": "2d8", "per_extra_level": "1d8", "damage_type": "thunder", "save": "con", "on_save": "half"},
-        {"primitive": "shift", "reach": "cube", "length": 3, "save": "con", "on_save": "negates", "same_save": true, "note": "SRD 5.2.1: on a failed save, pushed 10 feet straight away from the caster", "push": 2}
+        {"primitive": "damage", "aim": "cube", "length": 3, "amount": "2d8", "upcast": {"amount": "1d8"}, "damage_type": "thunder", "save": "con", "on_save": "half"},
+        {"primitive": "shift", "aim": "cube", "length": 3, "save": "con", "on_save": "negates", "same_save": true, "note": "SRD 5.2.1: on a failed save, pushed 10 feet straight away from the caster", "push": 2}
       ]
     }
   ]

@@ -1,7 +1,6 @@
 using System.Linq;
 using Content.Dialogue;
 using Core.Localization;
-using Xunit;
 
 namespace Content.Tests
 {

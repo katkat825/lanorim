@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Content.Schema;
 using Core.Combat;
 using Core.Localization;
 using Core.Magic;
+using Core.Words;
 
 namespace Content.Spells
 {
@@ -120,9 +120,9 @@ namespace Content.Spells
 
         void ReadRange(Caster caster)
         {
-            bool onlyAboutTheCaster = Spell.Effects.All(e => e.Reach == Reach.Caster ||
-                                                             e.Reach == Reach.Around ||
-                                                             e.Reach.IsDirected());
+            bool onlyAboutTheCaster = Spell.Effects.All(e => e.AimKind == AimKind.Caster ||
+                                                             e.AimKind == AimKind.Around ||
+                                                             e.AimKind.IsDirected());
 
             if (Spell.Range == 0 && onlyAboutTheCaster)
             {
@@ -148,12 +148,12 @@ namespace Content.Spells
 
             foreach (SpellEffect effect in Spell.Effects)
             {
-                (string shape, int feet) area = effect.Reach switch
+                (string shape, int feet) area = effect.AimKind switch
                 {
-                    Reach.Line => ("line", effect.Length * Feet),
-                    Reach.Cone => ("cone", effect.Length * Feet),
-                    Reach.Cube => ("cube", effect.Length * Feet),
-                    Reach.Burst or Reach.Around when effect.Radius > 0 => ("radius", effect.Radius * Feet),
+                    AimKind.Line => ("line", effect.Length * Feet),
+                    AimKind.Cone => ("cone", effect.Length * Feet),
+                    AimKind.Cube => ("cube", effect.Length * Feet),
+                    AimKind.Burst or AimKind.Around when effect.Radius > 0 => ("radius", effect.Radius * Feet),
                     _ => (null, 0),
                 };
 
@@ -234,15 +234,15 @@ namespace Content.Spells
 
             foreach (School school in Schools.All) yield return SchoolKeyOf(school);
 
-            yield return Ui("casting_time", CastingTime.Action.Id());
-            yield return Ui("casting_time", CastingTime.BonusAction.Id());
+            yield return Ui("casting_time", Spend.Action.Id());
+            yield return Ui("casting_time", Spend.Bonus.Id());
 
             // a smite answers your own hit with a bonus action; everything else is a reaction
             foreach (Trigger trigger in Triggers.All)
                 yield return KeyConventions.Key(KeyConventions.UiNs, "casting_time",
                                                 trigger == Trigger.Struck
-                                                    ? CastingTime.BonusAction.Id()
-                                                    : CastingTime.Reaction.Id(),
+                                                    ? Spend.Bonus.Id()
+                                                    : Spend.Reaction.Id(),
                                                 "name", trigger.Id());
 
             foreach (string range in new[] { "self", "touch", "feet" }) yield return Ui("range", range);

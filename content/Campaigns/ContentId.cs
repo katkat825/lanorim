@@ -31,14 +31,6 @@ namespace Content.Campaigns
         public static bool IsScoped(string id) =>
             !string.IsNullOrEmpty(id) && id.IndexOf(Separator) > 0;
 
-        // empty for the engine's own, unscoped ids
-        public static string CampaignOf(string id)
-        {
-            if (!IsScoped(id)) return "";
-
-            return id.Substring(0, id.IndexOf(Separator));
-        }
-
         public static string LocalOf(string id)
         {
             if (!IsScoped(id)) return id ?? "";
@@ -47,8 +39,5 @@ namespace Content.Campaigns
         }
 
         public static string ActorName(string id) => KeyConventions.ActorName(id);
-
-        public static bool NamesSomethingKeyable(string id) =>
-            !string.IsNullOrEmpty(id) && KeyConventions.IsWellFormed(KeyConventions.ActorName(id));
     }
 }

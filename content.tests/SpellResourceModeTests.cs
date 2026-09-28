@@ -4,7 +4,6 @@ using Content.Saves;
 using Content.Schema;
 using Content.Sheet;
 using Core.Magic;
-using Xunit;
 
 namespace Content.Tests
 {
@@ -179,7 +178,9 @@ namespace Content.Tests
             {
                 Hero = new SavedHero
                 {
-                    Name = "Pell", Resource = SpellResourceMode.Points, Points = 41,
+                    Name = "Pell",
+                    Resource = SpellResourceMode.Points,
+                    Points = 41,
                 },
             };
 

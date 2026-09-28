@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Core.Dice;
-using Core.Localization;
+using Core.Words;
 
 namespace Core.Tables
 {
@@ -72,7 +71,7 @@ namespace Core.Tables
         public override string ToString() => $"{Count} {Monster}";
     }
 
-    public sealed class EncounterEntry
+    public sealed class EncounterEntry : ITableEntry
     {
         public EncounterEntry(string id, EntryKind kind, int weight = 1,
                               IReadOnlyList<Band> monsters = null, string map = null,
@@ -105,7 +104,7 @@ namespace Core.Tables
         public bool Speaks => Kind != EntryKind.Nothing;
 
         public override string ToString() =>
-            $"{Id} x{Weight} {Kind.ToString().ToLowerInvariant()}" +
+            $"{Id} x{Weight} {EnumWords.Name(Kind)}" +
             (Monsters.Count > 0 ? ": " + string.Join(", ", Monsters) : "") +
             (Map.Length > 0 ? $" on {Map}" : "") +
             (Loot.Length > 0 ? $", leaves {Loot}" : "");
@@ -113,40 +112,17 @@ namespace Core.Tables
 
     // A RANDOM-ENCOUNTER TABLE: a chance that anything happens, then a weighted pick of what. It is
     // data and nothing else - no hooks, no script, and it never runs itself. The GmScreen rolls it.
-    public sealed class EncounterTable
+    public sealed class EncounterTable : GmTable<EncounterEntry>
     {
         public EncounterTable(string id, Trigger trigger, IEnumerable<EncounterEntry> entries,
                               Visibility visibility = Visibility.Hidden)
+            : base(id, entries, visibility, "line")
         {
-            Id = id ?? "";
             Trigger = trigger;
-            Visibility = visibility;
-            Entries = (entries ?? Enumerable.Empty<EncounterEntry>()).Where(e => e != null).ToList();
         }
-
-        public string Id { get; }
 
         public Trigger Trigger { get; }
 
-        public Visibility Visibility { get; }
-
-        public IReadOnlyList<EncounterEntry> Entries { get; }
-
-        public int TotalWeight => Entries.Sum(e => e.Weight);
-
-        // what the narrator says when an entry comes up. derived from the ids so there is no free
-        // text in the table to get wrong, and a "nothing" entry has no line to owe the locale.
-        public static string LineKey(string table, string entry) =>
-            KeyConventions.Key(KeyConventions.EncounterNs, table, "line", entry);
-
-        public string LineKey(EncounterEntry entry) =>
-            entry == null || !entry.Speaks ? "" : LineKey(Id, entry.Id);
-
-        public IEnumerable<string> Keys() =>
-            Entries.Where(e => e.Speaks).Select(e => LineKey(Id, e.Id));
-
-        public override string ToString() =>
-            $"{Id}: {Trigger}, {Entries.Count} entries" +
-            (Visibility == Visibility.Shown ? ", rolled in the open" : "");
+        public override string ToString() => $"{Id}: {Trigger}, {Entries.Count} entries" + RolledInTheOpen;
     }
 }

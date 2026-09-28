@@ -1,14 +1,15 @@
-using System;
 using System.Collections.Generic;
 using Core.Localization;
+using Core.Words;
 
 namespace Core.Characters
 {
     // the 18 SRD 5.2.1 skills. a campaign names one of these for a check and nothing else -
-    // content.tests refuses a campaign that asks for a skill not on this list.
+    // content.tests refuses a campaign that asks for a skill not on this list. the word is the name
+    // in snake case, "animal_handling": derived, never listed, so the two can't drift
     public enum Skill
     {
-        None = 0,
+        [Unread] None = 0,
 
         Acrobatics,
         AnimalHandling,
@@ -69,51 +70,6 @@ namespace Core.Characters
 
         public static Ability Governs(this Skill skill) =>
             Governing.TryGetValue(skill, out Ability ability) ? ability : Ability.Strength;
-
-        static readonly Dictionary<Skill, string> Ids = BuildIds();
-
-        static Dictionary<Skill, string> BuildIds()
-        {
-            var ids = new Dictionary<Skill, string>();
-
-            foreach (Skill skill in All) ids[skill] = Snake(skill.ToString());
-
-            return ids;
-        }
-
-        // AnimalHandling -> animal_handling; derived, never listed, so the two can't drift
-        static string Snake(string pascal)
-        {
-            var s = new System.Text.StringBuilder();
-
-            for (int i = 0; i < pascal.Length; i++)
-            {
-                if (i > 0 && char.IsUpper(pascal[i])) s.Append('_');
-
-                s.Append(char.ToLowerInvariant(pascal[i]));
-            }
-
-            return s.ToString();
-        }
-
-        public static string Id(this Skill skill) =>
-            skill == Skill.None ? "none"
-          : Ids.TryGetValue(skill, out string id) ? id
-          : "none";
-
-        public static bool TryParse(string id, out Skill skill)
-        {
-            foreach (Skill s in All)
-            {
-                if (!string.Equals(s.Id(), id, StringComparison.OrdinalIgnoreCase)) continue;
-
-                skill = s;
-                return true;
-            }
-
-            skill = Skill.None;
-            return false;
-        }
 
         public static string NameKey(this Skill skill) =>
             KeyConventions.Key(KeyConventions.SkillNs, skill.Id(), "name");

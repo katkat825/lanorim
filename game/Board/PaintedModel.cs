@@ -1,18 +1,13 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace Game.Board
 {
     public static class PaintedModel
     {
-        public static IEnumerable<MeshInstance3D> Meshes(Node node)
-        {
-            if (node is MeshInstance3D mesh && mesh.Mesh != null) yield return mesh;
-
-            foreach (Node child in node.GetChildren())
-                foreach (MeshInstance3D deeper in Meshes(child))
-                    yield return deeper;
-        }
+        public static IEnumerable<MeshInstance3D> Meshes(Node node) =>
+            Nodes.AndUnder<MeshInstance3D>(node).Where(m => m.Mesh != null);
 
         // THE PAINT GOES ON PER SURFACE, NOT PER MESH, AND IT KEEPS THE PACK'S COLOURS.
         //
@@ -140,15 +135,7 @@ namespace Game.Board
             return height > 0f;
         }
 
-        static Skeleton3D FirstSkeleton(Node node)
-        {
-            if (node is Skeleton3D skeleton) return skeleton;
-
-            foreach (Node child in node.GetChildren())
-                if (FirstSkeleton(child) is Skeleton3D deeper) return deeper;
-
-            return null;
-        }
+        static Skeleton3D FirstSkeleton(Node node) => Nodes.AndUnder<Skeleton3D>(node).FirstOrDefault();
 
         // fit the widest horizontal size; a tall model may stay tall
         public static float ToFitWidth(Aabb bounds, float metres)
@@ -157,9 +144,6 @@ namespace Game.Board
 
             return widest <= 0f ? 1f : metres / widest;
         }
-
-        public static float ToFitHeight(Aabb bounds, float metres) =>
-            bounds.Size.Y <= 0f ? 1f : metres / bounds.Size.Y;
 
         // deterministic per-square yaw: same on reload, different from neighbours
         public static float SettledAngle(int x, int y)

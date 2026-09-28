@@ -13,7 +13,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "creature",
+          "aim": "creature",
           "save": "wis",
           "on_save": "negates",
           "duration": "concentration",

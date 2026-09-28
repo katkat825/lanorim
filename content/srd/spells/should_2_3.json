@@ -8,7 +8,7 @@
       "range": 6,
       "classes": ["mage", "cleric", "druid", "paladin"],
       "effects": [
-        {"primitive": "sway", "reach": "creatures", "targets": 3, "amount": "5", "per_extra_level": "5", "raises_maximum": true, "duration": "long_rest", "note": "SRD 5.2.1: up to three creatures' hit point maximum and current hit points rise by 5 (+5 per slot level above 2) for 8 hours - until the next long rest"}
+        {"primitive": "sway", "aim": "creatures", "targets": 3, "amount": "5", "upcast": {"amount": "5"}, "raises_maximum": true, "duration": "long_rest", "note": "SRD 5.2.1: up to three creatures' hit point maximum and current hit points rise by 5 (+5 per slot level above 2) for 8 hours - until the next long rest"}
       ]
     },
     {
@@ -18,8 +18,8 @@
       "range": 24,
       "classes": ["mage", "cleric"],
       "effects": [
-        {"primitive": "afflict", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "condition": "blinded", "save": "con", "on_save": "negates", "repeat_save": true, "duration": "encounter", "mode": "blindness"},
-        {"primitive": "afflict", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "condition": "deafened", "save": "con", "on_save": "negates", "repeat_save": true, "duration": "encounter", "mode": "deafness", "note": "SRD 5.2.1: Blinded or Deafened, the caster's choice, for 1 minute (the fight), repeating the save at the end of each of its turns"}
+        {"primitive": "afflict", "aim": "creatures", "targets": 1, "upcast": {"targets": 1}, "condition": "blinded", "save": "con", "on_save": "negates", "repeat_save": {"ability": "con"}, "duration": "encounter", "mode": "blindness"},
+        {"primitive": "afflict", "aim": "creatures", "targets": 1, "upcast": {"targets": 1}, "condition": "deafened", "save": "con", "on_save": "negates", "repeat_save": {"ability": "con"}, "duration": "encounter", "mode": "deafness", "note": "SRD 5.2.1: Blinded or Deafened, the caster's choice, for 1 minute (the fight), repeating the save at the end of each of its turns"}
       ]
     },
     {
@@ -32,7 +32,7 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "caster",
+          "aim": "caster",
           "leans": "disadvantage_against",
           "duration": "concentration",
           "note": "SRD 5.2.1: attack rolls against you have disadvantage for 1 minute. An attacker with Truesight is unaffected (not_vs_truesight); Blindsight isn't modelled, since statblocks carry no senses",
@@ -48,7 +48,7 @@
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "zone", "reach": "place", "radius": 3, "obscures": "heavy", "magical_darkness": true, "duration": "concentration", "note": "SRD 5.2.1: a 15-foot-radius sphere of magical darkness that Darkvision cannot see through (Truesight can). cast on an unattended object it spreads from the object, which on the board is the same place. the dispelling of weak light spells it overlaps is the narrator's: v1 lights are not things on the board"}
+        {"primitive": "zone", "aim": "place", "radius": 3, "obscures": "magical_darkness", "duration": "concentration", "note": "SRD 5.2.1: a 15-foot-radius sphere of magical darkness that Darkvision cannot see through (Truesight can). cast on an unattended object it spreads from the object, which on the board is the same place. the dispelling of weak light spells it overlaps is the narrator's: v1 lights are not things on the board"}
       ]
     },
     {
@@ -60,7 +60,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "creature",
+          "aim": "creature",
           "duration": "long_rest",
           "note": "SRD 5.2.1: a willing creature gains Darkvision with a range of 150 feet for 8 hours. v1 has no vision or lighting rules on the fight board, so the narrator and the campaign honour it; judged narrative, not approximated. Revisit if v1 adds senses"
         }
@@ -76,11 +76,10 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 1,
-          "extra_targets_per_level": 1,
+          "upcast": {"targets": 1},
           "leans": "advantage_on_checks",
-          "ability": "chosen",
           "duration": "concentration",
           "note": "SRD 5.2.1: for 1 hour the target has advantage on ability checks using one ability the caster chooses; one extra creature per slot level above 2",
           "ability_choices": ["str", "dex", "int", "wis", "cha"]
@@ -95,8 +94,8 @@
       "concentration": true,
       "classes": ["mage", "druid"],
       "effects": [
-        {"primitive": "sway", "reach": "creature", "mode": "enlarge", "size_step": 1, "leans": "advantage_on_checks|advantage_on_saves", "leans_on": "str", "weapon_dice": "1d4", "save": "con", "on_save": "negates", "save_if_unwilling": true, "duration": "concentration", "note": "SRD 5.2.1 Enlarge: one size larger, advantage on Strength checks and saves, +1d4 damage with weapons and unarmed strikes. every creature is one square in v1 whatever its size"},
-        {"primitive": "sway", "reach": "creature", "mode": "reduce", "size_step": -1, "leans": "disadvantage_on_checks|disadvantage_on_saves", "leans_on": "str", "weapon_dice": "1d4", "weapon_dice_less": true, "save": "con", "on_save": "negates", "save_if_unwilling": true, "duration": "concentration", "note": "SRD 5.2.1 Reduce: one size smaller, disadvantage on Strength checks and saves, -1d4 weapon damage (never below 1). an unwilling target makes a Con save"}
+        {"primitive": "sway", "aim": "creature", "mode": "enlarge", "size_step": 1, "leans": "advantage_on_checks|advantage_on_saves", "ability": "str", "weapon_dice": "1d4", "save": "con", "on_save": "negates", "save_if_unwilling": true, "duration": "concentration", "note": "SRD 5.2.1 Enlarge: one size larger, advantage on Strength checks and saves, +1d4 damage with weapons and unarmed strikes. every creature is one square in v1 whatever its size"},
+        {"primitive": "sway", "aim": "creature", "mode": "reduce", "size_step": -1, "leans": "disadvantage_on_checks|disadvantage_on_saves", "ability": "str", "weapon_dice": "-1d4", "save": "con", "on_save": "negates", "save_if_unwilling": true, "duration": "concentration", "note": "SRD 5.2.1 Reduce: one size smaller, disadvantage on Strength checks and saves, -1d4 weapon damage (never below 1). an unwilling target makes a Con save"}
       ]
     },
     {
@@ -110,7 +109,7 @@
       "effects": [
         {
           "primitive": "zone",
-          "reach": "place",
+          "aim": "place",
           "radius": 1,
           "unoccupied": true,
           "duration": "concentration",
@@ -118,10 +117,10 @@
         },
         {
           "primitive": "damage",
-          "reach": "zone",
+          "aim": "zone",
           "pulses": "end_turn|ram",
           "amount": "2d6",
-          "per_extra_level": "1d6",
+          "upcast": {"amount": "1d6"},
           "damage_type": "fire",
           "save": "dex",
           "on_save": "half",
@@ -129,19 +128,18 @@
         },
         {
           "primitive": "shift",
-          "reach": "zone",
+          "aim": "zone",
           "length": 6,
-          "repeats": true,
+          "lands": "now_and_on_repeat",
           "rams": true,
           "note": "a bonus action rolls it up to 30 feet; rolled into a creature, it stops there for the turn"
         },
         {
           "primitive": "illuminate",
-          "reach": "place",
+          "aim": "place",
           "radius": 4,
           "duration": "concentration",
-          "note": "bright light 20 feet and dim light 20 feet beyond",
-          "dim_radius": 4
+          "note": "bright light 20 feet and dim light 20 feet beyond"
         }
       ]
     },
@@ -156,16 +154,16 @@
       "effects": [
         {
           "primitive": "zone",
-          "reach": "place",
+          "aim": "place",
           "radius": 1,
           "duration": "concentration"
         },
         {
           "primitive": "damage",
-          "reach": "zone",
+          "aim": "zone",
           "pulses": "appear|enter|end_turn",
           "amount": "2d10",
-          "per_extra_level": "1d10",
+          "upcast": {"amount": "1d10"},
           "damage_type": "radiant",
           "save": "con",
           "on_save": "half",
@@ -174,9 +172,9 @@
         },
         {
           "primitive": "shift",
-          "reach": "zone",
+          "aim": "zone",
           "length": 12,
-          "repeats": true,
+          "lands": "now_and_on_repeat",
           "note": "a Magic action on a later turn moves the beam up to 60 feet"
         }
       ]
@@ -189,8 +187,8 @@
       "concentration": true,
       "classes": ["druid"],
       "effects": [
-        {"primitive": "zone", "reach": "around", "radius": 6, "allies_only": true, "duration": "concentration", "note": "SRD 5.2.1: a 30-foot emanation for up to an hour"},
-        {"primitive": "sway", "reach": "zone", "while_inside": true, "sway": 10, "touches": "checks", "skill": "stealth", "duration": "concentration", "note": "you and each creature you choose while in the aura: +10 to Dexterity (Stealth) checks. leaving no tracks is the narrator's"}
+        {"primitive": "zone", "aim": "around", "radius": 6, "affects": "allies", "duration": "concentration", "note": "SRD 5.2.1: a 30-foot emanation for up to an hour"},
+        {"primitive": "sway", "aim": "zone", "while_in_zone": true, "flat": 10, "touches": "checks", "skill": "stealth", "duration": "concentration", "note": "you and each creature you choose while in the aura: +10 to Dexterity (Stealth) checks. leaving no tracks is the narrator's"}
       ]
     },
     {
@@ -203,7 +201,7 @@
       "effects": [
         {
           "primitive": "zone",
-          "reach": "place",
+          "aim": "place",
           "radius": 4,
           "rough": true,
           "duration": "concentration",
@@ -211,7 +209,7 @@
         },
         {
           "primitive": "damage",
-          "reach": "zone",
+          "aim": "zone",
           "pulses": "each_square",
           "amount": "2d4",
           "damage_type": "piercing",
@@ -228,8 +226,8 @@
       "repeat": "action",
       "classes": ["druid"],
       "effects": [
-        {"primitive": "zone", "reach": "place", "radius": 12, "on_caster": true, "duration": "concentration", "note": "SRD 5.2.1: a storm cloud 60 feet in radius above you"},
-        {"primitive": "damage", "reach": "burst", "radius": 1, "amount": "3d10", "per_extra_level": "1d10", "damage_type": "lightning", "save": "dex", "on_save": "half", "repeats": true, "within_zone": true, "bonus_if": "storm", "bonus_amount": "1d10", "note": "a bolt at a point under the cloud when cast and with a Magic action later: Dex save, 3d10 lightning within 5 feet, half on a success; +1d10 if the fight is outdoors in a storm"}
+        {"primitive": "zone", "aim": "place", "radius": 12, "on_caster": true, "duration": "concentration", "note": "SRD 5.2.1: a storm cloud 60 feet in radius above you"},
+        {"primitive": "damage", "aim": "burst", "radius": 1, "amount": "3d10", "upcast": {"amount": "1d10"}, "damage_type": "lightning", "save": "dex", "on_save": "half", "lands": "now_and_on_repeat", "within_zone": true, "extra_dice": {"dice": "1d10", "setting": "storm"}, "note": "a bolt at a point under the cloud when cast and with a Magic action later: Dex save, 3d10 lightning within 5 feet, half on a success; +1d10 if the fight is outdoors in a storm"}
       ]
     },
     {
@@ -240,7 +238,7 @@
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "afflict", "reach": "cone", "length": 6, "condition": "frightened", "save": "wis", "on_save": "negates", "disarms": true, "flees": true, "repeat_save": true, "repeat_unseen": true, "duration": "concentration", "note": "SRD 5.2.1: a 30-foot cone; a failed Wis save drops what it holds and is Frightened. each of its turns it Dashes away from you by the safest route, and it saves again only when it ends a turn out of your line of sight"}
+        {"primitive": "afflict", "aim": "cone", "length": 6, "condition": "frightened", "save": "wis", "on_save": "negates", "disarms": true, "flees": true, "repeat_save": {"ability": "wis", "only_unseen": true}, "duration": "concentration", "note": "SRD 5.2.1: a 30-foot cone; a failed Wis save drops what it holds and is Frightened. each of its turns it Dashes away from you by the safest route, and it saves again only when it ends a turn out of your line of sight"}
       ]
     },
     {
@@ -254,43 +252,42 @@
       "effects": [
         {
           "primitive": "sway",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 1,
-          "extra_targets_per_level": 1,
+          "upcast": {"targets": 1},
           "fly_speed": 10,
-          "resists": "bludgeoning|piercing|slashing",
+          "defenses": {"bludgeoning": "resistant", "piercing": "resistant", "slashing": "resistant"},
           "immune": ["prone"],
-          "no_attacks": true,
-          "no_casting": true,
-          "ends_at_zero": true,
+          "forbids": ["attacks", "casting"],
+          "on_damage": "ends_at_zero",
           "duration": "concentration",
           "note": "SRD 5.2.1 (SRD p.134): a willing creature you touch becomes a misty cloud, concentration up to 1 hour. Its only movement is a Fly Speed of 10 feet; Resistance to Bludgeoning, Piercing and Slashing; Immunity to Prone; Advantage on Str, Dex and Con saves; it can't attack or cast spells; the spell ends on it at 0 HP. +1 creature per slot level above 3. Not carried: entering and occupying another creature's space (one piece to a square), and the Magic action to end it on itself. Kept under the SRD name by Kathleen (2026-09-25)"
         },
         {
           "primitive": "sway",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 1,
-          "extra_targets_per_level": 1,
+          "upcast": {"targets": 1},
           "leans": "advantage_on_saves",
-          "leans_on": "str",
+          "ability": "str",
           "duration": "concentration"
         },
         {
           "primitive": "sway",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 1,
-          "extra_targets_per_level": 1,
+          "upcast": {"targets": 1},
           "leans": "advantage_on_saves",
-          "leans_on": "dex",
+          "ability": "dex",
           "duration": "concentration"
         },
         {
           "primitive": "sway",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 1,
-          "extra_targets_per_level": 1,
+          "upcast": {"targets": 1},
           "leans": "advantage_on_saves",
-          "leans_on": "con",
+          "ability": "con",
           "duration": "concentration"
         }
       ]
@@ -305,7 +302,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "place",
+          "aim": "place",
           "duration": "concentration",
           "note": "SRD 5.2.1: an illusion of an object, creature or phenomenon no larger than a 20-foot cube, with sound, smell and temperature, for 10 minutes; a creature that takes a Study action makes an Intelligence (Investigation) check against the spell save DC to see through it. How creatures react to an illusion is the narrator's call at any table, so this is narrative: the narrator places it and calls the Investigation check. Judged not approximated"
         }
@@ -319,7 +316,7 @@
       "range": 0,
       "classes": ["mage", "cleric", "paladin"],
       "effects": [
-        {"primitive": "dispel", "reach": "creature", "curses": true, "note": "SRD 5.2.1: every curse on the creature ends, whatever its level. a cursed item's broken attunement is the campaign's"}
+        {"primitive": "dispel", "aim": "creature", "curses": true, "note": "SRD 5.2.1: every curse on the creature ends, whatever its level. a cursed item's broken attunement is the campaign's"}
       ]
     },
     {
@@ -330,8 +327,8 @@
       "concentration": true,
       "classes": ["mage", "druid"],
       "effects": [
-        {"primitive": "zone", "reach": "place", "radius": 4, "rough": true, "obscures": "heavy", "duration": "concentration", "note": "SRD 5.2.1: a 20-foot-radius cylinder, heavily obscured and difficult terrain. doused flames are the narrator's"},
-        {"primitive": "afflict", "reach": "zone", "pulses": "enter|start_turn", "condition": "prone", "save": "dex", "on_save": "negates", "breaks_concentration": true, "note": "entering it for the first time on a turn or starting a turn there: a Dex save or Prone and concentration lost"}
+        {"primitive": "zone", "aim": "place", "radius": 4, "rough": true, "obscures": "heavy", "duration": "concentration", "note": "SRD 5.2.1: a 20-foot-radius cylinder, heavily obscured and difficult terrain. doused flames are the narrator's"},
+        {"primitive": "afflict", "aim": "zone", "pulses": "enter|start_turn", "condition": "prone", "save": "dex", "on_save": "negates", "breaks_concentration": true, "note": "entering it for the first time on a turn or starting a turn there: a Dex save or Prone and concentration lost"}
       ]
     },
     {
@@ -346,7 +343,7 @@
       "effects": [
         {
           "primitive": "narrate",
-          "reach": "place",
+          "aim": "place",
           "note": "SRD 5.2.1: a corpse within 10 feet with a mouth answers up to five questions over 10 minutes, knowing only what it knew in life; not on a corpse that was undead or targeted by this spell in the last 10 days. Purely information, played by the narrator and the campaign"
         }
       ]
@@ -359,9 +356,9 @@
       "concentration": true,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "zone", "reach": "place", "radius": 4, "obscures": "heavy", "duration": "concentration", "note": "SRD 5.2.1: a 20-foot-radius sphere of heavily obscuring gas"},
-        {"primitive": "afflict", "reach": "zone", "pulses": "start_turn", "condition": "poisoned", "save": "con", "on_save": "negates", "duration": "turn_end", "note": "a creature that starts its turn in it makes a Con save or is Poisoned until the end of that turn, and cannot take an action or a bonus action"},
-        {"primitive": "sway", "reach": "zone", "pulses": "start_turn", "no_actions": true, "follows": true, "duration": "turn_end"}
+        {"primitive": "zone", "aim": "place", "radius": 4, "obscures": "heavy", "duration": "concentration", "note": "SRD 5.2.1: a 20-foot-radius sphere of heavily obscuring gas"},
+        {"primitive": "afflict", "aim": "zone", "pulses": "start_turn", "condition": "poisoned", "save": "con", "on_save": "negates", "duration": "turn_end", "note": "a creature that starts its turn in it makes a Con save or is Poisoned until the end of that turn, and cannot take an action or a bonus action"},
+        {"primitive": "sway", "aim": "zone", "pulses": "start_turn", "forbids": ["actions"], "follows": true, "duration": "turn_end"}
       ]
     },
 
@@ -377,16 +374,14 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "cone",
+          "aim": "cone",
           "length": 3,
           "amount": "3d6",
-          "per_extra_level": "1d6",
-          "damage_type": "chosen",
+          "upcast": {"amount": "1d6"},
           "damage_choices": ["acid", "cold", "fire", "lightning", "poison"],
           "save": "dex",
           "on_save": "half",
-          "repeats": true,
-          "repeat_only": true,
+          "lands": "on_repeat",
           "note": "SRD 5.2.1 (SRD p.126): a bonus action, Touch, concentration up to 1 minute. You touch one willing creature (in a solo game, you) and choose Acid, Cold, Fire, Lightning or Poison; until the spell ends it can take a Magic action to exhale a 15-foot Cone: Dex save, 3d6 of the chosen type, half on a success. +1d6 per slot level above 2"
         }
       ]

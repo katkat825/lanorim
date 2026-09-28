@@ -21,7 +21,7 @@ namespace Core.Tests
         public void LightArmorTakesAllOfDexterity()
         {
             Actor a = With(18);
-            a.Armor = new ArmorProfile(ArmorWeight.Light, 11); // studded leather
+            a.Armor = new ArmorProfile(ArmorCategory.Light, 11); // studded leather
 
             Assert.Equal(15, a.ArmorClass);
         }
@@ -30,7 +30,7 @@ namespace Core.Tests
         public void MediumArmorCapsDexterityAtTwo()
         {
             Actor a = With(18);
-            a.Armor = new ArmorProfile(ArmorWeight.Medium, 14); // half plate
+            a.Armor = new ArmorProfile(ArmorCategory.Medium, 14); // half plate
 
             Assert.Equal(16, a.ArmorClass);
         }
@@ -39,7 +39,7 @@ namespace Core.Tests
         public void HeavyArmorIgnoresDexterityEntirelyEvenWhenItIsNegative()
         {
             Actor a = With(6);
-            a.Armor = new ArmorProfile(ArmorWeight.Heavy, 18); // plate
+            a.Armor = new ArmorProfile(ArmorCategory.Heavy, 18); // plate
 
             Assert.Equal(18, a.ArmorClass);
         }
@@ -48,7 +48,7 @@ namespace Core.Tests
         public void AShieldAddsTwoOnTopOfAnything()
         {
             Actor a = With(14);
-            a.Armor = new ArmorProfile(ArmorWeight.Heavy, 16);
+            a.Armor = new ArmorProfile(ArmorCategory.Heavy, 16);
             a.HasShield = true;
 
             Assert.Equal(18, a.ArmorClass);
@@ -70,7 +70,7 @@ namespace Core.Tests
         {
             var a = new Actor("barbarian", 1, new AbilityScores(16, 14, 16, 8, 10, 10));
             a.UnarmoredDefense = Ability.Constitution;
-            a.Armor = new ArmorProfile(ArmorWeight.Heavy, 16);
+            a.Armor = new ArmorProfile(ArmorCategory.Heavy, 16);
 
             Assert.Equal(16, a.ArmorClass);
         }
@@ -242,7 +242,7 @@ namespace Core.Tests
         {
             var actor = new Actor("dummy");
             actor.SetHealth(new Health(hp));
-            actor.Armor = new ArmorProfile(ArmorWeight.Heavy, ac);
+            actor.Armor = new ArmorProfile(ArmorCategory.Heavy, ac);
             return actor;
         }
 
@@ -384,7 +384,7 @@ namespace Core.Tests
         {
             var actor = new Actor("t", 4, new AbilityScores(8, 14, 13, 10, 16, 10));
 
-            actor.Armor = new ArmorProfile(ArmorWeight.Medium, 14);
+            actor.Armor = new ArmorProfile(ArmorCategory.Medium, 14);
             actor.HasShield = true;
 
             return actor;
@@ -398,7 +398,7 @@ namespace Core.Tests
             actor.Assume(Bear);
             Assert.Equal(11, actor.ArmorClass);
 
-            actor.Boons.Add(new Boon("shield_of_faith", armorClass: 2));
+            actor.Boons.Add(Boon.Of(new BoonSpec { Flat = 2, Touches = Sways.ArmorClass }, "shield_of_faith"));
             Assert.Equal(13, actor.ArmorClass);
         }
 
@@ -409,7 +409,8 @@ namespace Core.Tests
             int armorClass = actor.ArmorClass;
             int perception = actor.CheckModifier(Skill.Perception);
 
-            actor.Boons.Add(new Boon("bless", checks: true, flat: 1, duration: Duration.Rest));
+            actor.Boons.Add(Boon.Of(new BoonSpec { Duration = Duration.Rest, Flat = 1, Touches = Sways.Checks },
+                                    "bless"));
             actor.Assume(Bear);
 
             Assert.Equal(15, actor.Scores[Ability.Strength]);

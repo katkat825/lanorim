@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using Content.Campaigns;
@@ -41,99 +40,19 @@ namespace Content.Dialogue
         {
             var book = new HintBook(campaign);
 
-            if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder)) return book;
-
-            foreach (string path in Files(folder))
-            {
-                string name = Path.GetFileName(path);
-                string text;
-
-                try
-                {
-                    text = File.ReadAllText(path);
-                }
-                catch (Exception could)
-                {
-                    book._problems.Add(new ContentProblem(name, "", "could not be read - " + could.Message));
-                    continue;
-                }
-
-                book.Parse(text, name);
-            }
+            ListFile.ReadFolder(folder, Extension, "hints",
+                                "a hints file is a list of problems - { \"hints\": [ { \"id\": " +
+                                "\"the_stair_door\", \"rungs\": [ \"hinges_are_new\", " +
+                                "\"somebody_replaced_it\", \"the_pins_lift_out\" ] } ] }",
+                                "a hint", Fields, book._problems, book.One);
 
             return book;
-        }
-
-        void Parse(string json, string file)
-        {
-            JsonDocument document;
-
-            try
-            {
-                document = JsonDocument.Parse(json, new JsonDocumentOptions
-                {
-                    CommentHandling = JsonCommentHandling.Skip,
-                    AllowTrailingCommas = true,
-                });
-            }
-            catch (JsonException bad)
-            {
-                _problems.Add(new ContentProblem(
-                    file, "", "this is not JSON - " + bad.Message, (int)(bad.LineNumber ?? 0) + 1));
-                return;
-            }
-
-            using (document)
-            {
-                JsonElement root = document.RootElement;
-
-                if (root.ValueKind != JsonValueKind.Object)
-                {
-                    _problems.Add(new ContentProblem(
-                        file, "", $"a hints file is a JSON object and this is a {Named(root.ValueKind)}"));
-                    return;
-                }
-
-                foreach (JsonProperty property in root.EnumerateObject())
-                    if (property.Name != "hints")
-                        _problems.Add(new ContentProblem(
-                            file, property.Name,
-                            $"a hints file has no '{property.Name}' - it has hints, and nothing else"));
-
-                if (!root.TryGetProperty("hints", out JsonElement list) ||
-                    list.ValueKind != JsonValueKind.Array)
-                {
-                    _problems.Add(new ContentProblem(
-                        file, "hints",
-                        "a hints file is a list of problems - { \"hints\": [ { \"id\": " +
-                        "\"the_stair_door\", \"rungs\": [ \"hinges_are_new\", " +
-                        "\"somebody_replaced_it\", \"the_pins_lift_out\" ] } ] }"));
-                    return;
-                }
-
-                int at = 0;
-
-                foreach (JsonElement entry in list.EnumerateArray()) One(entry, file, $"hints[{at++}]");
-            }
         }
 
         static readonly string[] Fields = { "id", "rungs" };
 
         void One(JsonElement entry, string file, string where)
         {
-            if (entry.ValueKind != JsonValueKind.Object)
-            {
-                _problems.Add(new ContentProblem(
-                    file, where, $"a hint is an object and this is a {Named(entry.ValueKind)}"));
-                return;
-            }
-
-            foreach (JsonProperty property in entry.EnumerateObject())
-                if (Array.IndexOf(Fields, property.Name) < 0)
-                    _problems.Add(new ContentProblem(
-                        file, $"{where}.{property.Name}",
-                        $"a hint has no '{property.Name}' - it has {Vocabulary.Offer(Fields)}"));
-
             if (!entry.TryGetProperty("id", out JsonElement id) ||
                 id.ValueKind != JsonValueKind.String || !ContentId.IsLocal(id.GetString()))
             {
@@ -163,7 +82,7 @@ namespace Content.Dialogue
                 {
                     _problems.Add(new ContentProblem(
                         file, $"{where}.rungs[{at}]",
-                        $"'{Shown(rung)}' is not a beat id - a rung names a beat in this " +
+                        $"'{PackJson.Shown(rung)}' is not a beat id - a rung names a beat in this " +
                         "campaign's beats/ folder, so every companion has to phrase it"));
                     return;
                 }
@@ -192,19 +111,6 @@ namespace Content.Dialogue
 
             _hints[id.GetString()] = new Hint(id.GetString(), named);
         }
-
-        static IEnumerable<string> Files(string folder) =>
-            Directory.EnumerateFiles(folder, "*" + Extension, SearchOption.TopDirectoryOnly)
-                     .OrderBy(Path.GetFileName, StringComparer.Ordinal);
-
-        static string Shown(JsonElement value) => value.ValueKind switch
-        {
-            JsonValueKind.String => value.GetString(),
-            JsonValueKind.Undefined => "nothing",
-            _ => value.ToString(),
-        };
-
-        static string Named(JsonValueKind kind) => kind.ToString().ToLowerInvariant();
 
         public override string ToString() =>
             $"{_hints.Count} hints" + (_problems.Count > 0 ? $", {_problems.Count} problems" : "");

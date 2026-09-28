@@ -4,6 +4,7 @@ using System.Linq;
 using Core.Characters;
 using Core.Dice;
 using Core.Resolution;
+using Core.Words;
 
 namespace Content.Dialogue
 {
@@ -108,119 +109,105 @@ namespace Content.Dialogue
 
             if (words.Length == 0 || !Verbs.TryGetValue(words[0], out RequestKind kind)) return null;
 
+            // each shape of command reads its own words into the request, or says what is wrong
+            Func<Request, string[], string, string> read = kind switch
+            {
+                RequestKind.Check or RequestKind.Save => ReadTest,
+                RequestKind.Roll => ReadRoll,
+                RequestKind.Rest => ReadRest,
+                RequestKind.Encounter or RequestKind.Fight or RequestKind.Loot or RequestKind.Shop => ReadId,
+                RequestKind.Give => ReadGive,
+                RequestKind.Gold or RequestKind.Level => ReadAmount,
+                _ => null,
+            };
+
+            if (read == null) return null;
+
             var request = new Request(kind, command);
 
-            switch (kind)
+            problem = read(request, words, command);
+
+            return problem == null ? request : null;
+        }
+
+        // <<check skill dc>>, <<save ability dc>>
+        static string ReadTest(Request request, string[] words, string command)
+        {
+            RequestKind kind = request.Kind;
+
+            if (words.Length != 3) return $"'{command}' - it is <<{words[0]} what dc>>";
+
+            if (kind == RequestKind.Check && EnumWords.TryParse(words[1], out Skill skill))
             {
-                case RequestKind.Check:
-                case RequestKind.Save:
-                {
-                    if (words.Length != 3)
-                    {
-                        problem = $"'{command}' - it is <<{words[0]} what dc>>";
-                        return null;
-                    }
-
-                    if (kind == RequestKind.Check && Skills.TryParse(words[1], out Skill skill))
-                    {
-                        request.Skill = skill;
-                        request.Ability = skill.Governs();
-                    }
-                    else if (Abilities.TryParse(words[1], out Ability ability))
-                    {
-                        request.Ability = ability;
-                    }
-                    else
-                    {
-                        problem = $"'{command}' - '{words[1]}' is not " +
-                                  (kind == RequestKind.Check ? "a skill or an ability" : "an ability");
-                        return null;
-                    }
-
-                    if (!ReadDc(words[2], out int dc))
-                    {
-                        problem = $"'{command}' - '{words[2]}' is not a number or one of " +
-                                  string.Join(", ", Difficulties.Ladder.Select(d => d.Id()));
-                        return null;
-                    }
-
-                    request.Dc = dc;
-                    return request;
-                }
-
-                case RequestKind.Roll:
-                {
-                    if (words.Length != 2 || !DiceRoll.TryParse(words[1], out DiceRoll dice, out _) ||
-                        !dice.RollsAnything)
-                    {
-                        problem = $"'{command}' - it is <<roll 1d20>>";
-                        return null;
-                    }
-
-                    request.Dice = dice;
-                    return request;
-                }
-
-                case RequestKind.Rest:
-                {
-                    if (words.Length != 2 || words[1] != "short" && words[1] != "long")
-                    {
-                        problem = $"'{command}' - it is <<rest short>> or <<rest long>>";
-                        return null;
-                    }
-
-                    request.Id = words[1];
-                    return request;
-                }
-
-                case RequestKind.Encounter:
-                case RequestKind.Fight:
-                case RequestKind.Loot:
-                case RequestKind.Shop:
-                {
-                    if (words.Length != 2 || !Schema.Json.IsId(words[1]))
-                    {
-                        problem = $"'{command}' - it is <<{words[0]} an_id>>";
-                        return null;
-                    }
-
-                    request.Id = words[1];
-                    return request;
-                }
-
-                case RequestKind.Give:
-                {
-                    int count = 1;
-
-                    if (words.Length < 2 || words.Length > 3 || !Schema.Json.IsId(words[1]) ||
-                        words.Length == 3 && (!int.TryParse(words[2], out count) || count < 1))
-                    {
-                        problem = $"'{command}' - it is <<give item_id>> or <<give item_id 2>>";
-                        return null;
-                    }
-
-                    request.Id = words[1];
-                    request.Amount = count;
-                    return request;
-                }
-
-                case RequestKind.Gold:
-                case RequestKind.Level:
-                {
-                    if (words.Length != 2 || !int.TryParse(words[1], out int amount) ||
-                        kind == RequestKind.Level && (amount < 1 || amount > 20))
-                    {
-                        problem = kind == RequestKind.Gold
-                            ? $"'{command}' - it is <<gold 50>>, or <<gold -50>> to take it"
-                            : $"'{command}' - it is <<level 3>>, a level from 1 to 20";
-                        return null;
-                    }
-
-                    request.Amount = amount;
-                    return request;
-                }
+                request.Skill = skill;
+                request.Ability = skill.Governs();
+            }
+            else if (EnumWords.TryParse(words[1], out Ability ability))
+            {
+                request.Ability = ability;
+            }
+            else
+            {
+                return $"'{command}' - '{words[1]}' is not " +
+                       (kind == RequestKind.Check ? "a skill or an ability" : "an ability");
             }
 
+            if (!ReadDc(words[2], out int dc))
+                return $"'{command}' - '{words[2]}' is not a number or one of " +
+                       string.Join(", ", Difficulties.Ladder.Select(d => d.Id()));
+
+            request.Dc = dc;
+            return null;
+        }
+
+        static string ReadRoll(Request request, string[] words, string command)
+        {
+            if (words.Length != 2 || !DiceRoll.TryParse(words[1], out DiceRoll dice, out _) || !dice.RollsAnything)
+                return $"'{command}' - it is <<roll 1d20>>";
+
+            request.Dice = dice;
+            return null;
+        }
+
+        static string ReadRest(Request request, string[] words, string command)
+        {
+            if (words.Length != 2 || words[1] != "short" && words[1] != "long")
+                return $"'{command}' - it is <<rest short>> or <<rest long>>";
+
+            request.Id = words[1];
+            return null;
+        }
+
+        static string ReadId(Request request, string[] words, string command)
+        {
+            if (words.Length != 2 || !Schema.Json.IsId(words[1])) return $"'{command}' - it is <<{words[0]} an_id>>";
+
+            request.Id = words[1];
+            return null;
+        }
+
+        static string ReadGive(Request request, string[] words, string command)
+        {
+            int count = 1;
+
+            if (words.Length < 2 || words.Length > 3 || !Schema.Json.IsId(words[1]) ||
+                words.Length == 3 && (!int.TryParse(words[2], out count) || count < 1))
+                return $"'{command}' - it is <<give item_id>> or <<give item_id 2>>";
+
+            request.Id = words[1];
+            request.Amount = count;
+            return null;
+        }
+
+        static string ReadAmount(Request request, string[] words, string command)
+        {
+            if (words.Length != 2 || !int.TryParse(words[1], out int amount) ||
+                request.Kind == RequestKind.Level && (amount < 1 || amount > 20))
+                return request.Kind == RequestKind.Gold
+                    ? $"'{command}' - it is <<gold 50>>, or <<gold -50>> to take it"
+                    : $"'{command}' - it is <<level 3>>, a level from 1 to 20";
+
+            request.Amount = amount;
             return null;
         }
 
@@ -289,14 +276,5 @@ namespace Content.Dialogue
 
         // how much gold a <<loot>> found, so the story can say "a fat purse" or "a few coppers"
         public const string LootGold = "$loot_gold";
-
-        // "won", "lost", "fled" - words rather than numbers, so a .yarn file reads as English
-        public static string Word(Core.Combat.Outcome outcome) => outcome switch
-        {
-            Core.Combat.Outcome.HeroesWon => "won",
-            Core.Combat.Outcome.HeroesLost => "lost",
-            Core.Combat.Outcome.Fled => "fled",
-            _ => "",
-        };
     }
 }

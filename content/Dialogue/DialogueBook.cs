@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Content.Campaigns;
 using Content.Schema;
 using Core.Localization;
+using Core.Words;
 using Yarn;
 using Yarn.Compiler;
 
@@ -107,23 +107,9 @@ namespace Content.Dialogue
         {
             var book = new DialogueBook(campaign);
 
-            if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder)) return book;
-
-            var sources = new List<CompilationJob.File>();
-
-            foreach (string path in Files(folder))
-            {
-                string name = Package.DialogueFolder + "/" + Path.GetFileName(path);
-
-                try
-                {
-                    sources.Add(new CompilationJob.File { FileName = name, Source = File.ReadAllText(path) });
-                }
-                catch (Exception could)
-                {
-                    book._problems.Add(new ContentProblem(name, "", "could not be read - " + could.Message));
-                }
-            }
+            var sources = PackFolder.Read(folder, Extension, Package.DialogueFolder, book._problems)
+                                    .Select(f => new CompilationJob.File { FileName = f.File, Source = f.Text })
+                                    .ToList();
 
             if (sources.Count == 0) return book;
 
@@ -258,12 +244,12 @@ namespace Content.Dialogue
 
                 if (topic == null) continue;
 
-                if (!Topics.TryWord(topic, out Topic about))
+                if (!EnumWords.TryParse(topic, out Topic about))
                 {
                     _problems.Add(new ContentProblem(
                         file, node.Key + "." + TopicHeader,
                         $"'{topic}' is not something a night can be about - it is one of " +
-                        $"{Vocabulary.Offer(Topics.Words)}. The list is the engine's, because the " +
+                        $"{Vocabulary.Offer(EnumWords.Ids<Topic>())}. The list is the engine's, because the " +
                         "day is what picks the topic"));
                     continue;
                 }
@@ -346,10 +332,6 @@ namespace Content.Dialogue
 
             return null;
         }
-
-        static IEnumerable<string> Files(string folder) =>
-            Directory.EnumerateFiles(folder, "*" + Extension, SearchOption.TopDirectoryOnly)
-                     .OrderBy(Path.GetFileName, StringComparer.Ordinal);
 
         public override string ToString() =>
             $"{_speakers.Count} nodes, {_lines.Count} lines" +

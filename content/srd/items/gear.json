@@ -4,51 +4,51 @@
   "items": [
     {
       "id": "padded_armor", "kind": "armor", "cost": 5, "slot": "body",
-      "armor": { "weight": "light", "base": 11, "noisy": true }
+      "armor": { "category": "light", "base": 11, "noisy": true }
     },
     {
       "id": "leather_armor", "kind": "armor", "cost": 10, "slot": "body",
-      "armor": { "weight": "light", "base": 11 }
+      "armor": { "category": "light", "base": 11 }
     },
     {
       "id": "studded_leather_armor", "kind": "armor", "cost": 45, "slot": "body",
-      "armor": { "weight": "light", "base": 12 }
+      "armor": { "category": "light", "base": 12 }
     },
     {
       "id": "hide_armor", "kind": "armor", "cost": 10, "slot": "body",
-      "armor": { "weight": "medium", "base": 12 }
+      "armor": { "category": "medium", "base": 12 }
     },
     {
       "id": "chain_shirt", "kind": "armor", "cost": 50, "slot": "body",
-      "armor": { "weight": "medium", "base": 13 }
+      "armor": { "category": "medium", "base": 13 }
     },
     {
       "id": "scale_mail", "kind": "armor", "cost": 50, "slot": "body",
-      "armor": { "weight": "medium", "base": 14, "noisy": true }
+      "armor": { "category": "medium", "base": 14, "noisy": true }
     },
     {
       "id": "breastplate", "kind": "armor", "cost": 400, "slot": "body",
-      "armor": { "weight": "medium", "base": 14 }
+      "armor": { "category": "medium", "base": 14 }
     },
     {
       "id": "half_plate_armor", "kind": "armor", "cost": 750, "slot": "body",
-      "armor": { "weight": "medium", "base": 15, "noisy": true }
+      "armor": { "category": "medium", "base": 15, "noisy": true }
     },
     {
       "id": "ring_mail", "kind": "armor", "cost": 30, "slot": "body",
-      "armor": { "weight": "heavy", "base": 14, "noisy": true }
+      "armor": { "category": "heavy", "base": 14, "noisy": true }
     },
     {
       "id": "chain_mail", "kind": "armor", "cost": 75, "slot": "body",
-      "armor": { "weight": "heavy", "base": 16, "strength": 13, "noisy": true }
+      "armor": { "category": "heavy", "base": 16, "strength": 13, "noisy": true }
     },
     {
       "id": "splint_armor", "kind": "armor", "cost": 200, "slot": "body",
-      "armor": { "weight": "heavy", "base": 17, "strength": 15, "noisy": true }
+      "armor": { "category": "heavy", "base": 17, "strength": 15, "noisy": true }
     },
     {
       "id": "plate_armor", "kind": "armor", "cost": 1500, "slot": "body",
-      "armor": { "weight": "heavy", "base": 18, "strength": 15, "noisy": true }
+      "armor": { "category": "heavy", "base": 18, "strength": 15, "noisy": true }
     },
     {
       "id": "shield", "kind": "shield", "cost": 10, "slot": "shield"

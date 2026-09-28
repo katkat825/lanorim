@@ -1,3 +1,5 @@
+using Content.Schema;
+
 namespace Content.Saves
 {
     public static class SaveFormat
@@ -9,7 +11,7 @@ namespace Content.Saves
 
         public const int Oldest = 1;
 
-        public static bool CanRead(int format) => format >= Oldest && format <= Current;
+        public static readonly FormatVersion Range = new FormatVersion(Oldest, Current);
 
         // A SAVE IS READ AS FAR AS IT CAN BE, WHICH IS NOT HOW A CAMPAIGN IS READ. A campaign with
         // a fault is refused, because a half-loaded campaign fails in the middle of a fight. A save

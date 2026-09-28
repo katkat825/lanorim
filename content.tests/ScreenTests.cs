@@ -12,7 +12,6 @@ using Content.Schema;
 using Content.Screens;
 using Content.Sheet;
 using Core.Characters;
-using Core.Combat;
 using Core.Dice;
 using Core.Resolution;
 using Core.Space;
@@ -74,14 +73,14 @@ namespace Content.Tests
             var book = new CampaignBook(all, saves);
 
             Assert.Equal(new[] { "the_goat", "long_road", "sample" }, book.Pages.Select(p => p.Id));
-            Assert.Equal(CampaignBook.TestLabel, book.Page("sample").LabelKey);
-            Assert.Null(book.Page("the_goat").LabelKey);
+            Assert.Equal(CampaignBook.TestLabel, book.Pages.Single(p => p.Id == "sample").LabelKey);
+            Assert.Null(book.Pages.Single(p => p.Id == "the_goat").LabelKey);
             Assert.Equal("first_steps", book.Tutorials.Single().Id);
 
-            CharacterSlot tess = book.Page("the_goat").Characters.Single();
+            CharacterSlot tess = book.Pages.Single(p => p.Id == "the_goat").Characters.Single();
             Assert.Equal(1, tess.Slot);
             Assert.Equal("Tess", tess.Name);
-            Assert.True(book.Page("the_goat").CanStartNew);
+            Assert.True(book.Pages.Single(p => p.Id == "the_goat").CanStartNew);
             Assert.True(book.CanContinue);
 
             var picker = new TutorialPicker(all);
@@ -222,7 +221,7 @@ namespace Content.Tests
             Assert.Null(hud.Hotkey(0));
             Assert.All(hud.Bar.Where(o => !o.Enabled), o => Assert.False(string.IsNullOrEmpty(o.WhyNotKey)));
 
-            Assert.NotEmpty(hud.LastLines(5));
+            Assert.NotEmpty(hud.Log.Lines);
         }
 
         [Fact]
@@ -259,7 +258,7 @@ namespace Content.Tests
             Assert.True(death.CanReload);
             Assert.Equal("cellar", death.Reload.Game.Node);
         }
-    
+
         [Fact]
         public void CreationPicksCanBeTakenBack()
         {
@@ -302,5 +301,5 @@ namespace Content.Tests
             Assert.False(bad.Ok);
             Assert.Contains(bad.Problems, p => p.What.Contains("volcano"));
         }
-}
+    }
 }

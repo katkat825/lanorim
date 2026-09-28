@@ -177,7 +177,7 @@ namespace Core.Tests
             var fight = new Encounter(new StandardResolver(new ScriptedRng(10, 1, 19, 2, 4)), field);
 
             Actor hero = Combatants.Hero();
-            Actor goblin = Combatants.Goblin(ac: 15);
+            Actor goblin = Combatants.Goblin();
 
             fight.Enlist(hero, new Cell(0, 1));
             fight.Enlist(goblin, new Cell(6, 1));

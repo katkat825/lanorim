@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using Content.Minis;
-using Game.Audio;
 
 namespace Game.Board
 {
@@ -272,8 +270,6 @@ namespace Game.Board
 
         Vector3 _skitter = Vector3.Zero;
 
-        public bool BeingCleared => _clearing >= 0.0;
-
         // away from whatever huffed at it, flat across the felt; straight back when nothing did
         public void Skitter(Vector3 shooedFrom)
         {
@@ -289,6 +285,8 @@ namespace Game.Board
             _clearing = ClearedAfter + ClearedOver;
             _clearedFrom = Position;
         }
+
+        public bool BeingCleared => _clearing >= 0.0;
 
         // counted down in _Process rather than ended with a tween callback, for the reason
         // Bubble.cs spells out at its own line: a Callable.From(...) holds a C# delegate alive on

@@ -1,4 +1,5 @@
 using System;
+using Core.Words;
 using Godot;
 
 namespace Game.Access
@@ -15,6 +16,21 @@ namespace Game.Access
     // so without exact matching, reaching backward reached both ways at once and the hand never moved.
     public static class Keyboard
     {
+        // the key an action is on as the keyboard labels it ("E"), read from the InputMap so a line
+        // that says what the key does follows a rebinding; empty when nothing is bound
+        public static string Named(string action)
+        {
+            if (!InputMap.HasAction(action)) return "";
+
+            foreach (InputEvent bound in InputMap.ActionGetEvents(action))
+                if (bound is InputEventKey key)
+                    return OS.GetKeycodeString(key.PhysicalKeycode != Key.None
+                        ? DisplayServer.KeyboardGetKeycodeFromPhysical(key.PhysicalKeycode)
+                        : key.Keycode);
+
+            return "";
+        }
+
         // every act written into the InputMap, replacing whatever was there. Returns how many got a
         // key; an act with none is reachable another way or is deliberately unbound
         public static int Install(Bindings keys)
@@ -25,7 +41,7 @@ namespace Game.Access
 
             foreach (System.Collections.Generic.KeyValuePair<Act, Bindings.Bound> one in keys.All)
             {
-                string action = one.Key.Word();
+                string action = one.Key.Id();
 
                 if (!InputMap.HasAction(action)) InputMap.AddAction(action);
                 else InputMap.ActionEraseEvents(action);
@@ -52,7 +68,7 @@ namespace Game.Access
             if (what == null) return null;
 
             foreach (Act act in Enum.GetValues<Act>())
-                if (what.IsActionPressed(act.Word(), exactMatch: true)) return act;
+                if (what.IsActionPressed(act.Id(), exactMatch: true)) return act;
 
             return null;
         }

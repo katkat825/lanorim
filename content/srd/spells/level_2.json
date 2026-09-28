@@ -10,7 +10,7 @@
       "concentration": true,
       "classes": ["mage", "cleric", "druid"],
       "effects": [
-        {"primitive": "afflict", "reach": "creatures", "targets": 1, "extra_targets_per_level": 1, "condition": "paralyzed", "save": "wis", "on_save": "negates", "repeat_save": true, "only_tags": ["humanoid"], "duration": "concentration", "note": "SRD 5.2.1: a Humanoid you can see, Wis save or Paralyzed; it repeats the save at the end of each of its turns"}
+        {"primitive": "afflict", "aim": "creatures", "targets": 1, "upcast": {"targets": 1}, "condition": "paralyzed", "save": "wis", "on_save": "negates", "repeat_save": {"ability": "wis"}, "tag_rules": {"humanoid": "only"}, "duration": "concentration", "note": "SRD 5.2.1: a Humanoid you can see, Wis save or Paralyzed; it repeats the save at the end of each of its turns"}
       ]
     },
     {
@@ -23,9 +23,9 @@
       "effects": [
         {
           "primitive": "afflict",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 1,
-          "extra_targets_per_level": 1,
+          "upcast": {"targets": 1},
           "condition": "invisible",
           "ends_on_act": true,
           "duration": "concentration",
@@ -43,26 +43,26 @@
       "effects": [
         {
           "primitive": "relieve",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "blinded",
           "mode": "blinded",
           "note": "SRD 5.2.1: end one condition on a creature you touch - Blinded, Deafened, Paralyzed or Poisoned, chosen at the cast"
         },
         {
           "primitive": "relieve",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "deafened",
           "mode": "deafened"
         },
         {
           "primitive": "relieve",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "paralyzed",
           "mode": "paralyzed"
         },
         {
           "primitive": "relieve",
-          "reach": "creature",
+          "aim": "creature",
           "condition": "poisoned",
           "mode": "poisoned"
         }
@@ -75,7 +75,7 @@
       "range": 0,
       "classes": ["mage"],
       "effects": [
-        {"primitive": "sway", "reach": "caster", "decoys": 3, "duration": "encounter", "note": "SRD 5.2.1: three duplicates for 1 minute (the fight). each hit on you rolls a d6 per duplicate left, and on any 3+ a duplicate takes the hit and is destroyed. an attacker that is Blinded or has Truesight is not fooled"}
+        {"primitive": "sway", "aim": "caster", "decoys": 3, "duration": "encounter", "note": "SRD 5.2.1: three duplicates for 1 minute (the fight). each hit on you rolls a d6 per duplicate left, and on any 3+ a duplicate takes the hit and is destroyed. an attacker that is Blinded or has Truesight is not fooled"}
       ]
     },
     {
@@ -86,7 +86,7 @@
       "casting_time": "bonus_action",
       "classes": ["mage"],
       "effects": [
-        {"primitive": "shift", "reach": "caster", "note": "SRD 5.2.1: teleport up to 30 feet to an unoccupied space you can see", "teleports": true}
+        {"primitive": "shift", "aim": "caster", "note": "SRD 5.2.1: teleport up to 30 feet to an unoccupied space you can see", "teleports": true}
       ]
     },
     {
@@ -98,9 +98,9 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "creatures",
+          "aim": "creatures",
           "targets": 3,
-          "extra_targets_per_level": 1,
+          "upcast": {"targets": 1},
           "amount": "2d6",
           "damage_type": "fire",
           "attack_roll": true
@@ -116,15 +116,15 @@
       "effects": [
         {
           "primitive": "damage",
-          "reach": "burst",
+          "aim": "burst",
           "radius": 2,
           "amount": "3d8",
-          "per_extra_level": "1d8",
+          "upcast": {"amount": "1d8"},
           "damage_type": "thunder",
           "save": "con",
           "on_save": "half",
           "note": "SRD 5.2.1 (SRD p.161): a Construct has Disadvantage on the save (disadvantage_tags)",
-          "disadvantage_tags": ["construct"]
+          "tag_rules": {"construct": "save_disadvantage"}
         }
       ]
     },
@@ -140,29 +140,28 @@
       "effects": [
         {
           "primitive": "zone",
-          "reach": "place",
+          "aim": "place",
           "radius": 0,
           "duration": "concentration",
-          "note": "SRD 5.2.1: a floating spectral force within 60 feet - a square on the board that blocks nothing and harms nothing by itself",
-          "point": true
+          "note": "SRD 5.2.1: a floating spectral force within 60 feet - a square on the board that blocks nothing and harms nothing by itself"
         },
         {
           "primitive": "shift",
-          "reach": "zone",
+          "aim": "zone",
           "length": 4,
-          "repeats": true,
+          "lands": "now_and_on_repeat",
           "note": "a Bonus Action on later turns moves the force up to 20 feet"
         },
         {
           "primitive": "damage",
-          "reach": "creature",
+          "aim": "creature",
           "near_zone": 1,
           "amount": "1d8",
-          "per_extra_level": "1d8",
+          "upcast": {"amount": "1d8"},
           "damage_type": "force",
           "attack_roll": true,
           "add_modifier": true,
-          "repeats": true,
+          "lands": "now_and_on_repeat",
           "note": "then a melee spell attack against a creature within 5 feet of the force: 1d8 + your spellcasting modifier Force. +1d8 per slot level above 2"
         }
       ]
@@ -177,7 +176,7 @@
       "effects": [
         {
           "primitive": "zone",
-          "reach": "square",
+          "aim": "square",
           "length": 4,
           "rough": true,
           "duration": "concentration",
@@ -186,12 +185,12 @@
         },
         {
           "primitive": "afflict",
-          "reach": "zone",
+          "aim": "zone",
           "pulses": "start_turn|enter",
           "condition": "restrained",
           "save": "dex",
           "on_save": "negates",
-          "escape": "str",
+          "escape": {"ability": "str"},
           "duration": "concentration",
           "note": "SRD 5.2.1: starting a turn in the webs or entering them is a Dexterity save or Restrained; an action and a Strength (Athletics) check against the spell's DC breaks free",
           "while_in_zone": true

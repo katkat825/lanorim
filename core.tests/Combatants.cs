@@ -11,17 +11,17 @@ namespace Core.Tests
                                  Allegiance.Hero);
 
             hero.SetHealth(new Health(hp, Die.D10, 5));
-            hero.Armor = new ArmorProfile(ArmorWeight.Heavy, ac);
+            hero.Armor = new ArmorProfile(ArmorCategory.Heavy, ac);
 
             return hero;
         }
 
-        public static Actor Goblin(string id = "goblin", int hp = 7, int ac = 15)
+        public static Actor Goblin(string id = "goblin", int hp = 7)
         {
             var goblin = new Actor(id, 1, new AbilityScores(8, 14, 10, 10, 8, 8));
 
             goblin.SetHealth(new Health(hp, Die.D6, 2));
-            goblin.Armor = new ArmorProfile(ArmorWeight.Light, 13);
+            goblin.Armor = new ArmorProfile(ArmorCategory.Light, 13);
             goblin.HasShield = true;
             goblin.Speed = 30;
 

@@ -41,7 +41,7 @@ namespace Sim
 
         static int Help()
         {
-            Console.WriteLine("sim locale [path]   scaffold the English locale csv");
+            Console.WriteLine("sim locale [path]   audit the English locale csv: every key the engine emits has words");
             Console.WriteLine("sim spells          print the spell catalogue and its problems");
             Console.WriteLine("sim check-spells f  read a spell file off disk and print what it read, or why not");
             Console.WriteLine("sim fairness        chi-squared every die");
@@ -57,19 +57,17 @@ namespace Sim
         {
             string path = args.Length > 0 ? args[0] : Find("game/locale/game.csv");
 
-            string existing = File.Exists(path) ? File.ReadAllText(path) : "";
+            // the csv is the source of truth: this reads it and says what is missing. the scaffold
+            // that once drafted it (sim/English.cs) was deleted 2026-09-28 - a new key's English is
+            // written by hand, and this, check-locale and LocaleTests all say when one is missing
+            string csv = File.Exists(path) ? File.ReadAllText(path) : "";
 
-            string drafted = English.Draft(existing);
+            int rows = csv.Split('\n').Count(l => l.Trim().Length > 0) - 1;
 
-            Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));
-            File.WriteAllText(path, drafted);
-
-            int rows = drafted.Split('\n').Count(l => l.Length > 0) - 1;
-
-            Console.WriteLine($"wrote {rows} rows to {path}");
+            Console.WriteLine($"read {rows} rows from {path}");
 
             IReadOnlyList<string> problems =
-                Content.Schema.Locale.Audit(drafted, EngineKeys.Sorted());
+                Content.Schema.Locale.Audit(csv, EngineKeys.Sorted());
 
             foreach (string problem in problems) Console.Error.WriteLine("  " + problem);
 
@@ -273,7 +271,7 @@ namespace Sim
             // base two (decisions_checklist.md section 1, corrected 2026-09-23)
             fight.Enlist(hero, new Cell(0, 2),
                          new ActionBudget { ExtraActionsEachRound = level >= 5 ? 1 : 0 });
-            fight.ArmOpportunity(hero, Longsword(hero));
+            fight.ArmOpportunity(hero, Longsword());
 
             var brains = new Dictionary<Actor, ITactics>();
 
@@ -312,7 +310,7 @@ namespace Sim
         // the tactics.
         static void Play(Encounter fight, Turn turn, Actor hero)
         {
-            Attack sword = Longsword(hero);
+            Attack sword = Longsword();
 
             Actor quarry = fight.Field.Enemies(hero)
                                 .OrderBy(a => fight.Field.Distance(hero, a))
@@ -355,7 +353,7 @@ namespace Sim
             int hp = 10 + constitution + (level - 1) * (Die.D10.Average() + 1 + constitution);
 
             hero.SetHealth(new Health(hp, Die.D10, level));
-            hero.Armor = new ArmorProfile(ArmorWeight.Heavy, 16);
+            hero.Armor = new ArmorProfile(ArmorCategory.Heavy, 16);
             hero.HasShield = true;
             hero.TrainSave(Ability.Strength);
             hero.TrainSave(Ability.Constitution);
@@ -368,7 +366,7 @@ namespace Sim
             return hero;
         }
 
-        static Attack Longsword(Actor hero) =>
+        static Attack Longsword() =>
             new Attack("longsword", DiceRoll.Parse("1d8"), DamageType.Slashing);
 
         static readonly Attack Scimitar =
@@ -380,7 +378,7 @@ namespace Sim
             var goblin = new Actor("goblin_" + i, 1, new AbilityScores(8, 14, 10, 10, 8, 8));
 
             goblin.SetHealth(new Health(7, Die.D6, 2));
-            goblin.Armor = new ArmorProfile(ArmorWeight.Light, 13);
+            goblin.Armor = new ArmorProfile(ArmorCategory.Light, 13);
             goblin.HasShield = true;
 
             return goblin;

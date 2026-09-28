@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using Core.Characters;
 using Core.Resolution;
+using Core.Words;
 
 namespace Content.Schema
 {
@@ -49,6 +50,12 @@ namespace Content.Schema
             return trouble.Count == 0;
         }
 
+        // every key a consequence takes
+        public static readonly IReadOnlyList<string> Keys = new[]
+        {
+            "id", "polarity", "kind", "ability", "condition", "amount", "scales_with_level", "weight",
+        };
+
         static Consequence ReadOne(JsonElement entry, List<string> problems)
         {
             string id = entry.Text("id");
@@ -59,6 +66,8 @@ namespace Content.Schema
                 return null;
             }
 
+            Keyed.OnlyKnown(entry, Keys, id, problems);
+
             string polarityText = entry.Text("polarity", "bane");
 
             Polarity polarity = polarityText == "boon" ? Polarity.Boon : Polarity.Bane;
@@ -66,7 +75,7 @@ namespace Content.Schema
             if (polarityText != "boon" && polarityText != "bane")
                 problems.Add($"{id}: '{polarityText}' is not 'bane' or 'boon'");
 
-            if (!TryKind(entry.Text("kind"), out ConsequenceKind kind))
+            if (!EnumWords.TryParse(entry.Text("kind"), out ConsequenceKind kind))
             {
                 problems.Add($"{id}: '{entry.Text("kind")}' is not a kind of consequence " +
                              "(health, gold, ability_shift, condition, flavour)");
@@ -79,7 +88,7 @@ namespace Content.Schema
             var one = new Consequence(id, polarity, kind,
                                       entry.Dice("amount", problems, id),
                                       ability, condition,
-                                      entry.Number("weight", 1),
+                                      entry.Weight(id, problems),
                                       entry.Flag("scales_with_level"));
 
             switch (kind)
@@ -107,36 +116,8 @@ namespace Content.Schema
             return one;
         }
 
-        static bool TryKind(string id, out ConsequenceKind kind)
-        {
-            switch ((id ?? "").ToLowerInvariant())
-            {
-                case "health": kind = ConsequenceKind.Health; return true;
-                case "gold": kind = ConsequenceKind.Gold; return true;
-                case "ability_shift": kind = ConsequenceKind.AbilityShift; return true;
-                case "condition": kind = ConsequenceKind.Condition; return true;
-                case "flavour": kind = ConsequenceKind.Flavour; return true;
-
-                default: kind = ConsequenceKind.Flavour; return false;
-            }
-        }
-
-        public static ConsequencePool Srd()
-        {
-            var all = new List<Consequence>();
-
-            foreach ((string _, string text) in Srd_Files())
-            {
-                TryRead(text, out IReadOnlyList<Consequence> read, out _);
-
-                all.AddRange(read);
-            }
-
-            return new ConsequencePool(all);
-        }
-
-        static IEnumerable<(string Path, string Text)> Srd_Files() =>
-            Schema.Srd.ReadFolder("consequences");
+        public static ConsequencePool Srd() =>
+            new ConsequencePool(Schema.Srd.ReadAll<Consequence>("consequences", TryRead, null));
     }
 
     // what a drawn consequence actually does. the pool says which one; this is the only place that

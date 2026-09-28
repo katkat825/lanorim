@@ -10,6 +10,7 @@ using Core.Magic;
 using Core.Resolution;
 using Core.Rules;
 using Core.Space;
+using static Content.Tests.Fights;
 
 namespace Content.Tests
 {
@@ -20,34 +21,14 @@ namespace Content.Tests
     {
         static readonly Library Srd = Library.Srd();
 
-        const string Hall = @"
-+-+-+-+-+-+-+-+-+-+-+-+
-|@ . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+ + + + + + + + + + + +
-|. . . . . . . . . . .|
-+-+-+-+-+-+-+-+-+-+-+-+";
-
         static IRng Script(params int[] rolls) =>
             new ScriptedRng(rolls.Concat(Enumerable.Repeat(10, 200)).ToArray());
-
-        static Encounter Field(IRng rng)
-        {
-            Assert.True(MapReader.TryRead(Hall, out MapLayout map, out string problem), problem);
-
-            return new Encounter(new StandardResolver(rng), new Battlefield(map), new CombatLog());
-        }
 
         static Actor Hero(int hp = 60)
         {
             var hero = new Actor("hero", 5, new AbilityScores(), Allegiance.Hero);
             hero.SetHealth(new Health(hp));
-            hero.Armor = new ArmorProfile(ArmorWeight.Heavy, 10);
+            hero.Armor = new ArmorProfile(ArmorCategory.Heavy, 10);
             hero.Tag("humanoid");
             return hero;
         }
@@ -63,7 +44,7 @@ namespace Content.Tests
 
             Monster spider = Srd.Bestiary.Find("giant_spider");
             Assert.Single(spider.Actions);
-            Assert.Equal(5, spider.Actions[0].Recharge);
+            Assert.Equal(5, spider.Actions[0].RechargeOn);
 
             Assert.Contains("fireball", Srd.Bestiary.Find("mage").Spellcasting.SpellIds);
         }

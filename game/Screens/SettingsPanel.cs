@@ -20,6 +20,14 @@ namespace Game.Screens
 
         public event Action Done;
 
+        // the panel in a scroll, and what its Done goes back to: the book's page, or the pause card
+        public static Control Scrolled(Action done, int width)
+        {
+            var panel = new SettingsPanel();
+            panel.Done += done;
+            return Ui.Scroll(panel, width);
+        }
+
         public override void _Ready()
         {
             AddThemeConstantOverride("separation", 10);

@@ -87,11 +87,6 @@ namespace Content.Inventory
 
         public IReadOnlyList<string> Stock => _stock;
 
-        public void Stocks(string itemId)
-        {
-            if (!_stock.Contains(itemId)) _stock.Add(itemId);
-        }
-
         // only what this hero could actually use - an item they can never equip must not be on
         // the shelf (inventory_decisions.md: "tests ensure unuseable items aren't surfaced")
         public IEnumerable<Item> Showing(string className, int level) =>

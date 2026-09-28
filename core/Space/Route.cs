@@ -58,6 +58,44 @@ namespace Core.Space
             return null;
         }
 
+        // EVERY SQUARE WITHIN A BUDGET, AND ITS CHEAPEST COST: one Dijkstra flood from the start,
+        // stopped at the budget, with Between's own steps (the corner rule, walls, occupants) and
+        // the step's cost the caller's (difficult ground, flying, crawling). Battlefield.Reachable
+        // used to run Between to every square on the map, one A* each (cc_task_godfiles-dupes-
+        // efficiency.md #16). the start is in it at 0
+        public static Dictionary<Cell, int> Reach(MapLayout map, Cell from, Func<Cell, bool> occupied,
+                                                  Func<Cell, int> stepCost, int budget)
+        {
+            var best = new Dictionary<Cell, int> { [from] = 0 };
+
+            if (map == null || occupied == null || stepCost == null) return best;
+
+            // (cost, x, y): the tail is a total tie-break, so a flood is the same every run
+            var open = new PriorityQueue<Cell, (int Cost, int X, int Y)>();
+            open.Enqueue(from, (0, from.X, from.Y));
+
+            while (open.TryDequeue(out Cell here, out (int Cost, int X, int Y) at))
+            {
+                if (at.Cost > best[here]) continue;
+
+                foreach ((int dx, int dy) in Neighbours)
+                {
+                    var next = new Cell(here.X + dx, here.Y + dy);
+
+                    if (!CanStep(map, here, next, dx, dy, occupied)) continue;
+
+                    int through = at.Cost + stepCost(next);
+
+                    if (through > budget || best.TryGetValue(next, out int already) && already <= through) continue;
+
+                    best[next] = through;
+                    open.Enqueue(next, (through, next.X, next.Y));
+                }
+            }
+
+            return best;
+        }
+
         static bool CanStep(MapLayout map, Cell from, Cell to, int dx, int dy, Func<Cell, bool> occupied)
         {
             if (dx == 0 || dy == 0) return Crosses(map, from, to, occupied);
