@@ -101,7 +101,7 @@ namespace Content.Combat
         }
 
         // a spell for friends: healing, a ward, a boon with no save
-        static bool Kindly(Spell spell) =>
+        internal static bool Kindly(Spell spell) =>
             spell.Does(Primitive.Heal) || spell.Does(Primitive.Ward) ||
             spell.Does(Primitive.Stabilize) || spell.Does(Primitive.Relieve) ||
             spell.Effects.All(e => e.Kind == Primitive.Sway && !e.Save.HasValue ||

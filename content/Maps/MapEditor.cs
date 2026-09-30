@@ -36,7 +36,10 @@ namespace Content.Maps
         public MapEditor(MapDraft draft, PropCatalogue palette = null)
         {
             Draft = draft ?? throw new ArgumentNullException(nameof(draft));
-            Palette = palette ?? PropCatalogue.Srd();
+            Palette = palette ?? draft.Palette;
+
+            // the draft judges which props block by the palette the author is placing from
+            draft.Palette = Palette;
         }
 
         public MapDraft Draft { get; }

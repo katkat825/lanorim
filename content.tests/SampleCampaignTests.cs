@@ -24,7 +24,7 @@ namespace Content.Tests
     // death that reloads. campaigns/sample_millbrook is written by tools/make_sample_campaign.py.
     public class SampleCampaignTests : IDisposable
     {
-        static readonly string Folder =
+        internal static readonly string Folder =
             Path.Combine(AppContext.BaseDirectory, "campaigns", "sample_millbrook");
 
         readonly string _saves = Path.Combine(Path.GetTempPath(), "lanorim_sample_" + Guid.NewGuid().ToString("N"));

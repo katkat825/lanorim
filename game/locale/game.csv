@@ -986,12 +986,16 @@ ui.area.cube.name,{0}-foot cube
 ui.area.line.name,{0}-foot line
 ui.area.radius.name,{0}-foot radius
 ui.book.continue,Continue
+ui.book.delete,Delete
+ui.book.delete_question_many,Delete {0}? This can't be undone. All {1} of their saves go with them.
+ui.book.delete_question_one,Delete {0}? This can't be undone. Their one save goes with them.
 ui.book.empty,No campaigns are installed.
+ui.book.keep,Keep
 ui.book.load,Load
 ui.book.new_character,New character
 ui.book.quit,Quit
 ui.book.settings,Settings
-ui.book.slots_full,All five characters are in use. Retire one to start another.
+ui.book.slots_full,All five characters are in use. Delete one to start another.
 ui.book.test_campaign,Test campaign
 ui.book.tutorials,Tutorials
 ui.caption.behind.name,Something is rolled behind the screen. You are not shown it.
@@ -1008,7 +1012,13 @@ ui.casting_time.reaction.name.hit,"Reaction, when an attack hits you"
 ui.casting_time.reaction.name.leave_reach,"Reaction, when a creature leaves your reach"
 ui.combat.actions,Actions
 ui.combat.aim_hint,{0} and {1} or the wheel turn it; Shift and the wheel zoom; {2} or a click casts it
+ui.combat.before_cast,Cast {0} on yourself
+ui.combat.before_line,A spell that lasts longer than a fight can be cast on yourself now. It costs a slot as usual.
+ui.combat.before_title,Before the fight
 ui.combat.bonus_action,Bonus action
+ui.combat.caption_cast,You cast {0}
+ui.combat.caption_cast_on,You cast {0} on {1}
+ui.combat.caption_changed,{0}: {1}
 ui.combat.end_turn,End Turn
 ui.combat.enemy_turn,Enemy turn
 ui.combat.expected_damage,~{0} damage
@@ -1019,13 +1029,20 @@ ui.combat.log,Log
 ui.combat.manoeuvres_menu,More actions
 ui.combat.movement,Moved {0} of {1} squares
 ui.combat.no,No
+ui.combat.on_yourself,On yourself
 ui.combat.path_cost,{0} squares
 ui.combat.reaction,Reaction
 ui.combat.round,Round {0}
 ui.combat.save_chance,{0}% to fail the save
 ui.combat.skip,Skip
 ui.combat.spells_menu,Spells
+ui.combat.they_armor_class,{0}'s Armor Class is now {1}
+ui.combat.they_hit_points,"{0} regains {2} hit points, and has {1}"
+ui.combat.they_max_hit_points,{0}'s hit point maximum is now {1}
+ui.combat.they_speed,{0}'s speed is now {1} feet
+ui.combat.they_temporary_hit_points,{0} has {1} temporary hit points
 ui.combat.throw_prompt,Your dice are waiting - Space to throw
+ui.combat.to_the_fight,To the fight
 ui.combat.verdict_critical,Critical hit! {0} against Armor Class {1}
 ui.combat.verdict_failed,{0} fails the save: {1} against DC {2}
 ui.combat.verdict_hit,Hit! {0} against Armor Class {1}
@@ -1033,6 +1050,11 @@ ui.combat.verdict_miss,Miss: {0} against Armor Class {1}
 ui.combat.verdict_saved,{0} saves: {1} against DC {2}
 ui.combat.won,Victory
 ui.combat.yes,Yes
+ui.combat.you_armor_class,your Armor Class is now {0}
+ui.combat.you_hit_points,"you regain {1} hit points, and have {0}"
+ui.combat.you_max_hit_points,your hit point maximum is now {0}
+ui.combat.you_speed,your speed is now {0} feet
+ui.combat.you_temporary_hit_points,you have {0} temporary hit points
 ui.combat.your_turn,Your turn
 ui.combat_action.bonus_dash.name,Dash (bonus action)
 ui.combat_action.bonus_disengage.name,Disengage (bonus action)
@@ -1089,12 +1111,14 @@ ui.controls.not_yet,(not working yet)
 ui.controls.reserved,{0} is kept for the action bar. Pick another key.
 ui.controls.taken,{0} already does something else. Pick another key.
 ui.controls.title,Controls
+ui.create.chosen_of,{0} of {1} chosen
 ui.create.name_hint,What are you called?
 ui.create.picks_left,{0} left to choose
 ui.create.points_left,{0} points left to spend
 ui.create.step_abilities,Set your ability scores
 ui.create.step_alignment,Choose an alignment
 ui.create.step_background,Choose a background
+ui.create.step_cantrips,Choose your cantrips
 ui.create.step_class,Choose a class
 ui.create.step_improvements,Spend your ability score improvements
 ui.create.step_lineage,Choose a lineage
@@ -1111,6 +1135,15 @@ ui.death.reload,Try again
 ui.death.title,You have fallen
 ui.death.to_the_book,Back to the book
 ui.dialogue.continue,Continue
+ui.duration.concentration.name,"Concentration, as long as you hold it"
+ui.duration.encounter.name,Until the fight ends
+ui.duration.instant.name,Instantaneous
+ui.duration.long_rest.name,Until your next long rest
+ui.duration.next_turn.name,Until the start of the next turn
+ui.duration.next_turn_end.name,Until the end of the next turn
+ui.duration.permanent.name,Until it is undone
+ui.duration.rest.name,Until your next rest
+ui.duration.turn_end.name,Until the end of the turn
 ui.end.blurb,The story is over. Your character waits in the book.
 ui.end.demo,This is the end of the demo.
 ui.end.title,The End
@@ -1139,6 +1172,13 @@ ui.level_up.one_to_two,+1 to two scores
 ui.level_up.suggested,Take the suggestion
 ui.level_up.title,Level {0}
 ui.level_up.two_to_one,+2 to one score
+ui.log.cast.name,{0} casts {1}.
+ui.log.cast_on.name,{0} casts {1} on {2}.
+ui.log.changed_armor_class.name,{0}'s Armor Class is now {2} (was {1}).
+ui.log.changed_hit_points.name,"{0} regains {3} hit points, and has {2}."
+ui.log.changed_max_hit_points.name,{0}'s hit point maximum is now {2} (was {1}).
+ui.log.changed_speed.name,{0}'s speed is now {2} feet (was {1}).
+ui.log.changed_temporary_hit_points.name,{0} has {2} temporary hit points.
 ui.log.condition_off.name,{0} is no longer {1}.
 ui.log.condition_on.name,{0} is now {1}.
 ui.log.critical.name,Critical: {0} lands a critical hit on {1} ({2} against Armor Class {3})!
@@ -1231,6 +1271,7 @@ ui.school.illusion.name,Illusion
 ui.school.necromancy.name,Necromancy
 ui.school.transmutation.name,Transmutation
 ui.settings.access,Access
+ui.settings.bring_tray,Bring the dice tray to me
 ui.settings.enemy_speed,Enemy turn speed
 ui.settings.follow_enemies,Camera follows enemies
 ui.settings.game,Game
@@ -1256,7 +1297,7 @@ ui.spell_level.leveled.name,Level {0}
 ui.spell_resource.points.description,"One pool. Every spell level has a price, and a long rest refills it. Spells of 6th level and above are still once a day."
 ui.spell_resource.points.name,Spell points (simpler bookkeeping)
 ui.spell_resource.slots.description,"A grid of slots by level, refilled by a long rest. Cast a spell by spending a slot of its level or higher."
-ui.spell_resource.slots.name,Spell slots (classic D&D)
+ui.spell_resource.slots.name,Spell slots (the classic way)
 ui.table.came_round,"You come round a long while later, sore but whole. The day is done."
 ui.table.turn_hint,{0} and {1} turn the table; the wheel or {2} and {3} zoom
 ui.tutorial.advanced,Advanced

@@ -24,8 +24,8 @@ namespace Game.Screens
     {
         readonly CombatDirector _director;
 
-        HBoxContainer _strip;
-        HBoxContainer _bar;
+        HFlowContainer _strip;
+        HFlowContainer _bar;
         Control _barPanel;
         Label _pips;
         Label _preview;
@@ -52,15 +52,46 @@ namespace Game.Screens
             BuildStrip();
             BuildBar();
             BuildLog();
+
+            // a window resized live: the strip and the bar wrap to the new width
+            GetViewport().SizeChanged += Wrap;
+        }
+
+        public override void _ExitTree()
+        {
+            if (GetViewport() != null) GetViewport().SizeChanged -= Wrap;
+        }
+
+        // the room the strip has between the two top corners; the bar, at the bottom, has the screen's
+        // width. Both wrap past it rather than run off the screen (check-layout holds them to it)
+        float Between => GetViewportRect().Size.X - 2 * Layout.EdgeMargin - Layout.LogWidth - Layout.HintWidth
+                         - 4 * Layout.BarGap - 2 * PanelPadding;
+
+        float Across => GetViewportRect().Size.X - 2 * Layout.EdgeMargin - 2 * PanelPadding;
+
+        const float PanelPadding = 24;
+
+        void Wrap()
+        {
+            if (_strip != null) Ui.Fit(_strip, Between);
+            if (_bar != null) Ui.Fit(_bar, Across - Layout.EndTurnMinWidth - 6 * Layout.BarGap);
         }
 
         // top centre, flush to the top edge
         void BuildStrip()
         {
-            _strip = Ui.Row(Layout.BarGap * 2);
+            _strip = Ui.Flow(Layout.BarGap * 2);
             _status = new Label { ThemeTypeVariation = "HudLabel", HorizontalAlignment = HorizontalAlignment.Center };
 
-            var top = new CenterContainer { AnchorRight = 1, OffsetTop = Layout.EdgeMargin, MouseFilter = MouseFilterEnum.Ignore };
+            // between the log's corner and the hint's, so none of the three can overlap
+            var top = new CenterContainer
+            {
+                AnchorRight = 1,
+                OffsetLeft = Layout.EdgeMargin + Layout.LogWidth + 2 * Layout.BarGap,
+                OffsetRight = -(Layout.EdgeMargin + Layout.HintWidth + 2 * Layout.BarGap),
+                OffsetTop = Layout.EdgeMargin,
+                MouseFilter = MouseFilterEnum.Ignore,
+            };
             top.AddChild(Ui.Panel(Ui.Column(2, _strip, _status), "HudPanel"));
             AddChild(top);
         }
@@ -68,7 +99,7 @@ namespace Game.Screens
         // bottom centre, flush to the bottom edge: the options, End Turn at the right end, the pips under
         void BuildBar()
         {
-            _bar = Ui.Row(Layout.BarGap);
+            _bar = Ui.Flow(Layout.BarGap);
 
             _endTurn = Ui.Button(CombatHud.EndTurnKey, () => _director.EndTurn());
             _endTurn.CustomMinimumSize = new Vector2(Layout.EndTurnMinWidth, 0);
@@ -164,7 +195,6 @@ namespace Game.Screens
             if (_log == null) return;
 
             _logTitle.Text = Ui.Say(CombatHud.LogKey) + (_logOpen ? "  ▾" : "  ▸");
-            _logTitle.TooltipText = Game.Access.Keyboard.Named(Game.Access.Act.ToggleLog.Id());
 
             Ui.Clear(_log);
 
@@ -192,6 +222,8 @@ namespace Game.Screens
             var hud = new CombatHud(session);
 
             foreach (TurnChip chip in hud.Order) _strip.AddChild(Chip(chip));
+
+            Ui.Fit(_strip, Between);
 
             // whose turn it is, not whether the bar is up: while the hero's own dice are on the tray the
             // bar is down, and the strip said "Enemy turn"
@@ -234,7 +266,7 @@ namespace Game.Screens
             ReferenceEquals(session.Selected, o) || session.Selected?.Id == o.Id;
 
         // a menu of options on the bar - the spells, the manoeuvres. A greyed one stays in it, disabled,
-        // with its reason as the tooltip: a menu is where you look for what exists
+        // with its reason after its name: a menu is where you look for what exists
         void AddMenu(CombatSession session, string key, IReadOnlyList<ActionOption> options)
         {
             if (options.Count == 0) return;
@@ -246,9 +278,9 @@ namespace Game.Screens
             {
                 ActionOption o = options[i];
 
-                popup.AddItem(Label(o), i);
+                // a greyed one says why in its own words, not on hover (cc_task_ui-issues-9-30.md 3.1)
+                popup.AddItem(!o.Enabled && o.WhyNotKey != null ? $"{Label(o)}  ({Ui.Say(o.WhyNotKey)})" : Label(o), i);
                 popup.SetItemDisabled(i, !o.Enabled);
-                if (!o.Enabled && o.WhyNotKey != null) popup.SetItemTooltip(i, Ui.Say(o.WhyNotKey));
 
                 if (IsSelected(session, o)) menu.Modulate = Chosen;
             }
@@ -291,6 +323,16 @@ namespace Game.Screens
 
                 AddMenu(session, CombatHud.SpellsMenuKey, hud.Spells);
                 AddMenu(session, CombatHud.ManoeuvresMenuKey, hud.Manoeuvres);
+
+                // aiming a spell that can go on the hero: cast it on yourself without finding your mini
+                if (_director.CanAimAtSelf)
+                {
+                    Button self = Ui.Button(Ui.Say(ScreenWords.OnYourself), _director.OnYourself, true);
+                    self.ThemeTypeVariation = "HudButton";
+                    self.Modulate = Chosen;
+                    _bar.AddChild(self);
+                    _bar.MoveChild(self, 0);
+                }
             }
 
             _pips.Text = can
@@ -308,6 +350,7 @@ namespace Game.Screens
                 _aim.Text = Ui.Say(ScreenWords.AimHint, Game.Access.Keyboard.Named("turn_left"),
                                    Game.Access.Keyboard.Named("turn_right"), Game.Access.Keyboard.Named("touch"));
 
+            Wrap();
             _barPanel.Visible = can;
             _endTurn.Disabled = !can;
 

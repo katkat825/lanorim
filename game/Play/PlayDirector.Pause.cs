@@ -87,9 +87,11 @@ namespace Game.Play
         public override void _Process(double delta)
         {
             AgeVerdict();
+            TickCompanion(delta);
 
-            // a throw asked for while the tray was still settling the last one goes as soon as it can
-            if (_auto && _dice.Waiting != null && !_dice.Thrown) _dice.Go();
+            // thrown by itself (--auto, --autodice), or by a Space pressed while the tray was on its
+            // way, as soon as the tray is ready for it
+            if ((_auto || _dice.AutoThrow || _dice.Wanted) && _dice.Waiting != null && !_dice.Thrown) _dice.Go();
 
             if (_auto)
             {

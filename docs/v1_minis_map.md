@@ -36,6 +36,11 @@ Cleric and Druid are the only two without an exact model; both are covered by a 
 
 ## 2. Companion minis — 5 voices across 7 classes
 
+> **Superseded (2026-10-01):** `updated_decisions.md` says companions are variations on the **KayKit
+> Skeletons** pack, used nowhere else, mini-sized and never on the map. The table below is the older
+> Quaternius plan, kept for its voices. The skeleton picked for each companion is in
+> `game/Table/CompanionModels.cs`.
+
 The companion is a **live off-map token**, distinct from the on-map minis, so it can look different and may
 be animated. Voices: Barbarian + Fighter share one, Cleric + Paladin share one, Rogue/Mage/Druid each their
 own.

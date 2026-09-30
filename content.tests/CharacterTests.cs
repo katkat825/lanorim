@@ -616,6 +616,30 @@ namespace Content.Tests
             Assert.Equal(Step.Background, making.Next);
         }
 
+        // cc_task_ui-issues-9-30.md 3.3: the cantrips and the levelled spells are two steps, cantrips first
+        [Fact]
+        public void AMageChoosesCantripsThenSpells()
+        {
+            Creation.Creation making = Fresh();
+
+            making.Pick(Srd.Class("mage"));
+            making.Pick(Srd.Kind("human"));
+            making.Pick(Srd.Background("soldier"));
+            foreach (Skill skill in making.SkillChoices.Take(making.SkillPicksLeft).ToList()) making.Train(skill);
+
+            Assert.Equal(Step.Cantrips, making.Next);
+
+            foreach (var cantrip in making.SpellChoices.Where(s => s.IsCantrip).Take(making.CantripPicks).ToList())
+                Assert.True(making.Learn(cantrip));
+
+            Assert.Equal(Step.Spells, making.Next);
+
+            foreach (var spell in making.SpellChoices.Where(s => !s.IsCantrip).Take(making.SpellPicks).ToList())
+                Assert.True(making.Learn(spell));
+
+            Assert.Equal(Step.Name, making.Next);
+        }
+
         [Fact]
         public void PickingAHumanDoesNot()
         {

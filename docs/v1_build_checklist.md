@@ -125,7 +125,7 @@ done.**
 - `[~]` **3D table scene** — grid map (3/4 screen), lifting dice tray, GM screen, companion, help button.
 - `[x]` **Dice physics + roll + sound** — reuse the old dice system + the moved sound pool.
 - `[x]` **GM screen** — first-party GM-screen models made (`game/models/gm_screen/`); wire **blank** for now, per-campaign backgrounds later. *(2026-09-24: `GmScreen` stands beyond the board's far edge whatever the map's size; a manifest's `gm_screen` picks cave / dead-forest / plains / snowy-mountains; the GM's hidden rolls rattle behind it. Its place and size need eyes.)*
-- `[ ]` **Companion mini** — Quaternius creature, idle presence + hints (off-map token).
+- `[~]` **Companion mini** — a KayKit Skeletons variation, mini-sized, **never on the map**; sits, stands, walks or lies down elsewhere on the table (`updated_decisions.md`, which wins over the old "Quaternius creature"). *(2026-10-01: `game/Table/CompanionFigure.cs` stands the class's companion beside the board's near corner, idles dealt by `Idling`, moods from `CompanionMind` watching the fight, lies down for a rest and when the hero is down, gestures when the story gives it a line, and clears fallen foes off the mat (`Mini.Skitter`). Models: `CompanionModels`. Not yet: hints (`HintLadder`) and camp scenes (`Campfire`) - no campaign loads hints or camp nodes yet, and the sample has none; barks - no bark bank is loaded.)*
 - `[~]` **Mini rendering on grid** — heroes + monsters, palette-unified. *(2026-09-24: a monster stands as its statblock's mini — goblin, bandit, guard, zombie, wolf, rat, spider so far (`MiniModels`); props stand on their squares.)*
 - `[~]` **Camera + lighting** for the table.
 

@@ -33,6 +33,7 @@ namespace Game.Screens
         static object Word(object arg, Battle battle, string heroName) => arg switch
         {
             Actor actor => NameOf(actor, battle, heroName),
+            System.Collections.Generic.IEnumerable<Actor> many => string.Join(", ", many.Select(a => NameOf(a, battle, heroName))),
             Named named => Ui.Text.Has(named.Key) ? Ui.Say(named.Key) : NameOf(named.Or, battle, heroName),
             string key when key.Contains('.') && Ui.Text.Has(key) => Ui.Say(key),
             _ => arg,

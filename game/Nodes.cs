@@ -27,5 +27,11 @@ namespace Game
         // the node itself first, then everything under it
         public static IEnumerable<T> AndUnder<T>(Node node) where T : class =>
             (node == null ? Enumerable.Empty<Node>() : new[] { node }.Concat(Under(node))).OfType<T>();
+
+        // n frames of the tree going by, for a probe that has to let Godot lay out or settle first
+        public static async System.Threading.Tasks.Task Frames(this Node node, int n)
+        {
+            for (int i = 0; i < n; i++) await node.ToSignal(node.GetTree(), SceneTree.SignalName.ProcessFrame);
+        }
     }
 }

@@ -28,6 +28,7 @@
        build moved inside dotnet test so it cannot be forgotten -->
   <ItemGroup>
     <None Include="..\game\locale\game.csv" Link="game.csv" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\game\ui\lanorim_theme.tres" Link="lanorim_theme.tres" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <!-- the sample test campaign, played end to end by SampleCampaignTests -->

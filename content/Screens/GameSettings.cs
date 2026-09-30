@@ -34,6 +34,10 @@ namespace Content.Screens
         // the camera follows each enemy as it moves
         public bool FollowEnemies { get; set; } = true;
 
+        // the tray lifts toward the camera for the hero's own throws and goes back after
+        // (updated_decisions.md; cc_task_ui-issues-9-30.md 4)
+        public bool BringTrayToMe { get; set; } = true;
+
         public bool LogOpen { get; set; }
 
         public ReactionSettings Reactions { get; } = new ReactionSettings();
@@ -57,6 +61,7 @@ namespace Content.Screens
                 json.WriteString("enemy_speed", EnumWords.Name(EnemySpeed));
                 json.WriteBoolean("skip_physical_dice", SkipPhysicalDice);
                 json.WriteBoolean("follow_enemies", FollowEnemies);
+                json.WriteBoolean("bring_tray", BringTrayToMe);
                 json.WriteBoolean("log_open", LogOpen);
 
                 json.WritePropertyName("reactions");
@@ -100,6 +105,7 @@ namespace Content.Screens
 
                 settings.SkipPhysicalDice = Flag(root, "skip_physical_dice", false);
                 settings.FollowEnemies = Flag(root, "follow_enemies", true);
+                settings.BringTrayToMe = Flag(root, "bring_tray", true);
                 settings.LogOpen = Flag(root, "log_open", false);
 
                 if (root.TryGetProperty("reactions", out JsonElement reactions) &&
@@ -131,10 +137,11 @@ namespace Content.Screens
         public static readonly string EnemySpeedKey = ScreenKeys.Key("settings", "enemy_speed");
         public static readonly string SkipDiceKey = ScreenKeys.Key("settings", "skip_physical_dice");
         public static readonly string FollowKey = ScreenKeys.Key("settings", "follow_enemies");
+        public static readonly string BringTrayKey = ScreenKeys.Key("settings", "bring_tray");
         public static readonly string ReactionsKey = ScreenKeys.Key("settings", "reactions");
 
         public static IEnumerable<string> Keys() =>
             Enum.GetValues<CombatSpeed>().Select(SpeedKey)
-                .Concat(new[] { TitleKey, GameTabKey, AccessTabKey, EnemySpeedKey, SkipDiceKey, FollowKey, ReactionsKey });
+                .Concat(new[] { TitleKey, GameTabKey, AccessTabKey, EnemySpeedKey, SkipDiceKey, FollowKey, BringTrayKey, ReactionsKey });
     }
 }

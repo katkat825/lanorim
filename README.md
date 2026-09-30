@@ -101,12 +101,15 @@ The check scripts each **build first**, then print a one-line verdict:
 
 `game/locale/game.csv` is written by hand. `sim locale` only reads it and says which keys have no English.
 
-Three more need Godot, and find it themselves under `C:\Godot` (or `$env:GODOT_ROOT`):
+These need Godot, and find it themselves under `C:\Godot` (or `$env:GODOT_ROOT`):
 
 ```powershell
 .\checks\check-table.ps1     # does the table come up, do the dice roll, does core read the felt
 .\checks\check-play.ps1      # the whole game headless: launch -> table -> the sample campaign to its end, dice on the tray
 .\checks\check-dice.ps1      # is the PHYSICS d20 fair - slow, minutes, run it after touching the dice
+.\checks\check-controls.ps1  # every act on the Controls page, and Change rebinds
+.\checks\check-creation.ps1  # creation: no hover text, a description under each list, cantrips and spells apart, the scroll kept
+.\checks\check-layout.ps1    # every screen at six window sizes: nothing off screen or squeezed, no HUD overlaps
 ```
 
 `dotnet run --project sim -- classes [runs] [class]` plays every class at levels 1-5 against the sample

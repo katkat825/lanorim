@@ -92,6 +92,40 @@ namespace Content.Tests
             Assert.Equal("sample", picker.Tests.Single().Id);
         }
 
+        // cc_task_ui-issues-9-30.md 6.2: a character is deleted from the book, every save with it, after a
+        // question that names it and says how many saves go
+        [Fact]
+        public void DeletingACharacterTakesEverySaveAndFreesTheSlot()
+        {
+            var saves = new SaveLibrary(_root);
+            SaveGame Ren() => new SaveGame { Campaign = "the_goat", Slot = 0, Hero = HeroSaves.Capture(Made("fighter")) };
+
+            saves.Save(Ren(), SaveKind.ChapterStart);
+            saves.Save(Ren(), SaveKind.FightStart);
+            saves.Save(Ren(), SaveKind.Manual, "before the bridge");
+            saves.Save(new SaveGame { Campaign = "the_goat", Slot = 3, Hero = HeroSaves.Capture(Made("rogue")) },
+                       SaveKind.ChapterStart);
+
+            Manifest[] all = { Manifest("the_goat") };
+            BookPage page = new CampaignBook(all, saves).Pages.Single();
+            CharacterSlot ren = page.Characters.Single(c => c.Slot == 0);
+
+            Assert.Equal(3, ren.SaveCount);
+            (string key, object[] args) = CampaignBook.DeleteQuestion(ren);
+            Assert.Equal(CampaignBook.DeleteManyKey, key);
+            Assert.Equal(new object[] { ren.Name, 3 }, args);
+
+            Assert.Equal(3, CampaignBook.Delete(saves, "the_goat", ren));
+
+            BookPage after = new CampaignBook(all, saves).Pages.Single();
+            Assert.Equal(new[] { 3 }, after.Characters.Select(c => c.Slot));
+            Assert.Empty(saves.Of("the_goat", 0));
+            Assert.Equal(0, saves.FreeSlot("the_goat"));
+
+            // one save left says so in the singular
+            Assert.Equal(CampaignBook.DeleteOneKey, CampaignBook.DeleteQuestion(after.Characters.Single()).Key);
+        }
+
         [Fact]
         public void LevelUpShowsWhatCameAndWaitsForTheImprovement()
         {
@@ -227,7 +261,7 @@ namespace Content.Tests
         [Fact]
         public void SettingsRoundTripAndABadFileIsTheDefaults()
         {
-            var settings = new GameSettings { EnemySpeed = CombatSpeed.Fast, SkipPhysicalDice = true };
+            var settings = new GameSettings { EnemySpeed = CombatSpeed.Fast, SkipPhysicalDice = true, BringTrayToMe = false };
             settings.Reactions.Set("shield", ReactionPolicy.Ask);
 
             GameSettings back = GameSettings.Read(settings.Write(), out IReadOnlyList<string> problems);
@@ -235,6 +269,8 @@ namespace Content.Tests
             Assert.Empty(problems);
             Assert.Equal(CombatSpeed.Fast, back.EnemySpeed);
             Assert.True(back.SkipPhysicalDice);
+            Assert.False(back.BringTrayToMe);
+            Assert.True(new GameSettings().BringTrayToMe);
             Assert.Equal(ReactionPolicy.Ask, back.Reactions.For("shield"));
             Assert.True(back.SecondsPerEnemyStep < new GameSettings().SecondsPerEnemyStep);
 

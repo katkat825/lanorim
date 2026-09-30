@@ -19,7 +19,8 @@ namespace Content.Creation
           : !Scores.IsLegalPointBuy(out _) ? Step.Abilities
           : ImprovementPicksLeft > 0 ? Step.Improvements
           : SkillPicksLeft > 0 || ExpertisePicksLeft > 0 ? Step.Skills
-          : CantripPicksLeft > 0 || SpellPicksLeft > 0 ? Step.Spells
+          : CantripPicksLeft > 0 ? Step.Cantrips
+          : SpellPicksLeft > 0 ? Step.Spells
           : Name.Length == 0 ? Step.Name
           : Step.Done;
 

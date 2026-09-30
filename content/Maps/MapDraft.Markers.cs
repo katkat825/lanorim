@@ -11,7 +11,7 @@ namespace Content.Maps
 
         public bool PlaceStart(Cell cell)
         {
-            if (!Contains(cell) || !At(cell).IsPassable()) return false;
+            if (!Contains(cell) || !At(cell).IsPassable() || IsBlocked(cell)) return false;
 
             Cell was = Start;
 
@@ -27,7 +27,7 @@ namespace Content.Maps
         {
             if (slot < FirstSpawn || slot > LastSpawn) return false;
 
-            if (!Contains(cell) || !At(cell).IsPassable()) return false;
+            if (!Contains(cell) || !At(cell).IsPassable() || IsBlocked(cell)) return false;
 
             // two monsters on one square would both be standing in the same place at round one
             if (_spawns.Any(s => s.Key != slot && s.Value == cell)) return false;
@@ -58,6 +58,9 @@ namespace Content.Maps
             if (!Json.IsId(id) || !Contains(cell) || !At(cell).IsPassable()) return false;
 
             var prop = new Prop(id, cell, turn);
+
+            // a crate on the hero's start or a monster's spawn would leave it standing inside the crate
+            if (Blocks(prop) && (cell == Start || _spawns.ContainsValue(cell))) return false;
 
             Do(() => _props.Add(prop), () => _props.Remove(prop));
 

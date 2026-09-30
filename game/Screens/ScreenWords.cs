@@ -29,6 +29,7 @@ namespace Game.Screens
         public static readonly string PicksLeft = K("create", "picks_left");
         public static readonly string NameHint = K("create", "name_hint");
         public static readonly string Suggested = K("create", "take_suggested");
+        public static readonly string ChosenOf = K("create", "chosen_of");
 
         public static readonly string PauseTitle = K("pause", "title");
         public static readonly string Resume = K("pause", "resume");
@@ -55,6 +56,19 @@ namespace Game.Screens
         public static readonly string YourTurn = K("combat", "your_turn");
         public static readonly string FightWon = K("combat", "won");
         public static readonly string FightFled = K("combat", "fled");
+        public static readonly string OnYourself = K("combat", "on_yourself");
+        public static readonly string BeforeFightTitle = K("combat", "before_title");
+        public static readonly string BeforeFightLine = K("combat", "before_line");
+        public static readonly string BeforeFightCast = K("combat", "before_cast");
+        public static readonly string ToTheFight = K("combat", "to_the_fight");
+        public static readonly string CaptionCast = K("combat", "caption_cast");
+        public static readonly string CaptionCastOn = K("combat", "caption_cast_on");
+        public static readonly string CaptionChanged = K("combat", "caption_changed");
+
+        // what a spell changed, said to the hero ("your Armor Class is now 14") or about someone else
+        public static string YouChanged(Core.Combat.Stat stat) => K("combat", "you_" + stat.Id());
+
+        public static string TheyChanged(Core.Combat.Stat stat) => K("combat", "they_" + stat.Id());
 
         public static readonly string SheetTitle = K("sheet", "title");
         public static readonly string SheetLevel = K("sheet", "level");
@@ -67,17 +81,20 @@ namespace Game.Screens
             new[]
             {
                 GameTitle, PressToBegin, Back, Next, Begin, Saves, NoSaves, Character, Retire,
-                CreateTitle, PointsLeft, PicksLeft, NameHint, Suggested,
+                CreateTitle, PointsLeft, PicksLeft, NameHint, Suggested, ChosenOf,
                 PauseTitle, Resume, Save, Saved, Load, Sheet, Pack, ToTheBook,
                 TheEnd, TheEndBlurb, DemoEnd,
                 ThrowPrompt, VerdictHit, VerdictCritical, VerdictMiss, VerdictSaved, VerdictFailed, TurnHint, AimHint, CameRound, YourTurn, FightWon, FightFled,
+                OnYourself, CaptionCast, CaptionCastOn, CaptionChanged,
+                BeforeFightTitle, BeforeFightLine, BeforeFightCast, ToTheFight,
                 SheetTitle, SheetLevel, SheetHp, SheetAc, SheetSpells, SheetFeatures,
                 AskCard.TurnsTheHitKey,
             }
             .Concat(new[]
             {
                 Step.Class, Step.Species, Step.Lineage, Step.Background, Step.Abilities, Step.Improvements,
-                Step.Skills, Step.Spells, Step.SpellResource, Step.Alignment, Step.Name,
-            }.Select(StepKey));
+                Step.Skills, Step.Cantrips, Step.Spells, Step.SpellResource, Step.Alignment, Step.Name,
+            }.Select(StepKey))
+            .Concat(System.Enum.GetValues<Core.Combat.Stat>().SelectMany(s => new[] { YouChanged(s), TheyChanged(s) }));
     }
 }

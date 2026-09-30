@@ -18,6 +18,10 @@ namespace Content.Creation
         Improvements,
 
         Skills,
+
+        // the cantrips and the levelled spells are two pages, each with its own count
+        // (cc_task_ui-issues-9-30.md 3.3)
+        Cantrips,
         Spells,
 
         // A STEP `Next` NEVER STOPS ON, and that is not an oversight. The choice is pre-answered

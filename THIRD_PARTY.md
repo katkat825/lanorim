@@ -128,9 +128,9 @@ Packs in use (all CC0; in `lanorim/assets/`):
 
 | Pack | Source | Role |
 |---|---|---|
-| KayKit Adventurers 2.0 | [kaykit-adventurers](https://kaylousberg.itch.io/kaykit-adventurers) | Hero / character parts |
+| KayKit Adventurers 2.0 | [kaykit-adventurers](https://kaylousberg.itch.io/kaykit-adventurers) | Hero / character parts. Pulled 2026-10-01 into `game/models/props/kaykit_adventurers_2_0_free/`: `spellbook_closed` and `spellbook_open` (with `mage_texture.png`), the campaign book on the launch screen (`game/book.tscn`). |
 | KayKit Dungeon Pack 1.1 | [kaykit-dungeon-pack](https://kaylousberg.itch.io/kaykit-dungeon-pack) | Dungeon environment / tiles |
-| KayKit Skeletons 1.1 | [kaykit-skeletons](https://kaylousberg.itch.io/kaykit-skeletons) | Undead enemies |
+| KayKit Skeletons 1.1 | [kaykit-skeletons](https://kaylousberg.itch.io/kaykit-skeletons) | **The companions** (`updated_decisions.md`: used nowhere else). Pulled 2026-10-01 into `game/models/companions/`: `Skeleton_Warrior`, `Skeleton_Rogue`, `Skeleton_Mage`, `Skeleton_Minion` and the shared `Rig_Medium_General` / `Rig_Medium_MovementBasic` animations. The pack's `Skeleton_Rogue` carries a mesh named `Skeleton_Rogue_Hood`, the same name as rogue_v2's hood (the provenance question above), so the hood very likely came from here (CC0); Kathleen to confirm. |
 | KayKit Fantasy Weapons Bits 1.0 | kaylousberg.itch.io | Weapon / gear parts |
 | KayKit Furniture Bits 1.0 | kaylousberg.itch.io | Furniture / table dressing |
 | KayKit RPG Tools Bits 1.0 | kaylousberg.itch.io | Tabletop props |

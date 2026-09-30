@@ -56,6 +56,9 @@ namespace Content.Screens
         public DateTime Saved { get; init; }
 
         public SaveShelf.Saved Newest { get; init; }
+
+        // every save the character has, autosaves and manual alike: what goes with it if it's deleted
+        public int SaveCount { get; init; }
     }
 
     // A PAGE OF THE BOOK: one campaign, its characters, and whether a new one can start
@@ -130,6 +133,7 @@ namespace Content.Screens
                            Level = pair.Value.Game.Hero?.Level ?? 0,
                            Saved = pair.Value.Written,
                            Newest = pair.Value,
+                           SaveCount = saves.Of(campaign, pair.Key).Count,
                        })
                        .ToList();
 
@@ -142,6 +146,15 @@ namespace Content.Screens
 
         public bool CanContinue => Continue != null;
 
+        // DELETE A CHARACTER (cc_task_ui-issues-9-30.md 6.2): every save it has, gone, and its slot free
+        // again. The screen asks first, naming the hero and how many saves go with it (DeleteQuestion)
+        public static int Delete(SaveLibrary saves, string campaign, CharacterSlot character) =>
+            saves == null || character == null ? 0 : saves.Forget(campaign, character.Slot);
+
+        // "Delete Ren? This can't be undone. 7 saves go with them." - the key, and its name and count
+        public static (string Key, object[] Args) DeleteQuestion(CharacterSlot character) =>
+            (character.SaveCount == 1 ? DeleteOneKey : DeleteManyKey, new object[] { character.Name, character.SaveCount });
+
         public static readonly string ContinueKey = ScreenKeys.Key("book", "continue");
         public static readonly string NewCharacterKey = ScreenKeys.Key("book", "new_character");
         public static readonly string LoadKey = ScreenKeys.Key("book", "load");
@@ -150,12 +163,16 @@ namespace Content.Screens
         public static readonly string QuitKey = ScreenKeys.Key("book", "quit");
         public static readonly string SlotsFullKey = ScreenKeys.Key("book", "slots_full");
         public static readonly string EmptyKey = ScreenKeys.Key("book", "empty");
+        public static readonly string DeleteKey = ScreenKeys.Key("book", "delete");
+        public static readonly string DeleteOneKey = ScreenKeys.Key("book", "delete_question_one");
+        public static readonly string DeleteManyKey = ScreenKeys.Key("book", "delete_question_many");
+        public static readonly string KeepKey = ScreenKeys.Key("book", "keep");
 
         public static IEnumerable<string> Keys() =>
             new[]
             {
                 TestLabel, ContinueKey, NewCharacterKey, LoadKey, TutorialsKey, SettingsKey, QuitKey,
-                SlotsFullKey, EmptyKey,
+                SlotsFullKey, EmptyKey, DeleteKey, DeleteOneKey, DeleteManyKey, KeepKey,
             };
 
         public override string ToString() => $"{Pages.Count} pages, {Tutorials.Count} tutorials";

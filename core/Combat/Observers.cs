@@ -30,6 +30,14 @@ namespace Core.Combat
         // hit points came off a creature from a weapon or a spell, with the dice that did it
         void Dealt(Harm harm) { }
 
+        // a spell is cast: past the window where it could be countered and paid for, before anything
+        // it does resolves. the spell's name key, and whoever it was aimed at (none for an area)
+        void Casts(Actor caster, string spellKey, IReadOnlyList<Actor> at) { }
+
+        // the same spell, resolved: what it changed that the damage line doesn't say (an armor
+        // class, hit points regained, temporary hit points, speed)
+        void Cast(Actor caster, string spellKey, IReadOnlyList<Change> changes) { }
+
         void Opportunity(Actor attacker, Actor fleeing);
 
         // somebody spent their reaction, on what, and at what moment. told before the reaction
@@ -83,6 +91,10 @@ namespace Core.Combat
 
         public virtual void Dealt(Harm harm) { }
 
+        public virtual void Casts(Actor caster, string spellKey, IReadOnlyList<Actor> at) { }
+
+        public virtual void Cast(Actor caster, string spellKey, IReadOnlyList<Change> changes) { }
+
         public virtual void Opportunity(Actor attacker, Actor fleeing) { }
 
         public virtual void Reacted(Actor reactor, string reaction, Moment moment) { }
@@ -120,6 +132,10 @@ namespace Core.Combat
         public void Judged(Actor by, Actor target, Attempt attempt) => Each(w => w.Judged(by, target, attempt));
 
         public void Dealt(Harm harm) => Each(w => w.Dealt(harm));
+
+        public void Casts(Actor caster, string spellKey, IReadOnlyList<Actor> at) => Each(w => w.Casts(caster, spellKey, at));
+
+        public void Cast(Actor caster, string spellKey, IReadOnlyList<Change> changes) => Each(w => w.Cast(caster, spellKey, changes));
 
         public void Opportunity(Actor attacker, Actor fleeing) =>
             Each(w => w.Opportunity(attacker, fleeing));

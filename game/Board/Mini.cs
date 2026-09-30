@@ -217,6 +217,11 @@ namespace Game.Board
 
         void Lean(Vector3 toward)
         {
+            // a lean that cut a walk short left the piece between squares, where it stayed, and a
+            // click on it landed on the wrong square (found 2026-10-01: a rat that walked up and bit
+            // stood a square short). The walk finishes first, then the piece leans from there
+            if (_step != null) Position = _step.To;
+
             _step = MiniStep.Refusing(Position, toward);
             _elapsed = 0f;
             _refusing = true;

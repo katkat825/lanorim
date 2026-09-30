@@ -200,6 +200,12 @@ and expensive as *working mechanics*.** Decide, per hotspot, how faithful v1 is.
 - **[DECIDED] skip legendary/lair actions in v1**; spellcaster monsters reuse the spell system.
 - **[DECIDED] Grid tactics — cover, line-of-sight, flanking, AoE templates.** v1 does range checks and **radius, line, and cone** AoE templates (2026-09-23: line + cone added to scope — makes Lightning Bolt / Cone of Cold faithful, not approximations); 
 - **[DEFERRED] cover/flanking/LoS** (or add later).
+- **[DECIDED 2026-10-01] Props that block.** A prop whose palette entry says `"blocks": true` (crate, barrel,
+  cauldron, table…) fills its square: nobody walks onto it, is pushed onto it, starts or spawns on it, and
+  routes and the reachable squares go round it. It **does not block sight and gives no cover**: cover is
+  deferred (line above), so no `"cover"` key until it isn't. A flier doesn't fly over one either (v1
+  simplification). The map builder (`MapDraft`) refuses a start or spawn on a blocking prop and a blocking
+  prop on a start or spawn, and a hand-written map with one is unsound.
 - **[DECIDED 2026-09-23] Reactions & interrupts are a real system.** v1 builds a general reaction/
   interrupt window: a creature spends its 1 reaction to interrupt. Opportunity attacks are one case;
   Shield, Counterspell, Hellish Rebuke and other reaction spells cast as genuine reactions — Shield

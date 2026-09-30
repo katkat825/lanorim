@@ -8,6 +8,7 @@ using Core.Localization;
 using Core.Resolution;
 using Core.Rules;
 using Core.Space;
+using Core.Words;
 
 namespace Content.Combat
 {
@@ -47,8 +48,14 @@ namespace Content.Combat
                     "damage_lessened", "save_made", "save_failed",
                     "opportunity", "reacted", "condition_on", "condition_off", "down", "death_save_up",
                     "death_save_dead", "won", "lost", "fled", "roll_table", "roll_hidden", "diverted",
-                    "roll_attack", "roll_save", "roll_check", "roll_initiative" }
+                    "roll_attack", "roll_save", "roll_check", "roll_initiative", "cast", "cast_on" }
+                .Concat(Enum.GetValues<Stat>().Select(ChangedWord))
                 .Select(K);
+
+        // "changed_armor_class": what a spell changed, one key a number
+        static string ChangedWord(Stat stat) => "changed_" + stat.Id();
+
+        public static string ChangedKey(Stat stat) => K(ChangedWord(stat));
 
         // the verdicts the table also puts under the tray: hit, miss, critical, a save made or failed
         public static readonly IReadOnlyList<string> VerdictKeys =
@@ -154,6 +161,20 @@ namespace Content.Combat
             else
                 Add("damage_lessened", what, harm.Target, harm.Dice.ToString(), harm.Rolled, harm.Suffered,
                     harm.Type.NameKey());
+        }
+
+        // "Probe casts Mage Armor on Probe." - before the spell's dice, so a hit or a save follows it
+        public override void Casts(Actor caster, string spellKey, IReadOnlyList<Actor> at)
+        {
+            if (at == null || at.Count == 0) Add("cast", caster, spellKey);
+            else Add("cast_on", caster, spellKey, at.ToList());
+        }
+
+        // "Probe's Armor Class is now 14 (was 11)." - what the spell changed, after it resolved
+        public override void Cast(Actor caster, string spellKey, IReadOnlyList<Change> changes)
+        {
+            foreach (Change change in changes ?? Array.Empty<Change>())
+                Add(ChangedWord(change.What), change.Who, change.From, change.To, change.To - change.From);
         }
 
         public override void Opportunity(Actor attacker, Actor fleeing) =>

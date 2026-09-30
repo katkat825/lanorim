@@ -45,7 +45,10 @@ edges, End Turn is the bar's right end, and the log is top left. Sizes are `res:
 - **End Turn** — the bar's right end; also **Space** (see *Keys*).
 - **Combat log, top left** — the last few lines, open to the whole fight with **L** or its title. `FightLog`.
   Collapsed by default; the settings remember. A new fight starts a new log.
-- **The tray** stays where it is; the player's own rolls are thrown on it (see *Dice*).
+- **The tray** sits beside the board and **comes to the player** for their own rolls (see *Dice*).
+- **The top corners** (2026-10-01): the log top left, the turn hint, the tray's caption and notices top right,
+  each `HudLayout.LogWidth` / `HintWidth` wide; the turn strip lives between them and the action bar wraps
+  rather than run under them. `checks/check-layout.ps1` holds every screen to this at six window sizes.
 
 ## A turn
 
@@ -59,7 +62,9 @@ edges, End Turn is the bar's right end, and the log is top left. Sizes are `res:
    `ActionOption.Targeting`:
    - **Creature** — legal targets are ringed (`LegalTargets`). Hovering one shows the **preview**:
      hit chance (or the target's chance to fail the save), the damage dice, **expected damage**
-     (`Preview.HitChance`, `FailChance`, `Damage`, `ExpectedDamage`). Click to confirm.
+     (`Preview.HitChance`, `FailChance`, `Damage`, `ExpectedDamage`). Click to confirm. A click on a standing
+     mini counts as its square (2026-10-01; it used to land on the square behind it). A spell that can go on the
+     hero (Mage Armor, Cure Wounds) also shows **On yourself** on the bar, and **Enter** does the same.
    - **Creatures** (Magic Missile, Eldritch Blast, Bless) — click targets up to the option's `MaxTargets`, then
      confirm with **Enter** or the button.
    - **Square** (Fireball) — the template follows the pointer, clipped to `LegalSquares`; everything caught is
@@ -118,6 +123,16 @@ throw, then the damage line: "Greataxe hits Giant Rat: 1d12+3, for 9 Slashing da
 under the turn hint as the tray's caption, heading "Your dice are waiting" while the damage dice wait
 (`ICombatObserver.Judged` and `Dealt`, `FightLog`, `PlayDirector.Verdict`). A hero's roll that falls back to
 digital dice for any reason but the player's own setting logs a warning.
+
+**The tray comes to you** (2026-10-01, `updated_decisions.md`): asked for the hero's dice, the tray lifts toward
+the camera (tweens only, never while a die is moving), the dice are thrown up there, and it goes back
+`HoldSeconds` (1.5) after they're read. The GM's rolls behind the screen never touch it. Settings → Game
+"Bring the dice tray to me" turns it off. `TrayLift` in `table.tscn`, its dials in the inspector.
+
+**Every cast says what it was and what it changed** (2026-10-01): "Tess casts Mage Armor on Tess." before its
+dice, "Tess's Armor Class is now 14 (was 11)." after, and the caption "Mage Armor: your Armor Class is now 14"
+(`ICombatObserver.Casts` / `Cast`, `Change`). **Before a fight**, a caster with a spell that outlasts it (Mage
+Armor, Aid) is offered it on a "Before the fight" card, paid for as usual (`BeforeTheFight`).
 
 ## Fleeing
 

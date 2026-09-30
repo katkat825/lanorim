@@ -31,10 +31,17 @@ namespace Game.Play
 
         public Func<bool> Skip { get; set; } = () => false;
 
+        // whether the tray may be thrown into now: not while it is on its way to the player or back
+        // (TrayLift). A throw asked for while it travels waits - Space, or AutoThrow's next try
+        public Func<bool> Ready { get; set; } = () => true;
+
         // main thread: the dice the rules are waiting on, or null
         public IReadOnlyList<Die> Waiting => _pending?.Dice;
 
         public bool Thrown => _pending?.Thrown ?? false;
+
+        // asked to throw while the tray wasn't ready: to be tried again each frame until it goes
+        public bool Wanted => _pending?.Wanted ?? false;
 
         // main thread: something is waiting on the player's throw
         public event Action<IReadOnlyList<Die>> Asked;
@@ -47,6 +54,9 @@ namespace Game.Play
             public IReadOnlyList<Die> Dice;
             public Action<int[]> Done;
             public bool Thrown;
+
+            // Space was pressed while the tray was on its way: it goes the moment the tray is ready
+            public bool Wanted;
         }
 
         Pending _pending;
@@ -93,7 +103,11 @@ namespace Game.Play
 
             if (pending == null || pending.Thrown) return false;
 
-            if (_tray.IsThrowing) return false;
+            if (_tray.IsThrowing || !Ready())
+            {
+                pending.Wanted = true;
+                return false;
+            }
 
             _tray.Rolled += Read;
 

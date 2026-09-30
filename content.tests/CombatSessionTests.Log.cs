@@ -104,7 +104,7 @@ namespace Content.Tests
             session.Confirm(session.LegalTargets().First());
 
             List<string> said = Said(log, lines);
-            Assert.Equal(new[] { "roll_attack", "hit", "roll_table", "damage" }, said.Take(4));
+            Assert.Equal(new[] { "cast_on", "roll_attack", "hit", "roll_table", "damage" }, said.Take(5));
             Assert.Equal(new[] { Die.D20, Die.D10 }, dice.Asked.Skip(asked));
 
             LogLine dealt = log.Lines.Skip(lines).First(l => Say(l) == "damage");
@@ -126,7 +126,7 @@ namespace Content.Tests
             session.Confirm(session.LegalTargets().First());
 
             List<string> said = Said(log, lines);
-            Assert.Equal("save_failed", said.First());
+            Assert.Equal(new[] { "cast_on", "save_failed" }, said.Take(2));
             Assert.Contains("damage", said);
             Assert.True(said.IndexOf("save_failed") < said.IndexOf("damage"));
             Assert.DoesNotContain(Die.D20, dice.Asked.Skip(asked));

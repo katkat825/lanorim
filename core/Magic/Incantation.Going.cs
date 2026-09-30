@@ -106,8 +106,14 @@ namespace Core.Magic
             var squares = new List<Cell>();
             var covered = new List<Cell>();
 
+            // the table says what was cast before its dice, and what it changed after
+            Dictionary<(Actor, Stat), int> before = fight == null ? null : Change.Snapshot(fight.Actors);
+            fight?.Observer.Casts(caster.Actor, spell.NameKey, aim.Creatures);
+
             Run(caster, spell, spell.Effects, aim, castAt, fight, answering,
                 landings, squares, covered);
+
+            if (fight != null) fight.Observer.Cast(caster.Actor, spell.NameKey, Change.Since(before));
 
             return new Casting(spell, caster.Actor, castAt, true, null, landings, squares,
                                covered.Distinct().ToList());

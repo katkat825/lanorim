@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Characters;
 using Core.Combat;
 using Core.Localization;
 using Core.Magic;
@@ -61,12 +62,20 @@ namespace Content.Spells
 
         public bool Concentration => Spell.Concentration;
 
+        // how long it lasts, as the card says it: held in concentration, or the longest thing any of
+        // its effects leaves, or instantaneous
+        public Duration Lasts { get; private set; }
+
+        public string DurationKey => DurationKeyOf(Lasts);
+
         public bool Ritual => Spell.Ritual;
 
         // A LANORIM VERSION, NOT THE SRD'S. true for the bounded approximations, which already
         // carry a name of their own (decisions_checklist.md section 1); the card says so as well,
         // because CC-BY asks that changes be indicated and a renamed spell is still a changed one
         public bool Adapted => Spell.Approximated;
+
+        public static readonly string AdaptedKey = Ui("spell_card", "adapted");
 
         // --- what it asks of the caster, when there is one ------------------------------------
 
@@ -107,6 +116,7 @@ namespace Content.Spells
                 LevelKey = spell.IsCantrip ? Ui("spell_level", "cantrip") : Ui("spell_level", "leveled"),
                 SchoolKey = SchoolKeyOf(spell.School),
                 CastingTimeKey = CastingTimeKeyOf(spell),
+                Lasts = LastsOf(spell),
             };
 
             card.ReadRange(caster);
@@ -219,6 +229,24 @@ namespace Content.Spells
 
         public static string SchoolKeyOf(School school) => Ui("school", school.Id());
 
+        public static string DurationKeyOf(Duration duration) => Ui("duration", duration.Plain().Id());
+
+        // longest first: what a spell lasts is its longest-lasting effect
+        static readonly Duration[] Longest =
+        {
+            Duration.Permanent, Duration.LongRest, Duration.Rest, Duration.Encounter, Duration.Concentration,
+            Duration.NextTurnEnd, Duration.NextTurn, Duration.TurnEnd,
+        };
+
+        static Duration LastsOf(Spell spell)
+        {
+            if (spell.Concentration) return Duration.Concentration;
+
+            var lasting = spell.Effects.Select(e => e.Duration.Plain()).Append(spell.Duration.Plain()).ToHashSet();
+
+            return Longest.FirstOrDefault(lasting.Contains);
+        }
+
         public static string CastingTimeKeyOf(Spell spell) =>
             spell.Answers
                 ? KeyConventions.Key(KeyConventions.UiNs, "casting_time", spell.CastingTime.Id(),
@@ -256,7 +284,9 @@ namespace Content.Spells
             foreach (string why in new[] { "not_known", "shifted", "reaction", "spent" })
                 yield return Ui("not_castable", why);
 
-            yield return Ui("spell_card", "adapted");
+            yield return AdaptedKey;
+
+            foreach (Duration duration in Longest.Append(Duration.Instant)) yield return DurationKeyOf(duration);
         }
 
         public override string ToString() =>

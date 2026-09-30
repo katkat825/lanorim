@@ -23,10 +23,10 @@ texture_margin_left = 16.0
 texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
-content_margin_left = 12.0
-content_margin_top = 12.0
-content_margin_right = 12.0
-content_margin_bottom = 12.0
+content_margin_left = 24.0
+content_margin_top = 24.0
+content_margin_right = 24.0
+content_margin_bottom = 24.0
 
 [sub_resource type="StyleBoxTexture" id="PanelDark"]
 texture = ExtResource("8_panel_dark")
@@ -34,10 +34,10 @@ texture_margin_left = 16.0
 texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
-content_margin_left = 12.0
-content_margin_top = 12.0
-content_margin_right = 12.0
-content_margin_bottom = 12.0
+content_margin_left = 24.0
+content_margin_top = 24.0
+content_margin_right = 24.0
+content_margin_bottom = 24.0
 
 [sub_resource type="StyleBoxTexture" id="PanelBorder"]
 texture = ExtResource("9_panel_border")
@@ -45,10 +45,10 @@ texture_margin_left = 16.0
 texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
-content_margin_left = 12.0
-content_margin_top = 12.0
-content_margin_right = 12.0
-content_margin_bottom = 12.0
+content_margin_left = 24.0
+content_margin_top = 24.0
+content_margin_right = 24.0
+content_margin_bottom = 24.0
 draw_center = false
 
 [sub_resource type="StyleBoxTexture" id="Button"]
@@ -58,9 +58,9 @@ texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 content_margin_left = 14.0
-content_margin_top = 6.0
+content_margin_top = 10.0
 content_margin_right = 14.0
-content_margin_bottom = 8.0
+content_margin_bottom = 10.0
 
 [sub_resource type="StyleBoxTexture" id="ButtonHover"]
 texture = ExtResource("10_button")
@@ -69,9 +69,9 @@ texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 content_margin_left = 14.0
-content_margin_top = 6.0
+content_margin_top = 10.0
 content_margin_right = 14.0
-content_margin_bottom = 8.0
+content_margin_bottom = 10.0
 modulate_color = Color(1.12, 1.08, 1, 1)
 
 [sub_resource type="StyleBoxTexture" id="ButtonPressed"]
@@ -81,15 +81,15 @@ texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
 content_margin_left = 14.0
-content_margin_top = 8.0
+content_margin_top = 11.0
 content_margin_right = 14.0
-content_margin_bottom = 6.0
+content_margin_bottom = 9.0
 
 [sub_resource type="StyleBoxFlat" id="ButtonDisabled"]
 content_margin_left = 14.0
-content_margin_top = 6.0
+content_margin_top = 10.0
 content_margin_right = 14.0
-content_margin_bottom = 8.0
+content_margin_bottom = 10.0
 draw_center = false
 border_width_left = 2
 border_width_top = 2

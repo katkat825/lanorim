@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Content.Combat;
 using Content.Inventory;
 using Content.Screens;
@@ -30,8 +31,29 @@ namespace Game.Screens
             Body = Ui.Column(10);
             Body.CustomMinimumSize = new Vector2(Ui.Px(Width), 0);
 
-            AddChild(Ui.Panel(Body));
+            // A CARD TALLER THAN THE WINDOW SCROLLS inside it rather than running off the bottom
+            // (cc_task_ui-issues-9-30.md 2: the sheet was 1205 tall on a 1080 canvas)
+            _scroll = new ScrollContainer { HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled };
+            _scroll.AddChild(Body);
+
+            AddChild(Ui.Panel(_scroll));
             Draw();
+        }
+
+        ScrollContainer _scroll;
+
+        // the room a card may take: the window's height less a margin top and bottom
+        static float Margin => Ui.Px(24);
+
+        public override void _Process(double delta)
+        {
+            if (_scroll == null) return;
+
+            float most = GetViewportRect().Size.Y - 2 * Margin - 2 * 24;
+            float wants = Body.GetCombinedMinimumSize().Y;
+
+            var size = new Vector2(Body.CustomMinimumSize.X, Mathf.Min(wants, most));
+            if (_scroll.CustomMinimumSize != size) _scroll.CustomMinimumSize = size;
         }
 
         protected abstract void Draw();
@@ -79,11 +101,14 @@ namespace Game.Screens
             {
                 Body.AddChild(Ui.Label(LevelUpView.FeaturesKey));
 
+                // what each one does, written under it rather than on hover
                 foreach (var feature in _view.NewFeatures)
                 {
-                    Label name = Ui.Label(feature.NameKey);
-                    name.TooltipText = Ui.Say(feature.DescriptionKey);
-                    Body.AddChild(name);
+                    Body.AddChild(Ui.Label(feature.NameKey));
+
+                    Label does = Ui.Label(feature.DescriptionKey);
+                    does.ThemeTypeVariation = "CardLabel";
+                    Body.AddChild(does);
                 }
             }
 
@@ -119,6 +144,7 @@ namespace Game.Screens
             }
 
             Body.AddChild(Ui.Button(LevelUpView.DoneKey, Close).Greyed(!_view.Done, _view.DoneWhyNotKey));
+            Body.AddChild(Ui.Why(!_view.Done, _view.DoneWhyNotKey));
         }
     }
 
@@ -247,26 +273,36 @@ namespace Game.Screens
                 Ui.Label(ScreenWords.SheetHp, _sheet.HitPoints, _sheet.MaxHitPoints),
                 Ui.Label(ScreenWords.SheetAc, _sheet.ArmorClass)));
 
-            var scores = Ui.Row(12);
-
-            foreach (AbilityRow row in _sheet.Abilities)
-                scores.AddChild(Ui.Plain($"{Ui.Say(row.ShortKey)} {row.Score} ({row.Modifier:+0;-0})"));
+            // one line each, never wrapped: a wrapping label in a row was squeezed to nothing (found by
+            // check-layout, 2026-10-01)
+            var scores = Ui.Row(12, _sheet.Abilities
+                                          .Select(row => (Control)Ui.Plain($"{Ui.Say(row.ShortKey)} {row.Score} ({row.Modifier:+0;-0})"))
+                                          .ToArray());
 
             Body.AddChild(scores);
 
             var more = Ui.Column(4);
+
+            // NO HOVER TEXT (cc_task_ui-issues-9-30.md 3.1): a spell or a feature is picked to read, and
+            // what it is shows under the list - a spell as its whole card
+            Label about = Ui.Plain("");
+            about.ThemeTypeVariation = "CardLabel";
+
+            void Readable(string words, string text)
+            {
+                Button name = Ui.Button(words, () => about.Text = text, true);
+                name.Flat = true;
+                name.Alignment = HorizontalAlignment.Left;
+                name.FocusEntered += () => about.Text = text;
+                more.AddChild(name);
+            }
 
             if (_sheet.Spells.Count > 0)
             {
                 more.AddChild(Ui.Label(ScreenWords.SheetSpells));
 
                 foreach (SpellCard card in _sheet.Spells)
-                {
-                    Label name = Ui.Label(card.NameKey);
-                    name.ThemeTypeVariation = "CardLabel";
-                    name.TooltipText = Ui.Say(card.DescriptionKey);
-                    more.AddChild(name);
-                }
+                    Readable(Ui.Say(card.NameKey), SpellCardText.Of(card));
             }
 
             if (_sheet.Special.Count > 0)
@@ -274,14 +310,12 @@ namespace Game.Screens
                 more.AddChild(Ui.Label(ScreenWords.SheetFeatures));
 
                 foreach (SpecialRow row in _sheet.Special)
-                {
-                    Label name = Ui.Plain(Ui.Say(row.NameKey) + (row.UsesMost > 0 ? $"  {row.UsesLeft}/{row.UsesMost}" : ""));
-                    name.TooltipText = Ui.Say(row.DescriptionKey);
-                    more.AddChild(name);
-                }
+                    Readable(Ui.Say(row.NameKey) + (row.UsesMost > 0 ? $"  {row.UsesLeft}/{row.UsesMost}" : ""),
+                             Ui.Say(row.DescriptionKey));
             }
 
             Body.AddChild(Ui.Scroll(more, 320));
+            Body.AddChild(about);
             Body.AddChild(Ui.Button(ScreenWords.Back, Close));
         }
     }

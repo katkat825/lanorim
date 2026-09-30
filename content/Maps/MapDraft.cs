@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core.Space;
 
 namespace Content.Maps
@@ -43,6 +44,22 @@ namespace Content.Maps
         public Cell Start { get; private set; }
 
         public IReadOnlyList<Prop> Props => _props;
+
+        PropCatalogue _palette;
+
+        // what the draft judges its props by (which of them block): the SRD palette, unless the
+        // editor was given another
+        public PropCatalogue Palette
+        {
+            get => _palette ??= PropCatalogue.Srd();
+            set => _palette = value;
+        }
+
+        // a square a blocking prop stands on: nobody walks onto it, starts on it or spawns on it. a
+        // prop the palette doesn't know is drawn as a placeholder and blocks nothing
+        public bool IsBlocked(Cell cell) => _props.Any(p => p.Cell == cell && Blocks(p));
+
+        bool Blocks(Prop prop) => Palette.Find(prop.Id)?.Blocks == true;
 
         public IReadOnlyDictionary<int, Cell> Spawns => _spawns;
 

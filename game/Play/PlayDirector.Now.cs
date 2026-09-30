@@ -37,7 +37,9 @@ namespace Game.Play
             {
                 case Scene.Line:
                 case Scene.Choice:
-                    _dialogue.Show(new DialogueView(Run, GameState.Companion));
+                    var view = new DialogueView(Run, GameState.Companion);
+                    _dialogue.Show(view);
+                    CompanionSays(view);
 
                     if (_autoStory)
                     {
@@ -49,7 +51,7 @@ namespace Game.Play
 
                 case Scene.Fight:
                     _dialogue.Visible = false;
-                    if (!_fighting) StartFight();
+                    if (!_fighting && !OfferedBeforeTheFight()) StartFight();
                     break;
 
                 case Scene.Shop:
@@ -72,10 +74,16 @@ namespace Game.Play
         // WHAT A NATURAL 1 OR 20 BOUGHT, said on the table: the consequence's own line, under the
         // turn hint, for a few seconds. each is said once, however often the screen redraws
         readonly System.Collections.Generic.HashSet<Content.Dialogue.Settled> _told = new();
+        readonly System.Collections.Generic.HashSet<Content.Dialogue.Settled> _slept = new();
 
         void Tell()
         {
             var lines = new System.Collections.Generic.List<string>();
+
+            // a rest: the companion lies down beside the board for a while
+            foreach (Content.Dialogue.Settled settled in Run.Settled)
+                if ((settled.Rested || settled.Request?.Kind == Content.Dialogue.RequestKind.Rest) && _slept.Add(settled))
+                    Table.Companion?.Rest();
 
             foreach (Content.Dialogue.Settled settled in Run.Settled)
                 if (settled.Visit != null && _told.Add(settled))

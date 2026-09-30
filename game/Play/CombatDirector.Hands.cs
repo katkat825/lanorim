@@ -66,6 +66,20 @@ namespace Game.Play
             Refresh();
         }
 
+        // a spell that can go on the caster (Mage Armor, Cure Wounds) is being aimed: "On yourself"
+        // casts it without a click on the board
+        public bool CanAimAtSelf =>
+            HerosMove && Session.Selected?.Targeting is Targeting.Creature or Targeting.Creatures &&
+            Session.LegalTargets().Contains(Session.Hero.Actor);
+
+        public void OnYourself()
+        {
+            if (!CanAimAtSelf) return;
+
+            Actor me = Session.Hero.Actor;
+            Rules.Post(() => Session.Confirm(me), Refresh);
+        }
+
         public void EndTurn()
         {
             if (!HerosMove) return;
@@ -228,6 +242,14 @@ namespace Game.Play
             if (Session.Selected?.Targeting is Targeting.Direction && key.IsActionPressed(Game.Access.Act.Touch.Id()))
             {
                 Rules.Post(() => Session.Confirm(), Refresh);
+                GetViewport().SetInputAsHandled();
+                return;
+            }
+
+            // and on a spell you can put on yourself, Touch puts it there
+            if (CanAimAtSelf && key.IsActionPressed(Game.Access.Act.Touch.Id()))
+            {
+                OnYourself();
                 GetViewport().SetInputAsHandled();
                 return;
             }

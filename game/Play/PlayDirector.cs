@@ -21,6 +21,7 @@ namespace Game.Play
 
         RulesThread _rules;
         TrayDice _dice;
+        Game.Tray.TrayLift _lift;
         CombatDirector _combat;
         CanvasLayer _layer;
         Control _ui;
@@ -70,8 +71,21 @@ namespace Game.Play
                 AutoThrow = autoDice,
                 Skip = () => GameState.Settings.SkipPhysicalDice,
             };
-            _dice.Asked += _ => Prompt(true);
-            _dice.Landed += _ => Prompt(false);
+            // the tray comes to the player for their own dice, and goes back once they're read
+            _lift = Table.Lift;
+            _dice.Ready = () => _lift.IsStill;
+
+            _dice.Asked += _ =>
+            {
+                if (GameState.Settings.BringTrayToMe) _lift.Rise();
+                _mind?.Watches();
+                Prompt(true);
+            };
+            _dice.Landed += _ =>
+            {
+                _lift.Settle();
+                Prompt(false);
+            };
             GameState.HeroDice = _dice;
 
             BuildUi();
@@ -82,6 +96,7 @@ namespace Game.Play
                 Board = Table.Board,
                 Camera = Table.Camera,
                 Screen = Table.GmScreen,
+                Companion = Table.Companion,
                 Rules = _rules,
                 Dice = _dice,
                 Auto = _auto,
@@ -106,6 +121,7 @@ namespace Game.Play
             _maxHp = Run.Hero.Actor.Health.Maximum;
 
             Table.GmScreen?.Wear(Run.Pack.Manifest?.GmScreen);
+            WakeCompanion();
             LayChapterMap();
 
             bool starting = GameState.Starting;
@@ -117,6 +133,8 @@ namespace Game.Play
             }, Refresh);
 
             GD.Print($"play    {Run.Pack.Id}: {Run.Hero}");
+
+            CheckLayoutWhenAsked();
         }
 
         public override void _ExitTree()
@@ -151,56 +169,51 @@ namespace Game.Play
             _dialogue.Choose = option => Do(() => Run.Choose(option));
             _ui.AddChild(_dialogue);
 
-            _prompt = new Label
-            {
-                Name = "Prompt",
-                ThemeTypeVariation = "HudLabel",
-                Text = Ui.Say(ScreenWords.ThrowPrompt),
-                AnchorLeft = 1,
-                AnchorRight = 1,
-                OffsetLeft = -Ui.Px(380),
-                OffsetTop = Ui.Px(70),
-                OffsetRight = -Ui.Px(20),
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Visible = false,
-            };
-            _ui.AddChild(_prompt);
+            // THE TOP RIGHT CORNER (cc_task_ui-issues-9-30.md 2): the turn hint, the tray's caption and the
+            // notices, one under another in a column anchored to the corner and HudLayout.HintWidth wide,
+            // each wrapping inside it. They were three labels at fixed offsets, and the hint ran into
+            // the turn strip; the strip now keeps out of this corner (CombatHudUi)
+            HudLayout layout = HudLayout.Current;
 
-            _notice = new Label
+            var corner = new VBoxContainer
             {
-                Name = "Notice",
-                ThemeTypeVariation = "HudLabel",
+                Name = "Corner",
                 AnchorLeft = 1,
                 AnchorRight = 1,
-                OffsetLeft = -Ui.Px(480),
-                OffsetTop = Ui.Px(110),
-                OffsetRight = -Ui.Px(20),
-                HorizontalAlignment = HorizontalAlignment.Right,
-                AutowrapMode = TextServer.AutowrapMode.WordSmart,
-                Visible = false,
+                OffsetLeft = -(layout.HintWidth + layout.EdgeMargin),
+                OffsetRight = -(layout.EdgeMargin + layout.TextInset),
+                OffsetTop = layout.EdgeMargin + layout.TextInset,
+                GrowHorizontal = Control.GrowDirection.Begin,
                 MouseFilter = Control.MouseFilterEnum.Ignore,
             };
-            _ui.AddChild(_notice);
+            corner.AddThemeConstantOverride("separation", 8);
+            _ui.AddChild(corner);
 
             // nothing said E turns the table, so turning it looked like a fault
-            // (cc_ui_issues_9-25-2026.md): the keys, as they are bound, top right
-            _ui.AddChild(new Label
-            {
-                Name = "TurnHint",
-                ThemeTypeVariation = "HudLabel",
-                Text = Ui.Say(ScreenWords.TurnHint, Game.Access.Keyboard.Named("turn_left"),
-                              Game.Access.Keyboard.Named("turn_right"), Game.Access.Keyboard.Named("zoom_out"),
-                              Game.Access.Keyboard.Named("zoom_in")),
-                AnchorLeft = 1,
-                AnchorRight = 1,
-                OffsetLeft = -Ui.Px(560),
-                OffsetTop = Ui.Px(20),
-                OffsetRight = -Ui.Px(20),
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Modulate = new Color(1f, 1f, 1f, 0.7f),
-                MouseFilter = Control.MouseFilterEnum.Ignore,
-            });
+            // (cc_ui_issues_9-25-2026.md): the keys, as they are bound
+            corner.AddChild(CornerLabel("TurnHint", Ui.Say(ScreenWords.TurnHint, Game.Access.Keyboard.Named("turn_left"),
+                                                             Game.Access.Keyboard.Named("turn_right"), Game.Access.Keyboard.Named("zoom_out"),
+                                                             Game.Access.Keyboard.Named("zoom_in")), true, 0.7f));
+
+            _prompt = CornerLabel("Prompt", Ui.Say(ScreenWords.ThrowPrompt), false);
+            corner.AddChild(_prompt);
+
+            _notice = CornerLabel("Notice", "", false);
+            corner.AddChild(_notice);
         }
+
+        static Label CornerLabel(string name, string text, bool visible, float alpha = 1f) =>
+            new Label
+            {
+                Name = name,
+                ThemeTypeVariation = "HudLabel",
+                Text = text,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                AutowrapMode = TextServer.AutowrapMode.WordSmart,
+                Visible = visible,
+                Modulate = new Color(1f, 1f, 1f, alpha),
+                MouseFilter = Control.MouseFilterEnum.Ignore,
+            };
 
         // a call into the run, off the main thread, then the screen redrawn from what it says now
         void Do(Action call)
@@ -223,6 +236,7 @@ namespace Game.Play
                 Table.Board.Lay(map);
                 Table.Board.Dress(pack.PropsOn(id));
                 Table.GmScreen?.StandBehind(Table.Board);
+                Table.Companion?.StandBeside(Table.Board);
             }
         }
     }

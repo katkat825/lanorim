@@ -37,8 +37,14 @@ namespace Game.Table
 
         public Captioned Captions { get; private set; }
 
+        // the tray's lift toward the player (TrayLift): the scene's, whose dials are Kathleen's
+        public TrayLift Lift { get; private set; }
+
         // the GM's screen on the far side of the board (Tier 3d); placed whenever a map is laid
         public GmScreen GmScreen { get; private set; }
+
+        // the companion, beside the board and never on it (CompanionFigure); placed whenever a map is laid
+        public CompanionFigure Companion { get; private set; }
 
         readonly ILocalizer _text = new GodotLocalizer();
 
@@ -67,11 +73,30 @@ namespace Game.Table
                 AddChild(GmScreen);
             }
 
+            Companion = GetNodeOrNull<CompanionFigure>("Companion");
+
+            if (Companion == null)
+            {
+                Companion = new CompanionFigure { Name = "Companion", Visible = false };
+                AddChild(Companion);
+            }
+
             if (Tray == null)
             {
                 GD.PushError($"table: no dice tray at '{TrayPath}' - there is nothing to roll");
                 return;
             }
+
+            Lift = GetNodeOrNull<TrayLift>("TrayLift");
+
+            if (Lift == null)
+            {
+                Lift = new TrayLift { Name = "TrayLift" };
+                AddChild(Lift);
+            }
+
+            Lift.Tray = Tray;
+            Lift.Camera = Camera;
 
             // the captions card tells the things that make noise about itself, rather than hunting
             // them; one walk of the tree at boot

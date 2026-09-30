@@ -43,11 +43,20 @@ namespace Game.Table
 
         public string Focus { get; set; }
 
+        // `--tray-up`: wait (past --after) for the tray to have come to the player and its dice to be
+        // read, and photograph that - the moment the player reads the roll
+        public bool WhenTrayUp { get; set; }
+
         TableCamera _camera;
 
         public override void _Ready()
         {
-            if (Size.X > 0 && Size.Y > 0) GetWindow().Size = Size;
+            // the game opens maximized (project.godot), and a maximized window keeps its size
+            if (Size.X > 0 && Size.Y > 0)
+            {
+                GetWindow().Mode = Window.ModeEnum.Windowed;
+                GetWindow().Size = Size;
+            }
 
             _camera = Nodes.Under<TableCamera>(GetTree().Root).FirstOrDefault();
 
@@ -64,7 +73,19 @@ namespace Game.Table
             Game.Board.Mini mini = Nodes.Under<Game.Board.Mini>(GetTree().Root)
                                         .FirstOrDefault(m => m.Name.ToString().StartsWith(Focus, StringComparison.OrdinalIgnoreCase));
 
-            if (mini != null) _camera.Following = mini.GlobalPosition;
+            // or anything else on the table by its name (`--focus Companion`)
+            Node3D other = mini ?? Nodes.Under<Node3D>(GetTree().Root)
+                                        .FirstOrDefault(n => n.Name.ToString().StartsWith(Focus, StringComparison.OrdinalIgnoreCase));
+
+            if (other != null) _camera.Following = other.GlobalPosition;
+        }
+
+        bool TrayUpAndRead()
+        {
+            Game.Tray.TrayLift lift = Nodes.Under<Game.Tray.TrayLift>(GetTree().Root).FirstOrDefault();
+            Game.Tray.DiceTray tray = Nodes.Under<Game.Tray.DiceTray>(GetTree().Root).FirstOrDefault();
+
+            return lift != null && tray != null && lift.IsUp && !tray.IsThrowing && tray.Last != null;
         }
 
         // the shot the command line asks for, or null
@@ -78,6 +99,7 @@ namespace Game.Table
                         ? zoom : null,
                     Quarter = int.TryParse(Arg(args, "--quarter"), out int quarter) ? quarter : 0,
                     Focus = Arg(args, "--focus"),
+                    WhenTrayUp = Array.IndexOf(args ?? Array.Empty<string>(), "--tray-up") >= 0,
                 }
                 : null;
 
@@ -126,6 +148,8 @@ namespace Game.Table
 
             if (_waited++ < After) return;
 
+            if (WhenTrayUp && !TrayUpAndRead()) return;
+
             SetProcess(false);
 
             Viewport viewport = GetViewport();
@@ -146,6 +170,12 @@ namespace Game.Table
                 GetTree().Quit(1);
                 return;
             }
+
+            // whether the window fits the screen above the taskbar (cc_task_ui-issues-9-30.md 1.3)
+            Window window = GetWindow();
+            Rect2I usable = DisplayServer.ScreenGetUsableRect(window.CurrentScreen);
+            GD.Print($"shot    window {window.Size.X}x{window.Size.Y} at {window.Position.X},{window.Position.Y} " +
+                     $"({window.Mode}); the screen's usable area {usable.Size.X}x{usable.Size.Y} at {usable.Position.X},{usable.Position.Y}");
 
             Error wrote = picture.SavePng(Path);
 

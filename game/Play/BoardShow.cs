@@ -53,7 +53,7 @@ namespace Game.Play
             if (applied) Add(new Step { What = "wobble", Actor = actor });
         }
 
-        public override void Downed(Actor actor) => Add(new Step { What = "down", Actor = actor });
+        public override void Downed(Actor actor) => Add(new Step { What = "down", Actor = actor, Hero = _isHero(actor) });
 
         // Banishment, Maze: off the board and beside it, and back. the square it comes back to
         // follows as a Moved of one square
@@ -69,5 +69,19 @@ namespace Game.Play
         public event Action<Actor, Actor, Attempt> Judging;
 
         public override void Judged(Actor by, Actor target, Attempt attempt) => Judging?.Invoke(by, target, attempt);
+
+        // a spell cast and resolved: who cast what, at whom, and what it changed - for the tray's
+        // caption, told at once like a verdict (rules thread). A Shield cast inside a spell's attack
+        // is resolved inside it, so who each cast was aimed at is kept on a stack
+        public event Action<Actor, string, IReadOnlyList<Actor>, IReadOnlyList<Change>> Casting;
+
+        readonly Stack<IReadOnlyList<Actor>> _aimedAt = new Stack<IReadOnlyList<Actor>>();
+
+        public override void Casts(Actor caster, string spellKey, IReadOnlyList<Actor> at) =>
+            _aimedAt.Push(at ?? Array.Empty<Actor>());
+
+        public override void Cast(Actor caster, string spellKey, IReadOnlyList<Change> changes) =>
+            Casting?.Invoke(caster, spellKey, _aimedAt.Count > 0 ? _aimedAt.Pop() : Array.Empty<Actor>(),
+                            changes ?? Array.Empty<Change>());
     }
 }

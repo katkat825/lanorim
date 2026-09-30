@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Content.Campaigns;
+using Content.Creation;
 using Content.Saves;
 using Content.Screens;
 using Content.Sheet;
@@ -20,6 +21,9 @@ namespace Game.Screens
     {
         MarginContainer _body;
 
+        // the book on the table behind the screens (book.tscn): closed at the title, open under the rest
+        BookTable _book;
+
         public override void _Ready()
         {
             SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
@@ -27,7 +31,13 @@ namespace Game.Screens
             // the player's own keys, before anything reads one
             _ = GameState.Access;
 
-            AddChild(new ColorRect { Color = new Color(0.07f, 0.06f, 0.05f), AnchorRight = 1, AnchorBottom = 1 });
+            // the campaign book on the table, when the scene is there; a plain dark ground when it isn't
+            if (ResourceLoader.Exists(BookScene) && GD.Load<PackedScene>(BookScene)?.Instantiate() is BookTable book)
+            {
+                _book = book;
+                AddChild(_book);
+            }
+            else AddChild(new ColorRect { Color = new Color(0.07f, 0.06f, 0.05f), AnchorRight = 1, AnchorBottom = 1 });
 
             _body = new MarginContainer { AnchorRight = 1, AnchorBottom = 1 };
 
@@ -44,12 +54,19 @@ namespace Game.Screens
                 return;
             }
 
+            if (args.Contains(CreationProbe.Flag))
+            {
+                AddChild(new CreationProbe { Name = "CreationProbe" });
+                return;
+            }
+
             int at = Array.IndexOf(args, "--begin");
 
             if (at >= 0 && at + 1 < args.Length)
             {
                 GameState.SaveProbesApart();
-                QuickStart(args[at + 1], at + 2 < args.Length && !args[at + 2].StartsWith("--") ? args[at + 2] : "fighter");
+                QuickStart(args[at + 1], at + 2 < args.Length && !args[at + 2].StartsWith("--") ? args[at + 2] : "fighter",
+                           Arg(args, "--learn"));
                 return;
             }
 
@@ -64,16 +81,41 @@ namespace Game.Screens
                 case "tutorials": ShowTutorials(); break;
                 case "settings": ShowSettings(); break;
                 case "controls": ShowSettings(); ScrollToControls(); break;
-                case "create": ShowCreation(GameState.Manifests.FirstOrDefault()?.Id ?? ""); break;
+                case "create": ShowCreation(GameState.Manifests.FirstOrDefault()?.Id ?? "", Arg(args, "--page"), Arg(args, "--class")); break;
                 default: ShowTitle(); break;
             }
 
+            // `--show book --ask-delete`: the first character's Delete pressed, for a picture of the
+            // question (it asks; nothing is deleted)
+            if (screen == "book" && args.Contains("--ask-delete"))
+                Nodes.Under<Button>(this).FirstOrDefault(b => b.Text == Ui.Say(CampaignBook.DeleteKey))
+                     ?.EmitSignal(BaseButton.SignalName.Pressed);
+
             if (Game.Table.Shot.From(args) is { } shot) AddChild(shot);
+
+            // every launch screen at every window size (checks/check-layout.ps1)
+            if (args.Contains(LayoutProbe.Flag))
+            {
+                var probe = new LayoutProbe { Name = "LayoutProbe" };
+                string campaign = GameState.Manifests.FirstOrDefault()?.Id ?? "";
+
+                probe.Screens.Add(("title", ShowTitle));
+                probe.Screens.Add(("book", ShowBook));
+                probe.Screens.Add(("tutorials", ShowTutorials));
+                probe.Screens.Add(("settings", ShowSettings));
+                probe.Screens.Add(("create", () => ShowCreation(campaign, "class", null)));
+                probe.Screens.Add(("spells", () => ShowCreation(campaign, "spells", "mage")));
+                probe.Screens.Add(("abilities", () => ShowCreation(campaign, "abilities", "mage")));
+                AddChild(probe);
+            }
         }
+
+        public const string BookScene = "res://book.tscn";
 
         void Show(Control screen, float width = 720)
         {
             _onTitle = false;
+            _book?.Open();
             Ui.Clear(_body);
             _body.AddChild(Ui.Centred(screen, width));
             Ui.FocusFirst(screen);
@@ -81,12 +123,26 @@ namespace Game.Screens
 
         // --- the title --------------------------------------------------------------------------
 
+        // the title card under the closed book, which stands above it in the middle of the table
         void ShowTitle()
         {
             Show(Ui.Panel(Ui.Column(24,
                 Ui.Title(ScreenWords.GameTitle),
                 Ui.Label(ScreenWords.PressToBegin),
                 Ui.Button(ScreenWords.Begin, ShowBook))), 520);
+
+            if (_book != null && _body.GetChildCount() > 0 && _body.GetChild(0) is CenterContainer centre)
+            {
+                // to the bottom of the screen, so the closed book shows
+                _body.RemoveChild(centre);
+                var column = new VBoxContainer();
+                column.AddChild(new Control { SizeFlagsVertical = SizeFlags.ExpandFill });
+                centre.SizeFlagsVertical = SizeFlags.ShrinkEnd;
+                column.AddChild(centre);
+                _body.AddChild(column);
+            }
+
+            _book?.Close();
             _onTitle = true;
         }
 
@@ -130,11 +186,8 @@ namespace Game.Screens
             foreach (BookPage one in book.Pages)
             {
                 BookPage p = one;
-                Button button = Ui.Button(p.NameKey, () => ShowPage(page, p));
-
-                if (p.LabelKey != null) button.TooltipText = Ui.Say(p.LabelKey);
-
-                contents.AddChild(button);
+                // what the page's label says is on the page itself, not on hover
+                contents.AddChild(Ui.Button(p.NameKey, () => ShowPage(page, p)));
             }
 
             BookPage first = book.Pages.FirstOrDefault(p => p.Id == open) ?? book.Pages.FirstOrDefault();
@@ -166,13 +219,43 @@ namespace Game.Screens
             foreach (CharacterSlot slot in p.Characters)
             {
                 CharacterSlot s = slot;
-                page.AddChild(Ui.Button(Ui.Say(ScreenWords.Character, s.Name, s.Level,
+                Button load = Ui.Button(Ui.Say(ScreenWords.Character, s.Name, s.Level,
                                                Ui.Say(Core.Localization.KeyConventions.ClassName(s.ClassId))),
-                                        () => Load(s.Newest), true));
+                                        () => Load(s.Newest), true);
+                load.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+
+                var row = Ui.Row(8, load);
+                row.AddChild(Ui.Button(CampaignBook.DeleteKey, () => AskToDelete(row, p, s)));
+                page.AddChild(row);
             }
 
             page.AddChild(Ui.Button(CampaignBook.NewCharacterKey, () => ShowCreation(p.Id))
                             .Greyed(!p.CanStartNew, CampaignBook.SlotsFullKey));
+            page.AddChild(Ui.Why(!p.CanStartNew, CampaignBook.SlotsFullKey));
+        }
+
+        // DELETE A CHARACTER, ASKED FIRST (cc_task_ui-issues-9-30.md 6.2): the row becomes the question -
+        // the hero's name and how many saves go with it - with Keep, the safe answer, focused
+        void AskToDelete(HBoxContainer row, BookPage p, CharacterSlot s)
+        {
+            Ui.Clear(row);
+
+            (string key, object[] args) = CampaignBook.DeleteQuestion(s);
+            Label question = Ui.Label(key, args);
+            question.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+
+            Button keep = Ui.Button(CampaignBook.KeepKey, () => ShowBook(p.Id));
+            Button delete = Ui.Button(CampaignBook.DeleteKey, () =>
+            {
+                int gone = CampaignBook.Delete(GameState.Saves, p.Id, s);
+                GD.Print($"launch  deleted {s.Name} from {p.Id} slot {s.Slot}: {gone} saves");
+                ShowBook(p.Id);
+            });
+
+            row.AddChild(question);
+            row.AddChild(delete);
+            row.AddChild(keep);
+            Ui.FocusLater(keep);
         }
 
         // --- tutorials ------------------------------------------------------------------------
@@ -186,6 +269,7 @@ namespace Game.Screens
             {
                 TutorialChoice c = choice;
                 list.AddChild(Ui.Button(c.NameKey, () => ShowCreation(c.CampaignId)).Greyed(!c.Available, c.WhyNotKey));
+                list.AddChild(Ui.Why(!c.Available, c.WhyNotKey));
                 list.AddChild(Ui.Label(c.BlurbKey));
             }
 
@@ -237,6 +321,44 @@ namespace Game.Screens
 
         // --- a character -------------------------------------------------------------------------
 
+        // `--show create --page spells --class mage`: a creation page part filled in, for a picture of it
+        static string Arg(string[] args, string flag)
+        {
+            int at = Array.IndexOf(args, flag);
+            return at >= 0 && at + 1 < args.Length ? args[at + 1] : null;
+        }
+
+        void ShowCreation(string campaign, string page, string cls)
+        {
+            ShowCreation(campaign);
+
+            if (page == null || !Core.Words.EnumWords.TryName(page, out Step step)) return;
+
+            CreationScreen creation = Nodes.Under<CreationScreen>(this).FirstOrDefault();
+            if (creation == null) return;
+
+            Defaults(creation.Making, cls ?? "mage", learn: false);
+            creation.Open(step);
+        }
+
+        // every default a quick character takes: class, human, soldier, the first skills and expertise,
+        // and (learn) the first spells
+        static void Defaults(Creation making, string cls, bool learn)
+        {
+            // picking a class starts it over, so a class already picked (with spells learned) is kept
+            if (making.Class?.Id != cls) making.Pick(GameState.Content.Class(cls));
+            making.Pick(GameState.Content.Kind("human"));
+            making.Pick(GameState.Content.Background("soldier"));
+
+            foreach (var skill in making.SkillChoices.Take(making.SkillPicksLeft).ToList()) making.Train(skill);
+            foreach (var skill in making.Skills.Take(making.ExpertisePicksLeft).ToList()) making.Master(skill);
+
+            if (!learn) return;
+
+            foreach (var spell in making.SpellChoices.ToList())
+                if (making.CantripPicksLeft > 0 || making.SpellPicksLeft > 0) making.Learn(spell);
+        }
+
         void ShowCreation(string campaign)
         {
             Package pack = GameState.Package(campaign);
@@ -267,7 +389,9 @@ namespace Game.Screens
         void Load(SaveShelf.Saved saved) => Scenes.Resume(GetTree(), saved);
 
         // a character made with every default, for the headless checks
-        void QuickStart(string campaign, string cls)
+        // `--learn mage_armor,shield`: those spells learned first, the rest of the picks as usual (a
+        // probe or a picture that needs a particular spell)
+        void QuickStart(string campaign, string cls, string learn = null)
         {
             Package pack = GameState.Package(campaign);
 
@@ -283,13 +407,12 @@ namespace Game.Screens
             var making = creation.Making;
 
             making.Pick(GameState.Content.Class(cls));
-            making.Pick(GameState.Content.Kind("human"));
-            making.Pick(GameState.Content.Background("soldier"));
 
-            foreach (var skill in making.SkillChoices.Take(making.SkillPicksLeft).ToList()) making.Train(skill);
-            foreach (var skill in making.Skills.Take(making.ExpertisePicksLeft).ToList()) making.Master(skill);
-            foreach (var spell in making.SpellChoices.ToList())
-                if (making.CantripPicksLeft > 0 || making.SpellPicksLeft > 0) making.Learn(spell);
+            foreach (string id in (learn ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries))
+                if (making.SpellChoices.FirstOrDefault(s => s.Id == id) is { } wanted) making.Learn(wanted);
+                else GD.PushWarning($"launch: '{id}' is not a spell a level 1 {cls} can learn");
+
+            Defaults(making, cls, learn: true);
 
             making.Call("Probe");
 

@@ -43,6 +43,12 @@ namespace Game.Table
         // a trackpad's two-finger scroll, per unit of its pan, as a fraction of ZoomStep
         [Export] public float PanStep { get; set; } = 0.1f;
 
+        // THE SHAPE THE ZOOM WAS TUNED AT (cc_task_ui-issues-9-30.md 2). The field of view is kept in
+        // height, so a wider screen (21:9) sees more table either side and needs nothing; a narrower one
+        // (4:3) would cut the map and the tray off at the sides, so the camera stands back by as much as
+        // the screen is narrower than this
+        [Export] public float TunedAspect { get; set; } = 16f / 9f;
+
         // seconds for a quarter turn. long enough to follow, short enough not to wait through
         [Export] public float TurnSeconds { get; set; } = 0.35f;
 
@@ -151,7 +157,7 @@ namespace Game.Table
 
             _zoomShown = _zooming >= 1f ? Zoom : Mathf.Lerp(_zoomFrom, Zoom, Ease(_zooming));
 
-            float distance = Mathf.Lerp(Furthest, Nearest, Mathf.Clamp(_zoomShown, 0f, 1f));
+            float distance = Mathf.Lerp(Furthest, Nearest, Mathf.Clamp(_zoomShown, 0f, 1f)) * Narrower();
 
             // spherical: out along the yaw, up by the pitch
             var offset = new Vector3(
@@ -173,6 +179,16 @@ namespace Game.Table
             // and a whisper of roll, which is the part that actually reads as hands
             RotateObjectLocal(Vector3.Forward,
                               Mathf.DegToRad(Mathf.Sin((float)_drift * 0.53f) * DriftDegrees));
+        }
+
+        // how much further back a screen narrower than TunedAspect needs to stand; 1 at 16:9 and wider
+        float Narrower()
+        {
+            Vector2 size = GetViewport()?.GetVisibleRect().Size ?? Vector2.Zero;
+
+            if (size.Y <= 0f || TunedAspect <= 0f) return 1f;
+
+            return Mathf.Max(1f, TunedAspect / (size.X / size.Y));
         }
 
         // smoothstep

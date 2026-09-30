@@ -98,7 +98,7 @@ namespace Content.Tests
             MapDraft draft = editor.Draft;
             var here = new Cell(3, 2);
 
-            editor.Choose("crate");
+            editor.Choose("chest");
             editor.Click(here);
             editor.Tool = MapTool.Spawn;
             editor.Click(here);

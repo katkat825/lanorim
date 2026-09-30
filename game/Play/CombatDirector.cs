@@ -20,6 +20,8 @@ namespace Game.Play
 
         public Game.Table.GmScreen Screen { get; set; }
 
+        public Game.Table.CompanionFigure Companion { get; set; }
+
         public RulesThread Rules { get; set; }
 
         public TrayDice Dice { get; set; }
@@ -72,6 +74,7 @@ namespace Game.Play
             Board.Lay(battle.Fight.Field.Map);
             Board.Dress(props);
             Screen?.StandBehind(Board);
+            Companion?.StandBeside(Board);
 
             foreach ((Actor actor, Cell at) in places) Board.Place(actor, at);
 
@@ -199,8 +202,10 @@ namespace Game.Play
                     if (!_skipping) Board.Wobble(step.Actor);
                     break;
 
+                // a fallen foe is cleared off the mat by the companion; the hero stays where they fell
                 case "down":
                     Board.Topple(step.Actor);
+                    if (!step.Hero) Companion?.Huff(Board.Of(step.Actor));
                     break;
 
                 case "log":

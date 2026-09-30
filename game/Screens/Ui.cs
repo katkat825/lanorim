@@ -44,11 +44,20 @@ namespace Game.Screens
         }
 
         // a greyed button says why in its tooltip (combat_ux.md; the combat bar may hide it instead, HudLayout)
+        // NO HOVER TEXT (cc_task_ui-issues-9-30.md 3.1): a greyed button used to carry its reason as a
+        // tooltip. Where the reason matters, the screen writes it beside the button (Why)
         public static Button Greyed(this Button button, bool disabled, string whyKey)
         {
             button.Disabled = disabled;
-            button.TooltipText = disabled && whyKey != null ? Say(whyKey) : "";
             return button;
+        }
+
+        // the reason a button is greyed, written out under it; nothing when it isn't
+        public static Label Why(bool disabled, string whyKey)
+        {
+            Label why = Label(whyKey);
+            why.Visible = disabled && whyKey != null;
+            return why;
         }
 
         public static VBoxContainer Column(int gap = 8, params Control[] children)
@@ -81,6 +90,27 @@ namespace Game.Screens
             }
 
             return row;
+        }
+
+        // A ROW THAT WRAPS (cc_task_ui-issues-9-30.md 2): the action bar and the turn strip. A flow
+        // container on its own wraps at its widest child, so Fit gives it the width it would take on one
+        // line, or at most `most`, and it wraps past that
+        public static HFlowContainer Flow(int gap = 8)
+        {
+            var flow = new HFlowContainer();
+            flow.AddThemeConstantOverride("h_separation", gap);
+            flow.AddThemeConstantOverride("v_separation", gap);
+            return flow;
+        }
+
+        public static void Fit(HFlowContainer flow, float most)
+        {
+            var shown = flow.GetChildren().OfType<Control>().Where(c => c.Visible).ToList();
+            float gap = flow.GetThemeConstant("h_separation");
+            float line = shown.Sum(c => c.GetCombinedMinimumSize().X) + gap * System.Math.Max(0, shown.Count - 1);
+            float widest = shown.Count == 0 ? 0 : shown.Max(c => c.GetCombinedMinimumSize().X);
+
+            flow.CustomMinimumSize = new Vector2(Mathf.Max(widest, Mathf.Min(line, most)), 0);
         }
 
         // a panel with its content inside, the theme's parchment

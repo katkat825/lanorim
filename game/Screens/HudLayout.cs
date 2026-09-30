@@ -24,6 +24,11 @@ namespace Game.Screens
         // one of those widths and heights is multiplied by this (Ui.Px), rather than each rewritten
         [Export(PropertyHint.Range, "0.8,2,0.05")] public float MenuScale { get; set; } = 1.4f;
 
+        // the height kept for creation's description area under a list (what the selected class,
+        // species or spell is), in the old canvas's units like the menus: the page doesn't jump as
+        // descriptions of different lengths come and go
+        [Export] public float CreationAboutHeight { get; set; } = 110f;
+
         // --- the action bar ---------------------------------------------------------------------------
 
         // an option that can't be taken right now (no action left, nobody in reach) is left off the
@@ -41,6 +46,13 @@ namespace Game.Screens
         // --- the log ------------------------------------------------------------------------------------
 
         [Export] public int LogWidth { get; set; } = 460;
+
+        // the top right corner kept for the turn hint, the tray's caption and the notices; the turn
+        // strip lives between the log and this, so the three can never overlap (cc_task_ui-issues-9-30.md 2)
+        [Export] public int HintWidth { get; set; } = 460;
+
+        // words with no panel behind them (the top right corner) keep this far off the screen's edge
+        [Export] public int TextInset { get; set; } = 20;
 
         [Export] public int LogLinesClosed { get; set; } = 3;
 

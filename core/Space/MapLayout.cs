@@ -32,9 +32,17 @@ namespace Core.Space
 
         readonly Edge[] _horizontal;
 
+        // squares something solid stands on (a crate, a cauldron): walked around, seen past. the tile
+        // underneath is kept, so the board still draws it; a map file has no word for these, the
+        // builder's blocking props put them here (MapDraft.Layout)
+        readonly HashSet<Cell> _blocked;
+
+        public IReadOnlyCollection<Cell> Blocked => _blocked;
+
         public MapLayout(int columns, int rows, Tile[] tiles, Cell start,
                          Edge[] vertical = null, Edge[] horizontal = null,
-                         IReadOnlyDictionary<int, Cell> spawns = null)
+                         IReadOnlyDictionary<int, Cell> spawns = null,
+                         IEnumerable<Cell> blocked = null)
         {
             Extent = new Extent(columns, rows);
             Start = start;
@@ -46,6 +54,7 @@ namespace Core.Space
             _tiles = Sized(tiles, Extent.Count);
             _vertical = Sized(vertical, Extent.VerticalCount);
             _horizontal = Sized(horizontal, Extent.HorizontalCount);
+            _blocked = new HashSet<Cell>((blocked ?? Enumerable.Empty<Cell>()).Where(Extent.Contains));
         }
 
         static T[] Sized<T>(T[] layer, int wanted) =>
@@ -58,7 +67,7 @@ namespace Core.Space
         // off the map is Void, not an exception - so Route and Sight can step outside without a bounds check
         public Tile At(Cell cell) => Extent.At(_tiles, cell);
 
-        public bool IsPassable(Cell cell) => At(cell).IsPassable();
+        public bool IsPassable(Cell cell) => At(cell).IsPassable() && !_blocked.Contains(cell);
 
         public bool IsTransparent(Cell cell) => At(cell).IsTransparent();
 
@@ -103,7 +112,7 @@ namespace Core.Space
             var changed = (Tile[])_tiles.Clone();
             changed[Extent.Index(cell)] = tile;
 
-            return new MapLayout(Columns, Rows, changed, Start, _vertical, _horizontal, _spawns);
+            return new MapLayout(Columns, Rows, changed, Start, _vertical, _horizontal, _spawns, _blocked);
         }
 
         public MapLayout With(Border border, Edge edge)
@@ -124,7 +133,7 @@ namespace Core.Space
                 horizontal[Extent.Index(border)] = edge;
             }
 
-            return new MapLayout(Columns, Rows, _tiles, Start, vertical, horizontal, _spawns);
+            return new MapLayout(Columns, Rows, _tiles, Start, vertical, horizontal, _spawns, _blocked);
         }
 
         public IEnumerable<Cell> Cells => Extent.Cells;

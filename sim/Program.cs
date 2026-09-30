@@ -30,6 +30,7 @@ namespace Sim
                 case "fairness": return Fairness();
                 case "balance": return Balance(args.Skip(1).ToArray());
                 case "classes": return Classes.Run(args.Skip(1).ToArray(), Find);
+                case "mage-balance": return MageBalance.Run(args.Skip(1).ToArray(), Find);
                 case "trace": return Classes.Trace(args.Skip(1).ToArray(), Find);
                 case "help": return Help();
 
@@ -47,6 +48,7 @@ namespace Sim
             Console.WriteLine("sim fairness        chi-squared every die");
             Console.WriteLine("sim balance [runs]  play fights and print the win tables");
             Console.WriteLine("sim classes [runs] [class]  every class, levels 1-5, against the sample campaign's fights");
+            Console.WriteLine("sim mage-balance [runs]     a mage at 1-3: Mage Armor pre-cast, d6 or d8 hit die, enemy damage 100/85/75%");
             return 0;
         }
 

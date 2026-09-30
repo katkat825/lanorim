@@ -27,8 +27,9 @@ namespace Game.Play
                 BoardShow show = _combat.Show(a => ReferenceEquals(a, Run.Hero.Actor));
                 log.Wrote += show.Log;
                 show.Judging += (by, target, attempt) => MainQueue.Post(() => Verdict(by, target, attempt));
+                show.Casting += (caster, spell, at, changes) => MainQueue.Post(() => CastCaption(caster, spell, at, changes));
 
-                Battle battle = Run.BattleFor(GameState.Resolver, chooser, new Observers(log, show));
+                Battle battle = Run.BattleFor(GameState.Resolver, chooser, new Observers(log, show, _mind));
 
                 if (battle == null)
                 {
@@ -65,8 +66,40 @@ namespace Game.Play
             }, Refresh);
         }
 
+        // THE FIGHT'S READY MOMENT (cc_task_ui-issues-9-30.md 5): a spell that outlasts the fight may be
+        // cast on yourself first. Asked once a fight, only when there is one to cast, never under --auto
+        bool _readied;
+
+        bool OfferedBeforeTheFight()
+        {
+            if (_auto || _readied) return false;
+
+            _readied = true;
+
+            if (BeforeTheFight.Offered(Run.Hero).Count == 0) return false;
+
+            BeforeFightCard card = null;
+
+            card = new BeforeFightCard(() => BeforeTheFight.Offered(Run.Hero), spell =>
+            {
+                IReadOnlyList<Change> changed = null;
+
+                _rules.Post(() => BeforeTheFight.Cast(Run.Hero, spell, GameState.Resolver, out changed), () =>
+                {
+                    CastCaption(Run.Hero.Actor, spell.NameKey, new[] { Run.Hero.Actor }, changed ?? new List<Change>());
+                    card.Said = _verdict;
+                    card.Again();
+                });
+            });
+
+            Open(card, Refresh);
+            return true;
+        }
+
         void FightOver(Outcome outcome)
         {
+            _readied = false;
+
             if (outcome == Outcome.HeroesLost) _deaths++;
 
             // the fight's log stops hearing the campaign's rolls (it does at the end of the fight too;

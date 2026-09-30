@@ -26,7 +26,8 @@ namespace Content.Maps
             }
 
             return new MapLayout(Columns, Rows, (Tile[])_tiles.Clone(), Start,
-                                 vertical, horizontal, _spawns);
+                                 vertical, horizontal, _spawns,
+                                 _props.Where(Blocks).Select(p => p.Cell));
         }
 
         // what a campaign ships: the map as the same text MapReader reads, plus the props beside
@@ -112,6 +113,8 @@ namespace Content.Maps
 
             if (!At(Start).IsPassable())
                 problems.Add("the hero starts on solid rock - put the start somewhere you can stand");
+            else if (IsBlocked(Start))
+                problems.Add("the hero starts inside a prop that blocks - move the start or the prop");
 
             MapLayout map = Layout();
 
@@ -123,9 +126,15 @@ namespace Content.Maps
                     continue;
                 }
 
+                if (IsBlocked(spawn.Value))
+                {
+                    problems.Add($"spawn {spawn.Key} is inside a prop that blocks");
+                    continue;
+                }
+
                 if (!Route.Exists(map, Start, spawn.Value, _ => false))
                     problems.Add($"spawn {spawn.Key} cannot be walked to from the start - " +
-                                 "a wall or a gap of rock is in the way");
+                                 "a wall, a gap of rock or a prop that blocks is in the way");
             }
 
             foreach (Prop prop in _props)
