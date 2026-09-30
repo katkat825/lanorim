@@ -14,27 +14,37 @@ fight, and which piece of code answers each thing. The rules underneath are `cor
 ## Layout
 
 ```
- ┌──────────────── turn-order strip (top centre) ────────────────┐
- │  [Hero ♥ 14/20]  [goblin 7/7]  [goblin boss 21/21]   Round 2  │
- └───────────────────────────────────────────────────────────────┘
+┌ Log ▸ (top left) ─────────┐ ┌──── turn-order strip (top centre) ─────┐      Q and E turn the table…
+│ Hit: you hit the goblin   │ │ ▸ Hero ▬▬▬ 14/20   Goblin ▬▬▬   Round 2 │      Hit! 17 against Armor Class 15
+│ (17 against Armor Class…) │ └─────────────────────────────────────────┘      Your dice are waiting - Space…
+└───────────────────────────┘
 
-                  the board (the map, three quarters of the frame)            the tray
+                  the board (the map, the biggest thing on screen)             the tray
 
- ┌ combat log (bottom left, collapsible) ┐        ┌ action bar (bottom centre) ┐  ┌ End Turn ┐
- │ goblin hits you for 5                 │        │ 1 Longsword  2 Fire Bolt … │  │ (Space)  │
- └───────────────────────────────────────┘        │ ●● actions ● bonus ● react │  └──────────┘
-                                                  └────────────────────────────┘
+                ┌ action bar (bottom centre, flush to the edge) ───────────────────┐
+                │ 1 Longsword  2 Second Wind  Spells ▾  More actions ▾ │ End Turn  │
+                │ Actions ● ○   Bonus action ●   Reaction ●   Moved 3 of 6 squares │
+                └──────────────────────────────────────────────────────────────────┘
 ```
 
-- **Turn-order strip, top centre** — every combatant in initiative order: name, hit points (a foe's as a bar
-  only; the numbers are the player's), the current turn raised. Downed combatants stay, greyed. `CombatHud.Order`.
-- **Action bar, bottom centre** — the session's options, **1–9** on the first nine. An option that can't be
-  taken is **greyed, never hidden**, and its tooltip is the reason (`ActionOption.WhyNotKey` → `ui.combat_why.<reason>.name`).
-  Under it the **pips**: actions (usually two; three with Extra Attack), bonus action, reaction.
-  `CombatHud.Bar`, `Actions`, `BonusActions`, `Reactions`.
-- **End Turn, bottom right** — also **Space** (see *Keys*).
-- **Combat log, bottom left** — the last few lines, open to the whole fight with **L**. `CombatHud.LastLines`,
-  `FightLog`. Collapsed by default; the settings remember.
+*(2026-09-30, `cc_task_table-ui-minis-zoom-damage.md` 3: the canvas is 1920x1080, the panels are flush to their
+edges, End Turn is the bar's right end, and the log is top left. Sizes are `res://ui/hud_layout.tres`.)*
+
+- **Turn-order strip, top centre** — every combatant in initiative order: name and a health bar, the hero's and a
+  foe's alike, with the hero's numbers beside theirs (the numbers are the player's); the current turn marked.
+  Downed combatants stay, greyed. `CombatHud.Order`.
+- **Action bar, bottom centre** — what a turn reaches for as buttons (attacks, features, items, a shape, Surge,
+  Flee), the spells in one menu and the manoeuvres every creature has in another (*More actions*).
+  **An option that can't be taken right now is left off the bar**, and the pips say why (no action left); the
+  menus still list it, greyed, with its reason as the tooltip: a menu is where you look for what exists. With
+  `HudLayout.HideUnavailable` off it stays on the bar instead, hollow, faded and without its number. *(Kathleen,
+  2026-09-30: "clearly distinct or not there". This replaces "greyed, never hidden".)*
+  Under the bar the **pips**, sentence case: a filled dot for each one left and a hollow one for each spent —
+  actions, bonus action, reaction — and the movement as "Moved 3 of 6 squares". `CombatHud.Bar`, `Actions`,
+  `ActionsGiven`, `SquaresMoved`, `SquaresGiven`, `CombatHud.Pips`.
+- **End Turn** — the bar's right end; also **Space** (see *Keys*).
+- **Combat log, top left** — the last few lines, open to the whole fight with **L** or its title. `FightLog`.
+  Collapsed by default; the settings remember. A new fight starts a new log.
 - **The tray** stays where it is; the player's own rolls are thrown on it (see *Dice*).
 
 ## A turn
@@ -54,8 +64,8 @@ fight, and which piece of code answers each thing. The rules underneath are `cor
      confirm with **Enter** or the button.
    - **Square** (Fireball) — the template follows the pointer, clipped to `LegalSquares`; everything caught is
      ringed and the preview counts them. Click to confirm.
-   - **Direction** (Burning Hands, Lightning Bolt) — the template points from the hero; **scroll, Q or E**
-     turn it a quarter (`Rotate`). A cone that catches nobody previews **0** damage.
+   - **Direction** (Burning Hands, Lightning Bolt) — the template points from the hero; **the wheel, Q or E**
+     turn it a quarter (`Rotate`), and **Shift and the wheel** zoom while it is aimed; a line over the bar says so. A cone that catches nobody previews **0** damage.
    - **None** (Dash, Disengage, Second Wind, a potion) — happens on the press.
    A spell with **modes** or a **damage choice** (Chromatic Orb) asks first, in a small menu on the bar.
    A spell that can be **upcast** gets a slot-level picker; the preview updates with it.
@@ -97,9 +107,17 @@ on `IReactionAsker.Ask`).
 ## Dice
 
 The player's own rolls — attacks, damage, saves, checks, death saves — are **thrown on the tray**: the
-faces on the felt are the numbers (`TableResolver` → `IDiceSource` → the tray). **Space** throws when the tray
-is waiting. With **Skip physical dice** on, they're rolled digitally and shown on the tray card only.
-Advantage throws two d20s and both stay on the felt.
+faces on the felt are the numbers (`TableResolver` → `IDiceSource` → the tray). **Space**, or a **click on the
+tray**, throws when the tray is waiting. With **Skip physical dice** on, they're rolled digitally and shown on the
+tray card only. Advantage throws two d20s and both stay on the felt. A spell's damage is the caster's roll, so the
+hero's Fire Bolt and Burning Hands are thrown on the tray too; the target's saving throw is the GM's.
+
+**Every attack says what happened, in order** (2026-09-30): the to-hit throw, then **Hit**, **Miss** or
+**Critical** with the armor class (a save: **Saved** or **Failed** with the DC), then, on a hit, the damage
+throw, then the damage line: "Greataxe hits Giant Rat: 1d12+3, for 9 Slashing damage." The verdict also stands
+under the turn hint as the tray's caption, heading "Your dice are waiting" while the damage dice wait
+(`ICombatObserver.Judged` and `Dealt`, `FightLog`, `PlayDirector.Verdict`). A hero's roll that falls back to
+digital dice for any reason but the player's own setting logs a warning.
 
 ## Fleeing
 
@@ -111,21 +129,24 @@ fled branch.
 
 | Key | Does |
 |---|---|
-| **1–9** | the action bar's options |
+| **1–9** | the action bar's options, in a fixed order: the bar's buttons from the left, then the Spells menu, then More actions. An option counts whether or not it can be taken now, so a number never moves mid-turn; one that only appears partway through a turn (a Light weapon's bonus attack, Flee) comes last (`CombatHud.Numbered`) |
 | **Space** | the "go on" key: throw the dice when the tray is waiting; on the hero's turn **End Turn**; during the enemies' turns, skip to the end of them |
 | **Esc / right-click** | cancel the choice in hand; with nothing in hand, the pause menu |
-| **Q / E**, scroll | turn a direction template; with none in hand, turn the table |
+| **Q / E** | turn a direction template; with none in hand, turn the table |
+| the wheel, a trackpad pinch, **- / =**, the number pad's **+ / -** | zoom, eased (`TableCamera.ZoomSeconds`); while a line or cone is aimed the wheel turns it and **Shift+wheel** zooms |
 | **Enter** | confirm (a multi-target choice, the Ask prompt's Yes) — the Access layer's *Touch* act |
 | **Tab / Shift+Tab** | move the focus through the bar's options, then the legal targets or squares — the Access layer's *Reach next / back* acts |
-| **L** | open / close the combat log |
-| **- / =** | zoom |
+| **L** | open / close the combat log (the *Toggle log* act) |
 | arrow keys + Enter | move a cursor square by square and confirm it — the keyboard-only way to move and aim |
 
 Space ending the turn is only ever **one** press after the last throw has landed and been read — a throw
 still tumbling swallows the press rather than ending the turn under it.
 
-All of them are **acts** in `game/Access/Act.cs`, bound in the InputMap and rebindable on the Access page; the
-screen reader (`Narrator`) says the focused option, its reason when greyed, the preview, and each log line.
+The acts (`game/Access/Act.cs`) are bound in the InputMap and listed, with their current keys and a **Change**
+button, in **Settings → Controls** (2026-09-30), which saves a rebinding to `user://settings.txt`. The 1–9 hotkeys,
+Space's "go on" and Esc are listed there but aren't acts. Not built yet: the arrow-key cursor, and Tab / Shift+Tab
+walking the targets (Tab moves Godot's own focus), Help (F1), Where are we (F2), Read aloud (F3) and the `Narrator`
+itself. The Controls page says "not working yet" beside each.
 
 ## What's built and what isn't (2026-09-24)
 

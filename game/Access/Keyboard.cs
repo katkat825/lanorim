@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Core.Words;
 using Godot;
 
@@ -18,18 +20,40 @@ namespace Game.Access
     {
         // the key an action is on as the keyboard labels it ("E"), read from the InputMap so a line
         // that says what the key does follows a rebinding; empty when nothing is bound
-        public static string Named(string action)
+        public static string Named(string action) => Keys(action).FirstOrDefault() ?? "";
+
+        // every key an action is on, as the keyboard labels them: "=", "Num +"
+        public static IEnumerable<string> Keys(string action)
         {
-            if (!InputMap.HasAction(action)) return "";
+            if (!InputMap.HasAction(action)) yield break;
 
             foreach (InputEvent bound in InputMap.ActionGetEvents(action))
                 if (bound is InputEventKey key)
-                    return OS.GetKeycodeString(key.PhysicalKeycode != Key.None
-                        ? DisplayServer.KeyboardGetKeycodeFromPhysical(key.PhysicalKeycode)
-                        : key.Keycode);
-
-            return "";
+                    yield return (key.ShiftPressed ? "Shift+" : "") + Label(key.PhysicalKeycode == Key.None
+                        ? key.Keycode
+                        : Headless
+                            ? key.PhysicalKeycode
+                            : DisplayServer.KeyboardGetKeycodeFromPhysical(key.PhysicalKeycode));
         }
+
+        // a headless run has no keyboard layout to ask, and says so on every call
+        static bool Headless => DisplayServer.GetName() == "headless";
+
+        // what is printed on the key. Godot names = "Equal" and the pad's + "Kp Add"; a hint that
+        // says "Equal to zoom" names a key nobody can find. Not localized, for the reason Bindings
+        // gives: it is the key's own print
+        public static string Label(Key key) => key switch
+        {
+            Key.Equal => "=",
+            Key.Minus => "-",
+            Key.Plus => "+",
+            Key.KpAdd => "Num +",
+            Key.KpSubtract => "Num -",
+            Key.Comma => ",",
+            Key.Period => ".",
+            Key.Slash => "/",
+            _ => OS.GetKeycodeString(key),
+        };
 
         // every act written into the InputMap, replacing whatever was there. Returns how many got a
         // key; an act with none is reachable another way or is deliberately unbound
@@ -44,19 +68,27 @@ namespace Game.Access
                 string action = one.Key.Id();
 
                 if (!InputMap.HasAction(action)) InputMap.AddAction(action);
-                else InputMap.ActionEraseEvents(action);
 
-                if (!one.Value.Any) continue;
+                // only the keys go: a mouse button on the same action (touch's left click) stays
+                foreach (InputEvent old in InputMap.ActionGetEvents(action))
+                    if (old is InputEventKey) InputMap.ActionEraseEvent(action, old);
 
-                InputMap.ActionAddEvent(action, new InputEventKey
+                if (one.Value.Any)
                 {
-                    // PHYSICAL, not the keycode: the key in that position on the keyboard, so a
-                    // player on a French or Dvorak layout gets the key they actually pressed
-                    PhysicalKeycode = one.Value.Key,
-                    ShiftPressed = one.Value.Shift,
-                });
+                    InputMap.ActionAddEvent(action, new InputEventKey
+                    {
+                        // PHYSICAL, not the keycode: the key in that position on the keyboard, so a
+                        // player on a French or Dvorak layout gets the key they actually pressed
+                        PhysicalKeycode = one.Value.Key,
+                        ShiftPressed = one.Value.Shift,
+                    });
 
-                bound++;
+                    bound++;
+                }
+
+                // after the act's own key, so the first key named is the one the player chose
+                foreach (Key also in one.Key.Also())
+                    InputMap.ActionAddEvent(action, new InputEventKey { PhysicalKeycode = also });
             }
 
             return bound;

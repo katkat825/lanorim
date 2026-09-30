@@ -72,7 +72,7 @@ namespace Game.Board
 
             Dress(figure);
 
-            PaintedModel.Paint(figure, Paint);
+            PaintedModel.Paint(figure, Paint, "mini");
 
             // a rigged figure is measured off its posed skeleton, because its AABB is stuck in the
             // bind pose; anything else is measured off its geometry, which is telling the truth
@@ -134,6 +134,9 @@ namespace Game.Board
             figure.AddChild(model);
 
             Pose(model);
+
+            // a hood or a cloak that isn't skinned goes on its bone, so it follows the pose
+            RigidParts.Attach(model);
         }
 
         // the pack's idle, held on one frame. Named clips vary between packs, so it takes the one

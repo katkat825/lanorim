@@ -47,6 +47,10 @@ namespace Game.Access
         ZoomIn,
 
         ZoomOut,
+
+        // the fight's log, open to the whole fight and closed to its last lines. It was L by keycode
+        // in the HUD, out of the InputMap, so it could be neither listed nor rebound
+        ToggleLog,
     }
 
     public static class Acts
@@ -91,7 +95,19 @@ namespace Game.Access
             Act.ZoomIn => Key.Equal,
             Act.ZoomOut => Key.Minus,
 
+            Act.ToggleLog => Key.L,
+
             _ => Key.None,
+        };
+
+        // KEYS AN ACT KEEPS BESIDE ITS OWN, whatever it is rebound to: the number pad's + and -
+        // zoom as well as = and -. They are in project.godot's InputMap too; this is what puts them
+        // back when a rebinding rewrites the act
+        public static IReadOnlyList<Key> Also(this Act act) => act switch
+        {
+            Act.ZoomIn => new[] { Key.KpAdd },
+            Act.ZoomOut => new[] { Key.KpSubtract },
+            _ => Array.Empty<Key>(),
         };
 
         // reaching backward is the one that shares a key, the way it does everywhere

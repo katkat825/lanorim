@@ -117,6 +117,7 @@ namespace Core.Combat
             _granted = Actions;
             BonusActions = Budget.BonusActionsFor(round);
             Movement = actor.Moves;
+            MovementGiven = Movement;
 
             // Haste: one more action, of a narrow kind
             Limited = actor.Boons.LimitedAction ? 1 : 0;
@@ -149,6 +150,14 @@ namespace Core.Combat
         public const int FeetPerSquare = 5;
 
         public int SquaresLeft => Movement / FeetPerSquare;
+
+        // the feet this turn has had to spend, all told: the speed, a Dash, a speed that changed.
+        // what the HUD says "moved 3 of 6" against
+        public int MovementGiven { get; private set; }
+
+        public int SquaresGiven => MovementGiven / FeetPerSquare;
+
+        public int SquaresMoved => Math.Max(0, (MovementGiven - Movement) / FeetPerSquare);
 
         public bool Can(Spend spend, int amount = 1) => spend switch
         {
@@ -259,7 +268,11 @@ namespace Core.Combat
         }
 
         // SRD Dash: movement equal to your speed again, on top of what is left
-        public void Hasten() => Movement += Actor.Moves;
+        public void Hasten()
+        {
+            Movement += Actor.Moves;
+            MovementGiven += Actor.Moves;
+        }
 
         // SRD: when your speed changes during your move, subtract the distance you have already
         // moved from the new speed - which is the change, added to what is left
@@ -268,6 +281,7 @@ namespace Core.Combat
             if (before == after) return;
 
             Movement = Math.Max(0, Movement + after - before);
+            MovementGiven = Math.Max(0, MovementGiven + after - before);
         }
 
         public void Disengage() => Disengaged = true;

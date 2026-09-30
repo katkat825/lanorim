@@ -94,7 +94,7 @@ namespace Content.Play
                     Reply(settled.Answer ?? new Answer());
 
                     if (request.Kind == RequestKind.Level) Autosave(SaveKind.LevelUp);
-                    if (request.Kind == RequestKind.Rest)
+                    if (request.Kind == RequestKind.Rest || settled.Rested)
                     {
                         Day.Slept();
                         Autosave(SaveKind.Rest);

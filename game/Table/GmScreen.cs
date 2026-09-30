@@ -24,15 +24,14 @@ namespace Game.Table
 
         [Export] public string Skin { get; set; } = "blank";
 
-        // metres from the board's far edge to the screen's face
+        // metres from the mat's far edge to the screen's face
         [Export] public float Gap { get; set; } = 0.3f;
 
-        // how wide the screen stands, as a share of the board's width
-        [Export] public float WidthShare { get; set; } = 1.0f;
-
-        // the tallest it may stand, whatever the model's proportions. 0.2 m stood it lower than a
-        // tall mini on 60 mm squares, "wayy too small" (cc_ui_issues_9-25-2026.md)
-        [Export] public float MostHeight { get; set; } = 0.3f;
+        // how tall it stands, in metres; its width follows the model's own proportions. Sized by
+        // height alone: a cap on width as a share of the board shrank it on every small map, and
+        // 0.2 then 0.3 m still read as "wayy too small" (Kathleen, 2026-09-28: twice as big, and it
+        // may run off the top of the screen)
+        [Export] public float Height { get; set; } = 0.6f;
 
         // which way the model faces, in degrees about the table's up: its art is on its back, so it
         // is turned to show the players the art and the GM (beyond the board) the inside
@@ -82,21 +81,19 @@ namespace Game.Table
             return true;
         }
 
-        // stand beyond the board's far edge, centred on it, sized to it
+        // stand beyond the mat's far edge, centred on it, Height tall
         public void StandBehind(Game.Board.Board board)
         {
             if (board?.Map == null || _model == null) return;
-
-            float width = board.Metrics.Width * WidthShare;
 
             // measured at its own size, so laying a second map doesn't scale the scaled model
             _model.Scale = Vector3.One;
             _model.RotationDegrees = new Vector3(0f, TurnDegrees, 0f);
             Aabb box = Bounds(_model);
 
-            if (box.Size.X > 0.0001f)
+            if (box.Size.Y > 0.0001f)
             {
-                float scale = Mathf.Min(width / box.Size.X, MostHeight / Mathf.Max(0.0001f, box.Size.Y));
+                float scale = Height / box.Size.Y;
                 _model.Scale = Vector3.One * scale;
                 box = new Aabb(box.Position * scale, box.Size * scale);
             }
@@ -106,7 +103,7 @@ namespace Game.Table
 
             // board-local far edge (-Z), then into the table's space; the model's own front face is
             // put on that line, its base on the mat
-            Vector3 far = board.Position + new Vector3(0f, 0f, -board.Metrics.HalfDepth - Gap);
+            Vector3 far = board.Position + new Vector3(0f, 0f, -board.MatDepth * 0.5f - Gap);
 
             Position = new Vector3(far.X - (box.Position.X + box.Size.X * 0.5f), far.Y - box.Position.Y,
                                    far.Z - (box.Position.Z + box.Size.Z));

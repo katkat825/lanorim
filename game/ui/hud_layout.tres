@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="HudLayout" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Screens/HudLayout.cs" id="1_hud"]
+
+; THE TABLE HUD'S DIALS (game/Screens/HudLayout.cs says what each one does). Open this in the
+; inspector. Colours, fonts and panel padding are ui/lanorim_theme.tres's.
+[resource]
+script = ExtResource("1_hud")
+MenuScale = 1.4
+HideUnavailable = true
+UnavailableAlpha = 0.45
+BarGap = 8
+EndTurnMinWidth = 180
+LogWidth = 460
+LogLinesClosed = 3
+LogLinesOpen = 14
+EdgeMargin = 0
+HealthBarSize = Vector2(96, 14)
+VerdictSeconds = 3.5

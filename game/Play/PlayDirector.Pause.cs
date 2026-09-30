@@ -45,6 +45,15 @@ namespace Game.Play
 
         public override void _UnhandledInput(InputEvent @event)
         {
+            // a click on the tray throws what is waiting on it, the way Space does
+            if (@event is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left } click &&
+                _dice.Waiting != null && !_dice.Thrown && Table.Tray.Under(Table.Camera, click.Position))
+            {
+                _dice.Go();
+                GetViewport().SetInputAsHandled();
+                return;
+            }
+
             if (@event is not InputEventKey { Pressed: true, Echo: false } key) return;
 
             // Space: throw what the tray is waiting on; otherwise the fight's "go on"
@@ -77,6 +86,8 @@ namespace Game.Play
 
         public override void _Process(double delta)
         {
+            AgeVerdict();
+
             // a throw asked for while the tray was still settling the last one goes as soon as it can
             if (_auto && _dice.Waiting != null && !_dice.Thrown) _dice.Go();
 
@@ -95,6 +106,12 @@ namespace Game.Play
                     GD.PrintErr($"play    FAILED - still going after {_clock:0} s, at {Run}");
                     Quit(1);
                 }
+            }
+
+            if (_pauseOnTurn && _overlay == null && _combat.CanAct)
+            {
+                _pauseOnTurn = false;
+                Pause();
             }
 
             if (_rules.Failed != null && !_failed)

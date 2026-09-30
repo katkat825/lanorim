@@ -5,6 +5,7 @@ using System.Linq;
 using Content.Combat;
 using Core.Characters;
 using Core.Combat;
+using Core.Resolution;
 using Core.Rules;
 using Core.Space;
 
@@ -62,5 +63,11 @@ namespace Game.Play
         }
 
         public void Log(LogLine line) => Add(new Step { What = "log", Line = line });
+
+        // hit, miss, a save made or failed: told at once rather than paced, because the hero's damage
+        // throw is asked for right behind it and the tray's caption should say why (rules thread)
+        public event Action<Actor, Actor, Attempt> Judging;
+
+        public override void Judged(Actor by, Actor target, Attempt attempt) => Judging?.Invoke(by, target, attempt);
     }
 }

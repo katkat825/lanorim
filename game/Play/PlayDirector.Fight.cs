@@ -22,9 +22,11 @@ namespace Game.Play
             {
                 var log = new FightLog();
                 log.Listen(GameState.Resolver);
+                _log = log;
 
                 BoardShow show = _combat.Show(a => ReferenceEquals(a, Run.Hero.Actor));
                 log.Wrote += show.Log;
+                show.Judging += (by, target, attempt) => MainQueue.Post(() => Verdict(by, target, attempt));
 
                 Battle battle = Run.BattleFor(GameState.Resolver, chooser, new Observers(log, show));
 
@@ -46,7 +48,17 @@ namespace Game.Play
                 IReadOnlyList<Content.Maps.Prop> props = Run.Pack.PropsOn(Run.Fight?.MapId);
                 MainQueue.Post(() => _combat.Lay(battle, places, props));
 
-                var session = new CombatSession(battle, GameState.Content.Items, GameState.Content.Forms);
+                // a critical hit buys a consequence: the campaign's referee draws and carries it out,
+                // and the log says what it was
+                var session = new CombatSession(battle, GameState.Content.Items, GameState.Content.Forms)
+                {
+                    Consequence = attempt =>
+                    {
+                        Content.Schema.Consequences.Visit visit = Run.Referee.Consequence(attempt);
+                        log.Befell(visit);
+                        return visit;
+                    },
+                };
                 session.Start();
 
                 MainQueue.Post(() => _combat.Started(session));
@@ -56,6 +68,11 @@ namespace Game.Play
         void FightOver(Outcome outcome)
         {
             if (outcome == Outcome.HeroesLost) _deaths++;
+
+            // the fight's log stops hearing the campaign's rolls (it does at the end of the fight too;
+            // this is for a fight torn down some other way)
+            _log?.Stop();
+            _log = null;
 
             _rules.Post(() => Run.EndFight(outcome == Outcome.Open ? Outcome.Fled : outcome), () =>
             {

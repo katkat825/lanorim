@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=28 format=3]
+[gd_resource type="Theme" load_steps=30 format=3]
 
 [ext_resource type="FontFile" path="res://fonts/AlegreyaSC-Regular.ttf" id="1_ui"]
 [ext_resource type="FontFile" path="res://fonts/AlegreyaSC-Bold.ttf" id="2_ui_bold"]
@@ -23,10 +23,10 @@ texture_margin_left = 16.0
 texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
-content_margin_left = 20.0
-content_margin_top = 18.0
-content_margin_right = 20.0
-content_margin_bottom = 18.0
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
 
 [sub_resource type="StyleBoxTexture" id="PanelDark"]
 texture = ExtResource("8_panel_dark")
@@ -34,10 +34,10 @@ texture_margin_left = 16.0
 texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
-content_margin_left = 20.0
-content_margin_top = 18.0
-content_margin_right = 20.0
-content_margin_bottom = 18.0
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
 
 [sub_resource type="StyleBoxTexture" id="PanelBorder"]
 texture = ExtResource("9_panel_border")
@@ -45,10 +45,10 @@ texture_margin_left = 16.0
 texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
-content_margin_left = 20.0
-content_margin_top = 18.0
-content_margin_right = 20.0
-content_margin_bottom = 18.0
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
 draw_center = false
 
 [sub_resource type="StyleBoxTexture" id="Button"]
@@ -85,16 +85,21 @@ content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 6.0
 
-[sub_resource type="StyleBoxTexture" id="ButtonDisabled"]
-texture = ExtResource("11_button_off")
-texture_margin_left = 8.0
-texture_margin_top = 8.0
-texture_margin_right = 8.0
-texture_margin_bottom = 8.0
+[sub_resource type="StyleBoxFlat" id="ButtonDisabled"]
 content_margin_left = 14.0
 content_margin_top = 6.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.55, 0.45, 0.34, 0.5)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="Focus"]
 draw_center = false
@@ -133,11 +138,33 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id="HudPanel"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.2, 0.13, 0.08, 0.86)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.55, 0.38, 0.2, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxEmpty" id="Flat"]
+content_margin_left = 4.0
+content_margin_top = 2.0
+content_margin_right = 4.0
+content_margin_bottom = 2.0
+
 [resource]
 default_font = ExtResource("1_ui")
-default_font_size = 20
+default_font_size = 28
 Button/colors/font_color = Color(0.22, 0.13, 0.07, 1)
-Button/colors/font_disabled_color = Color(0.36, 0.34, 0.32, 1)
+Button/colors/font_disabled_color = Color(0.3, 0.24, 0.18, 0.5)
 Button/colors/font_focus_color = Color(0.16, 0.09, 0.04, 1)
 Button/colors/font_hover_color = Color(0.12, 0.07, 0.03, 1)
 Button/colors/font_hover_pressed_color = Color(1, 0.96, 0.9, 1)
@@ -176,22 +203,46 @@ VScrollBar/styles/grabber_highlight = SubResource("Scroll")
 VScrollBar/styles/grabber_pressed = SubResource("Scroll")
 CardLabel/base_type = &"Label"
 CardLabel/fonts/font = ExtResource("3_card")
-CardLabel/font_sizes/font_size = 18
+CardLabel/font_sizes/font_size = 25
 CardTitle/base_type = &"Label"
 CardTitle/fonts/font = ExtResource("4_card_bold")
-CardTitle/font_sizes/font_size = 22
+CardTitle/font_sizes/font_size = 31
 DarkPanel/base_type = &"PanelContainer"
 DarkPanel/styles/panel = SubResource("PanelDark")
 HudLabel/base_type = &"Label"
 HudLabel/colors/font_color = Color(0.98, 0.95, 0.88, 1)
 HudLabel/colors/font_outline_color = Color(0.1, 0.07, 0.05, 1)
-HudLabel/constants/outline_size = 4
+HudLabel/constants/outline_size = 5
+HudLabel/font_sizes/font_size = 26
+HudButton/base_type = &"Button"
+HudButton/colors/font_disabled_color = Color(0.95, 0.9, 0.8, 0.45)
+HudHeading/base_type = &"Button"
+HudHeading/colors/font_color = Color(0.98, 0.95, 0.88, 1)
+HudHeading/colors/font_hover_color = Color(1, 0.9, 0.62, 1)
+HudHeading/colors/font_focus_color = Color(1, 0.9, 0.62, 1)
+HudHeading/colors/font_pressed_color = Color(1, 0.9, 0.62, 1)
+HudHeading/colors/font_outline_color = Color(0.1, 0.07, 0.05, 1)
+HudHeading/constants/outline_size = 5
+HudHeading/fonts/font = ExtResource("2_ui_bold")
+HudHeading/font_sizes/font_size = 26
+HudHeading/styles/normal = SubResource("Flat")
+HudHeading/styles/hover = SubResource("Flat")
+HudHeading/styles/pressed = SubResource("Flat")
+HudHeading/styles/focus = SubResource("Focus")
+HudPanel/base_type = &"PanelContainer"
+HudPanel/styles/panel = SubResource("HudPanel")
+HudText/base_type = &"Label"
+HudText/colors/font_color = Color(0.98, 0.95, 0.88, 1)
+HudText/colors/font_outline_color = Color(0.1, 0.07, 0.05, 1)
+HudText/constants/outline_size = 4
+HudText/fonts/font = ExtResource("3_card")
+HudText/font_sizes/font_size = 26
 NarrationLabel/base_type = &"RichTextLabel"
 NarrationLabel/fonts/normal_font = ExtResource("5_story")
-NarrationLabel/font_sizes/normal_font_size = 24
+NarrationLabel/font_sizes/normal_font_size = 34
 NarrationPlain/base_type = &"RichTextLabel"
 NarrationPlain/fonts/normal_font = ExtResource("6_story_plain")
-NarrationPlain/font_sizes/normal_font_size = 20
+NarrationPlain/font_sizes/normal_font_size = 28
 TitleLabel/base_type = &"Label"
 TitleLabel/fonts/font = ExtResource("2_ui_bold")
-TitleLabel/font_sizes/font_size = 32
+TitleLabel/font_sizes/font_size = 44

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Content.Classes;
 using Content.Items;
+using Content.Schema;
 using Content.Sheet;
 using Core.Combat;
+using Core.Resolution;
 using Core.Localization;
 
 namespace Content.Combat
@@ -48,6 +50,14 @@ namespace Content.Combat
         public SessionPhase Phase { get; private set; } = SessionPhase.Waiting;
 
         public Outcome Outcome => Fight.Outcome;
+
+        // A CRITICAL HIT BUYS A CONSEQUENCE (decisions_checklist.md section 1, "crit = double + the
+        // pool"): the campaign's referee draws and carries it out (Referee.Consequence). only the
+        // hero's crits - the pool's gold, rests and conditions are a hero's. unset, a crit buys nothing
+        public Func<Attempt, Consequences.Visit> Consequence { get; init; }
+
+        Consequences.Visit Bought(Attempt attempt) =>
+            attempt?.DrawsConsequence == true ? Consequence?.Invoke(attempt) : null;
 
         public static string Why(string reason) =>
             KeyConventions.Key(KeyConventions.UiNs, "combat_why", reason, "name");

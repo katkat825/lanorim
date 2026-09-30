@@ -70,6 +70,8 @@ namespace Core.Magic
 
                 attempt = Strike.Decoyed(_resolver, caster.Actor, target, attempt);
 
+                fight?.Observer.Judged(caster.Actor, target, attempt);
+
                 landed = attempt.Succeeded;
             }
             else if (effect.Save.HasValue &&
@@ -108,6 +110,11 @@ namespace Core.Magic
                             ? new Attempt(RollKind.Save, D20Roll.Fixed(1, 0), int.MaxValue)
                             : Checks.Save(_resolver, target, effect.Save.Value, DcFor(caster, spell) - cover,
                                           extra);
+
+                // a save rolled now is said now; one shared with an earlier effect was said then, and
+                // one made or failed without a roll has no numbers to say
+                if (!automatic && !fails && !ReferenceEquals(attempt, saves.GetValueOrDefault(target)))
+                    fight?.Observer.Judged(caster.Actor, target, attempt);
 
                 saves[target] = attempt;
 

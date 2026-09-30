@@ -26,10 +26,12 @@ namespace Game.Play
         Control _ui;
         DialoguePopup _dialogue;
         Label _prompt;
+        Label _notice;
         Overlay _overlay;
 
         bool _auto;
         bool _autoStory;
+        bool _pauseOnTurn;
         string _startAt;
         bool _fighting;
         bool _failed;
@@ -55,6 +57,9 @@ namespace Game.Play
             // start the story at a node other than the chapter's first (a probe, a screenshot)
             int at = Array.IndexOf(args, "--start");
             _startAt = at >= 0 && at + 1 < args.Length ? args[at + 1] : null;
+
+            // the pause menu opened on the hero's first turn in a fight: for a screenshot of it
+            _pauseOnTurn = args.Contains("--pause");
 
             AddChild(new MainQueue { Name = "MainQueue" });
 
@@ -153,13 +158,29 @@ namespace Game.Play
                 Text = Ui.Say(ScreenWords.ThrowPrompt),
                 AnchorLeft = 1,
                 AnchorRight = 1,
-                OffsetLeft = -380,
-                OffsetTop = 70,
-                OffsetRight = -20,
+                OffsetLeft = -Ui.Px(380),
+                OffsetTop = Ui.Px(70),
+                OffsetRight = -Ui.Px(20),
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Visible = false,
             };
             _ui.AddChild(_prompt);
+
+            _notice = new Label
+            {
+                Name = "Notice",
+                ThemeTypeVariation = "HudLabel",
+                AnchorLeft = 1,
+                AnchorRight = 1,
+                OffsetLeft = -Ui.Px(480),
+                OffsetTop = Ui.Px(110),
+                OffsetRight = -Ui.Px(20),
+                HorizontalAlignment = HorizontalAlignment.Right,
+                AutowrapMode = TextServer.AutowrapMode.WordSmart,
+                Visible = false,
+                MouseFilter = Control.MouseFilterEnum.Ignore,
+            };
+            _ui.AddChild(_notice);
 
             // nothing said E turns the table, so turning it looked like a fault
             // (cc_ui_issues_9-25-2026.md): the keys, as they are bound, top right
@@ -168,19 +189,18 @@ namespace Game.Play
                 Name = "TurnHint",
                 ThemeTypeVariation = "HudLabel",
                 Text = Ui.Say(ScreenWords.TurnHint, Game.Access.Keyboard.Named("turn_left"),
-                              Game.Access.Keyboard.Named("turn_right")),
+                              Game.Access.Keyboard.Named("turn_right"), Game.Access.Keyboard.Named("zoom_out"),
+                              Game.Access.Keyboard.Named("zoom_in")),
                 AnchorLeft = 1,
                 AnchorRight = 1,
-                OffsetLeft = -380,
-                OffsetTop = 40,
-                OffsetRight = -20,
+                OffsetLeft = -Ui.Px(560),
+                OffsetTop = Ui.Px(20),
+                OffsetRight = -Ui.Px(20),
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Modulate = new Color(1f, 1f, 1f, 0.7f),
                 MouseFilter = Control.MouseFilterEnum.Ignore,
             });
         }
-
-        void Prompt(bool waiting) => _prompt.Visible = waiting && !_auto;
 
         // a call into the run, off the main thread, then the screen redrawn from what it says now
         void Do(Action call)

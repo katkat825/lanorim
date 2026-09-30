@@ -24,8 +24,8 @@ namespace Game.Screens
             AnchorRight = 0.88f;
             AnchorTop = 1f;
             AnchorBottom = 1f;
-            OffsetTop = -176;
-            OffsetBottom = -16;
+            OffsetTop = -Ui.Px(176);
+            OffsetBottom = -Ui.Px(16);
             GrowVertical = GrowDirection.Begin;
 
             _speaker = new Label();
@@ -35,7 +35,7 @@ namespace Game.Screens
                 FitContent = true,
                 BbcodeEnabled = false,
                 SizeFlagsVertical = SizeFlags.ExpandFill,
-                CustomMinimumSize = new Vector2(0, 48),
+                CustomMinimumSize = new Vector2(0, Ui.Px(48)),
             };
             _buttons = Ui.Column(6);
 

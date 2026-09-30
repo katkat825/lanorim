@@ -88,7 +88,9 @@ namespace Content.Combat
 
             Blow blow = Hero.Hit(Fight, Turn, target, option.Attack, spend: option.Cost);
 
-            return blow == null ? ActionResult.No(Why("out_of_range")) : new ActionResult { Done = true, Blow = blow };
+            return blow == null
+                ? ActionResult.No(Why("out_of_range"))
+                : new ActionResult { Done = true, Blow = blow, Visit = Bought(blow.Attempt) };
         }
 
         ActionResult DoCast(ActionOption option, IReadOnlyList<Actor> targets, Cell? square)
@@ -106,7 +108,10 @@ namespace Content.Combat
 
             Hero.Receive(casting, _shelf);
 
-            return new ActionResult { Done = true, Casting = casting };
+            // a spell attack's critical hit, once a cast however many beams crit
+            Attempt crit = casting.Landings.Select(l => l.Attempt).FirstOrDefault(a => a?.DrawsConsequence == true);
+
+            return new ActionResult { Done = true, Casting = casting, Visit = Bought(crit) };
         }
 
         ActionResult DoHide(ActionOption option)

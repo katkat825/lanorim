@@ -60,7 +60,7 @@ namespace Game.Board
                 if (scene == null) continue;
 
                 var model = scene.Instantiate<Node3D>();
-                if (Paint != null) PaintedModel.Paint(model, Paint);
+                if (Paint != null) PaintedModel.Paint(model, Paint, "prop");
 
                 Aabb bounds = PaintedModel.Bounds(model);
                 float scale = PaintedModel.ToFitWidth(bounds, Metrics.CellSize * 0.85f);
@@ -87,6 +87,15 @@ namespace Game.Board
             _propRoot = null;
         }
 
+        // THE MAT RUNS A RING OF SQUARES PAST THE MAP on every side, ruled like the rest: a
+        // wet-erase mat is bigger than what is drawn on it (Kathleen, 2026-09-28). The ring is
+        // table, not map - nothing stands or moves there but a mini set aside
+        public const int Margin = 1;
+
+        public float MatWidth => Metrics.Width + 2 * Margin * Metrics.CellSize;
+
+        public float MatDepth => Metrics.Depth + 2 * Margin * Metrics.CellSize;
+
         // the mat under the tiles - a plain quad, because the unexplored parts of a map are meant
         // to read as blank table (ART_DIRECTION section 7)
         void LayTheMat()
@@ -95,7 +104,7 @@ namespace Game.Board
 
             if (_mat.GetParent() == null) AddChild(_mat);
 
-            _mat.Mesh = new PlaneMesh { Size = new Vector2(Metrics.Width, Metrics.Depth) };
+            _mat.Mesh = new PlaneMesh { Size = new Vector2(MatWidth, MatDepth) };
             _mat.MaterialOverride = MatMaterial;
             _mat.Position = new Vector3(0f, -MatDrop, 0f);
 
@@ -143,16 +152,17 @@ namespace Game.Board
             float bottom = LineClearance * Metrics.CellSize;
             float centre = bottom + thick * 0.5f;
 
-            // one more line than squares: the outside edges are painted too
-            var down = new BoxMesh { Size = new Vector3(width, thick, Metrics.Depth + width) };
-            var across = new BoxMesh { Size = new Vector3(Metrics.Width + width, thick, width) };
+            // one more line than squares: the outside edges are painted too - the mat's, a ring past
+            // the map's
+            var down = new BoxMesh { Size = new Vector3(width, thick, MatDepth + width) };
+            var across = new BoxMesh { Size = new Vector3(MatWidth + width, thick, width) };
 
-            for (int x = 0; x <= Metrics.Columns; x++)
-                _grid.AddChild(Line($"Down{x:00}", down,
+            for (int x = -Margin; x <= Metrics.Columns + Margin; x++)
+                _grid.AddChild(Line($"Down{x + Margin:00}", down,
                     new Vector3(x * Metrics.CellSize - Metrics.HalfWidth, centre, 0f)));
 
-            for (int y = 0; y <= Metrics.Rows; y++)
-                _grid.AddChild(Line($"Across{y:00}", across,
+            for (int y = -Margin; y <= Metrics.Rows + Margin; y++)
+                _grid.AddChild(Line($"Across{y + Margin:00}", across,
                     new Vector3(0f, centre, y * Metrics.CellSize - Metrics.HalfDepth)));
         }
 

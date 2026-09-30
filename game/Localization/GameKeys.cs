@@ -38,6 +38,9 @@ namespace Game.Localization
 
             // what the launch screen, creation and the table's menus say (Tier 3b)
             foreach (string key in Game.Screens.ScreenWords.Keys()) yield return key;
+
+            // the Controls section of the settings page
+            foreach (string key in Game.Screens.ControlsSection.Keys()) yield return key;
         }
 
         // a skin's name is a key in its own .tres, so the folder is the list

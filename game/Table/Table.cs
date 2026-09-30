@@ -47,6 +47,9 @@ namespace Game.Table
 
         public override void _Ready()
         {
+            // the player's own keys (the launch screen has usually read them already)
+            _ = Game.Play.GameState.Access;
+
             Tray = GetNodeOrNull<DiceTray>(TrayPath);
             Camera = GetNodeOrNull<TableCamera>(CameraPath);
             Board = GetNodeOrNull<Game.Board.Board>(BoardPath);
@@ -114,8 +117,7 @@ namespace Game.Table
 
             // and a picture of it, if one was asked for. Added last so it photographs the table
             // with everything already on it
-            if (Shot.RequestedFrom(OS.GetCmdlineUserArgs(), out string path, out int after))
-                AddChild(new Shot { Name = "Shot", Path = path, After = after });
+            if (Shot.From(OS.GetCmdlineUserArgs()) is { } shot) AddChild(shot);
         }
 
         // ONE REAL CHECK, THROWN ON THE REAL TRAY, so opening the scene shows the whole stack

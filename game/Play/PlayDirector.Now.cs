@@ -31,6 +31,8 @@ namespace Game.Play
                 Mark();
             }
 
+            Tell();
+
             switch (Run.Now)
             {
                 case Scene.Line:
@@ -66,6 +68,39 @@ namespace Game.Play
                     break;
             }
         }
+
+        // WHAT A NATURAL 1 OR 20 BOUGHT, said on the table: the consequence's own line, under the
+        // turn hint, for a few seconds. each is said once, however often the screen redraws
+        readonly System.Collections.Generic.HashSet<Content.Dialogue.Settled> _told = new();
+
+        void Tell()
+        {
+            var lines = new System.Collections.Generic.List<string>();
+
+            foreach (Content.Dialogue.Settled settled in Run.Settled)
+                if (settled.Visit != null && _told.Add(settled))
+                {
+                    lines.Add(Ui.Say(settled.Visit.LineKey));
+
+                    // it put the hero down away from a fight: the long rest that followed
+                    if (settled.Rested) lines.Add(Ui.Say(ScreenWords.CameRound));
+                }
+
+            if (lines.Count == 0) return;
+
+            _notice.Text = string.Join("\n", lines);
+            _notice.Visible = true;
+
+            ulong shown = ++_notices;
+            GetTree().CreateTimer(NoticeSeconds).Timeout += () =>
+            {
+                if (shown == _notices && IsInstanceValid(_notice)) _notice.Visible = false;
+            };
+        }
+
+        const double NoticeSeconds = 6.0;
+
+        ulong _notices;
 
         void Mark()
         {

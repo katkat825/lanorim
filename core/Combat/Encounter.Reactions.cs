@@ -212,6 +212,9 @@ namespace Core.Combat
 
             attempt = Strike.Decoyed(_resolver, attacker, target, attempt);
 
+            // hit or miss is said now, before the damage dice are thrown
+            Observer.Judged(attacker, target, attempt);
+
             // the statblock's own riders ride with whatever the swing brought
             if (attack.OnHit.Count > 0)
                 riders = (riders ?? Array.Empty<Rider>()).Concat(attack.OnHit).ToList();
@@ -228,6 +231,10 @@ namespace Core.Combat
                                              ReferenceEquals(Current?.Actor, target)));
 
             Observer.Struck(blow);
+
+            if (blow.Hit)
+                Observer.Dealt(new Harm(attacker, target, attack.NameKey, attack.DamageFor(attacker, attempt.IsCritical),
+                                        blow.Rolled, blow.Suffered, attack.DamageTypeFor(attacker, target)));
 
             if (blow.Downed) Observer.Downed(target);
 

@@ -24,16 +24,26 @@ namespace Game.Screens
         {
             SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
 
+            // the player's own keys, before anything reads one
+            _ = GameState.Access;
+
             AddChild(new ColorRect { Color = new Color(0.07f, 0.06f, 0.05f), AnchorRight = 1, AnchorBottom = 1 });
 
             _body = new MarginContainer { AnchorRight = 1, AnchorBottom = 1 };
 
             foreach (string side in new[] { "left", "right", "top", "bottom" })
-                _body.AddThemeConstantOverride("margin_" + side, 48);
+                _body.AddThemeConstantOverride("margin_" + side, (int)Ui.Px(48));
 
             AddChild(_body);
 
             string[] args = OS.GetCmdlineUserArgs();
+
+            if (args.Contains(ControlsProbe.Flag))
+            {
+                AddChild(new ControlsProbe { Name = "ControlsProbe" });
+                return;
+            }
+
             int at = Array.IndexOf(args, "--begin");
 
             if (at >= 0 && at + 1 < args.Length)
@@ -53,12 +63,12 @@ namespace Game.Screens
                 case "book": ShowBook(); break;
                 case "tutorials": ShowTutorials(); break;
                 case "settings": ShowSettings(); break;
+                case "controls": ShowSettings(); ScrollToControls(); break;
                 case "create": ShowCreation(GameState.Manifests.FirstOrDefault()?.Id ?? ""); break;
                 default: ShowTitle(); break;
             }
 
-            if (Game.Table.Shot.RequestedFrom(args, out string path, out int after))
-                AddChild(new Game.Table.Shot { Name = "Shot", Path = path, After = after });
+            if (Game.Table.Shot.From(args) is { } shot) AddChild(shot);
         }
 
         void Show(Control screen, float width = 720)
@@ -131,7 +141,7 @@ namespace Game.Screens
 
             if (first != null) ShowPage(page, first);
 
-            contents.CustomMinimumSize = new Vector2(300, 0);
+            contents.CustomMinimumSize = new Vector2(Ui.Px(300), 0);
 
             PanelContainer list = Ui.Panel(Ui.Scroll(contents, 340));
             PanelContainer opened = Ui.Panel(Ui.Scroll(page, 340));
@@ -200,6 +210,29 @@ namespace Game.Screens
         void ShowSettings()
         {
             Show(Ui.Panel(SettingsPanel.Scrolled(ShowBook, 560)));
+        }
+
+        // the settings page scrolled down to its Controls (`--show controls`, for a picture of them)
+        void ScrollToControls()
+        {
+            ScrollContainer scroll = Nodes.Under<ScrollContainer>(_body).FirstOrDefault();
+
+            if (scroll == null) return;
+
+            int frames = 0;
+
+            // a few frames: the page lays itself out in the first
+            GetTree().ProcessFrame += Once;
+
+            void Once()
+            {
+                if (++frames < 3) return;
+
+                GetTree().ProcessFrame -= Once;
+
+                if (Nodes.Under<ControlsSection>(scroll).FirstOrDefault() is { } controls)
+                    scroll.ScrollVertical = (int)controls.Position.Y;
+            }
         }
 
         // --- a character -------------------------------------------------------------------------

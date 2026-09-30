@@ -66,6 +66,8 @@ namespace Game.Play
                 ? Game.Board.MiniModels.For(monster.Mini)
                 : null;
 
+            _hud.ClearLog();
+
             Board.ClearAll();
             Board.Lay(battle.Fight.Field.Map);
             Board.Dress(props);

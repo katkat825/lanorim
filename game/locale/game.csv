@@ -959,18 +959,19 @@ spell.web.description,"Level 2. Fills a 20-foot cube with webs: difficult terrai
 spell.web.name,Web
 spell.wish.description,Level 9. Its effect is told by the narrator. (v1 ships a bounded version of this spell.)
 spell.wish.name,Wish
-ui.act.help.name,Open the rules - {0}
-ui.act.reach_back.name,Move back to the last one - {0}
-ui.act.reach_next.name,Move to the next thing on the table - {0}
-ui.act.read_aloud.name,"Read the table aloud, on and off - {0}"
-ui.act.throw_dice.name,Throw the dice - {0}
-ui.act.touch.name,Press what you are on - {0}
-ui.act.turn_left.name,Turn the table a quarter to the left - {0}
-ui.act.turn_right.name,Turn the table a quarter to the right - {0}
+ui.act.help.name,Open the rules: {0}
+ui.act.reach_back.name,Move back to the last one: {0}
+ui.act.reach_next.name,Move to the next thing on the table: {0}
+ui.act.read_aloud.name,"Read the table aloud, on and off: {0}"
+ui.act.throw_dice.name,Throw the dice: {0}
+ui.act.toggle_log.name,Open or close the fight log: {0}
+ui.act.touch.name,Press what you are on: {0}
+ui.act.turn_left.name,Turn the table a quarter to the left: {0}
+ui.act.turn_right.name,Turn the table a quarter to the right: {0}
 ui.act.waiting,press a key
-ui.act.where_are_we.name,Ask where you are and what you were doing - {0}
-ui.act.zoom_in.name,Lean in - {0}
-ui.act.zoom_out.name,Sit back - {0}
+ui.act.where_are_we.name,Ask where you are and what you were doing: {0}
+ui.act.zoom_in.name,Lean in: {0}
+ui.act.zoom_out.name,Sit back: {0}
 ui.alignment.chaotic_evil.name,Chaotic evil
 ui.alignment.chaotic_good.name,Chaotic good
 ui.alignment.chaotic_neutral.name,Chaotic neutral
@@ -1006,6 +1007,7 @@ ui.casting_time.reaction.name.damaged,"Reaction, when a creature you can see hur
 ui.casting_time.reaction.name.hit,"Reaction, when an attack hits you"
 ui.casting_time.reaction.name.leave_reach,"Reaction, when a creature leaves your reach"
 ui.combat.actions,Actions
+ui.combat.aim_hint,{0} and {1} or the wheel turn it; Shift and the wheel zoom; {2} or a click casts it
 ui.combat.bonus_action,Bonus action
 ui.combat.end_turn,End Turn
 ui.combat.enemy_turn,Enemy turn
@@ -1014,14 +1016,21 @@ ui.combat.fled,You got away
 ui.combat.flee_edge,Flee
 ui.combat.hit_chance,{0}% to hit
 ui.combat.log,Log
-ui.combat.movement,{0} squares left
+ui.combat.manoeuvres_menu,More actions
+ui.combat.movement,Moved {0} of {1} squares
 ui.combat.no,No
 ui.combat.path_cost,{0} squares
 ui.combat.reaction,Reaction
 ui.combat.round,Round {0}
 ui.combat.save_chance,{0}% to fail the save
 ui.combat.skip,Skip
+ui.combat.spells_menu,Spells
 ui.combat.throw_prompt,Your dice are waiting - Space to throw
+ui.combat.verdict_critical,Critical hit! {0} against Armor Class {1}
+ui.combat.verdict_failed,{0} fails the save: {1} against DC {2}
+ui.combat.verdict_hit,Hit! {0} against Armor Class {1}
+ui.combat.verdict_miss,Miss: {0} against Armor Class {1}
+ui.combat.verdict_saved,{0} saves: {1} against DC {2}
 ui.combat.won,Victory
 ui.combat.yes,Yes
 ui.combat.your_turn,Your turn
@@ -1064,6 +1073,22 @@ ui.combat_why.shifted.name,You can't cast in a borrowed shape.
 ui.combat_why.spent.name,Nothing left to cast it with.
 ui.combat_why.too_far.name,Too far to reach this turn.
 ui.combat_why.too_long.name,It takes too long to cast in a fight.
+ui.controls.cancel,"Put back what you picked; with nothing picked, pause: {0}"
+ui.controls.change,Change
+ui.controls.go_on,"End your turn, or skip the rest of the enemies' turns: {0}"
+ui.controls.hotkeys,"Take an option on the action bar: 1 to 9, the buttons from the left, then the menus"
+ui.controls.keyboard,Keyboard
+ui.controls.mouse,Mouse and trackpad
+ui.controls.mouse_cancel,Right-click to put back what you picked
+ui.controls.mouse_hover,"Point at a square to see the path, or at a creature to see your chance and the damage"
+ui.controls.mouse_pick,"Left-click an option to pick it, a lit square to walk there, or a target to aim at it"
+ui.controls.mouse_pinch,Pinch on a trackpad to zoom
+ui.controls.mouse_tray,Click the tray to throw the dice waiting on it
+ui.controls.mouse_wheel,"The wheel zooms. While you aim a line or a cone, the wheel turns it and Shift and the wheel zoom"
+ui.controls.not_yet,(not working yet)
+ui.controls.reserved,{0} is kept for the action bar. Pick another key.
+ui.controls.taken,{0} already does something else. Pick another key.
+ui.controls.title,Controls
 ui.create.name_hint,What are you called?
 ui.create.picks_left,{0} left to choose
 ui.create.points_left,{0} points left to spend
@@ -1116,23 +1141,30 @@ ui.level_up.title,Level {0}
 ui.level_up.two_to_one,+2 to one score
 ui.log.condition_off.name,{0} is no longer {1}.
 ui.log.condition_on.name,{0} is now {1}.
-ui.log.critical.name,{0} lands a critical hit on {1} ({2} against Armor Class {3})!
-ui.log.damage.name,{0} takes {1} {2} damage.
+ui.log.critical.name,Critical: {0} lands a critical hit on {1} ({2} against Armor Class {3})!
+ui.log.damage.name,"{0} hits {1}: {2}, for {3} {4} damage."
+ui.log.damage_lessened.name,"{0} hits {1}: {2}, for {3} {5} damage; {1} loses {4} hit points."
 ui.log.death_save_dead.name,{0} rolls {1} on the death save. It is over.
 ui.log.death_save_up.name,{0} rolls {1} on the death save and gets back up.
 ui.log.diverted.name,{0}'s blow strikes one of {1}'s images instead.
 ui.log.down.name,{0} goes down.
 ui.log.fled.name,You get away.
-ui.log.hit.name,{0} hits {1} ({2} against Armor Class {3}).
+ui.log.hit.name,Hit: {0} hits {1} ({2} against Armor Class {3}).
 ui.log.initiative.name,Initiative is rolled: {0}.
 ui.log.lost.name,The fight is lost.
-ui.log.miss.name,{0} misses {1} ({2} against Armor Class {3}).
+ui.log.miss.name,Miss: {0} misses {1} ({2} against Armor Class {3}).
 ui.log.moved.name,{0} moves {1} squares.
 ui.log.opportunity.name,{0} swings at {1} as it leaves.
 ui.log.reacted.name,{0} reacts: {1}.
+ui.log.roll_attack.name,"{0} rolls to hit, {1}: {2}, for {3}."
+ui.log.roll_check.name,"{0} rolls a check, {1}: {2}, for {3}."
 ui.log.roll_hidden.name,The GM rolls behind the screen.
+ui.log.roll_initiative.name,"{0} rolls initiative, {1}: {2}, for {3}."
+ui.log.roll_save.name,"{0} rolls a saving throw, {1}: {2}, for {3}."
 ui.log.roll_table.name,"{0} rolls {1}: {2}, for {3}."
 ui.log.round.name,Round {0}.
+ui.log.save_failed.name,Failed: {0} fails the saving throw ({1} against DC {2}).
+ui.log.save_made.name,Saved: {0} makes the saving throw ({1} against DC {2}).
 ui.log.turn.name,{0}'s turn.
 ui.log.won.name,The fight is won.
 ui.map.category_containers,Containers
@@ -1225,7 +1257,8 @@ ui.spell_resource.points.description,"One pool. Every spell level has a price, a
 ui.spell_resource.points.name,Spell points (simpler bookkeeping)
 ui.spell_resource.slots.description,"A grid of slots by level, refilled by a long rest. Cast a spell by spending a slot of its level or higher."
 ui.spell_resource.slots.name,Spell slots (classic D&D)
-ui.table.turn_hint,{0} and {1} turn the table
+ui.table.came_round,"You come round a long while later, sore but whole. The day is done."
+ui.table.turn_hint,{0} and {1} turn the table; the wheel or {2} and {3} zoom
 ui.tutorial.advanced,Advanced
 ui.tutorial.advanced_blurb,"Positioning, concentration and resources over a long day."
 ui.tutorial.beginner,Beginner

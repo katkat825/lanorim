@@ -43,7 +43,7 @@ namespace Game.Screens
             return button;
         }
 
-        // a greyed button says why in its tooltip - never hidden (combat_ux.md)
+        // a greyed button says why in its tooltip (combat_ux.md; the combat bar may hide it instead, HudLayout)
         public static Button Greyed(this Button button, bool disabled, string whyKey)
         {
             button.Disabled = disabled;
@@ -95,12 +95,15 @@ namespace Game.Screens
             return panel;
         }
 
+        // a size written for the old 1152-wide canvas, at today's (HudLayout.MenuScale)
+        public static float Px(float old) => old * HudLayout.Current.MenuScale;
+
         public static ScrollContainer Scroll(Control content, float minHeight = 0)
         {
             var scroll = new ScrollContainer
             {
                 HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
-                CustomMinimumSize = new Vector2(0, minHeight),
+                CustomMinimumSize = new Vector2(0, Px(minHeight)),
                 SizeFlagsVertical = Control.SizeFlags.ExpandFill,
             };
 
@@ -115,7 +118,7 @@ namespace Game.Screens
             var centre = new CenterContainer();
             centre.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
 
-            content.CustomMinimumSize = new Vector2(width, content.CustomMinimumSize.Y);
+            content.CustomMinimumSize = new Vector2(Px(width), content.CustomMinimumSize.Y);
             centre.AddChild(content);
             return centre;
         }
@@ -130,11 +133,21 @@ namespace Game.Screens
         }
 
         // the first focusable control under a node gets the focus, so every screen is keyboard
-        // reachable the moment it opens
+        // reachable the moment it opens. Deferred, and only if it is still on screen by then: a bar
+        // redrawn twice in a frame freed the button first, and Godot said "!is_inside_tree()"
         public static void FocusFirst(Node root)
         {
-            Control first = FirstFocusable(root);
-            first?.CallDeferred(Control.MethodName.GrabFocus);
+            FocusLater(FirstFocusable(root));
+        }
+
+        public static void FocusLater(Control control)
+        {
+            if (control == null) return;
+
+            Callable.From(() =>
+            {
+                if (GodotObject.IsInstanceValid(control) && control.IsInsideTree()) control.GrabFocus();
+            }).CallDeferred();
         }
 
         static Control FirstFocusable(Node node) =>

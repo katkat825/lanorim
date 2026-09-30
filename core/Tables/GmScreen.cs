@@ -31,6 +31,13 @@ namespace Core.Tables
             return Tell(new GmRoll(purpose, dice.ToString(), faces, total, visibility, table));
         }
 
+        // A NATURAL 1 OR 20 ON A CHECK, OR A CRITICAL HIT, buys a consequence (decisions_checklist.md
+        // section 1): which one is drawn here, behind the screen. null when the roll buys nothing, or
+        // the pool has nothing on that side
+        public Core.Resolution.Consequence Draw(Core.Resolution.ConsequencePool pool,
+                                                Core.Resolution.Attempt attempt) =>
+            pool?.DrawFor(_rng, attempt);
+
         public TableRoll Consult(EncounterTable table)
         {
             if (table == null) throw new ArgumentNullException(nameof(table));

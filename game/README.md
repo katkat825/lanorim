@@ -96,7 +96,7 @@ every test still passes. `--locale` is the check that catches it.
 
 ## What is a stand-in
 
-Most of the visuals. The board now stands real minis (the hero is `rogue_v2.glb`, the enemy
+Most of the visuals. The board now stands real minis (the hero is `rogue_v3.glb`, the enemy
 `goblin_male.gltf`), the tray is the modeled one and the table has a wood material, but the tiles
 are still boxes and the lamp is a directional light. The GM-screen models are imported and not yet
 on the table. Anything not yet judged by eye in the editor should be treated as a stand-in.

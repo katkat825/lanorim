@@ -40,6 +40,13 @@ uniform float band_blend : hint_range(0.0, 1.0) = 0.14;
 // paint, darker - and the room's ambient adds to this rather than replacing it
 uniform float shade_floor : hint_range(0.0, 1.0) = 0.28;
 
+// HOW MUCH OF THE LAMP A PAINTED SURFACE TAKES. This light() adds the lamp straight in, where Godot's
+// own materials scale theirs down, so under the same lamp the painted map, minis and props came out
+// far brighter than the table and the tray around them - skin and parchment washed to white, the
+// cauldron's iron to near white (Kathleen, 2026-09-30: "everything looks too washed out"). This
+// dims only the painted things; the lamp itself stays as the rest of the table wants it
+uniform float light_strength : hint_range(0.0, 2.0, 0.05) = 1.0;
+
 // GODOT APPLIES ALBEDO TO DIFFUSE_LIGHT AFTER THIS SHADER'S light() RUNS, so this stays at 0 and
 // the light function returns light rather than lit colour. It is a dial rather than a constant
 // for one reason: if a build ever composites the other way round, every surface in the game goes
@@ -88,6 +95,35 @@ uniform float varnish : hint_range(0.0, 1.0) = 0.06;
 
 uniform float varnish_tightness : hint_range(1.0, 64.0) = 22.0;
 
+// ---- a face painted on: eyes that stand off the skin ----
+
+// THE QUATERNIUS FACES ARE A SEPARATE SURFACE A MILLIMETRE OFF THE HEAD (cc_task_table-ui-minis-zoom-damage.md
+// 5). At a mini's scale that is closer than the depth buffer can tell apart from across the table, so the
+// eyes came and went with the camera's distance. A surface PaintedModel marks 'lifted' (a material named
+// Face or Eyes) is pushed out along its normals by this many metres at the table's scale
+uniform float lift_distance : hint_range(0.0, 0.002, 0.00005) = 0.0004;
+
+// per surface, set by PaintedModel: 1 lifts it, 0 leaves it where it was modelled
+uniform float lifted : hint_range(0.0, 1.0) = 0.0;
+
+// ---- metal ----
+
+// THE MEGAKIT'S IRON IS A MID-GREY THAT ITS OWN PBR MATERIAL DRAWS AS METAL - no diffuse, only reflection -
+// which is how it reads dark. This shader paints everything as diffuse, so the same grey came out near white
+// (the cauldron, cc_task_table-ui-minis-zoom-damage.md 6). A surface PaintedModel marks 'metal' (a material
+// named for metal) is painted the way a painter does iron: a dark base, and more varnish to catch the light
+uniform float metal : hint_range(0.0, 1.0) = 0.0;
+
+// how dark painted iron is: its paint is multiplied by this
+uniform float metal_shade : hint_range(0.0, 1.0) = 0.2;
+
+// its gloss, in place of varnish. AT 0.12 AND 0.3 IT READ AS A WHITE OVAL on the floor inside the
+// cauldron, which faces the lamp; 0 is no gloss at all. Dial it up until iron just catches the light
+uniform float metal_varnish : hint_range(0.0, 1.0) = 0.0;
+
+// below this the atlas's alpha cuts a hole; above it the surface is solid (leaves, a torn banner)
+uniform float alpha_cut : hint_range(0.0, 1.0) = 0.5;
+
 varying vec3 world_normal;
 varying vec3 world_position;
 
@@ -111,6 +147,12 @@ float paint_noise(vec2 p) {
 }
 
 void vertex() {
+    // in the model's own units: a mini is scaled down by ~0.05, so a millimetre at the table is ~20 of them
+    if (lifted > 0.0) {
+        float scale = max(length(MODEL_MATRIX[0].xyz), 0.00001);
+        VERTEX += normalize(NORMAL) * lifted * lift_distance / scale;
+    }
+
     world_normal = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
     world_position = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 }
@@ -130,6 +172,8 @@ void fragment() {
 
     paint = mix(paint, primer.rgb, underneath * primer_depth);
 
+    paint *= mix(1.0, metal_shade, metal);
+
     // the liner round the silhouette. mix rather than multiply, so it lands on the liner's own
     // colour rather than on black however dark the paint under it is
     float facing = clamp(dot(normalize(NORMAL), normalize(VIEW)), 0.0, 1.0);
@@ -138,11 +182,20 @@ void fragment() {
     paint = mix(paint, liner.rgb, edge * liner_strength);
 
     ALBEDO = paint;
+
+    // A CUT-OUT, NOT A BLEND. Writing ALPHA alone put every painted surface in Godot's transparent pass:
+    // no depth written, and the surfaces of one mesh drawn in whatever order the sort gave them - so a
+    // goblin's eyes showed through the back of its head from one side and were lost under its skin from
+    // the front, changing with the camera's distance (cc_task_table-ui-minis-zoom-damage.md 5). With a
+    // scissor threshold the material stays opaque and the depth buffer decides, per pixel
     ALPHA = texel.a;
+    ALPHA_SCISSOR_THRESHOLD = alpha_cut;
+
+    float gloss_coat = mix(varnish, metal_varnish, metal);
 
     METALLIC = 0.0;
-    SPECULAR = varnish * 0.5;
-    ROUGHNESS = 1.0 - varnish * 0.75;
+    SPECULAR = gloss_coat * 0.5;
+    ROUGHNESS = 1.0 - gloss_coat * 0.75;
 }
 
 void light() {
@@ -155,7 +208,7 @@ void light() {
 
     stepped = mix(stepped, lambert, band_blend);
 
-    DIFFUSE_LIGHT += mix(shade_floor, 1.0, stepped) * ATTENUATION * LIGHT_COLOR
+    DIFFUSE_LIGHT += mix(shade_floor, 1.0, stepped) * light_strength * ATTENUATION * LIGHT_COLOR
                      * mix(vec3(1.0), ALBEDO, albedo_in_light);
 
     // the varnish: one small tight highlight, banded like everything else rather than a smooth
@@ -163,5 +216,5 @@ void light() {
     vec3 halfway = normalize(normalize(LIGHT) + normalize(VIEW));
     float gloss = pow(clamp(dot(normalize(NORMAL), halfway), 0.0, 1.0), varnish_tightness);
 
-    SPECULAR_LIGHT += LIGHT_COLOR * ATTENUATION * varnish * smoothstep(0.25, 0.45, gloss);
+    SPECULAR_LIGHT += LIGHT_COLOR * ATTENUATION * mix(varnish, metal_varnish, metal) * smoothstep(0.25, 0.45, gloss);
 }

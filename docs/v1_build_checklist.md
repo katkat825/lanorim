@@ -77,7 +77,7 @@ done.**
 
 - `[x]` **d20 resolution** — roll + mods vs DC/AC, advantage/disadvantage.
 - `[x]` **Ability scores, modifiers, proficiency bonus** (+2→+6).
-- `[~]` **Skill checks** — 18 skills, DC ladder or campaign custom, **nat-1/nat-20 consequence pool**.
+- `[~]` **Skill checks** — 18 skills, DC ladder or campaign custom, **nat-1/nat-20 consequence pool**. *(2026-09-28: wired. A story's check with a natural 1 draws a bane and a natural 20 a boon, behind the GM screen (`GmScreen.Draw`), carried out on the hero by `Referee.Consequence` and said on the table; the hero's critical hits draw through the same door and go in the fight log. A campaign's own consequences are still open, decisions_checklist.md.)*
 - `[~]` **Saving throws** — six saves + class proficiencies.
 - `[x]` **Attack + damage + crits** — weapon die + mod; crit = double + consequence pool.
 - `[x]` **HP / damage / healing / death save** — single d20 ≥ 10 death save.

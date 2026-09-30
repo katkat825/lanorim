@@ -21,6 +21,15 @@ namespace Core.Combat
 
         void Struck(Blow blow);
 
+        // an attack roll or a saving throw is settled: after every reaction that could turn it (a
+        // Shield, a Mirror Image), before anything it does lands. So the table says hit or miss
+        // before the damage dice are thrown. A weapon's swing and a spell's alike; for a save, the
+        // target rolled it and 'by' is the caster
+        void Judged(Actor by, Actor target, Attempt attempt) { }
+
+        // hit points came off a creature from a weapon or a spell, with the dice that did it
+        void Dealt(Harm harm) { }
+
         void Opportunity(Actor attacker, Actor fleeing);
 
         // somebody spent their reaction, on what, and at what moment. told before the reaction
@@ -70,6 +79,10 @@ namespace Core.Combat
 
         public virtual void Struck(Blow blow) { }
 
+        public virtual void Judged(Actor by, Actor target, Attempt attempt) { }
+
+        public virtual void Dealt(Harm harm) { }
+
         public virtual void Opportunity(Actor attacker, Actor fleeing) { }
 
         public virtual void Reacted(Actor reactor, string reaction, Moment moment) { }
@@ -103,6 +116,10 @@ namespace Core.Combat
         public void Moved(Actor actor, IReadOnlyList<Cell> route) => Each(w => w.Moved(actor, route));
 
         public void Struck(Blow blow) => Each(w => w.Struck(blow));
+
+        public void Judged(Actor by, Actor target, Attempt attempt) => Each(w => w.Judged(by, target, attempt));
+
+        public void Dealt(Harm harm) => Each(w => w.Dealt(harm));
 
         public void Opportunity(Actor attacker, Actor fleeing) =>
             Each(w => w.Opportunity(attacker, fleeing));

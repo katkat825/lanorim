@@ -5,6 +5,7 @@ using Content.Combat;
 using Content.Screens;
 using Core.Characters;
 using Core.Space;
+using Core.Words;
 using Game.Screens;
 using Godot;
 
@@ -191,7 +192,8 @@ namespace Game.Play
                     Click(cell);
                     GetViewport().SetInputAsHandled();
                 }
-                else if (Session.Selected?.Targeting == Targeting.Direction &&
+                // the plain wheel turns an aimed line or cone; Shift+wheel is left to the table, to zoom
+                else if (Session.Selected?.Targeting == Targeting.Direction && !click.ShiftPressed &&
                          click.ButtonIndex is MouseButton.WheelUp or MouseButton.WheelDown)
                 {
                     Session.Rotate(click.ButtonIndex == MouseButton.WheelUp ? 1 : -1);
@@ -222,7 +224,8 @@ namespace Game.Play
                 return;
             }
 
-            if (Session.Selected?.Targeting is Targeting.Direction && key.Keycode == Key.Enter)
+            // Enter is the Access layer's Touch: press what you are on (it was Enter by keycode)
+            if (Session.Selected?.Targeting is Targeting.Direction && key.IsActionPressed(Game.Access.Act.Touch.Id()))
             {
                 Rules.Post(() => Session.Confirm(), Refresh);
                 GetViewport().SetInputAsHandled();

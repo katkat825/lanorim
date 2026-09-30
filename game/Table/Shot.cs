@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Godot;
 
 namespace Game.Table
@@ -29,10 +30,78 @@ namespace Game.Table
 
         int _waited;
 
-        public static bool RequestedFrom(string[] args, out string path, out int after)
+        // `--size 2560x1440`: the window made that size once it is up. `--resolution` is clamped to
+        // the screen's work area, so a 1440-tall shot on a 1080 screen came out 1061 tall
+        public Vector2I Size { get; set; }
+
+        // `--zoom 1 --quarter 2 --focus goblin`: the camera parked at that zoom (0 all the way out, 1
+        // all the way in) and quarter, following the first mini whose name starts with that - for a
+        // close look at one figure from each side
+        public float? Zoom { get; set; }
+
+        public int Quarter { get; set; }
+
+        public string Focus { get; set; }
+
+        TableCamera _camera;
+
+        public override void _Ready()
+        {
+            if (Size.X > 0 && Size.Y > 0) GetWindow().Size = Size;
+
+            _camera = Nodes.Under<TableCamera>(GetTree().Root).FirstOrDefault();
+
+            if (_camera == null) return;
+
+            if (Zoom is float zoom) _camera.ZoomBy(zoom - _camera.Zoom);
+            if (Quarter != 0) _camera.Turn(Quarter);
+        }
+
+        void Follow()
+        {
+            if (_camera == null || string.IsNullOrEmpty(Focus)) return;
+
+            Game.Board.Mini mini = Nodes.Under<Game.Board.Mini>(GetTree().Root)
+                                        .FirstOrDefault(m => m.Name.ToString().StartsWith(Focus, StringComparison.OrdinalIgnoreCase));
+
+            if (mini != null) _camera.Following = mini.GlobalPosition;
+        }
+
+        // the shot the command line asks for, or null
+        public static Shot From(string[] args) =>
+            RequestedFrom(args, out string path, out int after, out Vector2I size)
+                ? new Shot
+                {
+                    Name = "Shot", Path = path, After = after, Size = size,
+                    Zoom = Arg(args, "--zoom") is { } z && float.TryParse(z, System.Globalization.NumberStyles.Float,
+                                                                         System.Globalization.CultureInfo.InvariantCulture, out float zoom)
+                        ? zoom : null,
+                    Quarter = int.TryParse(Arg(args, "--quarter"), out int quarter) ? quarter : 0,
+                    Focus = Arg(args, "--focus"),
+                }
+                : null;
+
+        static string Arg(string[] args, string flag)
+        {
+            int at = Array.IndexOf(args ?? Array.Empty<string>(), flag);
+            return at >= 0 && at + 1 < args.Length ? args[at + 1] : null;
+        }
+
+        public static bool RequestedFrom(string[] args, out string path, out int after, out Vector2I size)
         {
             path = "table.png";
             after = 150;
+            size = default;
+
+            int sized = Array.IndexOf(args ?? Array.Empty<string>(), "--size");
+
+            if (sized >= 0 && sized + 1 < args.Length)
+            {
+                string[] wh = args[sized + 1].Split('x');
+
+                if (wh.Length == 2 && int.TryParse(wh[0], out int w) && int.TryParse(wh[1], out int h))
+                    size = new Vector2I(w, h);
+            }
 
             if (args == null) return false;
 
@@ -53,6 +122,8 @@ namespace Game.Table
 
         public override void _Process(double delta)
         {
+            Follow();
+
             if (_waited++ < After) return;
 
             SetProcess(false);
@@ -87,6 +158,8 @@ namespace Game.Table
 
             GD.Print($"shot    {picture.GetWidth()} x {picture.GetHeight()} saved to {Path}");
 
+            // a shot of a --begin run leaves no probe saves behind
+            Game.Play.GameState.ForgetProbeSaves();
             GetTree().Quit(0);
         }
     }

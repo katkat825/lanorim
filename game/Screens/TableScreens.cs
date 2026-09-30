@@ -28,7 +28,7 @@ namespace Game.Screens
             MouseFilter = MouseFilterEnum.Stop;
 
             Body = Ui.Column(10);
-            Body.CustomMinimumSize = new Vector2(Width, 0);
+            Body.CustomMinimumSize = new Vector2(Ui.Px(Width), 0);
 
             AddChild(Ui.Panel(Body));
             Draw();

@@ -15,7 +15,7 @@ namespace Content.Tests
     // THE COMBAT COMMAND API (Tier 2.9 of the 2026-09-24 run): what the combat UX calls - the
     // action bar, movement, targeting with previews, confirm and cancel, reaction settings with an
     // "ask" that stops and waits, and the player's dice going to the tray
-    public class CombatSessionTests
+    public partial class CombatSessionTests
     {
         static readonly Library Srd = Library.Srd();
 

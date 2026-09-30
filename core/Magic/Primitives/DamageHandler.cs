@@ -80,7 +80,12 @@ namespace Core.Magic
 
             int rolled = Lessened(c, Rolled(c), potent);
 
-            int suffered = target.Suffer(rolled, type) + MarksPaid(c);
+            int suffered = target.Suffer(rolled, type);
+
+            c.Fight?.Observer.Dealt(new Harm(c.Caster.Actor, target, c.Spell.NameKey,
+                                             Critical(c) ? c.Amount.Doubled() : c.Amount, rolled, suffered, type));
+
+            suffered += MarksPaid(c);
 
             if (c.Fight != null && suffered > 0) c.Fight.Hurt(c.Caster.Actor, target, suffered);
 
@@ -150,11 +155,7 @@ namespace Core.Magic
 
             c.Magic.LastFaces = faces;
 
-            // SRD: a critical doubles a spell's damage dice the same as a weapon's - and a smite's
-            // dice are the hit's, so its critical doubles them too
-            bool critical = c.Attempt != null && c.Attempt.IsCritical ||
-                            c.Answering?.Trigger == Trigger.Struck &&
-                            c.Answering.Attempt != null && c.Answering.Attempt.IsCritical;
+            bool critical = Critical(c);
 
             if (critical) rolled += Math.Max(0, c.Resolver.Roll(c.Amount, caster));
 
@@ -173,6 +174,12 @@ namespace Core.Magic
 
             return rolled;
         }
+
+        // SRD: a critical doubles a spell's damage dice the same as a weapon's - and a smite's
+        // dice are the hit's, so its critical doubles them too
+        static bool Critical(Contact c) =>
+            c.Attempt != null && c.Attempt.IsCritical ||
+            c.Answering?.Trigger == Trigger.Struck && c.Answering.Attempt != null && c.Answering.Attempt.IsCritical;
 
         // what takes it down: Evasion, a save for half, a potent cantrip's miss
         static int Lessened(Contact c, int rolled, bool potent)

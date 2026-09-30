@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cct5pm1obpwiu"
-path="res://.godot/imported/rogue_v2.glb-b37deb125a85bae525f97f869c232a72.scn"
+uid="uid://hu3h11iwtxp2"
+path="res://.godot/imported/rogue_v3.glb-7f05fee7fdbd0e6e212aceb1f0291347.scn"
 
 [deps]
 
-source_file="res://models/minis/rogue_v2.glb"
-dest_files=["res://.godot/imported/rogue_v2.glb-b37deb125a85bae525f97f869c232a72.scn"]
+source_file="res://models/minis/rogue_v3.glb"
+dest_files=["res://.godot/imported/rogue_v3.glb-7f05fee7fdbd0e6e212aceb1f0291347.scn"]
 
 [params]
 

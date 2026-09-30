@@ -81,6 +81,8 @@ namespace Game.Screens
                                 policy));
             }
 
+            AddChild(new ControlsSection());
+
             AddChild(Ui.Button(ScreenWords.Back, () => Done?.Invoke()));
         }
 

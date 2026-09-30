@@ -47,6 +47,7 @@ namespace Game.Play
         public static void SaveProbesApart()
         {
             SavesFolder = $"user://saves_probe_{System.Environment.ProcessId}";
+            AccessFolder = SavesFolder;
             _saves = null;
 
             // a probe that was stopped rather than finished leaves its folder; an hour on, it is
@@ -113,6 +114,36 @@ namespace Game.Play
             {
                 GD.PushError("settings: could not be saved - " + bad.Message);
             }
+        }
+
+        // --- the access dials and the key bindings (game/Access) ------------------------------------
+
+        static Game.Access.Adjustments _access;
+
+        // where settings.txt lives; a probe keeps its own beside its saves, so it never rebinds the
+        // player's keys
+        static string AccessFolder { get; set; } = "user://";
+
+        // read from user://settings.txt the first time anything asks, and the player's rebindings put
+        // into the InputMap then, so every screen after it hears the keys the player chose
+        public static Game.Access.Adjustments Access
+        {
+            get
+            {
+                if (_access != null) return _access;
+
+                _access = Game.Access.Adjustments.From(ProjectSettings.GlobalizePath(AccessFolder));
+
+                if (_access.Keys.Changed > 0) Game.Access.Keyboard.Install(_access.Keys);
+
+                return _access;
+            }
+        }
+
+        public static void SaveAccess()
+        {
+            if (!Access.To(ProjectSettings.GlobalizePath(AccessFolder)))
+                GD.PushError("settings: the key bindings could not be saved");
         }
 
         // --- the campaign being played -------------------------------------------------------------
@@ -191,8 +222,16 @@ namespace Game.Play
 
             public Deferred(Func<IDiceSource> source) => _source = source;
 
-            public IReadOnlyList<int> Throw(IReadOnlyList<Die> dice) =>
-                (_source() ?? new Digital(Gm)).Throw(dice);
+            public IReadOnlyList<int> Throw(IReadOnlyList<Die> dice)
+            {
+                IDiceSource source = _source();
+
+                if (source != null) return source.Throw(dice);
+
+                // no table up to throw them on (a level-up's hit points rolled from a menu, say)
+                GD.PushWarning($"dice: the hero's {string.Join(" ", dice ?? Array.Empty<Die>())} had no tray to land on - rolled digitally instead");
+                return new Digital(Gm).Throw(dice);
+            }
         }
 
         // a resolver made after the run that needs it

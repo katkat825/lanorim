@@ -38,13 +38,18 @@
 [sub_resource type="PlaneMesh" id="Mesh_tabletop"]
 size = Vector2(6, 6)
 
+; DIMMED 2026-09-30 ("everything looks too washed out"): ACES rather than filmic (tonemap_mode 3 - it
+; keeps more contrast), exposure 0.6 (was 1.0), ambient 0.35 -> 0.2, and the painted shader's own
+; light_strength 0.6 in shaders/painted.tres. The lamp is unchanged. Picked from a side-by-side of five
+; settings (_design_docs/shots_2026-09-30/lighting_*.png); every one of these is a dial to turn.
 [sub_resource type="Environment" id="Env_table"]
 background_mode = 1
 background_color = Color(0.06, 0.055, 0.05, 1)
 ambient_light_source = 2
 ambient_light_color = Color(0.5, 0.47, 0.42, 1)
-ambient_light_energy = 0.35
-tonemap_mode = 2
+ambient_light_energy = 0.2
+tonemap_mode = 3
+tonemap_exposure = 0.6
 
 [node name="Table" type="Node3D"]
 script = ExtResource("1_table")

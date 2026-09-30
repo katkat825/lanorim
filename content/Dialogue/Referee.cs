@@ -26,6 +26,14 @@ namespace Content.Dialogue
         // what goes back into the conversation. null for a fight, which the referee cannot settle
         public Answer Answer { get; }
 
+        // what a natural 1 or 20 on the check bought, already carried out on the hero: the table
+        // shows its line
+        public Consequences.Visit Visit { get; init; }
+
+        // the consequence took the hero to 0 hit points away from a fight, so it came round and took
+        // a long rest (Recovered): the day is over
+        public bool Rested { get; init; }
+
         // the hero's own d20, for a check or a save - the dice tray throws this
         public Attempt Attempt { get; init; }
 
@@ -83,7 +91,7 @@ namespace Content.Dialogue
 
             return request.Kind switch
             {
-                RequestKind.Check => Tested(request, request.Skill != Skill.None
+                RequestKind.Check => Checked(request, request.Skill != Skill.None
                                                          ? Checks.Check(_resolver, _hero.Actor, request.Skill, request.Dc)
                                                          : Checks.Check(_resolver, _hero.Actor, request.Ability, request.Dc)),
                 RequestKind.Save => Tested(request, Checks.Save(_resolver, _hero.Actor, request.Ability, request.Dc)),
@@ -100,6 +108,41 @@ namespace Content.Dialogue
 
         static Settled Tested(Request request, Attempt attempt) =>
             new Settled(request, Answer.Of(attempt)) { Attempt = attempt };
+
+        // a check, and what its natural 1 or 20 buys - whether it passed or not (updated_decisions.md)
+        Settled Checked(Request request, Attempt attempt)
+        {
+            Consequences.Visit visit = Consequence(attempt);
+
+            return new Settled(request, Answer.Of(attempt)) { Attempt = attempt, Visit = visit, Rested = Recovered() };
+        }
+
+        // DOWN OUTSIDE A FIGHT IS A LONG REST (Kathleen, 2026-09-28): a consequence that takes the
+        // hero to 0 hit points away from the board doesn't kill it - it comes round, and the day is
+        // done. SRD 5.2.1's rest needs 1 hit point to start, so it is steadied and brought to 1 first
+        bool Recovered()
+        {
+            Actor hero = _hero.Actor;
+
+            if (!hero.IsDown || hero.IsDead) return false;
+
+            hero.Stabilize();
+            hero.Mend(1);
+            _hero.LongRest();
+
+            return true;
+        }
+
+        // WHAT A NATURAL 1 OR 20 ON A CHECK, OR THE HERO'S CRITICAL HIT, BUYS: drawn behind the
+        // screen from the pool, carried out on the hero - its hit points, its gold, a shift until it
+        // rests, a condition - and its amount thrown on the hero's own dice. the one door for both
+        // the story's checks and a fight's crits (CombatSession.Consequence). null when it buys nothing
+        public Consequences.Visit Consequence(Attempt attempt)
+        {
+            Consequence drawn = _screen.Draw(_library.Consequences, attempt);
+
+            return drawn == null ? null : Consequences.Befall(drawn, _resolver, _hero.Actor, _hero.Pack);
+        }
 
         Settled Rolled(Request request)
         {

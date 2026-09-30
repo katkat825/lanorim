@@ -16,16 +16,22 @@
 ; the SECOND answer to that question, not the first.
 ;
 ; THE FIGURES. The enemy is Quaternius' Goblin_Male, straight out of the Ultimate Animated
-; Character Pack and paired off docs/v1_minis_map.md. The hero is rogue_v2.glb - KATHLEEN'S OWN
+; Character Pack and paired off docs/v1_minis_map.md. The hero is rogue_v3.glb - KATHLEEN'S OWN
 ; MODEL, built on the pack's rig and kept in assets/modified/. It is not the Ninja that doc names;
-; it is a hooded rogue with a cloak, and the doc's row wants updating to say so.
+; it is a rogue with a cloak (v3 dropped v2's hood), and the doc's row wants updating to say so.
 ;
-; rogue_v2 is THREE meshes, not one: a skinned body (skin, clothes, details, eyes) plus a cloak and
-; a hood that are NOT skinned and hang off the root rather than off a bone. That is worth knowing
-; before anyone animates a mini, because those two pieces will not follow a skeleton anywhere. For
-; a piece that is posed once and then stands still it is fine, and it was checked by rendering the
-; figure posed and unposed side by side rather than assumed: the hood and cloak sit where they
-; should through the idle.
+; rogue_v3 (final export of 2026-09-30): one body (Body_001, with hair) on one armature, the pack's
+; 18 clips, and dark Eyes - that surface is the pupils AND the brows, so white there read as no face at
+; all. The cloak is still a mesh of its own, not skinned - it hangs off a plain "Body_001" node - so
+; RigidParts puts it on Torso. (Two earlier v3 exports carried a T-posed second body, then white eyes.)
+;
+; rogue_v2 was THREE meshes: a skinned body plus a cloak and
+; a hood that are NOT skinned and hang off the root rather than off a bone. Posed into its idle, the
+; head moved and the hood stayed where the T-pose left it: from the side, the face stuck out of the
+; front of the hood (2026-09-30; the earlier note here said they sat right, and they didn't). Since
+; then RigidParts (game/Board/RigidParts.cs) puts each on a BoneAttachment3D - the hood on Head, the
+; cloak on Torso - at its bind-pose offset, so they follow the pose. Better still: weight them to
+; those bones in Blender, and RigidParts finds nothing to do.
 ;
 ; They are rigged and they are NOT animated here - Mini.Dress stands each one in a single frame of
 ; its own idle and switches the AnimationPlayer off, because a mini is an object that gets moved,
@@ -58,7 +64,7 @@
 [ext_resource type="Texture2D" path="res://textures/map_parchment/color.jpg" id="4_color"]
 [ext_resource type="Texture2D" path="res://textures/map_parchment/normalgl.jpg" id="5_normal"]
 [ext_resource type="Texture2D" path="res://textures/map_parchment/roughness.jpg" id="6_rough"]
-[ext_resource type="PackedScene" uid="uid://cct5pm1obpwiu" path="res://models/minis/rogue_v2.glb" id="7_hero"]
+[ext_resource type="PackedScene" uid="uid://hu3h11iwtxp2" path="res://models/minis/rogue_v3.glb" id="7_hero"]
 [ext_resource type="PackedScene" uid="uid://dalitcw5x4nb1" path="res://models/minis/goblin_male.gltf" id="8_enemy"]
 
 ; no albedo_color tint: the parchment's colour is baked into the map, which is the one deliberate

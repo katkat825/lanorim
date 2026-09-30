@@ -209,7 +209,7 @@ namespace Game.Board
             var instance = model.Instantiate<Node3D>();
 
             instance.Name = name;
-            PaintedModel.Paint(instance, Paint);
+            PaintedModel.Paint(instance, Paint, "tile");
 
             return instance;
         }

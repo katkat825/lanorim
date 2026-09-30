@@ -44,7 +44,14 @@ namespace Game.Screens
         public static readonly string DemoEnd = K("end", "demo");
 
         public static readonly string ThrowPrompt = K("combat", "throw_prompt");
+        public static readonly string VerdictHit = K("combat", "verdict_hit");
+        public static readonly string VerdictCritical = K("combat", "verdict_critical");
+        public static readonly string VerdictMiss = K("combat", "verdict_miss");
+        public static readonly string VerdictSaved = K("combat", "verdict_saved");
+        public static readonly string VerdictFailed = K("combat", "verdict_failed");
         public static readonly string TurnHint = K("table", "turn_hint");
+        public static readonly string AimHint = K("combat", "aim_hint");
+        public static readonly string CameRound = K("table", "came_round");
         public static readonly string YourTurn = K("combat", "your_turn");
         public static readonly string FightWon = K("combat", "won");
         public static readonly string FightFled = K("combat", "fled");
@@ -63,7 +70,7 @@ namespace Game.Screens
                 CreateTitle, PointsLeft, PicksLeft, NameHint, Suggested,
                 PauseTitle, Resume, Save, Saved, Load, Sheet, Pack, ToTheBook,
                 TheEnd, TheEndBlurb, DemoEnd,
-                ThrowPrompt, TurnHint, YourTurn, FightWon, FightFled,
+                ThrowPrompt, VerdictHit, VerdictCritical, VerdictMiss, VerdictSaved, VerdictFailed, TurnHint, AimHint, CameRound, YourTurn, FightWon, FightFled,
                 SheetTitle, SheetLevel, SheetHp, SheetAc, SheetSpells, SheetFeatures,
                 AskCard.TurnsTheHitKey,
             }

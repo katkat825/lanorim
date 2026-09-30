@@ -301,5 +301,143 @@ namespace Content.Tests
             Assert.False(bad.Ok);
             Assert.Contains(bad.Problems, p => p.What.Contains("volcano"));
         }
+        // THE BAR IN THREE PARTS (Kathleen, 2026-09-28): every option is in exactly one - a button,
+        // the spells' menu or the manoeuvres' - and the hotkeys don't move
+        [Fact]
+        public void TheBarIsButtonsAndTwoMenusAndLosesNothing()
+        {
+            Content.Classes.CharacterClass mages = Srd.Class("mage");
+            var mage = new Hero("Tess", mages, Srd.Kind("human"), Srd.Background("sage"),
+                                Creation.Creation.Standard(mages), 3);
+            mage.Build(null, mages.SkillChoices.Take(mages.SkillPicks).ToList(), null, Srd.Items,
+                       Srd.Spells.For("mage").Where(s => s.Level <= 2).ToList());
+            var hall = new MapDraft(8, 4);
+            hall.Paint(new Cell(0, 0), new Cell(7, 3), Tile.Floor);
+            hall.Enclose();
+            hall.PlaceStart(new Cell(0, 1));
+
+            Battle battle = Battle.Set(Srd, hall.Layout(), mage,
+                                       new[] { new Battle.Foe(Srd.Bestiary.Find("goblin"), new Cell(6, 2)) },
+                                       new StandardResolver(new SeededRng(5)), null, new FightLog());
+            var session = new CombatSession(battle, Srd.Items, Srd.Forms);
+            session.Start();
+
+            var hud = new CombatHud(session);
+
+            Assert.NotEmpty(hud.Spells);
+            Assert.NotEmpty(hud.Manoeuvres);
+            Assert.All(hud.Spells, o => Assert.True(o.Kind is OptionKind.Spell or OptionKind.Again));
+            Assert.DoesNotContain(hud.Buttons, o => o.Kind is OptionKind.Spell or OptionKind.Dash or OptionKind.EndTurn);
+            Assert.Contains(hud.Buttons, o => o.Kind == OptionKind.Attack);
+
+            Assert.Equal(hud.Bar.Count(o => o.Kind != OptionKind.EndTurn),
+                         hud.Buttons.Count + hud.Spells.Count + hud.Manoeuvres.Count);
+            Assert.Same(hud.Hotkey(1), hud.Bar.First(o => o.Hotkey == 1));
+        }
+
+        // THE NATURAL 1 / 20 POOL, WIRED (Kathleen, 2026-09-28): a story's check with a natural 1
+        // draws a bane and a natural 20 a boon, whether it passed or not, and it is carried out
+        [Theory]
+        [InlineData(1, Polarity.Bane)]
+        [InlineData(20, Polarity.Boon)]
+        public void AStoryChecksNaturalOneOrTwentyBuysAConsequence(int natural, Polarity side)
+        {
+            Hero hero = Made("fighter", 3);
+            var referee = new Content.Dialogue.Referee(hero, new StandardResolver(new ScriptedRng(natural)),
+                                                       new Core.Tables.GmScreen(new SeededRng(3)), Srd);
+
+            Content.Dialogue.Settled settled =
+                referee.Settle(Content.Dialogue.Request.Parse("check athletics 15", out _));
+
+            Assert.NotNull(settled.Visit);
+            Assert.Equal(side, settled.Visit.Consequence.Polarity);
+            Assert.Equal(natural, settled.Attempt.Natural);
+        }
+
+        [Fact]
+        public void AnOrdinaryCheckOrASaveBuysNothing()
+        {
+            Hero hero = Made("fighter", 3);
+            var referee = new Content.Dialogue.Referee(hero, new StandardResolver(new ScriptedRng(11)),
+                                                       new Core.Tables.GmScreen(new SeededRng(3)), Srd);
+
+            Assert.Null(referee.Settle(Content.Dialogue.Request.Parse("check athletics 15", out _)).Visit);
+
+            var unlucky = new Content.Dialogue.Referee(hero, new StandardResolver(new ScriptedRng(1)),
+                                                       new Core.Tables.GmScreen(new SeededRng(3)), Srd);
+
+            Assert.Null(unlucky.Settle(Content.Dialogue.Request.Parse("save dex 15", out _)).Visit);
+        }
+
+        // and a critical hit in a fight: the hero's, through the same referee
+        [Fact]
+        public void TheHerosCriticalHitBuysAConsequenceAndAnUnwiredSessionBuysNone()
+        {
+            foreach (bool wired in new[] { true, false })
+            {
+                Hero hero = Made("fighter", 3);
+                var hall = new MapDraft(8, 4);
+                hall.Paint(new Cell(0, 0), new Cell(7, 3), Tile.Floor);
+                hall.Enclose();
+                hall.PlaceStart(new Cell(0, 1));
+
+                // every die its highest: every attack a critical hit
+                var resolver = new StandardResolver(new ScriptedRng(20));
+                Battle battle = Battle.Set(Srd, hall.Layout(), hero,
+                                           new[] { new Battle.Foe(Srd.Bestiary.Find("skeleton"), new Cell(1, 1)) },
+                                           resolver, null, new FightLog());
+                var referee = new Content.Dialogue.Referee(hero, resolver, new Core.Tables.GmScreen(new SeededRng(3)), Srd);
+
+                var session = new CombatSession(battle, Srd.Items, Srd.Forms)
+                {
+                    Consequence = wired ? referee.Consequence : null,
+                };
+                session.Start();
+
+                ActionOption swing = session.Options().First(o => o.Kind == OptionKind.Attack && o.Enabled &&
+                                                                 o.Attack.Reach >= 1 && !o.Attack.IsRanged);
+                Assert.True(session.Select(swing));
+
+                ActionResult hit = session.Confirm(session.LegalTargets().First());
+
+                Assert.True(hit.Blow.Attempt.IsCritical);
+                if (wired) Assert.Equal(Polarity.Boon, hit.Visit.Consequence.Polarity);
+                else Assert.Null(hit.Visit);
+            }
+        }
+        // DOWN OUTSIDE A FIGHT IS A LONG REST (Kathleen, 2026-09-28): a bane that takes the hero to
+        // 0 hit points on a story's check wakes it and rests it, and the day is done
+        [Fact]
+        public void ABaneThatPutsTheHeroDownOutsideAFightIsALongRest()
+        {
+            bool downed = false;
+
+            for (int seed = 1; seed < 200 && !downed; seed++)
+            {
+                Hero hero = Made("fighter", 3);
+                hero.Actor.Suffer(hero.Actor.Health.Current - 1, DamageType.Bludgeoning);
+
+                var referee = new Content.Dialogue.Referee(hero, new StandardResolver(new ScriptedRng(1)),
+                                                           new Core.Tables.GmScreen(new SeededRng(seed)), Srd);
+
+                Content.Dialogue.Settled settled =
+                    referee.Settle(Content.Dialogue.Request.Parse("check athletics 15", out _));
+
+                if (settled.Visit.Consequence.Kind != ConsequenceKind.Health)
+                {
+                    Assert.False(settled.Rested);
+                    continue;
+                }
+
+                downed = true;
+
+                Assert.True(settled.Rested);
+                Assert.False(hero.Actor.IsDown);
+                Assert.False(hero.Actor.IsDead);
+                Assert.Equal(hero.Actor.Health.Maximum, hero.Actor.Health.Current);
+            }
+
+            Assert.True(downed, "no seed drew a bane that hurts");
+        }
     }
 }

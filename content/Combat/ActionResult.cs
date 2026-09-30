@@ -21,6 +21,9 @@ namespace Content.Combat
 
         public Attempt Attempt { get; init; }
 
+        // what the hero's critical hit bought from the consequence pool, already carried out
+        public Content.Schema.Consequences.Visit Visit { get; init; }
+
         public static ActionResult No(string why) => new ActionResult { Done = false, WhyNotKey = why };
     }
 }

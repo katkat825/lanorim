@@ -12,7 +12,9 @@ namespace Game.Play
     // back what the felt shows, in throw order. The physics is the random number generator.
     //
     // With "skip throwing the dice" on, or when asked from the main thread (a test, a probe), the
-    // faces come from a generator instead and nothing is thrown.
+    // faces come from a generator instead and nothing is thrown. Skip is the player's choice and
+    // quiet; every other way a hero's roll goes digital is a fault and says so (the main thread
+    // can't block on the tray it would have to draw)
     public sealed class TrayDice : IDiceSource
     {
         readonly DiceTray _tray;
@@ -55,7 +57,9 @@ namespace Game.Play
 
             if (dice.Count == 0) return Array.Empty<int>();
 
-            if (Skip() || MainQueue.OnMain) return dice.Select(d => d.Roll(_fallback)).ToList();
+            if (Skip()) return Digital(dice);
+
+            if (MainQueue.OnMain) return Fallback(dice, "was asked on the main thread, which can't wait on the tray");
 
             int[] faces = MainQueue.Ask<int[]>(done =>
             {
@@ -68,7 +72,17 @@ namespace Game.Play
             });
 
             // a throw the table could not make (no tray, torn down mid-fight) is the generator's
-            return faces ?? dice.Select(d => d.Roll(_fallback)).ToList().ToArray();
+            return faces ?? Fallback(dice, "never came back from the tray");
+        }
+
+        int[] Digital(IReadOnlyList<Die> dice) => dice.Select(d => d.Roll(_fallback)).ToArray();
+
+        // a hero's roll the tray should have thrown, rolled digitally: kept, so play goes on, and loud
+        int[] Fallback(IReadOnlyList<Die> dice, string why)
+        {
+            string what = string.Join(" ", dice.Select(d => d.ToString().ToLowerInvariant()));
+            Godot.GD.PushWarning($"dice: the hero's {what} {why} - rolled digitally instead");
+            return Digital(dice);
         }
 
         // main thread: the player threw (Space, or a click on the tray). False while there is
@@ -121,7 +135,7 @@ namespace Game.Play
             if (pending == null) return;
 
             _tray.Rolled -= Read;
-            pending.Done(pending.Dice.Select(d => d.Roll(_fallback)).ToArray());
+            pending.Done(Fallback(pending.Dice, "was waiting when the table went away"));
         }
     }
 }

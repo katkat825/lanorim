@@ -63,6 +63,27 @@ namespace Game.Tray
             return (null, null);
         }
 
+        // IS THIS POINT ON THE SCREEN OVER THE TRAY? The camera's ray met with the felt's plane, in the
+        // tray's own space, walls included. A click there throws what is waiting (the mouse's Space)
+        public bool Under(Camera3D camera, Vector2 screen)
+        {
+            if (camera == null) return false;
+
+            Vector3 origin = camera.ProjectRayOrigin(screen);
+            Vector3 from = ToLocal(origin);
+            Vector3 along = ToLocal(origin + camera.ProjectRayNormal(screen)) - from;
+
+            if (Mathf.IsZeroApprox(along.Y)) return false;
+
+            float t = (_bounds.FeltY - from.Y) / along.Y;
+
+            if (t < 0f) return false;
+
+            Vector3 hit = from + along * t;
+
+            return Mathf.Abs(hit.X) <= _bounds.HalfWidth && Mathf.Abs(hit.Z) <= _bounds.HalfDepth;
+        }
+
         void Bind(DieBody die)
         {
             die.TraySpace = this;

@@ -31,6 +31,18 @@ namespace Game.Table
 
         [Export] public float ZoomStep { get; set; } = 0.12f;
 
+        // seconds a zoom step takes to arrive: eased, not a jump
+        [Export] public float ZoomSeconds { get; set; } = 0.15f;
+
+        // what one notch of the mouse wheel does, as a fraction of ZoomStep, and what a trackpad
+        // pinch does per unit of its magnification
+        [Export] public float WheelStep { get; set; } = 1f;
+
+        [Export] public float PinchStep { get; set; } = 2.5f;
+
+        // a trackpad's two-finger scroll, per unit of its pan, as a fraction of ZoomStep
+        [Export] public float PanStep { get; set; } = 0.1f;
+
         // seconds for a quarter turn. long enough to follow, short enough not to wait through
         [Export] public float TurnSeconds { get; set; } = 0.35f;
 
@@ -86,15 +98,33 @@ namespace Game.Table
             _turning = 0f;
         }
 
+        // the zoom shown this frame, easing toward Zoom
+        float _zoomShown = -1f;
+        float _zoomFrom;
+        float _zooming = 1f;
+
         public void ZoomBy(float by)
         {
-            Zoom = Mathf.Clamp(Zoom + by, 0f, 1f);
+            float to = Mathf.Clamp(Zoom + by, 0f, 1f);
+
+            if (Mathf.IsEqualApprox(to, Zoom)) return;
+
+            // from wherever it is now, so a second step mid-ease carries on rather than jumping
+            _zoomFrom = _zoomShown < 0f ? Zoom : _zoomShown;
+            Zoom = to;
+            _zooming = 0f;
         }
+
+        // one step in (+1) or out (-1), at the keyboard's size
+        public void Step(float steps) => ZoomBy(steps * ZoomStep);
 
         public override void _Process(double delta)
         {
             if (_turning < 1f)
                 _turning = Mathf.Min(1f, _turning + (float)delta / Mathf.Max(0.01f, TurnSeconds));
+
+            if (_zooming < 1f)
+                _zooming = Mathf.Min(1f, _zooming + (float)delta / Mathf.Max(0.01f, ZoomSeconds));
 
             _drift += delta * DriftSpeed;
 
@@ -119,7 +149,9 @@ namespace Game.Table
 
             float pitch = Mathf.DegToRad(Mathf.Clamp(Pitch, 5f, 89f));
 
-            float distance = Mathf.Lerp(Furthest, Nearest, Mathf.Clamp(Zoom, 0f, 1f));
+            _zoomShown = _zooming >= 1f ? Zoom : Mathf.Lerp(_zoomFrom, Zoom, Ease(_zooming));
+
+            float distance = Mathf.Lerp(Furthest, Nearest, Mathf.Clamp(_zoomShown, 0f, 1f));
 
             // spherical: out along the yaw, up by the pitch
             var offset = new Vector3(
@@ -148,7 +180,7 @@ namespace Game.Table
 
         // TRUE WHEN THE CAMERA IS PARKED. A screenshot taken mid-turn is a screenshot of a blur,
         // so the headless checks wait on this.
-        public bool IsStill => _turning >= 1f;
+        public bool IsStill => _turning >= 1f && _zooming >= 1f;
 
         // the quarter it is on, brought back into 0..3 for anything that wants to name it
         public int Facing => ((Quarter % 4) + 4) % 4;
