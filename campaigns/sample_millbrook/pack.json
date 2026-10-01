@@ -17,5 +17,6 @@
       ]
     }
   ],
-  "start": "old_mill"
+  "start": "old_mill",
+  "gm_screen": "plains"
 }

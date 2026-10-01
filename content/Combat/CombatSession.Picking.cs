@@ -100,6 +100,14 @@ namespace Content.Combat
                         .ToList();
         }
 
+        // A PARTY OF ONE (cc_task_ui-issues-10-01.md 2.1): a creature-aimed option whose only legal target is
+        // the caster lands on the caster, with no aiming step - Cure Wounds, Healing Word or Mage Armor with
+        // no ally on the board. Not a spell list: any option, whenever this is true. With anyone else to
+        // aim at (a summoned creature on your side), it is aimed as usual
+        public bool OnlyTargetIsYou =>
+            Selected?.Targeting is Targeting.Creature or Targeting.Creatures &&
+            LegalTargets() is { Count: 1 } only && ReferenceEquals(only[0], Hero.Actor);
+
         // a spell for friends: healing, a ward, a boon with no save
         internal static bool Kindly(Spell spell) =>
             spell.Does(Primitive.Heal) || spell.Does(Primitive.Ward) ||

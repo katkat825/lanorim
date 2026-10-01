@@ -125,7 +125,10 @@ demonstration throw. `boot.tscn` is the smaller smoke test that only prints what
 Flags after `--` (for looking and checking): `--begin <campaign> [class]` makes a character with the defaults
 and goes to the table; `--auto` plays it to the end; `--autodice` / `--autostory` throw and read on by
 themselves but leave the fights to you; `--start <node>` starts the story elsewhere; `--show
-book|tutorials|create|settings` opens a launch screen; `--shot <file> --after <frames>` saves a picture and quits.
+book|tutorials|create|settings` opens a launch screen (`--show book --open <campaign>` that campaign's two pages,
+`--book-overlay` the menu on panels instead of the pages); `--gm-screen <skin>` stands another GM screen on the
+table; `--tray-footprint 0.65 --tray-walls 1` tries a smaller dice tray (`DiceTray.Sizing`); `--shot <file>
+--after <frames>` saves a picture and quits.
 
 **After `game/locale/game.csv` changes, re-import it:**
 

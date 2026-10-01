@@ -81,11 +81,14 @@ namespace Content.Creation
                        .SelectMany(m => new[] { LabelKey(m), BlurbKey(m) });
 
         public IEnumerable<Spell> SpellChoices =>
+            Offered.Where(s => s.Level <= HighestSpellLevel)
+                   .Where(s => !_spells.Any(k => k.Id == s.Id));
+
+        // the class's list as a solo hero sees it: no spell a party of one can never cast (Solo)
+        IEnumerable<Spell> Offered =>
             Class == null || !Class.Casts
                 ? Enumerable.Empty<Spell>()
-                : Library.Spells.For(Class.Id)
-                         .Where(s => s.Level <= HighestSpellLevel)
-                         .Where(s => !_spells.Any(k => k.Id == s.Id));
+                : Library.Spells.For(Class.Id).Where(s => s.Solo != Solo.Unavailable);
 
         // the top of the class's own slot table at this level: a level 5 Paladin has 2nd-level
         // slots, not 3rd (SRD 5.2.1 p.53)
@@ -96,17 +99,20 @@ namespace Content.Creation
 
         // SRD 5.2.1's Cantrips column: a Wizard or Cleric 3, 4 at 4th level, 5 at 10th; a Druid
         // one fewer; a Paladin none. read off the spellcasting feature, and off the class's own
-        // list for a class that says nothing
+        // list for a class that says nothing; capped at the cantrips offered
         public int CantripPicks
         {
             get
             {
-                if (Class == null || !Class.Casts || !Library.Spells.For(Class.Id).Any(s => s.IsCantrip))
-                    return 0;
+                int offered = Offered.Count(s => s.IsCantrip);
+
+                if (offered == 0) return 0;
 
                 int table = Class.Spellcasting.CantripsAt(Level);
 
-                return table >= 0 ? table : 2;
+                // never more than are on offer: without Spare the Dying a 10th-level Cleric has four
+                // cantrips to learn where the SRD's column says five (cc_task_ui-issues-10-01.md 2.2)
+                return Math.Min(offered, table >= 0 ? table : 2);
             }
         }
 

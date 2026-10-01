@@ -168,11 +168,14 @@ namespace Content.Screens
         public static readonly string DeleteManyKey = ScreenKeys.Key("book", "delete_question_many");
         public static readonly string KeepKey = ScreenKeys.Key("book", "keep");
 
+        // back from a campaign's two pages to the contents (BookContents)
+        public static readonly string ContentsKey = ScreenKeys.Key("book", "contents");
+
         public static IEnumerable<string> Keys() =>
             new[]
             {
                 TestLabel, ContinueKey, NewCharacterKey, LoadKey, TutorialsKey, SettingsKey, QuitKey,
-                SlotsFullKey, EmptyKey, DeleteKey, DeleteOneKey, DeleteManyKey, KeepKey,
+                SlotsFullKey, EmptyKey, DeleteKey, DeleteOneKey, DeleteManyKey, KeepKey, ContentsKey,
             };
 
         public override string ToString() => $"{Pages.Count} pages, {Tutorials.Count} tutorials";

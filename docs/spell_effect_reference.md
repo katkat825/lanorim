@@ -82,6 +82,7 @@ picked. Any of them can still be renamed back in the reader and the data. The ru
 | `affects` | `"all"` (the default) \| `"not_caster"` \| `"foes"` \| `"allies"` |
 | `lands` | `"now"` (the default) \| `"next_turn_end"` \| `"each_turn"` \| `"on_end"` \| `"now_and_on_repeat"` \| `"on_repeat"` |
 | `cantrip_growth` | `"dice"` \| `"beams"` |
+| `solo` | `"usable"` (the default) \| `"unavailable"` |
 | `on_damage` | `"ends"` \| `"ends_if_caster_side"` \| `"ends_at_zero"` \| `"saves_again"` |
 | `obscures` | `"light"` \| `"heavy"` \| `"magical_darkness"` |
 | `duration` | `"instant"` \| `"concentration"` \| `"encounter"` \| `"rest"` \| `"long_rest"` \| `"next_turn"` \| `"next_turn_end"` \| `"turn_end"` \| `"caster_next_turn"` \| `"caster_next_turn_end"` \| `"permanent"` (a feature's boons) |
@@ -154,6 +155,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `not_in_srd` | flag | not an SRD 5.2.1 spell at all, so it ships under an original name | | reserved: none since Dissonant Whispers and Dragon's Breath were found in the SRD (2026-09-25); a campaign's own spells may use it | existing |
 | `answers_spell` | spell id | a reaction that also answers being targeted by this spell (Shield and Magic Missile) | | spell file | existing |
 | `out_of_combat` | flag | a minute's or an hour's casting: cast out of a fight only | | spell file | existing |
+| `solo` | `usable` (the default), `unavailable` | whether a party of one can ever cast it. `unavailable` is never offered to a hero with no ally on the board (creation, the Spells menu): Spare the Dying, whose only target is a creature at 0 hit points | | spell file | new 2026-10-01 (cc_task_ui-issues-10-01.md 2.2). `out_of_combat` is *when* a spell can be cast and `classes` is *who* learns it; neither says "not with no ally". A word, not a flag, so a later rule ("spare a foe", a companion on the board) can add a value rather than a second flag |
 | `concentration_below` | slot level | cast at this level or higher it needs no concentration (Major Image) | | spell file | existing |
 | `ends_previous` | flag | casting it again ends the one already cast (Foresight) | | spell file | existing |
 | `moves_when_down` | flag | its repeat moves it to a new creature once the one it is on drops (Hex) | | spell file | existing |

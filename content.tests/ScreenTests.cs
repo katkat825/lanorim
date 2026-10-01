@@ -20,7 +20,7 @@ namespace Content.Tests
 {
     // Tier 2.8 of the 2026-09-24 run: the screens' view models - what each screen shows and what its
     // buttons do, tested without Godot. The scenes that draw them are Kathleen's to look at.
-    public class ScreenTests : IDisposable
+    public partial class ScreenTests : IDisposable
     {
         static readonly Library Srd = Library.Srd();
 

@@ -34,6 +34,7 @@ namespace Game.Play
         bool _autoStory;
         bool _pauseOnTurn;
         string _startAt;
+        string _gmScreen;
         bool _fighting;
         bool _failed;
         int _level;
@@ -61,6 +62,10 @@ namespace Game.Play
 
             // the pause menu opened on the hero's first turn in a fight: for a screenshot of it
             _pauseOnTurn = args.Contains("--pause");
+
+            // `--gm-screen plains`: another of the GM screens, for a picture of each under the lamp
+            int skin = Array.IndexOf(args, "--gm-screen");
+            _gmScreen = skin >= 0 && skin + 1 < args.Length ? args[skin + 1] : null;
 
             AddChild(new MainQueue { Name = "MainQueue" });
 
@@ -120,7 +125,7 @@ namespace Game.Play
             _level = Run.Hero.Level;
             _maxHp = Run.Hero.Actor.Health.Maximum;
 
-            Table.GmScreen?.Wear(Run.Pack.Manifest?.GmScreen);
+            Table.GmScreen?.Wear(_gmScreen ?? Run.Pack.Manifest?.GmScreen);
             WakeCompanion();
             LayChapterMap();
 
@@ -236,7 +241,7 @@ namespace Game.Play
                 Table.Board.Lay(map);
                 Table.Board.Dress(pack.PropsOn(id));
                 Table.GmScreen?.StandBehind(Table.Board);
-                Table.Companion?.StandBeside(Table.Board);
+                Table.Companion?.StandBy(Table.Board, Table.GmScreen);
             }
         }
     }

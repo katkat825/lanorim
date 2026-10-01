@@ -64,8 +64,8 @@ namespace Game.Tray
         // of a big spell that have not gone up yet
         public bool IsThrowing => _awaitingSettle || _pending.Count > 0 || _queued.Count > 0;
 
-        // how many dice the scene can put on the felt at once
-        public int Seats => _dice.Count;
+        // how many dice go on the felt at once: every die the scene seats, or MostAtOnce of them
+        public int Seats => MostAtOnce > 0 ? Math.Min(MostAtOnce, _dice.Count) : _dice.Count;
 
         public override void _Ready()
         {
@@ -78,6 +78,9 @@ namespace Game.Tray
             if (_dice.Count != _throwPoints.Count)
                 GD.PushError($"dice tray: {_dice.Count} dice but {_throwPoints.Count} throw points " +
                              "- they pair by index");
+
+            // a smaller tray round the same dice, if one is asked for (DiceTray.Sizing)
+            Resize();
 
             // the skin sets the friction and bounce, so it goes on before anything is thrown
             ApplySkin();

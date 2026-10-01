@@ -75,9 +75,13 @@ namespace Game.Screens
             int show = Array.IndexOf(args, "--show");
             string screen = show >= 0 && show + 1 < args.Length ? args[show + 1] : "title";
 
+            // `--book-overlay`: the menu on the 10-01 panels over the book, as when the pages are too small;
+            // `--show book --open sample_millbrook`: that campaign's two pages
+            _overlayBook = args.Contains("--book-overlay");
+
             switch (screen)
             {
-                case "book": ShowBook(); break;
+                case "book": ShowBook(Arg(args, "--open")); break;
                 case "tutorials": ShowTutorials(); break;
                 case "settings": ShowSettings(); break;
                 case "controls": ShowSettings(); ScrollToControls(); break;
@@ -111,152 +115,6 @@ namespace Game.Screens
         }
 
         public const string BookScene = "res://book.tscn";
-
-        void Show(Control screen, float width = 720)
-        {
-            _onTitle = false;
-            _book?.Open();
-            Ui.Clear(_body);
-            _body.AddChild(Ui.Centred(screen, width));
-            Ui.FocusFirst(screen);
-        }
-
-        // --- the title --------------------------------------------------------------------------
-
-        // the title card under the closed book, which stands above it in the middle of the table
-        void ShowTitle()
-        {
-            Show(Ui.Panel(Ui.Column(24,
-                Ui.Title(ScreenWords.GameTitle),
-                Ui.Label(ScreenWords.PressToBegin),
-                Ui.Button(ScreenWords.Begin, ShowBook))), 520);
-
-            if (_book != null && _body.GetChildCount() > 0 && _body.GetChild(0) is CenterContainer centre)
-            {
-                // to the bottom of the screen, so the closed book shows
-                _body.RemoveChild(centre);
-                var column = new VBoxContainer();
-                column.AddChild(new Control { SizeFlagsVertical = SizeFlags.ExpandFill });
-                centre.SizeFlagsVertical = SizeFlags.ShrinkEnd;
-                column.AddChild(centre);
-                _body.AddChild(column);
-            }
-
-            _book?.Close();
-            _onTitle = true;
-        }
-
-        bool _onTitle;
-
-        // the title card: any key or click opens the book
-        public override void _UnhandledInput(InputEvent @event)
-        {
-            if (!_onTitle) return;
-
-            if (@event is InputEventKey { Pressed: true } || @event is InputEventMouseButton { Pressed: true })
-            {
-                GetViewport().SetInputAsHandled();
-                ShowBook();
-            }
-        }
-
-        // --- the book -------------------------------------------------------------------------
-
-        void ShowBook() => ShowBook(null);
-
-        void ShowBook(string open)
-        {
-            var book = new CampaignBook(GameState.Manifests, GameState.Saves);
-
-            var top = Ui.Row(12);
-
-            if (book.CanContinue)
-                top.AddChild(Ui.Button(CampaignBook.ContinueKey, () => Load(book.Continue)));
-
-            top.AddChild(Ui.Button(CampaignBook.TutorialsKey, ShowTutorials));
-            top.AddChild(Ui.Button(CampaignBook.SettingsKey, ShowSettings));
-            top.AddChild(Ui.Button(CampaignBook.QuitKey, () => GetTree().Quit()));
-
-            var contents = Ui.Column(6);
-            var page = Ui.Column(10);
-            page.SizeFlagsHorizontal = SizeFlags.ExpandFill;
-
-            if (book.Pages.Count == 0) contents.AddChild(Ui.Label(CampaignBook.EmptyKey));
-
-            foreach (BookPage one in book.Pages)
-            {
-                BookPage p = one;
-                // what the page's label says is on the page itself, not on hover
-                contents.AddChild(Ui.Button(p.NameKey, () => ShowPage(page, p)));
-            }
-
-            BookPage first = book.Pages.FirstOrDefault(p => p.Id == open) ?? book.Pages.FirstOrDefault();
-
-            if (first != null) ShowPage(page, first);
-
-            contents.CustomMinimumSize = new Vector2(Ui.Px(300), 0);
-
-            PanelContainer list = Ui.Panel(Ui.Scroll(contents, 340));
-            PanelContainer opened = Ui.Panel(Ui.Scroll(page, 340));
-            opened.SizeFlagsHorizontal = SizeFlags.ExpandFill;
-
-            Show(Ui.Panel(Ui.Column(16,
-                Ui.Title(ScreenWords.GameTitle),
-                top,
-                Ui.Row(24, list, opened))), 1040);
-        }
-
-        void ShowPage(VBoxContainer page, BookPage p)
-        {
-            Ui.Clear(page);
-
-            page.AddChild(Ui.Title(p.NameKey));
-
-            if (p.LabelKey != null) page.AddChild(Ui.Label(p.LabelKey));
-
-            page.AddChild(Ui.Label(p.DescriptionKey));
-
-            foreach (CharacterSlot slot in p.Characters)
-            {
-                CharacterSlot s = slot;
-                Button load = Ui.Button(Ui.Say(ScreenWords.Character, s.Name, s.Level,
-                                               Ui.Say(Core.Localization.KeyConventions.ClassName(s.ClassId))),
-                                        () => Load(s.Newest), true);
-                load.SizeFlagsHorizontal = SizeFlags.ExpandFill;
-
-                var row = Ui.Row(8, load);
-                row.AddChild(Ui.Button(CampaignBook.DeleteKey, () => AskToDelete(row, p, s)));
-                page.AddChild(row);
-            }
-
-            page.AddChild(Ui.Button(CampaignBook.NewCharacterKey, () => ShowCreation(p.Id))
-                            .Greyed(!p.CanStartNew, CampaignBook.SlotsFullKey));
-            page.AddChild(Ui.Why(!p.CanStartNew, CampaignBook.SlotsFullKey));
-        }
-
-        // DELETE A CHARACTER, ASKED FIRST (cc_task_ui-issues-9-30.md 6.2): the row becomes the question -
-        // the hero's name and how many saves go with it - with Keep, the safe answer, focused
-        void AskToDelete(HBoxContainer row, BookPage p, CharacterSlot s)
-        {
-            Ui.Clear(row);
-
-            (string key, object[] args) = CampaignBook.DeleteQuestion(s);
-            Label question = Ui.Label(key, args);
-            question.SizeFlagsHorizontal = SizeFlags.ExpandFill;
-
-            Button keep = Ui.Button(CampaignBook.KeepKey, () => ShowBook(p.Id));
-            Button delete = Ui.Button(CampaignBook.DeleteKey, () =>
-            {
-                int gone = CampaignBook.Delete(GameState.Saves, p.Id, s);
-                GD.Print($"launch  deleted {s.Name} from {p.Id} slot {s.Slot}: {gone} saves");
-                ShowBook(p.Id);
-            });
-
-            row.AddChild(question);
-            row.AddChild(delete);
-            row.AddChild(keep);
-            Ui.FocusLater(keep);
-        }
 
         // --- tutorials ------------------------------------------------------------------------
 

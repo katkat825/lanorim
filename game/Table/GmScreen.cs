@@ -107,7 +107,12 @@ namespace Game.Table
 
             Position = new Vector3(far.X - (box.Position.X + box.Size.X * 0.5f), far.Y - box.Position.Y,
                                    far.Z - (box.Position.Z + box.Size.Z));
+
+            Standing = new Aabb(Position + box.Position, box.Size);
         }
+
+        // where it stands, in the table's space (what the companion stands beside)
+        public Aabb Standing { get; private set; }
 
         // a hidden roll behind the screen
         public void Rattle()

@@ -94,6 +94,8 @@ namespace Core.Characters
         public int PointBuySpend =>
             Abilities.All.Sum(a => Math.Max(0, Abilities.PointBuyCost(Base(a))));
 
+        public int PointBuyLeft => Abilities.PointBuyBudget - PointBuySpend;
+
         // a legal point-buy array: every score in 8..15 and the budget not overspent. species
         // bumps are applied after, so this is asked of the array as picked, not of the finished hero.
         public bool IsLegalPointBuy(out string problem)

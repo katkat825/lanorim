@@ -3,33 +3,27 @@ using Godot;
 
 namespace Game.Table
 {
-    // WHICH SKELETON IS WHICH COMPANION (docs/updated_decisions.md: "companions will all be variations on
-    // the kaykit skeleton pack. this pack will not be used anywhere else in the game"). A class names its
-    // companion (content/srd/classes, "companion"); this is where that name meets a KayKit Skeletons 1.1
-    // model in game/models/companions/, pulled with tools/pull-models.ps1. FIRST PICKS for Kathleen:
+    // WHICH ANIMAL IS WHICH COMPANION (cc_task_ui-issues-10-01.md 4; Kathleen, 2026-10-01: "Quaternius animals,
+    // not KayKit skeletons"). A class names its companion (content/srd/classes, "companion"); this is where that
+    // name meets a model from Quaternius's Ultimate Animated Animals in game/models/companions/, pulled with
+    // tools/pull-models.ps1. Every one carries its own clips. PICKS for Kathleen:
     //
-    //   bonded_wolf            (barbarian, fighter)  Skeleton_Warrior - the one who fights beside you
-    //   gossiping_raven        (rogue)               Skeleton_Rogue   - hooded, and it talks
-    //   bound_imp              (mage)                Skeleton_Mage    - the bound thing in the hat
-    //   saints_fragment        (cleric, paladin)     Skeleton_Minion  - a small, plain relic of someone
-    //   borrowed_shape_spirit  (druid)               Skeleton_Minion  - until it has its own variation
-    //
-    // "Variations" is the plan: a recolour or a prop each (the pack's weapons and shields), which is
-    // Kathleen's in Blender or the painted shader. Two share the Minion until then.
+    //   bonded_wolf            (barbarian, fighter)  Wolf         - the direct match
+    //   gossiping_raven        (rogue)               Fox          - stand-in: no bird in any Quaternius pack here
+    //   bound_imp              (mage)                ShibaInu     - stand-in: the Bestiary's Imp has no clips
+    //   saints_fragment        (cleric, paladin)     Horse_White  - stand-in: a pale, holy-looking beast
+    //   borrowed_shape_spirit  (druid)               Stag         - stand-in: the druid's spirit of the wild
     public static class CompanionModels
     {
         const string Folder = "res://models/companions/";
 
-        // the animations every skeleton shares (Rig_Medium): idles, a gesture, lying down, a hop
-        public static readonly string[] Rigs = { Folder + "Rig_Medium_General.glb", Folder + "Rig_Medium_MovementBasic.glb" };
-
         static readonly Dictionary<string, string> Known = new Dictionary<string, string>
         {
-            ["bonded_wolf"] = "Skeleton_Warrior.glb",
-            ["gossiping_raven"] = "Skeleton_Rogue.glb",
-            ["bound_imp"] = "Skeleton_Mage.glb",
-            ["saints_fragment"] = "Skeleton_Minion.glb",
-            ["borrowed_shape_spirit"] = "Skeleton_Minion.glb",
+            ["bonded_wolf"] = "Wolf.gltf",
+            ["gossiping_raven"] = "Fox.gltf",
+            ["bound_imp"] = "ShibaInu.gltf",
+            ["saints_fragment"] = "Horse_White.gltf",
+            ["borrowed_shape_spirit"] = "Stag.gltf",
         };
 
         public static IEnumerable<string> Names => Known.Keys;

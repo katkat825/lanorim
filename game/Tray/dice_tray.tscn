@@ -36,6 +36,16 @@
 ; a die to leave, so check-dice.ps1 is the thing that says whether it matters - run it after any
 ; change to this file.
 ;
+; SMALLER, WITH TALLER WALLS (cc_task_ui-issues-10-01.md 6, 2026-10-02). Kathleen: "make the tray smaller so
+; that when it's brought to you the dice are easier to see". Footprint 0.65 and WallHeight 1.25 on the node
+; below resize the model and the collision in code before the tray measures itself (DiceTray.Sizing) - the
+; numbers in this file stay the authored tray's. The felt is 0.321 x 0.401 m and the rim 0.071 m above it,
+; and the throw is softer by the root of the footprint. Measured over 1000 throws of 2d20 and 250 of 4d6:
+; at 1/1, 5 and 18 dice left the tray; at 0.65/0.65 (a plain shrink, walls 37 mm) 73 and 107; at 0.65/1
+; 10 and 23; at 0.65/1.25, 1 and 10. All uniform. Eight d20s at once in it cocked on each other on 7% of
+; dice (1.4% in the authored tray) and four on 1.2%, so MostAtOnce = 4: a Fireball's 8d6 goes up as two
+; handfuls. Set Footprint and WallHeight back to 1 and MostAtOnce to 0 for the authored tray.
+;
 ; EIGHT SEATS. A check is one d20, advantage is two, and damage is a handful - eight covers a
 ; Fireball's 8d6 in one throw. Anything larger (Meteor Swarm is 20d6) the tray throws in
 ; successive handfuls, the way a person does, and adds them up.
@@ -67,6 +77,9 @@ size = Vector3(0.528, 0.068034, 0.021552)
 [node name="DiceTray" type="Node3D"]
 script = ExtResource("1_tray")
 Skin = ExtResource("3_skin")
+Footprint = 0.65
+WallHeight = 1.25
+MostAtOnce = 4
 
 ; y = -0.0593467 drops the model's underside onto y = 0, so the tray's origin is the face it
 ; stands on and table.tscn can set it down without knowing anything about the mesh

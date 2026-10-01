@@ -4,6 +4,7 @@ note: examples are simply one of many examples and used to express the point rat
 - traditional ui menu (map, inventory, equipment, etc.) is a campaign book and the nav options are the table of contents in that campaign book
 
 - companions will all be variations on the kaykit skeleton pack. this pack will not be used anywhere else in the game.
+  - superseded 2026-10-01: Quaternius animals
 
 - companions will be the size of minis, but never on the map. they can sit or stand or walk or lay down elsewhere on the table.
 

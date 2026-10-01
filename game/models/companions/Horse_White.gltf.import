@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://rxwe25ed7g1f"
-path="res://.godot/imported/Skeleton_Warrior.glb-87a1f8673f1a4e0e7fed3b269c67c7af.scn"
+uid="uid://xx4ba13j8mar"
+path="res://.godot/imported/Horse_White.gltf-b89e35fc8a18c87bae071f0f8efaf351.scn"
 
 [deps]
 
-source_file="res://models/companions/Skeleton_Warrior.glb"
-dest_files=["res://.godot/imported/Skeleton_Warrior.glb-87a1f8673f1a4e0e7fed3b269c67c7af.scn"]
+source_file="res://models/companions/Horse_White.gltf"
+dest_files=["res://.godot/imported/Horse_White.gltf-b89e35fc8a18c87bae071f0f8efaf351.scn"]
 
 [params]
 

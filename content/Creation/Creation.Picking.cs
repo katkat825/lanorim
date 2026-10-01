@@ -31,6 +31,36 @@ namespace Content.Creation
             return true;
         }
 
+        // THE POINT-BUY GUARD (cc_task_ui-issues-10-01.md 1): a score goes up one only when it is under
+        // 15 and the next step's cost fits what is left - 13 to 14 costs 2, so 1 point left can't buy it.
+        // Every way the array changes goes through here or through Pick(class), whose standard array
+        // is exactly the budget; the background's +2/+1 is kept apart (BackgroundSpend) and costs nothing.
+        public bool CanRaise(Ability ability)
+        {
+            int now = Scores.Base(ability);
+
+            return now >= Abilities.PointBuyFloor && now < Abilities.PointBuyCeiling &&
+                   Abilities.PointBuyCost(now + 1) - Abilities.PointBuyCost(now) <= Scores.PointBuyLeft;
+        }
+
+        public bool CanLower(Ability ability) => Scores.Base(ability) > Abilities.PointBuyFloor;
+
+        public bool Raise(Ability ability)
+        {
+            if (!CanRaise(ability)) return false;
+
+            Scores.SetBase(ability, Scores.Base(ability) + 1);
+            return true;
+        }
+
+        public bool Lower(Ability ability)
+        {
+            if (!CanLower(ability)) return false;
+
+            Scores.SetBase(ability, Scores.Base(ability) - 1);
+            return true;
+        }
+
         public bool Pick(Kind species)
         {
             if (species == null || species.IsLineage) return false;

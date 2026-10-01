@@ -74,7 +74,7 @@ namespace Game.Play
             Board.Lay(battle.Fight.Field.Map);
             Board.Dress(props);
             Screen?.StandBehind(Board);
-            Companion?.StandBeside(Board);
+            Companion?.StandBy(Board, Screen);
 
             foreach ((Actor actor, Cell at) in places) Board.Place(actor, at);
 

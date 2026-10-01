@@ -36,11 +36,12 @@ namespace Game.Screens
         public static readonly string MousePinchKey = K("mouse_pinch");
         public static readonly string MouseHoverKey = K("mouse_hover");
         public static readonly string MouseTrayKey = K("mouse_tray");
+        public static readonly string BeginKey = K("begin");
 
         public static IEnumerable<string> Keys() => new[]
         {
             TitleKey, KeyboardKey, MouseKey, ChangeKey, TakenKey, ReservedKey, NotYetKey, HotkeysKey, GoOnKey,
-            CancelKey, MousePickKey, MouseCancelKey, MouseWheelKey, MousePinchKey, MouseHoverKey, MouseTrayKey,
+            CancelKey, MousePickKey, MouseCancelKey, MouseWheelKey, MousePinchKey, MouseHoverKey, MouseTrayKey, BeginKey,
         };
 
         // THE ACTS NOTHING IN LANORIM ANSWERS YET. They came over from the old build's Access layer and are
@@ -88,6 +89,7 @@ namespace Game.Screens
             AddChild(Line(Ui.Say(HotkeysKey)));
             AddChild(Line(Ui.Say(GoOnKey, Keyboard.Named(Act.ThrowDice.Id()))));
             AddChild(Line(Ui.Say(CancelKey, Keyboard.Named("ui_cancel"))));
+            AddChild(Line(Ui.Say(BeginKey, string.Join(" / ", Keyboard.Keys("ui_accept").Distinct()))));
 
             if (_said != "") AddChild(new Label { Text = _said, AutowrapMode = TextServer.AutowrapMode.WordSmart });
 

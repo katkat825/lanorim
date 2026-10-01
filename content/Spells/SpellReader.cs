@@ -23,7 +23,7 @@ namespace Content.Spells
             "id", "level", "school", "range", "concentration", "ritual", "approximated", "classes",
             "casting_time", "trigger", "repeat", "duration", "shapes", "curse", "range_scales",
             "not_in_srd", "answers_spell", "out_of_combat", "concentration_below", "ends_previous",
-            "moves_when_down", "force_creation", "dc_ability", "effects",
+            "moves_when_down", "force_creation", "dc_ability", "solo", "effects",
         };
 
         // on any effect, whatever its primitive

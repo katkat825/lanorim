@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cqnyfde5d2tio"
-path="res://.godot/imported/Skeleton_Mage.glb-629a4f2d5ae7577c72e1536583ef7911.scn"
+uid="uid://bifr7mkifgvxs"
+path="res://.godot/imported/Wolf.gltf-c385e471d357619440c2b8afe8219a79.scn"
 
 [deps]
 
-source_file="res://models/companions/Skeleton_Mage.glb"
-dest_files=["res://.godot/imported/Skeleton_Mage.glb-629a4f2d5ae7577c72e1536583ef7911.scn"]
+source_file="res://models/companions/Wolf.gltf"
+dest_files=["res://.godot/imported/Wolf.gltf-c385e471d357619440c2b8afe8219a79.scn"]
 
 [params]
 

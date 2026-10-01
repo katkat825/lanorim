@@ -63,11 +63,20 @@ namespace Game.Play
                 return;
             }
 
+            // and one whose only legal target is the hero goes on the hero (a party of one's Cure Wounds)
+            if (Session.OnlyTargetIsYou)
+            {
+                Actor me = Session.Hero.Actor;
+                Rules.Post(() => Session.Confirm(me), Refresh);
+                return;
+            }
+
             Refresh();
         }
 
-        // a spell that can go on the caster (Mage Armor, Cure Wounds) is being aimed: "On yourself"
-        // casts it without a click on the board
+        // a spell that can go on the caster (Mage Armor, Cure Wounds) is being aimed with someone else to
+        // aim at too: "On yourself" casts it without a click on the board. With no one else it never shows,
+        // since picking it cast it (OnlyTargetIsYou)
         public bool CanAimAtSelf =>
             HerosMove && Session.Selected?.Targeting is Targeting.Creature or Targeting.Creatures &&
             Session.LegalTargets().Contains(Session.Hero.Actor);

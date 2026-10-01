@@ -98,6 +98,9 @@ namespace Core.Magic
         // of a fight only, where the minute passes in the telling
         public bool OutOfCombat { get; init; }
 
+        // whether a party of one can ever cast it (Solo): Spare the Dying can't
+        public Solo Solo { get; init; }
+
         // cast at this level or higher it needs no concentration: Major Image at 4+. 0 is never
         public int ConcentrationBelow { get; init; }
 

@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://rct5itt83faq"
-path="res://.godot/imported/Skeleton_Minion.glb-369067d2741a136a2f25055c6859a864.scn"
+uid="uid://cypu4vum8827o"
+path="res://.godot/imported/ShibaInu.gltf-fb178c0fa9f06f3c93b0f6893a8393db.scn"
 
 [deps]
 
-source_file="res://models/companions/Skeleton_Minion.glb"
-dest_files=["res://.godot/imported/Skeleton_Minion.glb-369067d2741a136a2f25055c6859a864.scn"]
+source_file="res://models/companions/ShibaInu.gltf"
+dest_files=["res://.godot/imported/ShibaInu.gltf-fb178c0fa9f06f3c93b0f6893a8393db.scn"]
 
 [params]
 

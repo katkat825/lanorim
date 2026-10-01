@@ -54,6 +54,9 @@ namespace Content.Spells
 
             CheckWhole(entry, id, effects, concentration, trigger, repeat, lasts, problems);
 
+            if (!EnumWords.TryParse(entry.Text("solo", "usable"), out Solo solo))
+                problems.Add($"{id}: '{entry.Text("solo")}' is not a solo word (usable, unavailable)");
+
             return new Spell(id, level, school, effects,
                              entry.Number("range"),
                              concentration,
@@ -76,6 +79,7 @@ namespace Content.Spells
                 MovesWhenDown = entry.Flag("moves_when_down"),
                 ForceCreation = entry.Flag("force_creation"),
                 DcAbility = entry.Ability("dc_ability", problems, id),
+                Solo = solo,
             };
         }
 

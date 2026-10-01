@@ -85,7 +85,10 @@ namespace Content.Combat
         {
             if (Hero.Caster == null) yield break;
 
-            foreach (Spell spell in Hero.Caster.Known.Where(s => !s.Answers))
+            // a spell a party of one can never cast isn't offered while the hero is alone (Solo)
+            bool alone = !Fight.Actors.Any(a => a.Side == Hero.Actor.Side && !ReferenceEquals(a, Hero.Actor));
+
+            foreach (Spell spell in Hero.Caster.Known.Where(s => !s.Answers && !(alone && s.Solo == Solo.Unavailable)))
             {
                 string why = WhyNotSpell(spell);
 

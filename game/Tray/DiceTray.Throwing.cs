@@ -47,10 +47,10 @@ namespace Game.Tray
             _queued.Clear();
             _read.Clear();
 
-            for (int i = _dice.Count; i < dice.Length; i += _dice.Count)
-                _queued.Add(dice.Skip(i).Take(_dice.Count).ToArray());
+            for (int i = Seats; i < dice.Length; i += Seats)
+                _queued.Add(dice.Skip(i).Take(Seats).ToArray());
 
-            Handful(dice.Take(_dice.Count).ToArray());
+            Handful(dice.Take(Seats).ToArray());
 
             return true;
         }

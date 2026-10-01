@@ -46,16 +46,16 @@ namespace Game.Screens
             {
                 Ability one = ability;
 
-                Button less = Ui.Button("-", () => Shift(one, -1), true);
-                Button more = Ui.Button("+", () => Shift(one, +1), true);
+                Button less = Ui.Button("-", () => { _making.Lower(one); Update(); }, true);
+                Button more = Ui.Button("+", () => { _making.Raise(one); Update(); }, true);
                 Label score = Ui.Plain("");
                 Label after = Ui.Plain("");
 
                 _updates.Add(() =>
                 {
                     int now = _making.Scores.Base(one);
-                    less.Disabled = now <= Abilities.PointBuyFloor;
-                    more.Disabled = now >= Abilities.PointBuyCeiling;
+                    less.Disabled = !_making.CanLower(one);
+                    more.Disabled = !_making.CanRaise(one);
                     score.Text = now.ToString();
                     after.Text = $"→ {_making.ScoreAfter(one)}";
                 });
@@ -65,15 +65,8 @@ namespace Game.Screens
             }
 
             Label left = Ui.Plain("");
-            _updates.Add(() => left.Text = Ui.Say(ScreenWords.PointsLeft, Abilities.PointBuyBudget - _making.Scores.PointBuySpend));
+            _updates.Add(() => left.Text = Ui.Say(ScreenWords.PointsLeft, _making.Scores.PointBuyLeft));
             _body.AddChild(left);
-        }
-
-        void Shift(Ability ability, int by)
-        {
-            _making.Scores.SetBase(ability, Math.Clamp(_making.Scores.Base(ability) + by,
-                                                       Abilities.PointBuyFloor, Abilities.PointBuyCeiling));
-            Update();
         }
 
         // the "take it back" button comes and goes, so this page rebuilds (keeping its place)

@@ -170,6 +170,9 @@ MANIFEST = {
         {"id": "old_mill", "maps": ["mill_cellar", "road_clearing", "mill_yard"]},
     ],
     "start": "old_mill",
+    # a screen with a picture, so the table shows what a campaign's art looks like under the lamp
+    # (cc_task_ui-issues-10-01.md 5); the default is "blank"
+    "gm_screen": "plains",
 }
 
 # --- the story ----------------------------------------------------------------------------------

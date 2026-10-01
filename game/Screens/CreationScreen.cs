@@ -190,7 +190,7 @@ namespace Game.Screens
             Step.Skills => _making.SkillPicksLeft + _making.ExpertisePicksLeft,
             Step.Cantrips => _making.CantripPicksLeft,
             Step.Spells => _making.SpellPicksLeft,
-            Step.Abilities => Abilities.PointBuyBudget - _making.Scores.PointBuySpend,
+            Step.Abilities => _making.Scores.PointBuyLeft,
             _ => 0,
         };
 

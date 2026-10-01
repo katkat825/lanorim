@@ -985,6 +985,7 @@ ui.area.cone.name,{0}-foot cone
 ui.area.cube.name,{0}-foot cube
 ui.area.line.name,{0}-foot line
 ui.area.radius.name,{0}-foot radius
+ui.book.contents,Contents
 ui.book.continue,Continue
 ui.book.delete,Delete
 ui.book.delete_question_many,Delete {0}? This can't be undone. All {1} of their saves go with them.
@@ -1095,6 +1096,7 @@ ui.combat_why.shifted.name,You can't cast in a borrowed shape.
 ui.combat_why.spent.name,Nothing left to cast it with.
 ui.combat_why.too_far.name,Too far to reach this turn.
 ui.combat_why.too_long.name,It takes too long to cast in a fight.
+ui.controls.begin,"On the closed book, Begin opens it: {0}, or a click on it"
 ui.controls.cancel,"Put back what you picked; with nothing picked, pause: {0}"
 ui.controls.change,Change
 ui.controls.go_on,"End your turn, or skip the rest of the enemies' turns: {0}"
