@@ -63,7 +63,7 @@ namespace Content.Combat
             bool again = Selected.Kind == OptionKind.Again;
             List<SpellEffect> effects = spell.Effects
                                              .Where(e => again ? e.Lands.Repeats() : e.Lands != Lands.OnRepeat)
-                                             .Where(e => e.Mode.Length == 0 || e.Mode == Mode)
+                                             .Where(e => e.InMode(Mode))
                                              .ToList();
 
             IReadOnlyList<Cell> template = Template(effects, square);
@@ -87,13 +87,13 @@ namespace Content.Combat
             {
                 bool close = Fight.Field.Distance(me, about) <= 1;
                 Advantage lean = Strike.Lean(me, about, close, Fight.Sees(me, about), Fight.Sees(about, me));
-                hitChance = AttackChance(Hero.Caster.AttackModifier, about.ArmorClass + Fight.Cover(me, about),
+                hitChance = AttackChance(Hero.Caster.AttackModifierFor(spell), about.ArmorClass + Fight.Cover(me, about),
                                          lean);
                 expected = hitChance * Math.Max(0, dice.Average);
             }
             else if (about != null && saved != null)
             {
-                fail = SaveFailChance(about.SaveModifier(saved.Save.Value), Hero.Caster.SaveDc,
+                fail = SaveFailChance(about.SaveModifier(saved.Save.Value), Hero.Caster.SaveDcFor(spell),
                                       about.SaveAdvantage(saved.Save.Value));
                 expected = Math.Max(0, dice.Average) *
                            (fail + (saved.OnSave == OnSave.Half ? (1 - fail) * 0.5 : 0));
@@ -115,7 +115,7 @@ namespace Content.Combat
                 Legal = LegalAim(targets, square),
                 Targets = caught,
                 HitChance = hitChance,
-                SaveDc = saved != null ? Hero.Caster.SaveDc : null,
+                SaveDc = saved != null ? Hero.Caster.SaveDcFor(spell) : null,
                 SaveAbility = saved?.Save,
                 HalfOnSave = saved?.OnSave == OnSave.Half,
                 FailChance = fail,
@@ -172,7 +172,7 @@ namespace Content.Combat
                     case AimKind.Around:
                         cells.AddRange(Fight.Field.Burst(here, e.Radius));
                         break;
-                    case AimKind.Place when square.HasValue && e.Kind == Primitive.Zone:
+                    case AimKind.Place when square.HasValue && e.Handler.MakesAZone:
                         cells.AddRange(Fight.Field.Burst(square.Value, e.Radius));
                         break;
                 }

@@ -1,0 +1,37 @@
+{
+  "_": "SRD 5.2.1 spells a species gives and no v1 class list has yet: the Wood Elf's Druidcraft and Longstrider (SRD p.85, the spells pp.126 and 138), CC-BY-4.0. On no class's list here: the SRD puts them on the Druid's (and Longstrider on the Ranger's and Wizard's too), and whether the v1 lists grow is Kathleen's (cc_task_e-shop-species-and-ui-notes.md 1.3). Ranges are in squares: one square is five feet.",
+  "spells": [
+    {
+      "id": "druidcraft",
+      "level": 0,
+      "school": "transmutation",
+      "range": 6,
+      "classes": [],
+      "effects": [
+        {
+          "primitive": "narrate",
+          "aim": "place",
+          "note": "SRD 5.2.1: a weather sense, a bloom, a harmless sensory effect in a 5-foot cube, or a candle, torch or campfire lit or snuffed. narrative only, like Prestidigitation"
+        }
+      ]
+    },
+    {
+      "id": "longstrider",
+      "level": 1,
+      "school": "transmutation",
+      "range": 0,
+      "classes": [],
+      "effects": [
+        {
+          "primitive": "sway",
+          "aim": "creatures",
+          "targets": 1,
+          "speed_change": 10,
+          "duration": "rest",
+          "upcast": {"targets": 1},
+          "note": "SRD 5.2.1: a touched creature's Speed is 10 feet more for an hour (until a rest, decisions_checklist.md's mapping); one more creature for each slot level above 1"
+        }
+      ]
+    }
+  ]
+}

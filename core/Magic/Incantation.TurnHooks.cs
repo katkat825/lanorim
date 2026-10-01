@@ -342,13 +342,7 @@ namespace Core.Magic
         // the concentration thread follows a worsened condition, so letting go ends the new one
         void ReplaceThread(Placement hold, Condition now)
         {
-            if (hold.Caster == null || !_held.TryGetValue(hold.Caster.Actor, out List<Thread> threads))
-                return;
-
-            for (int i = 0; i < threads.Count; i++)
-                if (ReferenceEquals(threads[i].Target, hold.Target) &&
-                    threads[i].SpellId == hold.Spell && threads[i].Condition == hold.Condition)
-                    threads[i] = new Thread(hold.Target, hold.Spell, now);
+            if (hold.Caster != null) _held.Swap(hold.Caster.Actor, hold.Target, hold.Spell, hold.Condition, now);
         }
     }
 }

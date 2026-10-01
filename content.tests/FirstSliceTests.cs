@@ -24,6 +24,7 @@ namespace Content.Tests
             making.Pick(Srd.Class("fighter"));
             making.Pick(Srd.Kind("human"));
             making.Pick(Srd.Background("soldier"));
+            making.SuggestTraits();
 
             foreach (Skill skill in making.SkillChoices.Take(making.SkillPicksLeft))
                 making.Train(skill);

@@ -114,7 +114,7 @@ namespace Game.Play
             // the keyboard's own keys (Game.Access.AccessDesk): Tab reaches the fight's pieces and bar and the tray,
             // F2 says where in the campaign we are
             Game.Access.AccessDesk.Reaching = Reachables;
-            Game.Access.AccessDesk.Where = () => Content.Screens.Whereabouts.Of(Run, _combat.Session);
+            Game.Access.AccessDesk.Where = () => Content.Screens.Whereabouts.Of(Run, _combat.Session, _combat.TurnShown);
 
             if (args.Contains(ProneProbe.Flag)) AddChild(new ProneProbe { Name = "ProneProbe", Combat = _combat });
 

@@ -32,7 +32,8 @@ namespace Content.Screens
         // on the launch screen, with no campaign under way
         public static IReadOnlyList<Said> AtTheBook() => new[] { new Said(BookKey) };
 
-        public static IReadOnlyList<Said> Of(CampaignRun run, CombatSession fight = null)
+        // `showing`: the turn the table is playing back, when it is behind the rules (CombatHud's, 2.7)
+        public static IReadOnlyList<Said> Of(CampaignRun run, CombatSession fight = null, Actor showing = null)
         {
             var said = new List<Said>();
 
@@ -42,7 +43,7 @@ namespace Content.Screens
             {
                 said.Add(new Said(RoundKey, fight.Fight.Round));
 
-                Actor turn = fight.Turn?.Actor;
+                Actor turn = showing ?? fight.Turn?.Actor;
 
                 if (turn != null)
                     said.Add(ReferenceEquals(turn, fight.Hero.Actor)

@@ -55,61 +55,24 @@ namespace Content.Spells
 
             keys.UnionWith(PrimitiveHandlers.For(primitive).Keys);
 
-            if (primitive == Primitive.Sway) keys.UnionWith(BoonSpecReader.Keys);
+            if (PrimitiveHandlers.For(primitive).CarriesABoon) keys.UnionWith(BoonSpecReader.Keys);
 
             return keys;
         }
 
         public static bool TryRead(string text, out IReadOnlyList<Spell> spells,
-                                   out IReadOnlyList<string> problems)
-        {
-            var found = new List<Spell>();
-            var trouble = new List<string>();
+                                   out IReadOnlyList<string> problems) =>
+            Entries.TryRead(text, out spells, out problems);
 
-            spells = found;
-            problems = trouble;
+        // the file: { "spells": [ ... ] }, or a bare array of spells, each read by ReadOne (EntryList).
+        // made on first use: SpellKeys is in this file and ReadOne in another
+        static EntryList<Spell> _entries;
 
-            if (!Json.TryParse(text, out JsonDocument document, out string bad))
-            {
-                trouble.Add(bad);
-                return false;
-            }
-
-            using (document)
-            {
-                JsonElement root = document.RootElement;
-
-                IReadOnlyList<JsonElement> entries =
-                    root.ValueKind == JsonValueKind.Array
-                        ? ToList(root)
-                        : root.Items("spells");
-
-                if (entries.Count == 0)
-                    trouble.Add("no spells in it - the file is an array, or an object with a " +
-                                "'spells' array");
-
-                foreach (JsonElement entry in entries)
-                {
-                    Spell spell = ReadOne(entry, trouble);
-
-                    if (spell != null) found.Add(spell);
-                }
-            }
-
-            return trouble.Count == 0;
-        }
-
-        static IReadOnlyList<JsonElement> ToList(JsonElement array)
-        {
-            var list = new List<JsonElement>();
-
-            foreach (JsonElement item in array.EnumerateArray()) list.Add(item);
-
-            return list;
-        }
+        public static EntryList<Spell> Entries =>
+            _entries ??= new EntryList<Spell>("spells", "spell", SpellKeys, ReadOne, bareArray: true);
 
         // one spell object on its own - a statblock's special action is one, inline
         public static Spell ReadEntry(JsonElement entry, List<string> problems) =>
-            ReadOne(entry, problems ?? new List<string>());
+            Entries.ReadEntry(entry, problems ?? new List<string>());
     }
 }

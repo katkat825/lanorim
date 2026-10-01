@@ -386,6 +386,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `companion` | id | the companion it comes with | | class | existing |
 | `starting_gear` | list of item ids | its SRD kit | | class | existing |
 | `gold` | number | starting gold | | class | existing |
+| `gold_instead` | number | the gold taken instead of the starting gear (SRD 5.2.1's "or (B) 75 GP"); taken, the hero shops before the campaign | | class | `gold` is what comes with the gear; this is the other choice (2026-10-05, task E 1.4) |
 | `tools` | list | tool proficiencies | | class | existing |
 | `weapon_proficiencies` | list of `simple`, `martial` | SRD's Weapon Proficiencies | `weapons` | class | SRD's name; `weapons` is a rewrite's list of weapon ids (leftovers #13) |
 | `features` | list of features | what it gets, by level | | class | existing |
@@ -437,7 +438,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `free_casts` | record of spell id: number | casts each long rest that cost no slot | | class | existing |
 | `cantrips_by_level` | record of level: number | cantrips known by level | | class | existing |
 | `known_by_level` | record of level: number | spells prepared by level | | class | existing |
-| `skill_picks` | number | one more skill to pick | | class | existing |
+| `skill_picks` | number | one more skill to pick: a class feature's from the class list (Primal Knowledge); a species feature's from its own `skills`, or any skill when it lists none (Skillful, Keen Senses) | | class, species | existing (species since 2026-10-05) |
 | `expertise_from` | list of skills | the skills an expertise may choose from | | class | existing |
 | `dc` | number | an intercept's save DC | `save_dc` | class | the word every other DC uses (leftovers #2) |
 | `dc_step` | number | how much the DC grows each use | | class | existing |
@@ -511,6 +512,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `features` | list of features | its traits | | species | existing |
 | `lineages` | list of species ids | its lineages, picked in the creator | | species | existing |
 | `lineage_of` | species id | the species this is a lineage of | | species | existing |
+| `sizes` | list of sizes | the sizes it may be, the first the default; two is a choice in the creator (Human, Tiefling: Medium or Small) | | species | a monster's `size` is one word; a species can offer two, so a list (2026-10-05, task E 1.3) |
 
 ### `background`
 
@@ -521,6 +523,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `abilities` | list of abilities | the three abilities its score increase may go to | | background | existing |
 | `gear` | list of item ids | the gear it starts with | | background | existing |
 | `gold` | number | the gold it starts with | | background | existing |
+| `gold_instead` | number | the gold taken instead of its gear (50 GP, SRD 5.2.1 p.83) | | background | as the class's (2026-10-05, task E 1.4) |
 | `not_in_srd` | flag | Lanorim's own, not an SRD 5.2.1 background (Recluse, in `content/srd/backgrounds/lanorim.json`) | | background | a spell's word for the same idea, reused (2026-09-28) |
 
 ### `consequence`: one entry in the nat-1 / nat-20 pool

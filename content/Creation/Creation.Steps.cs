@@ -28,7 +28,7 @@ namespace Content.Creation
         public bool NeedsLineage => LineageChoices.Any();
 
         public IEnumerable<Skill> SkillChoices =>
-            Class?.SkillChoices.Where(s => !_skills.Contains(s)) ?? Enumerable.Empty<Skill>();
+            Class?.SkillChoices.Where(s => !_skills.Contains(s) && !_traitSkills.Contains(s)) ?? Enumerable.Empty<Skill>();
 
         // the class's picks, and one more for a feature that grants it by this level (SRD 5.2.1
         // Primal Knowledge, p.29)

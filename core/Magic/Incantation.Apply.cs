@@ -5,6 +5,9 @@ using Core.Dice;
 using Core.Resolution;
 using Core.Rules;
 
+using static Core.Magic.SpellReach;
+using static Core.Magic.SpellShapes;
+
 namespace Core.Magic
 {
     // ONE EFFECT ON ONE CREATURE: the checks every primitive shares - can it be touched, is a Globe
@@ -26,7 +29,7 @@ namespace Core.Magic
             DiceRoll amount = effect.AmountAt(spell.Level, castAt, caster.Actor.Level);
 
             // Cure Wounds' "+ your spellcasting ability modifier" - once, not per die
-            int modifier = effect.AddsModifier ? caster.Actor.AbilityModifier(caster.Ability) : 0;
+            int modifier = effect.AddsModifier ? caster.Actor.AbilityModifier(caster.AbilityFor(spell)) : 0;
 
             // an attack roll, a saving throw, or neither - and never both
             Attempt attempt = null;
@@ -51,7 +54,7 @@ namespace Core.Magic
 
                 int cover = fight?.Cover(caster.Actor, target) ?? 0;
 
-                attempt = _resolver.Resolve(RollKind.Attack, caster.AttackModifier,
+                attempt = _resolver.Resolve(RollKind.Attack, caster.AttackModifierFor(spell),
                                             target.ArmorClass + cover, lean, caster.Actor);
 
                 caster.Actor.Boons.Attacked();
@@ -94,7 +97,7 @@ namespace Core.Magic
                     extra = Advantages.Of(extra == Advantage.Advantage, true);
 
                 // Fey Ancestry, Brave, Dwarven Resilience: advantage on a save against the condition
-                if (effect.Kind == Primitive.Afflict && target.AdvantageOnSaveAgainst(effect.Condition))
+                if (effect.Handler.Inflicts(effect) is Condition inflicted && target.AdvantageOnSaveAgainst(inflicted))
                     extra = extra.And(Advantage.Advantage);
 
                 // a statblock's Magic Resistance: advantage on every save against a spell
@@ -140,6 +143,6 @@ namespace Core.Magic
         static int DcFor(Caster caster, Spell spell) =>
             spell?.DcAbility is Ability own
                 ? 8 + caster.Actor.ProficiencyBonus + caster.Actor.AbilityModifier(own)
-                : caster.SaveDc;
+                : caster.SaveDcFor(spell);
     }
 }

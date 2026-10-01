@@ -160,6 +160,7 @@ namespace Sim
             making.Pick(library.Class(cls));
             making.Pick(library.Kind("human"));
             making.Pick(library.Background("soldier"));
+            making.SuggestTraits();
 
             foreach (Skill skill in making.SkillChoices.Take(making.SkillPicksLeft).ToList()) making.Train(skill);
             foreach (Skill skill in making.Skills.Take(making.ExpertisePicksLeft).ToList()) making.Master(skill);

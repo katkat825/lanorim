@@ -50,6 +50,7 @@ namespace Content.Tests
             making.Pick(library.Class(className));
             making.Pick(library.Kind("human"));
             making.Pick(library.Background("soldier"));
+            making.SuggestTraits();
 
             foreach (Core.Characters.Skill skill in making.SkillChoices.Take(making.SkillPicksLeft).ToList())
                 making.Train(skill);

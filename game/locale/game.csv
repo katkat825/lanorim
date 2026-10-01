@@ -263,7 +263,7 @@ feature.instinctive_pounce.description,"When you rage, you can move up to half y
 feature.instinctive_pounce.name,Instinctive Pounce
 feature.intimidating_presence.description,Your fury can frighten the creatures around you.
 feature.intimidating_presence.name,Intimidating Presence
-feature.keen_senses.description,You are trained in Perception.
+feature.keen_senses.description,"You are trained in Insight, Perception or Survival, your choice."
 feature.keen_senses.name,Keen Senses
 feature.lands_aid.description,Spend a Wild Shape use to harm foes and heal yourself.
 feature.lands_aid.name,Land's Aid
@@ -327,7 +327,7 @@ feature.reliable_talent.description,"On a check with a skill you are trained in,
 feature.reliable_talent.name,Reliable Talent
 feature.remarkable_athlete.description,Advantage on initiative and on Strength (Athletics) checks.
 feature.remarkable_athlete.name,Remarkable Athlete
-feature.resourceful.description,Heroic Inspiration after every long rest (the narrator spends it for now).
+feature.resourceful.description,Heroic Inspiration after every long rest: the first saving throw you fail after it is rolled again.
 feature.resourceful.name,Resourceful
 feature.restoring_touch.description,Lay on Hands also ends conditions.
 feature.restoring_touch.name,Restoring Touch
@@ -349,7 +349,7 @@ feature.second_wind.description,"A bonus action: regain 1d10 plus your fighter l
 feature.second_wind.name,Second Wind
 feature.signature_spells.description,"Two 3rd-level spells, each free once between rests."
 feature.signature_spells.name,Signature Spells
-feature.skillful.description,You are trained in Insight.
+feature.skillful.description,You are trained in one skill of your choice.
 feature.skillful.name,Skillful
 feature.slippery_mind.description,Trained in Wisdom and Charisma saving throws.
 feature.slippery_mind.name,Slippery Mind
@@ -407,7 +407,7 @@ feature.wild_resurgence.description,Trade between spell slots and Wild Shape use
 feature.wild_resurgence.name,Wild Resurgence
 feature.wild_shape.description,"4 shapes you can take, 2 times between rests (3 at 6th level, 4 at 17th); a short rest gives one back."
 feature.wild_shape.name,Wild Shape
-feature.wood_elf_magic.description,"Pass without Trace at 5th level, once a day without a slot."
+feature.wood_elf_magic.description,"Druidcraft; Longstrider at 3rd level and Pass without Trace at 5th, each once a day without a slot."
 feature.wood_elf_magic.name,Wood Elf Magic
 form.black_bear.description,"Combat. Strong and steady: Armor Class 11, speed 30 feet, climbs and swims 30 feet, trained in Perception. Rend for 1d6 slashing. Opens at level 4."
 form.black_bear.name,Black Bear
@@ -773,6 +773,8 @@ spell.dominate_monster.description,"Level 8. Leaves the target stunned, wis save
 spell.dominate_monster.name,Dominate Monster
 spell.dragons_breath.description,"Level 2. Bonus action. You touch a willing creature and choose acid, cold, fire, lightning or poison. While you hold the spell, it can take an action to exhale a 15-foot cone: Dexterity save, 3d6 damage of that type, half on a success. 1d6 more per level above 2. Requires concentration."
 spell.dragons_breath.name,Dragon's Breath
+spell.druidcraft.description,Cantrip. Its effect is told by the narrator.
+spell.druidcraft.name,Druidcraft
 spell.eldritch_blast.description,"Cantrip. 1d10 force damage, more beams as you level, on a hit."
 spell.eldritch_blast.name,Eldritch Blast
 spell.enhance_ability.description,Level 2. Advantage on ability checks. Requires concentration.
@@ -853,6 +855,8 @@ spell.light.description,Cantrip. Lights 4 squares.
 spell.light.name,Light
 spell.lightning_bolt.description,"Level 3. 8d6 lightning damage in a 100-foot line, dex save for half."
 spell.lightning_bolt.name,Lightning Bolt
+spell.longstrider.description,Level 1. A creature you touch has 10 feet more Speed until a rest. One more creature for each slot level above 1.
+spell.longstrider.name,Longstrider
 spell.mage_armor.description,Level 1. Armor Class 13 plus Dexterity while wearing no armor.
 spell.mage_armor.name,Mage Armor
 spell.mage_hand.description,Cantrip. Its effect is told by the narrator.
@@ -1046,6 +1050,7 @@ ui.combat.round,Round {0}
 ui.combat.save_chance,{0}% to fail the save
 ui.combat.skip,Skip
 ui.combat.spells_menu,Spells
+ui.combat.their_turn,{0}'s turn
 ui.combat.they_armor_class,{0}'s Armor Class is now {1}
 ui.combat.they_hit_points,"{0} regains {2} hit points, and has {1}"
 ui.combat.they_max_hit_points,{0}'s hit point maximum is now {1}
@@ -1124,6 +1129,12 @@ ui.controls.reserved,{0} is kept for the action bar. Pick another key.
 ui.controls.taken,{0} already does something else. Pick another key.
 ui.controls.title,Controls
 ui.create.chosen_of,{0} of {1} chosen
+ui.create.kit_from_background,From your background
+ui.create.kit_from_class,From your class
+ui.create.kit_gear,"The gear, and {0}"
+ui.create.kit_gold,{0} instead
+ui.create.kit_shop_first,"With the gold, you visit a shop before the story begins."
+ui.create.kit_starts_with,You start with {0}.
 ui.create.name_hint,What are you called?
 ui.create.picks_left,{0} left to choose
 ui.create.points_left,{0} points left to spend
@@ -1132,6 +1143,7 @@ ui.create.step_alignment,Choose an alignment
 ui.create.step_background,Choose a background
 ui.create.step_cantrips,Choose your cantrips
 ui.create.step_class,Choose a class
+ui.create.step_equipment,Your starting equipment
 ui.create.step_improvements,Spend your ability score improvements
 ui.create.step_lineage,Choose a lineage
 ui.create.step_name,Name your character
@@ -1139,8 +1151,12 @@ ui.create.step_skills,Choose your skills
 ui.create.step_species,Choose a species
 ui.create.step_spellresource,How do you pay for spells?
 ui.create.step_spells,Choose your spells
+ui.create.step_traits,Your species' traits
 ui.create.take_suggested,Take the suggestion
 ui.create.title,A new character
+ui.create.trait_size,Your size
+ui.create.trait_skill,A skill your species gives you
+ui.create.trait_spell_ability,Your species' spells are cast with
 ui.death.load,Load a save
 ui.death.no_save,There is no save to go back to.
 ui.death.reload,Try again
@@ -1317,8 +1333,16 @@ ui.sheet.armor_class,Armor Class {0}
 ui.sheet.features,Features
 ui.sheet.hit_points,{0} / {1} hit points
 ui.sheet.level,Level {0}
+ui.sheet.size,{0}
+ui.sheet.species_spells,Species spells: {0}
 ui.sheet.spells,Spells
 ui.sheet.title,Character
+ui.size.gargantuan.name,Gargantuan
+ui.size.huge.name,Huge
+ui.size.large.name,Large
+ui.size.medium.name,Medium
+ui.size.small.name,Small
+ui.size.tiny.name,Tiny
 ui.spell_card.adapted.name,A Lanorim version of this spell
 ui.spell_cost.at_will.name,At will
 ui.spell_cost.points.name,{0} spell points

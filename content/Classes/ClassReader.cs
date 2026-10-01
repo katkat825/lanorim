@@ -11,58 +11,23 @@ namespace Content.Classes
     public static class ClassReader
     {
         public static bool TryRead(string text, out IReadOnlyList<CharacterClass> classes,
-                                   out IReadOnlyList<string> problems)
-        {
-            var found = new List<CharacterClass>();
-            var trouble = new List<string>();
-
-            classes = found;
-            problems = trouble;
-
-            if (!Json.TryParse(text, out JsonDocument document, out string bad))
-            {
-                trouble.Add(bad);
-                return false;
-            }
-
-            using (document)
-            {
-                Keyed.OnlyKnown(document.RootElement, new[] { "classes" }, "the classes file", trouble);
-
-                foreach (JsonElement entry in document.RootElement.Items("classes"))
-                {
-                    CharacterClass read = ReadOne(entry, trouble);
-
-                    if (read != null) found.Add(read);
-                }
-
-                if (found.Count == 0 && trouble.Count == 0)
-                    trouble.Add("no classes in it - the file is an object with a 'classes' array");
-            }
-
-            return trouble.Count == 0;
-        }
+                                   out IReadOnlyList<string> problems) =>
+            Entries.TryRead(text, out classes, out problems);
 
         // every key a class takes (its features' are FeatureReader.Keys)
         public static readonly IReadOnlyList<string> Keys = new[]
         {
             "id", "hit_die", "saves", "skill_choices", "skill_picks", "armor_training", "shields", "priority",
-            "subclass", "companion", "starting_gear", "gold", "tools", "weapon_proficiencies", "features",
+            "subclass", "companion", "starting_gear", "gold", "gold_instead", "tools", "weapon_proficiencies", "features",
             "improvement_levels",
         };
 
-        static CharacterClass ReadOne(JsonElement entry, List<string> problems)
+        // the file: { "classes": [ ... ] }, each entry read by ReadOne (EntryList)
+        public static readonly EntryList<CharacterClass> Entries =
+            new EntryList<CharacterClass>("classes", "class", Keys, ReadOne);
+
+        static CharacterClass ReadOne(JsonElement entry, string id, List<string> problems)
         {
-            string id = entry.Text("id");
-
-            if (!Json.IsId(id))
-            {
-                problems.Add($"'{id}' is not a class id");
-                return null;
-            }
-
-            Keyed.OnlyKnown(entry, Keys, id, problems);
-
             if (!DieExtensions.TryParse(entry.Text("hit_die", "d8"), out Die hitDie))
             {
                 problems.Add($"{id}: '{entry.Text("hit_die")}' is not a die");
@@ -106,6 +71,7 @@ namespace Content.Classes
             {
                 ImprovementLevels = improvements,
                 Gold = entry.Number("gold"),
+                GoldInstead = entry.Number("gold_instead"),
                 Tools = entry.Strings("tools"),
                 // SRD's Weapon Proficiencies: simple, martial
                 WeaponProficiencies = entry.Strings("weapon_proficiencies"),

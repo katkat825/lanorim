@@ -25,6 +25,13 @@ namespace Core.Combat
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             Field = field ?? throw new ArgumentNullException(nameof(field));
             Observer = observer ?? new Observers();
+
+            // what only the fight knows about a step, put where every route asks (Battlefield.StepCost): a spell's
+            // difficult ground, and dragging a grappled creature - one more square unless it is Tiny or two sizes
+            // smaller (SRD 5.2.1 Grappled)
+            Field.MadeRough = IsRough;
+            Field.Drags = mover => Held(mover).Any(h => h.CurrentSize != Size.Tiny &&
+                                                       (int)h.CurrentSize > (int)mover.CurrentSize - 2);
         }
 
         public Battlefield Field { get; }
@@ -322,24 +329,15 @@ namespace Core.Combat
 
             for (int i = 1; i < route.Count; i++)
             {
-                // difficult terrain is double, whether the map made it or a spell did, and the two
-                // do not stack - SRD's difficult terrain is a yes or a no
-                bool rough = !turn.Actor.IsFlying && Field.Map.At(route[i]).MoveCost() > 1 ||
-                             IsRough(route[i], turn.Actor);
-
-                // crawling: one extra square (SRD 5.2.1 Prone). dragging a grappled creature: one
-                // extra, unless it is Tiny or two sizes smaller (Grappled)
-                bool crawling = turn.Actor.Has(Condition.Prone) && !turn.Actor.IsFlying;
+                // the one step cost the route was found by (Battlefield.StepCost): difficult ground, a spell's
+                // included, crawling and dragging
                 List<Actor> dragged = Held(turn.Actor);
-                bool dragging = dragged.Any(h => h.CurrentSize != Size.Tiny &&
-                                                 (int)h.CurrentSize > (int)turn.Actor.CurrentSize - 2);
-
-                int cost = ((rough ? 2 : 1) + (crawling ? 1 : 0) + (dragging ? 1 : 0)) * Turn.FeetPerSquare;
+                int cost = Field.StepCost(turn.Actor, route[i]) * Turn.FeetPerSquare;
 
                 Cell from = walked[walked.Count - 1];
 
-                // Frightened: not one step closer to what it fears
-                if (Field.CloserToFear(turn.Actor, from, route[i])) break;
+                // Frightened: not one step closer to what it fears (the route already keeps to this)
+                if (Field.Forbids(turn.Actor, from, route[i])) break;
 
                 if (!turn.Take(Spend.Movement, cost)) break;
 

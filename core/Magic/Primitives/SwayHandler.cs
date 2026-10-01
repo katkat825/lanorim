@@ -10,6 +10,15 @@ namespace Core.Magic
     {
         public Primitive Kind => Primitive.Sway;
 
+        public bool CarriesABoon => true;
+
+        public bool LastsWhileInTheZone(SpellEffect effect) => effect.Linger.WhileInZone;
+
+        // a boon with nothing against its bearer (Bless, Haste, Enlarge), that nobody saves against
+        // or only the unwilling do. not Hex or Hunter's Mark: a mark is on the one it hurts
+        public bool Helps(SpellEffect effect) =>
+            effect.OnlyHelps && (!effect.Save.HasValue || effect.SaveIfUnwilling);
+
         // its own two, what the boon is (BoonSpecReader.Keys, read by that reader), and how it ends
         public IReadOnlyList<string> Keys { get; } = new[]
         {

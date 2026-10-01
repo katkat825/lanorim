@@ -94,3 +94,7 @@
     - **[DEFER]** **Gaseous Form entering and occupying another creature's space**: the battlefield holds one creature a square, and movement, targeting, areas and the board all lean on that. Two to three days; until then Gaseous Form stays on the allow-list.
     - **[DEFER]** **A `<<cast spell>>` request**, so a campaign can ask the hero to cast a spell outside a fight (Spare the Dying on a dying guard, Raise Dead on a murdered innkeeper, Identify, Speak with Dead). A new request verb read like the others, a yes/no card, the slot spent through the incantation with no fight, and the answer in a Yarn variable. About a day. Until it exists, Spare the Dying and Raise Dead aren't offered to a party of one.
     - Decided as they are, not deferred: **Telekinesis on unattended objects** (the narrator's; a fight's only object is a door), **Enhance Ability's per-target ability** (a party of one only ever targets itself), **Shillelagh and True Strike** taking the better option (the one a player would choose), **Hunter's Mark's tracking advantage** (finding is exploration, the narrator's).
+
+- attunement for magic items (2026-10-01, `09-25 Q18`): until campaigns carry enough magic items to need it. What it would
+  take: a cap of three attuned items on the sheet, a short rest to attune, and an `attunement` flag on the items that need
+  it - about a day.

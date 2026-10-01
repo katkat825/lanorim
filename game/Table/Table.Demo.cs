@@ -21,6 +21,7 @@ namespace Game.Table
             making.Pick(srd.Class("rogue"));
             making.Pick(srd.Kind("halfling"));
             making.Pick(srd.Background("criminal"));
+            making.SuggestTraits();
 
             foreach (Skill pick in making.SkillChoices.Take(making.SkillPicksLeft))
                 making.Train(pick);

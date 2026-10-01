@@ -10,6 +10,8 @@ namespace Core.Magic
     {
         public Primitive Kind => Primitive.Zone;
 
+        public bool MakesAZone => true;
+
         public IReadOnlyList<string> Keys { get; } = new[]
         {
             "rough", "ground", "each_time", "cover", "encloses", "ring_size", "beside", "drifts",

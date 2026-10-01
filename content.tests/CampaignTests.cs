@@ -203,6 +203,23 @@ namespace Content.Tests
             Assert.Contains(package.Problems, p => p.What.Contains(Package.MonstersFolder + "/"));
         }
 
+        // a problem in a campaign's monster file names the statblock it is in, not only the file
+        [Fact]
+        public void AProblemInAMonsterFileSaysWhichMonster()
+        {
+            using var folder = new Folder("ash_yard");
+
+            folder.Write(ManifestReader.PackFileName, Pack())
+                  .Write("maps/yard.map", OneRoom)
+                  .Write("monsters/beasts.json", @"{ ""monsters"": [ { ""id"": ""ash_rat"", ""hit_pointz"": 4 } ] }");
+
+            Package package = Package.Read(folder.Path);
+
+            Assert.Contains(package.Problems, p => p.File == "monsters/beasts.json" &&
+                                                   p.Where == "monsters.ash_rat" &&
+                                                   p.What.Contains("'hit_pointz' is not a key here"));
+        }
+
 
         // --- the shelf ---------------------------------------------------------------------------
 

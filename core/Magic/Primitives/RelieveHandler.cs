@@ -9,6 +9,10 @@ namespace Core.Magic
     {
         public Primitive Kind => Primitive.Relieve;
 
+        public bool Helps(SpellEffect effect) => true;
+
+        public bool KindWhateverElse => true;
+
         public IReadOnlyList<string> Keys { get; } = new[] { "restores_abilities" };
 
         public IEnumerable<string> Check(SpellEffect effect, int spellLevel)

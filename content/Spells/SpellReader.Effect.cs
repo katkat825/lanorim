@@ -25,12 +25,14 @@ namespace Content.Spells
                 return null;
             }
 
-            // a boon's key anywhere but a sway says so plainly; any other stray key names the
-            // nearest one a <primitive> takes
-            foreach (string key in BoonSpecReader.Keys.Where(k => primitive != Primitive.Sway && raw.Has(k)))
+            // a boon's key anywhere but a sway (the primitive that carries a boon) says so plainly; any
+            // other stray key names the nearest one a <primitive> takes
+            bool boon = PrimitiveHandlers.For(primitive).CarriesABoon;
+
+            foreach (string key in BoonSpecReader.Keys.Where(k => !boon && raw.Has(k)))
                 problems.Add($"{where}: '{key}' is what a boon is - it belongs on a sway");
 
-            Keyed.OnlyKnown(raw, KeysFor(primitive).Concat(primitive == Primitive.Sway ? Array.Empty<string>() : BoonSpecReader.Keys),
+            Keyed.OnlyKnown(raw, KeysFor(primitive).Concat(boon ? Array.Empty<string>() : BoonSpecReader.Keys),
                             $"{where} ({primitive.Id()})", problems);
 
             SpellEffect effect = Build(raw, primitive, EffectWords.Read(raw, where, problems), where, problems);
@@ -39,12 +41,12 @@ namespace Content.Spells
                 raw.Text("encloses") != "bars" && raw.Text("encloses") != "solid")
                 problems.Add($"{where}: 'encloses' is 'bars' or 'solid'");
 
-            if (primitive == Primitive.Sway)
+            if (boon)
                 BoonSpecReader.Check(effect.Boon, where, problems, mustDoSomething: false);
 
             Check(effect, spellId, level, raw.Has("radius"), problems);
 
-            foreach (string wrong in PrimitiveHandlers.For(primitive).Check(effect, level))
+            foreach (string wrong in effect.Handler.Check(effect, level))
                 problems.Add($"{spellId}: {wrong}");
 
             return effect;
@@ -79,7 +81,7 @@ namespace Content.Spells
                 Upcast = ReadUpcast(raw, where, problems),
                 DamageChoices = raw.DamageTypeList("damage_choices", problems, where),
                 Mode = raw.Text("mode") ?? "",
-                Boon = primitive == Primitive.Sway
+                Boon = PrimitiveHandlers.For(primitive).CarriesABoon
                     ? BoonSpecReader.Read(raw, duration, where, problems)
                     : BoonSpec.Nothing,
                 Linger = LingerSpecReader.Read(raw, where, problems),

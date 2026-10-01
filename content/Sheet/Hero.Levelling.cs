@@ -10,13 +10,16 @@ namespace Content.Sheet
 {
     public sealed partial class Hero
     {
-        // Indomitable (SRD 5.2.1 p.48): so many rerolls a long rest, each adding the class level
+        // SO MANY REROLLS OF A FAILED SAVE A LONG REST: the class's Indomitable (SRD 5.2.1 p.48) adds the class level to
+        // each; a species' adds nothing - the Human's Resourceful, whose Heroic Inspiration v1 spends as the same reroll
+        // (cc_task_e-shop-species-and-ui-notes.md 1.3: one mechanic, not two)
         void Rerolls()
         {
-            Feature reroll = Features.LastOrDefault(f => f.Trait == Trait.Reroll);
+            Actor.SaveRerolls.Clear();
 
-            Actor.SaveRerolls = reroll?.UsesAt(Level) ?? 0;
-            Actor.SaveRerollBonus = reroll == null ? 0 : Level;
+            foreach (Feature reroll in Features.Where(f => f.Trait == Trait.Reroll && f.Level <= Level))
+                for (int i = 0; i < Math.Max(1, reroll.UsesAt(Level)); i++)
+                    Actor.SaveRerolls.Add(Class.Features.Contains(reroll) ? Level : 0);
         }
 
         // the spells a feature always has prepared, and its free casts (SRD 5.2.1: a Life Domain's
@@ -27,14 +30,21 @@ namespace Content.Sheet
         {
             // a species' spells arriving at 3rd level on a hero whose class casts nothing
             if (Caster == null && Features.Any(f => f.Spells.Count > 0 || f.InnateSpell != null))
-                Caster = new Caster(Actor, InnateAbility());
+                Caster = new Caster(Actor, SpellAbility ?? InnateAbility());
 
             if (Caster == null) return;
 
             foreach (Feature feature in Features)
             {
                 foreach (string id in feature.SpellsAt(Level))
-                    if (SrdSpells.Find(id) is Spell spell) Caster.Prepare(spell);
+                    if (SrdSpells.Find(id) is Spell spell)
+                    {
+                        Caster.Prepare(spell);
+
+                        // a lineage's spells with the ability the player chose for it, whatever the class casts with
+                        if (SpellAbility is Ability chosen && feature.SpellAbilities.Contains(chosen))
+                            Caster.CastWith(id, chosen);
+                    }
 
                 // a species' free cast comes with its spell's level (SRD 5.2.1 p.84), not before
                 foreach (KeyValuePair<string, int> free in feature.FreeCasts)
@@ -54,6 +64,11 @@ namespace Content.Sheet
                 }
             }
         }
+
+        // the ability the species' spells are cast with: the player's choice, or the best allowed; null for a species
+        // with no spells of its own (what the sheet shows)
+        public Ability? SpeciesSpellAbility =>
+            Features.Any(f => f.SpellAbilities.Count > 0) ? SpellAbility ?? InnateAbility() : null;
 
         // the best of the abilities a species lets its spells use (SRD 5.2.1: "Intelligence,
         // Wisdom, or Charisma"); Charisma when it names none

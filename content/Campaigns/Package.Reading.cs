@@ -6,6 +6,7 @@ using Content.Items;
 using Content.Maps;
 using Content.Monsters;
 using Content.Schema;
+using Content.Spells;
 using Core.Magic;
 using Core.Space;
 using Core.Tables;
@@ -39,9 +40,10 @@ namespace Content.Campaigns
 
             UnknownFolders(folder, problems);
 
-            IReadOnlyList<Monster> monsters = ReadMonsters(folder, manifest.Id, problems);
-            IReadOnlyList<Item> items = ReadItems(folder, manifest.Id, problems);
-            IReadOnlyList<Spell> spells = ReadSpells(folder, manifest.Id, problems);
+            IReadOnlyList<Monster> monsters =
+                ReadFolder(folder, MonstersFolder, MonsterReader.Entries, m => m.Id, problems);
+            IReadOnlyList<Item> items = ReadFolder(folder, ItemsFolder, ItemReader.Entries, i => i.Id, problems);
+            IReadOnlyList<Spell> spells = ReadFolder(folder, SpellsFolder, SpellReader.Entries, s => s.Id, problems);
             var props = new Dictionary<string, IReadOnlyList<Prop>>(StringComparer.Ordinal);
             IReadOnlyDictionary<string, MapLayout> maps = ReadMaps(folder, problems, props);
 
@@ -62,48 +64,20 @@ namespace Content.Campaigns
             };
         }
 
+        // a campaign's merchants (MerchantReader, the reader the SRD's starting shop has too); an item a stock names
+        // has to be the campaign's own or the SRD's
         static IReadOnlyList<MerchantDef> ReadMerchants(string folder, IReadOnlyList<Item> items,
                                                         List<ContentProblem> problems)
         {
             var own = new HashSet<string>(items.Select(i => i.Id), StringComparer.Ordinal);
             ItemShelf srd = Library.Srd().Items;
-            var all = new List<MerchantDef>();
 
-            foreach ((string file, string text) in Jsons(folder, MerchantsFolder, problems))
-            {
-                if (!Json.TryParse(text, out System.Text.Json.JsonDocument doc, out string bad))
-                {
-                    problems.Add(new ContentProblem(file, "", bad));
-                    continue;
-                }
+            IReadOnlyList<MerchantDef> all = ReadFolder(folder, MerchantsFolder, MerchantReader.Entries, m => m.Id, problems);
 
-                using (doc)
-                    foreach (System.Text.Json.JsonElement one in doc.RootElement.Items("merchants"))
-                    {
-                        string id = one.Text("id");
-
-                        if (!Json.IsId(id))
-                        {
-                            problems.Add(new ContentProblem(file, "", $"'{id}' is not a merchant id"));
-                            continue;
-                        }
-
-                        var unknown = new List<string>();
-                        Keyed.OnlyKnown(one, new[] { "id", "stock", "sell_percent" }, id, unknown);
-
-                        foreach (string why in unknown)
-                            problems.Add(new ContentProblem(file, $"merchants.{id}", why));
-
-                        IReadOnlyList<string> stock = one.Strings("stock");
-
-                        foreach (string item in stock.Where(i => !own.Contains(i) && !srd.Has(i)))
-                            problems.Add(new ContentProblem(file, $"merchants.{id}",
-                                $"'{item}' is not an item in this campaign or the SRD"));
-
-                        all.Add(new MerchantDef(id, stock,
-                                                one.Has("sell_percent") ? one.Number("sell_percent") : -1));
-                    }
-            }
+            foreach (MerchantDef merchant in all)
+                foreach (string item in merchant.Stock.Where(i => !own.Contains(i) && !srd.Has(i)))
+                    problems.Add(new ContentProblem(MerchantsFolder, $"merchants.{merchant.Id}",
+                        $"'{item}' is not an item in this campaign or the SRD"));
 
             return all;
         }

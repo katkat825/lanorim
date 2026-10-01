@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Core.Resolution;
 
@@ -38,10 +39,10 @@ namespace Core.Characters
         // the Defense fighting style: armor class while wearing armor (SRD 5.2.1 p.88)
         public int ArmoredArmorClassBonus { get; set; }
 
-        // Indomitable: rerolls of a failed save, with a bonus, until the next long rest
-        public int SaveRerolls { get; set; }
-
-        public int SaveRerollBonus { get; set; }
+        // REROLLS OF A FAILED SAVE until the next long rest, each with its own bonus: Indomitable's add the Fighter's
+        // level, the Human's Resourceful (Heroic Inspiration, cc_task_e-shop-species-and-ui-notes.md 1.3) adds
+        // nothing. the biggest is spent first, on the first save that fails (Checks.Save)
+        public List<int> SaveRerolls { get; } = new List<int>();
 
         // the one boon an attack is giving up the advantage of: Brutal Strike forgoes Reckless
         // Attack's (SRD 5.2.1 p.29)

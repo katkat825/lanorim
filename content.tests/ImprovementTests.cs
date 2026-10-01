@@ -216,6 +216,7 @@ namespace Content.Tests
             making.Pick(Srd.Class("fighter"));
             making.Pick(Srd.Kind("human"));
             making.Pick(Srd.Background("soldier"));
+            making.SuggestTraits();
 
             Assert.Equal(Creation.Step.Improvements, making.Next);
 

@@ -9,6 +9,8 @@ namespace Core.Magic
     {
         public Primitive Kind => Primitive.Conjure;
 
+        public bool Helps(SpellEffect effect) => true;
+
         public IReadOnlyList<string> Keys { get; } = new[] { "item" };
 
         public IEnumerable<string> Check(SpellEffect effect, int spellLevel)

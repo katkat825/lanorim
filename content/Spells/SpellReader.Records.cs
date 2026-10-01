@@ -13,7 +13,7 @@ namespace Content.Spells
         // "upcast": {"amount": "1d6", "targets": 1, "radius": 4, "blocks_spells_up_to": 1}
         static Upcast ReadUpcast(JsonElement raw, string where, List<string> problems)
         {
-            if (!Record(raw, "upcast", UpcastKeys, where, problems, out JsonElement upcast)) return Upcast.Nothing;
+            if (!raw.Record("upcast", UpcastKeys, where, problems, out JsonElement upcast)) return Upcast.Nothing;
 
             return new Upcast
             {
@@ -27,7 +27,7 @@ namespace Content.Spells
         // "hit_points": {"at_or_below": 150} or {"above": 150}
         static HitPointGate ReadHitPoints(JsonElement raw, string where, List<string> problems)
         {
-            if (!Record(raw, "hit_points", HitPointKeys, where, problems, out JsonElement gate)) return null;
+            if (!raw.Record("hit_points", HitPointKeys, where, problems, out JsonElement gate)) return null;
 
             bool below = gate.Has("at_or_below");
 
@@ -45,7 +45,7 @@ namespace Content.Spells
         // {..., "setting": "storm"}
         static ExtraDice ReadExtraDice(JsonElement raw, string where, List<string> problems)
         {
-            if (!Record(raw, "extra_dice", ExtraDiceKeys, where, problems, out JsonElement extra)) return null;
+            if (!raw.Record("extra_dice", ExtraDiceKeys, where, problems, out JsonElement extra)) return null;
 
             IReadOnlyList<TagRule> rules = extra.TagRuleList("tag_rules", problems, where);
 
@@ -58,7 +58,7 @@ namespace Content.Spells
         // "raises": {"as": "zombie", "tag_rules": {"humanoid": "only"}}
         static Raises ReadRaises(JsonElement raw, string where, List<string> problems)
         {
-            if (!Record(raw, "raises", RaisesKeys, where, problems, out JsonElement raises)) return null;
+            if (!raw.Record("raises", RaisesKeys, where, problems, out JsonElement raises)) return null;
 
             IReadOnlyList<TagRule> rules = raises.TagRuleList("tag_rules", problems, where);
 
@@ -71,28 +71,9 @@ namespace Content.Spells
         // "item": {"id": "goodberry", "count": 10}
         static ConjuredItem ReadItem(JsonElement raw, string where, List<string> problems)
         {
-            if (!Record(raw, "item", ItemKeys, where, problems, out JsonElement item)) return null;
+            if (!raw.Record("item", ItemKeys, where, problems, out JsonElement item)) return null;
 
             return new ConjuredItem(item.Text("id") ?? "", Math.Max(1, item.Number("count", 1)));
-        }
-
-        static bool Record(JsonElement raw, string name, IReadOnlyList<string> keys, string where,
-                           List<string> problems, out JsonElement record)
-        {
-            record = default;
-
-            if (!raw.Has(name)) return false;
-
-            record = raw.GetProperty(name);
-
-            if (record.ValueKind != JsonValueKind.Object)
-            {
-                problems.Add($"{where}: '{name}' is a record, {{...}}");
-                return false;
-            }
-
-            Keyed.OnlyKnown(record, keys, $"{where} {name}", problems);
-            return true;
         }
     }
 }

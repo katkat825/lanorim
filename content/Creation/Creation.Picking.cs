@@ -67,6 +67,7 @@ namespace Content.Creation
 
             Species = species;
             Lineage = null;
+            ForgetTraits(sizeToo: true);
 
             return true;
         }
@@ -76,6 +77,7 @@ namespace Content.Creation
             if (lineage == null || Species == null || lineage.LineageOf != Species.Id) return false;
 
             Lineage = lineage;
+            ForgetTraits(sizeToo: false);
             return true;
         }
 
@@ -85,6 +87,9 @@ namespace Content.Creation
 
             Background = background;
             _backgroundSpend.Clear();
+
+            // a species skill the new background trains anyway is picked again
+            _traitSkills.RemoveAll(background.Skills.Contains);
 
             // the default spend is +2 to the class's first priority and +1 to the second, if the
             // background raises them; otherwise the first two it does raise
@@ -113,7 +118,8 @@ namespace Content.Creation
         {
             if (Class == null || SkillPicksLeft <= 0) return false;
 
-            if (!Class.SkillChoices.Contains(skill) || _skills.Contains(skill)) return false;
+            if (!Class.SkillChoices.Contains(skill) || _skills.Contains(skill) || _traitSkills.Contains(skill))
+                return false;
 
             _skills.Add(skill);
             return true;
@@ -124,7 +130,8 @@ namespace Content.Creation
             if (ExpertisePicksLeft <= 0 || _expertise.Contains(skill)) return false;
 
             // SRD: Expertise doubles a proficiency you already have
-            if (!_skills.Contains(skill) && !(Background?.Skills.Contains(skill) ?? false))
+            if (!_skills.Contains(skill) && !_traitSkills.Contains(skill) &&
+                !(Background?.Skills.Contains(skill) ?? false))
                 return false;
 
             // a Scholar's Expertise is one of six skills of learning (SRD 5.2.1 p.78)

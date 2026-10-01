@@ -14,7 +14,9 @@ namespace Game.Board
     // that run toward the camera hide nothing beside them and always stand Tall. Asked again whenever the
     // camera comes round to another side of the board (Board.Cut), so every quarter turn has its own near side.
     //
-    // A pillar where walls meet comes down with them: Low if any wall it joins is Low. A DOORWAY NEVER COMES
+    // A pillar where walls meet stands as tall as the tallest of them: Low only when every wall it joins is Low. Low
+    // when any was, it dropped under a corner's Tall side wall and left that wall's cut brick end standing on it, half
+    // over the corner (cc_task_e-shop-species-and-ui-notes.md 2.8, "dungeon wall corners are glitchy"). A DOORWAY NEVER COMES
     // DOWN: cut to a lip its arch and door are a sliver nobody could find or click (the 2026-10-03 shots), and a
     // door is the one thing on a wall line the player has to see.
     public sealed class Cutaway
@@ -87,7 +89,7 @@ namespace Game.Board
 
             foreach (Piece line in _pieces.Values.Where(p => p.Line != null)) Stand(line, Hides(line, toward) || FacesLowRock(line, toward));
 
-            foreach (Piece pillar in _pieces.Values.Where(p => p.Corner != null)) Stand(pillar, Joins(pillar).Any(p => p.IsLow));
+            foreach (Piece pillar in _pieces.Values.Where(p => p.Corner != null)) Stand(pillar, Joins(pillar).All(p => p.IsLow));
         }
 
         // how many squares a Tall piece hides most of: at 45 degrees a thing h tall hides h of board behind it, so a

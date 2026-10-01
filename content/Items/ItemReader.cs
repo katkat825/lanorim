@@ -10,37 +10,8 @@ namespace Content.Items
     public static class ItemReader
     {
         public static bool TryRead(string text, out IReadOnlyList<Item> items,
-                                   out IReadOnlyList<string> problems)
-        {
-            var found = new List<Item>();
-            var trouble = new List<string>();
-
-            items = found;
-            problems = trouble;
-
-            if (!Json.TryParse(text, out JsonDocument document, out string bad))
-            {
-                trouble.Add(bad);
-                return false;
-            }
-
-            using (document)
-            {
-                Keyed.OnlyKnown(document.RootElement, new[] { "items" }, "the items file", trouble);
-
-                foreach (JsonElement entry in document.RootElement.Items("items"))
-                {
-                    Item item = ReadOne(entry, trouble);
-
-                    if (item != null) found.Add(item);
-                }
-
-                if (found.Count == 0 && trouble.Count == 0)
-                    trouble.Add("no items in it - the file is an object with an 'items' array");
-            }
-
-            return trouble.Count == 0;
-        }
+                                   out IReadOnlyList<string> problems) =>
+            Entries.TryRead(text, out items, out problems);
 
         // every key an item takes, and the keys of its weapon, its armor and each of its boons
         // (a boon's own keys are BoonSpecReader.Keys)
@@ -50,6 +21,10 @@ namespace Content.Items
             "minimum_level", "boons", "heals", "casts", "uses", "vanishes", "use_time",
         };
 
+        // the file: { "items": [ ... ] }, each entry read by ReadOne (EntryList)
+        public static readonly EntryList<Item> Entries =
+            new EntryList<Item>("items", "item", Keys, ReadOne);
+
         // what a weapon is beside an attack (AttackReader.Keys): its category and its properties
         public static readonly IReadOnlyList<string> WeaponKeys = new[] { "category", "light", "heavy", "versatile" };
 
@@ -57,18 +32,8 @@ namespace Content.Items
 
         public static readonly IReadOnlyList<string> BoonKeys = new[] { "id", "duration" };
 
-        static Item ReadOne(JsonElement entry, List<string> problems)
+        static Item ReadOne(JsonElement entry, string id, List<string> problems)
         {
-            string id = entry.Text("id");
-
-            if (!Json.IsId(id))
-            {
-                problems.Add($"'{id}' is not an item id - lowercase a-z, 0-9 and underscore only");
-                return null;
-            }
-
-            Keyed.OnlyKnown(entry, Keys, id, problems);
-
             if (!EnumWords.TryParse(entry.Text("kind"), out ItemKind kind))
             {
                 problems.Add($"{id}: '{entry.Text("kind")}' is not a kind of item");

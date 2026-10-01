@@ -15,7 +15,7 @@
       "subclass": "path_of_the_berserker",
       "companion": "bonded_wolf",
       "starting_gear": ["greataxe", "handaxe", "handaxe", "handaxe", "handaxe"],
-      "gold": 15,
+      "gold": 15, "gold_instead": 75,
       "weapon_proficiencies": ["simple", "martial"],
       "features": [
         { "id": "rage", "trait": "stance", "level": 1, "boons": [{"flat": 2, "touches": "damage", "ability": "str", "leans": "advantage_on_checks|advantage_on_saves", "defenses": {"bludgeoning": "resistant", "piercing": "resistant", "slashing": "resistant"}}],
@@ -75,7 +75,7 @@
       "improvement_levels": [4, 6, 8, 12, 14, 16, 19],
       "companion": "bonded_wolf",
       "starting_gear": ["chain_mail", "greatsword", "flail", "javelin", "javelin", "javelin", "javelin", "javelin", "javelin", "javelin", "javelin"],
-      "gold": 4,
+      "gold": 4, "gold_instead": 155,
       "weapon_proficiencies": ["simple", "martial"],
       "features": [
         { "id": "fighting_style", "trait": "narrate", "level": 1, "armored_ac": 1,
@@ -123,7 +123,7 @@
       "improvement_levels": [4, 8, 10, 12, 16, 19],
       "companion": "gossiping_raven",
       "starting_gear": ["leather_armor", "dagger", "dagger", "shortsword", "shortbow", "thieves_tools"],
-      "gold": 8,
+      "gold": 8, "gold_instead": 100,
       "tools": ["thieves_tools"],
       "weapon_proficiencies": ["simple", "martial_finesse_or_light"],
       "features": [
@@ -171,7 +171,7 @@
       "subclass": "evoker",
       "companion": "bound_imp",
       "starting_gear": ["dagger", "dagger", "quarterstaff", "arcane_focus"],
-      "gold": 5,
+      "gold": 5, "gold_instead": 55,
       "weapon_proficiencies": ["simple"],
       "features": [
         { "id": "arcane_spellcasting", "trait": "spellcasting", "level": 1, "ability": "int",
@@ -211,7 +211,7 @@
       "subclass": "life_domain",
       "companion": "saints_fragment",
       "starting_gear": ["mace", "shield", "chain_shirt", "holy_symbol"],
-      "gold": 7,
+      "gold": 7, "gold_instead": 110,
       "weapon_proficiencies": ["simple"],
       "features": [
         { "id": "divine_spellcasting", "trait": "spellcasting", "level": 1, "ability": "wis",
@@ -262,7 +262,7 @@
       "subclass": "oath_of_devotion",
       "companion": "saints_fragment",
       "starting_gear": ["chain_mail", "shield", "longsword", "javelin", "javelin", "javelin", "javelin", "javelin", "javelin", "holy_symbol"],
-      "gold": 9,
+      "gold": 9, "gold_instead": 150,
       "weapon_proficiencies": ["simple", "martial"],
       "features": [
         { "id": "lay_on_hands", "trait": "recovery", "level": 1, "amount": "5", "per_level": "5",
@@ -319,7 +319,7 @@
       "subclass": "circle_of_the_land",
       "companion": "borrowed_shape_spirit",
       "starting_gear": ["leather_armor", "shield", "sickle", "quarterstaff", "druidic_focus"],
-      "gold": 9,
+      "gold": 9, "gold_instead": 50,
       "tools": ["herbalism_kit"],
       "weapon_proficiencies": ["simple"],
       "features": [

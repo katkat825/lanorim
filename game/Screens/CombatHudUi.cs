@@ -81,7 +81,7 @@ namespace Game.Screens
         void BuildStrip()
         {
             _strip = Ui.Flow(Layout.BarGap * 2);
-            _status = new Label { ThemeTypeVariation = "HudLabel", HorizontalAlignment = HorizontalAlignment.Center };
+            _status = Ui.Centred("HudLabel");
 
             // between the log's corner and the hint's, so none of the three can overlap
             var top = new CenterContainer
@@ -104,9 +104,10 @@ namespace Game.Screens
             _endTurn = Ui.Button(CombatHud.EndTurnKey, () => _director.EndTurn());
             _endTurn.CustomMinimumSize = new Vector2(Layout.EndTurnMinWidth, 0);
 
-            _pips = new Label { ThemeTypeVariation = "HudText", HorizontalAlignment = HorizontalAlignment.Center };
-            _preview = new Label { ThemeTypeVariation = "HudText", HorizontalAlignment = HorizontalAlignment.Center };
-            _aim = new Label { ThemeTypeVariation = "HudText", HorizontalAlignment = HorizontalAlignment.Center, Visible = false };
+            _pips = Ui.Centred("HudText");
+            _preview = Ui.Centred("HudText");
+            _aim = Ui.Centred("HudText");
+            _aim.Visible = false;
 
             // the options take the room; a gap of their own keeps End Turn apart from the last of them
             var row = Ui.Row(Layout.BarGap * 3, _bar, new VSeparator(), _endTurn);
@@ -219,16 +220,20 @@ namespace Game.Screens
 
             Ui.Clear(_strip);
 
-            var hud = new CombatHud(session);
+            var hud = new CombatHud(session, null, _director.TurnShown);
 
             foreach (TurnChip chip in hud.Order) _strip.AddChild(Chip(chip));
 
             Ui.Fit(_strip, Between);
 
-            // whose turn it is, not whether the bar is up: while the hero's own dice are on the tray the
-            // bar is down, and the strip said "Enemy turn"
+            // whose turn the TABLE is on, not the rules (cc_task_e-shop-species-and-ui-notes.md 2.7): the session runs
+            // every monster's turn at once and is on the hero's before the board has shown any of them, and the strip
+            // said "Your turn" through all of it. Not whether the bar is up either: while the hero's own dice are on
+            // the tray the bar is down, and the strip said "Enemy turn"
             _status.Text = Ui.Say(CombatHud.RoundKey, hud.Round) + "   " +
-                           (hud.HerosTurn ? Ui.Say(ScreenWords.YourTurn) : Ui.Say(CombatHud.EnemyTurnKey));
+                           (hud.ShowsHerosTurn ? Ui.Say(ScreenWords.YourTurn)
+                          : hud.TurnShownNameKey != null ? Ui.Say(CombatHud.TheirTurnKey, Ui.Say(hud.TurnShownNameKey))
+                          : Ui.Say(CombatHud.EnemyTurnKey));
         }
 
         // a name and a health bar, the hero's and a foe's alike; the hero's numbers are the player's to

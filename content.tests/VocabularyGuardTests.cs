@@ -435,7 +435,8 @@ namespace Content.Tests
                 string name = Path.GetFileName(reader.Key) + ".cs";
 
                 if (Regex.IsMatch(text, @"\.(Text|Number|Flag|Strings|Items|Dice)\(""[a-z_]+""") &&
-                    !text.Contains("Keyed.OnlyKnown") && !UncheckedReaders.ContainsKey(name))
+                    !text.Contains("Keyed.OnlyKnown") && !text.Contains("new EntryList<") && !text.Contains(".Record(") &&
+                    !UncheckedReaders.ContainsKey(name))
                     unchecked_.Add(name);
             }
 

@@ -8,6 +8,10 @@ namespace Core.Magic
     {
         public Primitive Kind => Primitive.Ward;
 
+        public bool Helps(SpellEffect effect) => true;
+
+        public bool KindWhateverElse => true;
+
         public IReadOnlyList<string> Keys { get; } = Array.Empty<string>();
 
         public IEnumerable<string> Check(SpellEffect effect, int spellLevel)

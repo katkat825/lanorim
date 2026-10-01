@@ -68,7 +68,7 @@ namespace Core.Magic
 
         // the sways it lays on whoever stands inside
         public IEnumerable<SpellEffect> Auras =>
-            Acts.Where(e => e.Kind == Primitive.Sway && e.Linger.WhileInZone);
+            Acts.Where(e => e.Handler.LastsWhileInTheZone(e));
 
         // Globe of Invulnerability's 5, and its upcast's one more per slot level
         public int BlocksSpellsUpTo =>

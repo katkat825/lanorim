@@ -144,8 +144,10 @@ namespace Core.Combat
             Best(fight, me, target) != null;
 
         // WHICH ATTACK, AS A RULE (cc_task_open-questions-answers.md 2.7): of the attacks it can use from where it
-        // stands, one it can make without Disadvantage first, then the biggest average damage, then the
-        // statblock's own order (OrderBy is a stable sort, so the statblock has the last word). Until 2026-10-03 a
+        // stands, one it can make without Disadvantage first, then one whose hit would put a condition on the target
+        // that it doesn't have yet (cc_task_e-shop-species-and-ui-notes.md 1.1: the Ghoul's Claw until its quarry is
+        // Paralyzed, then its two Bites; a bear's prone-making claw before its bite), then the biggest average
+        // damage, then the statblock's own order (OrderBy is a stable sort, so the statblock has the last word). Until 2026-10-03 a
         // tie went to the attack's id, alphabetically: a goblin's scimitar and shortbow both average 5, the boss's
         // "goblin_shortbow" sorted before "scimitar", so beside the hero it shot point-blank at Disadvantage - and
         // renaming the id made the rogue lose the goblin camp 33 times in the sample campaign's test
@@ -156,6 +158,7 @@ namespace Core.Combat
                    .Where(a => !Is(Instinct.Skirmisher) || !a.IsRanged ||
                                fight.Field.Distance(me, target) > 1)
                    .OrderBy(a => fight.Band(me, target, a) == Core.Resolution.Advantage.Disadvantage)
+                   .ThenByDescending(a => a.OnHit.Any(r => r.Adds(target)))
                    .ThenByDescending(a => a.DamageFor(me).Average)
                    .FirstOrDefault();
 

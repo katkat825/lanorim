@@ -187,16 +187,13 @@ namespace Game.Play
                 return null;
             }
 
-            TableResolver resolver = null;
-
-            CampaignRun run = CampaignRun.Resume(save, Content, pack, new Late(() => resolver), Gm, Saves,
+            CampaignRun run = CampaignRun.Resume(save, Content, pack, hero => MakeResolver(hero), Gm, Saves,
                                                  out IReadOnlyList<ContentProblem> problems);
 
             foreach (ContentProblem problem in problems) GD.PushWarning("load: " + problem);
 
             if (run == null) return null;
 
-            resolver = MakeResolver(run.Hero);
             Pack = pack;
             Run = run;
             Starting = false;
@@ -232,31 +229,6 @@ namespace Game.Play
                 GD.PushWarning($"dice: the hero's {string.Join(" ", dice ?? Array.Empty<Die>())} had no tray to land on - rolled digitally instead");
                 return new Digital(Gm).Throw(dice);
             }
-        }
-
-        // a resolver made after the run that needs it
-        sealed class Late : IResolver
-        {
-            readonly Func<IResolver> _resolver;
-
-            public Late(Func<IResolver> resolver) => _resolver = resolver;
-
-            IResolver Real => _resolver() ?? new StandardResolver(Gm);
-
-            public Attempt Resolve(RollKind kind, int modifier, int against, Advantage advantage = Advantage.Flat) =>
-                Real.Resolve(kind, modifier, against, advantage);
-
-            public Attempt Resolve(RollKind kind, int modifier, int against, Advantage advantage, Core.Characters.Actor roller) =>
-                Real.Resolve(kind, modifier, against, advantage, roller);
-
-            public int Roll(DiceRoll dice) => Real.Roll(dice);
-
-            public int Roll(DiceRoll dice, Core.Characters.Actor roller) => Real.Roll(dice, roller);
-
-            public int Roll(DiceRoll dice, out IReadOnlyList<int> faces) => Real.Roll(dice, out faces);
-
-            public int Roll(DiceRoll dice, Core.Characters.Actor roller, out IReadOnlyList<int> faces) =>
-                Real.Roll(dice, roller, out faces);
         }
     }
 }

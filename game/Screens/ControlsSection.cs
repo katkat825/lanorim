@@ -84,7 +84,7 @@ namespace Game.Screens
             AddChild(Line(Ui.Say(CancelKey, Keyboard.Named("ui_cancel"))));
             AddChild(Line(Ui.Say(BeginKey, string.Join(" / ", Keyboard.Keys("ui_accept").Distinct()))));
 
-            if (_said != "") AddChild(new Label { Text = _said, AutowrapMode = TextServer.AutowrapMode.WordSmart });
+            if (_said != "") AddChild(Ui.Plain(_said));
 
             AddChild(Ui.Label(MouseKey));
 
@@ -95,7 +95,7 @@ namespace Game.Screens
         Control Line(string words)
         {
             _lines.Add(words);
-            return new Label { Text = words, AutowrapMode = TextServer.AutowrapMode.WordSmart };
+            return Ui.Plain(words);
         }
 
         Control ActRow(Act act)
@@ -108,12 +108,8 @@ namespace Game.Screens
             _actKeys[act] = listening ? "" : keys;
             _lines.Add(words);
 
-            var said = new Label
-            {
-                Text = words,
-                AutowrapMode = TextServer.AutowrapMode.WordSmart,
-                SizeFlagsHorizontal = SizeFlags.ExpandFill,
-            };
+            Label said = Ui.Plain(words);
+            said.SizeFlagsHorizontal = SizeFlags.ExpandFill;
 
             Button change = Ui.Button(ChangeKey, () => Listen(act));
             change.AccessibilityName = words + ". " + change.Text;

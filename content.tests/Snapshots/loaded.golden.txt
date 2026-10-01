@@ -1,4 +1,4 @@
-spells 123
+spells 125
 classes 7
 class features 123
 species 15
@@ -38,6 +38,7 @@ spell dissonant_whispers 1 effects 1
 spell divine_smite 1 effects 1
 spell dominate_monster 8 effects 1
 spell dragons_breath 2 effects 1
+spell druidcraft 0 effects 1
 spell eldritch_blast 0 effects 1
 spell enhance_ability 2 effects 1
 spell enlarge_reduce 2 effects 2
@@ -78,6 +79,7 @@ spell invisibility 2 effects 1
 spell lesser_restoration 2 effects 4
 spell light 0 effects 1
 spell lightning_bolt 3 effects 1
+spell longstrider 1 effects 1
 spell mage_armor 1 effects 1
 spell mage_hand 0 effects 1
 spell magic_missile 1 effects 1

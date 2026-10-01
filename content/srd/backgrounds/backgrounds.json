@@ -3,12 +3,12 @@
 
   "backgrounds": [
     { "id": "acolyte", "skills": ["insight", "religion"], "abilities": ["int", "wis", "cha"],
-      "gear": ["holy_symbol"], "gold": 8 },
+      "gear": ["holy_symbol"], "gold": 8, "gold_instead": 50 },
     { "id": "criminal", "skills": ["sleight_of_hand", "stealth"],
-      "abilities": ["dex", "con", "int"], "gear": ["dagger", "dagger", "thieves_tools"], "gold": 16 },
+      "abilities": ["dex", "con", "int"], "gear": ["dagger", "dagger", "thieves_tools"], "gold": 16, "gold_instead": 50 },
     { "id": "sage", "skills": ["arcana", "history"], "abilities": ["con", "int", "wis"],
-      "gear": ["quarterstaff"], "gold": 8 },
+      "gear": ["quarterstaff"], "gold": 8, "gold_instead": 50 },
     { "id": "soldier", "skills": ["athletics", "intimidation"],
-      "abilities": ["str", "dex", "con"], "gear": ["spear", "shortbow"], "gold": 14 }
+      "abilities": ["str", "dex", "con"], "gear": ["spear", "shortbow"], "gold": 14, "gold_instead": 50 }
   ]
 }

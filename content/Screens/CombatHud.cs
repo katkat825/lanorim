@@ -35,8 +35,12 @@ namespace Content.Screens
     // and End Turn. Everything it shows is read off the CombatSession; nothing here decides a rule.
     public sealed class CombatHud
     {
-        public CombatHud(CombatSession session, FightLog log = null)
+        // `showing`: whose turn the table is playing back, when it is behind the rules (CombatDirector): the session
+        // has already run every monster's turn and is on the hero's next, and the strip follows the table, not the
+        // rules (cc_task_e-shop-species-and-ui-notes.md 2.7). null is the live turn
+        public CombatHud(CombatSession session, FightLog log = null, Actor showing = null)
         {
+            Showing = showing;
             Session = session ?? throw new ArgumentNullException(nameof(session));
             Log = log;
         }
@@ -47,13 +51,28 @@ namespace Content.Screens
 
         Encounter Fight => Session.Fight;
 
+        public Actor Showing { get; }
+
+        // whose turn the strip shows: the one being played back, else the live one
+        public Actor TurnShown => Showing ?? Session.Turn?.Actor;
+
+        public bool ShowsHerosTurn => TurnShown != null && ReferenceEquals(TurnShown, Session.Hero.Actor);
+
+        // a monster's name for "the goblin's turn", or null for the hero or nobody
+        public string TurnShownNameKey =>
+            TurnShown != null && !ShowsHerosTurn && Session.Battle.StatblockOf(TurnShown) is { } monster
+                ? KeyConventions.MonsterName(monster.Id)
+                : null;
+
+        public static readonly string TheirTurnKey = ScreenKeys.Key("combat", "their_turn");
+
         public int Round => Fight.Round;
 
         public IReadOnlyList<TurnChip> Order
         {
             get
             {
-                Actor now = Session.Turn?.Actor;
+                Actor now = TurnShown;
 
                 return Fight.Order
                             .Select(roll => new TurnChip
@@ -115,17 +134,23 @@ namespace Content.Screens
         // shape, Surge, Flee; the spells are one menu and the manoeuvres every creature has another,
         // so the bar is one row. The hotkeys don't move
         public IReadOnlyList<ActionOption> Buttons =>
-            Bar.Where(o => o.Kind != OptionKind.EndTurn && !IsSpell(o) && !IsManoeuvre(o)).ToList();
+            Bar.Where(o => o.Kind != OptionKind.EndTurn && !IsSpell(o) && !InMore(o)).ToList();
 
         public IReadOnlyList<ActionOption> Spells => Bar.Where(IsSpell).ToList();
 
-        public IReadOnlyList<ActionOption> Manoeuvres => Bar.Where(IsManoeuvre).ToList();
+        public IReadOnlyList<ActionOption> Manoeuvres => Bar.Where(InMore).ToList();
 
         static bool IsSpell(ActionOption o) => o.Kind is OptionKind.Spell or OptionKind.Again;
 
-        static bool IsManoeuvre(ActionOption o) =>
+        // WHAT GOES IN MORE ACTIONS, the one rule: the manoeuvres every creature has, and the Unarmed Strike while a
+        // weapon is in hand (Kathleen, 2026-10-01: "if there's a weapon in hand, make unarmed strike be in the More
+        // Actions dropdown"). With nothing in hand it is what the hero hits with, so it stays a button; a Wild Shape
+        // form's own attacks are never it
+        bool InMore(ActionOption o) =>
             o.Kind is OptionKind.Dash or OptionKind.Disengage or OptionKind.Hide or OptionKind.Grapple or
-                OptionKind.Shove or OptionKind.StandUp or OptionKind.BreakFree or OptionKind.Shake or OptionKind.OpenDoor;
+                OptionKind.Shove or OptionKind.StandUp or OptionKind.BreakFree or OptionKind.Shake or OptionKind.OpenDoor ||
+            ReferenceEquals(o.Attack, Content.Sheet.Hero.UnarmedStrike) && o.Kind == OptionKind.Attack &&
+                Session.Hero.HoldsAWeapon;
 
         // THE HOTKEYS, THE HUD'S WAY (docs/combat_ux.md, Keys): the bar's buttons from the left, then the
         // Spells menu, then More actions - so the buttons on the bar are 1, 2, 3 and not "1, 2, 9" with the
@@ -134,13 +159,13 @@ namespace Content.Screens
         // only turn up partway through a turn (a Light weapon's bonus attack, Flee on an open edge) come
         // last, for the same reason. The session's own order (Options) is left alone: the AutoPlayer and
         // the sim read it
-        static IReadOnlyList<ActionOption> Numbered(IReadOnlyList<ActionOption> options)
+        IReadOnlyList<ActionOption> Numbered(IReadOnlyList<ActionOption> options)
         {
-            List<ActionOption> buttons = options.Where(o => o.Kind != OptionKind.EndTurn && !IsSpell(o) && !IsManoeuvre(o)).ToList();
+            List<ActionOption> buttons = options.Where(o => o.Kind != OptionKind.EndTurn && !IsSpell(o) && !InMore(o)).ToList();
 
             IEnumerable<ActionOption> order = buttons.Where(o => !Late(o))
                                                      .Concat(options.Where(IsSpell))
-                                                     .Concat(options.Where(IsManoeuvre))
+                                                     .Concat(options.Where(InMore))
                                                      .Concat(buttons.Where(Late));
 
             int key = 1;
@@ -178,7 +203,7 @@ namespace Content.Screens
             new[]
             {
                 EndTurnKey, ActionsKey, BonusKey, ReactionKey, MovementKey, RoundKey, LogKey,
-                EnemyTurnKey, SkipKey, FleeKey, HitChanceKey, SaveChanceKey, ExpectedDamageKey,
+                EnemyTurnKey, TheirTurnKey, SkipKey, FleeKey, HitChanceKey, SaveChanceKey, ExpectedDamageKey,
                 PathCostKey, YesKey, NoKey, SpellsMenuKey, ManoeuvresMenuKey,
             };
     }

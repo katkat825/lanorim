@@ -109,6 +109,15 @@ namespace Content.Saves
 
         public string Alignment { get; set; } = "";
 
+        // the species' choices (cc_task_e-shop-species-and-ui-notes.md 1.3): the ability a lineage's spells are
+        // cast with, and the size, as words. empty in a save from before them: the best ability, the species' size
+        public string SpellAbility { get; set; } = "";
+
+        public string Size { get; set; } = "";
+
+        // the hero hasn't been to the starting shop yet (cc_task_e-shop-species-and-ui-notes.md 1.4)
+        public bool ShopsFirst { get; set; }
+
         public int Level { get; set; } = 1;
 
         // BASE scores, before anything shifted them. A shift lasts until a rest, so it is a thing

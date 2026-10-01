@@ -25,10 +25,10 @@ namespace Game.Dice
             return DieRecoveryStep.Accept;
         }
 
-        public DieRecoveryStep Escaped(in EscapedDie die) => Fading(die.EscapesSoFar, _maxEscapes);
+        public DieRecoveryStep Escaped(in StrayDie die) => Fading(die.TimesSoFar, _maxEscapes);
 
         // past the hard ceiling: nudged (at most _maxRestless times), then read as it lies. never thrown again
-        public DieRecoveryStep Restless(in RestlessDie die) =>
+        public DieRecoveryStep Restless(in StrayDie die) =>
             die.TimesSoFar <= _maxRestless ? DieRecoveryStep.Nudge : DieRecoveryStep.Accept;
 
         // the escape's answer: thrown again with less energy each time, so the last one drops inside the

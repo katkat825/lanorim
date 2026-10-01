@@ -144,35 +144,8 @@ namespace Content.Classes
     public static class FormReader
     {
         public static bool TryRead(string text, out IReadOnlyList<Form> forms,
-                                   out IReadOnlyList<string> problems)
-        {
-            var found = new List<Form>();
-            var trouble = new List<string>();
-
-            forms = found;
-            problems = trouble;
-
-            if (!Json.TryParse(text, out JsonDocument document, out string bad))
-            {
-                trouble.Add(bad);
-                return false;
-            }
-
-            using (document)
-            {
-                foreach (JsonElement entry in document.RootElement.Items("forms"))
-                {
-                    Form form = ReadOne(entry, trouble);
-
-                    if (form != null) found.Add(form);
-                }
-
-                if (found.Count == 0 && trouble.Count == 0)
-                    trouble.Add("no forms in it - the file is an object with a 'forms' array");
-            }
-
-            return trouble.Count == 0;
-        }
+                                   out IReadOnlyList<string> problems) =>
+            Entries.TryRead(text, out forms, out problems);
 
         // every key a Wild Shape card takes
         public static readonly IReadOnlyList<string> Keys = new[]
@@ -181,21 +154,15 @@ namespace Content.Classes
             "skills", "attacks", "mini",
         };
 
+        // the file: { "forms": [ ... ] }, each entry read by ReadOne (EntryList)
+        public static readonly EntryList<Form> Entries =
+            new EntryList<Form>("forms", "form", Keys, ReadOne);
+
         // a form's attack: its name; the rest is what every attack takes (AttackReader.Keys)
         public static readonly IReadOnlyList<string> AttackKeys = new[] { "id" };
 
-        static Form ReadOne(JsonElement entry, List<string> problems)
+        static Form ReadOne(JsonElement entry, string id, List<string> problems)
         {
-            string id = entry.Text("id");
-
-            if (!Json.IsId(id))
-            {
-                problems.Add($"'{id}' is not a form id");
-                return null;
-            }
-
-            Keyed.OnlyKnown(entry, Keys, id, problems);
-
             if (!EnumWords.TryParse(entry.Text("role"), out FormRole role))
                 problems.Add($"{id}: '{entry.Text("role")}' is not a role " +
                              $"({string.Join(", ", FormRoles.All.Select(r => r.Id()))})");

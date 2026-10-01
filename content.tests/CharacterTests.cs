@@ -625,6 +625,11 @@ namespace Content.Tests
             making.Pick(Srd.Class("mage"));
             making.Pick(Srd.Kind("human"));
             making.Pick(Srd.Background("soldier"));
+
+            // the Human's Skillful (cc_task_e-shop-species-and-ui-notes.md 1.3)
+            Assert.Equal(Step.Traits, making.Next);
+            Assert.True(making.PickTraitSkill(Skill.Arcana));
+
             foreach (Skill skill in making.SkillChoices.Take(making.SkillPicksLeft).ToList()) making.Train(skill);
 
             Assert.Equal(Step.Cantrips, making.Next);

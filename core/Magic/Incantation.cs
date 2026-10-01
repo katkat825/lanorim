@@ -4,6 +4,9 @@ using Core.Characters;
 using Core.Combat;
 using Core.Resolution;
 
+using static Core.Magic.SpellReach;
+using static Core.Magic.SpellShapes;
+
 namespace Core.Magic
 {
     // the one thing that casts a spell. it reads the primitives and does what they say; there is
@@ -94,7 +97,7 @@ namespace Core.Magic
             if (fight != null && UnderTheZone(caster, spell, aim, fight, null) is string outside)
                 return Casting.Refused(spell, caster.Actor, castAt, outside);
 
-            if (fight != null && spell.Effects.Any(e => e.Kind == Primitive.Zone && e.Unoccupied) &&
+            if (fight != null && spell.Effects.Any(e => e.Handler.MakesAZone && e.Unoccupied) &&
                 aim.Square.HasValue && fight.Field.At(aim.Square.Value) != null)
                 return Casting.Refused(spell, caster.Actor, castAt, "that square is taken");
 
@@ -103,17 +106,15 @@ namespace Core.Magic
                                        "choose how to cast it: " + string.Join(" or ", spell.Modes));
 
             foreach (SpellEffect choice in spell.Effects.Where(e => e.ChosenDamageType &&
-                                                                    InMode(e, aim)))
+                                                                    e.InMode(aim.Mode)))
                 if (!choice.DamageChoices.Contains(aim.DamageType))
                     return Casting.Refused(spell, caster.Actor, castAt,
                                            "choose a damage type for it");
 
             // SRD 5.2.1 Charmed: no damaging or magical effect aimed at the charmer. v1 reads it
-            // as "nothing hostile": a heal or a blessing still may, a curse with no save may not
-            if (aim.Creatures.Any(t => caster.Actor.HasFrom(Condition.Charmed, t)) &&
-                spell.Effects.Any(e => !(e.Kind == Primitive.Heal || e.Kind == Primitive.Ward ||
-                                         e.Kind == Primitive.Relieve || e.Kind == Primitive.Stabilize ||
-                                         e.Kind == Primitive.Sway && !e.Save.HasValue && e.OnlyHelps)))
+            // as "nothing hostile" (Spell.Kindly): a heal, a blessing or Invisibility still may, a
+            // curse with no save may not
+            if (aim.Creatures.Any(t => caster.Actor.HasFrom(Condition.Charmed, t)) && !spell.Kindly(aim.Mode))
                 return Casting.Refused(spell, caster.Actor, castAt, "charmed by the target");
 
             bool bonus = spell.CastingTime == Spend.Bonus;

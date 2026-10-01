@@ -88,13 +88,15 @@ namespace Content.Combat
             if (Selected.Spell == null) return Array.Empty<Actor>();
 
             int range = Math.Max(1, Selected.Spell.RangeAt(me.Level));
-            bool kind = Kindly(Selected.Spell, Mode);
+            bool kind = Selected.Spell.Kindly(Mode);
 
-            // a kindly spell goes on friends (and the caster); a harmful one on foes
-            return Fight.Actors.Where(a => kind ? a.Side == me.Side : a.Side != me.Side)
+            // a kindly spell goes on friends (and the caster); a harmful one on foes, and never on one
+            // who charmed you (the cast would refuse it, as an attack is never offered at them)
+            return Fight.Actors.Where(a => kind ? a.Side == me.Side
+                                                : a.Side != me.Side && !me.HasFrom(Condition.Charmed, a))
                         .Where(a => ReferenceEquals(a, me) && kind ||
                                     Fight.Field.InRange(me, a, range) && Fight.Sees(me, a))
-                        .Where(a => kind || !a.IsDown || Selected.Spell.Does(Primitive.Stabilize))
+                        .Where(a => kind || !a.IsDown)
                         .OrderBy(a => Fight.Field.Distance(me, a))
                         .ThenBy(a => a.Id, StringComparer.Ordinal)
                         .ToList();
@@ -107,23 +109,6 @@ namespace Content.Combat
         public bool OnlyTargetIsYou =>
             Selected?.Targeting is Targeting.Creature or Targeting.Creatures &&
             LegalTargets() is { Count: 1 } only && ReferenceEquals(only[0], Hero.Actor);
-
-        // a spell for friends: healing, a ward, a boon with no save. SINCE 2026-10-03 (cc_task_open-questions-answers.md
-        // 3.5, a party of one): also a boon only the unwilling save against (Enlarge), and the Invisible condition, the
-        // one a creature is glad of (Invisibility, Greater Invisibility). Judged in the mode picked - Enlarge is kind,
-        // Reduce isn't - and not by what lands when the spell ends (Haste's lethargy is the price of the gift). Before,
-        // all of these could only be aimed at foes, so a lone hero could never cast them on themselves
-        internal static bool Kindly(Spell spell) => Kindly(spell, null);
-
-        internal static bool Kindly(Spell spell, string mode) =>
-            spell.Does(Primitive.Heal) || spell.Does(Primitive.Ward) ||
-            spell.Does(Primitive.Stabilize) || spell.Does(Primitive.Relieve) ||
-            spell.Effects.Where(e => string.IsNullOrEmpty(mode) || e.Mode.Length == 0 || e.Mode == mode)
-                 .Where(e => e.Lands != Lands.OnEnd)
-                 .All(e => e.Kind == Primitive.Sway && (!e.Save.HasValue || e.SaveIfUnwilling && e.OnlyHelps) ||
-                           e.Kind == Primitive.Afflict && e.Condition == Condition.Invisible ||
-                           e.Kind == Primitive.Narrate || e.Kind == Primitive.Reveal ||
-                           e.Kind == Primitive.Illuminate || e.Kind == Primitive.Conjure);
 
         // where a square-aimed option may be put
         public IReadOnlyList<Cell> LegalSquares()

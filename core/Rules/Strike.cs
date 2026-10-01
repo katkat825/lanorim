@@ -101,6 +101,17 @@ namespace Core.Rules
 
         public DamageType TypeOr(DamageType weapon) => Type == DamageType.None ? weapon : Type;
 
+        // whether its condition could land on this creature at all, the save aside: not too big, not a creature its
+        // tags spare (the Ghoul's claw and an elf), not immune
+        public bool CanPut(Actor target) =>
+            Condition != Condition.None && target != null &&
+            (!MaxSize.HasValue || target.CurrentSize <= MaxSize.Value) &&
+            TagRules.Touch(target) && !target.IsImmuneTo(Condition);
+
+        // it would ADD a condition: one it can put on the creature, that the creature doesn't have yet. a monster's
+        // brain prefers such an attack (Tactics.Best): the Ghoul claws until its quarry is Paralyzed, then bites
+        public bool Adds(Actor target) => !OnlyOnCritical && CanPut(target) && !target.Has(Condition);
+
         public override string ToString() =>
             Id + (Amount.IsNothing ? "" : $" {Amount}") +
             (Condition == Condition.None ? "" : $" {Condition.Id()}");
@@ -267,9 +278,7 @@ namespace Core.Rules
                     suffered += target.Suffer(extraRolled, rider.TypeOr(type));
                 }
 
-                if (rider.Condition != Condition.None &&
-                    (!rider.MaxSize.HasValue || target.CurrentSize <= rider.MaxSize.Value) &&
-                    rider.TagRules.Touch(target) &&
+                if (rider.CanPut(target) &&
                     (!rider.Save.HasValue ||
                      Checks.Save(resolver, target, rider.Save.Value, rider.Dc,
                                  target.AdvantageOnSaveAgainst(rider.Condition)

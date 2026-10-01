@@ -49,7 +49,7 @@ namespace Content.Spells
         // "escape": {"ability": "int", "skill": "investigation", "dc": 20}
         static Escape ReadEscape(JsonElement raw, string where, List<string> problems)
         {
-            if (!Record(raw, "escape", where, problems, EscapeKeys, out JsonElement escape)) return null;
+            if (!raw.Record("escape", EscapeKeys, where, problems, out JsonElement escape)) return null;
 
             Ability? ability = escape.Ability("ability", problems, where);
 
@@ -67,7 +67,7 @@ namespace Content.Spells
         // "repeat_save": {"ability": "wis", "worsens": "unconscious", "worsens_after": 2}
         static RepeatSave ReadRepeatSave(JsonElement raw, string where, List<string> problems)
         {
-            if (!Record(raw, "repeat_save", where, problems, RepeatSaveKeys, out JsonElement save)) return null;
+            if (!raw.Record("repeat_save", RepeatSaveKeys, where, problems, out JsonElement save)) return null;
 
             Ability? ability = save.Ability("ability", problems, where);
 
@@ -89,7 +89,7 @@ namespace Content.Spells
         // "gone": {"after_rounds": 10, "tag_rules": {"fiend": "only", ...}}
         static Gone ReadGone(JsonElement raw, string where, List<string> problems)
         {
-            if (!Record(raw, "gone", where, problems, GoneKeys, out JsonElement gone)) return null;
+            if (!raw.Record("gone", GoneKeys, where, problems, out JsonElement gone)) return null;
 
             int rounds = gone.Number("after_rounds");
             IReadOnlyList<TagRule> rules = gone.TagRuleList("tag_rules", problems, where);
@@ -101,25 +101,6 @@ namespace Content.Spells
                 problems.Add($"{where}: a 'gone' record's tag rules are all 'only'");
 
             return new Gone(rounds, rules);
-        }
-
-        static bool Record(JsonElement raw, string name, string where, List<string> problems,
-                           IReadOnlyList<string> keys, out JsonElement record)
-        {
-            record = default;
-
-            if (!raw.Has(name)) return false;
-
-            record = raw.GetProperty(name);
-
-            if (record.ValueKind != JsonValueKind.Object)
-            {
-                problems.Add($"{where}: '{name}' is a record, {{...}}");
-                return false;
-            }
-
-            Keyed.OnlyKnown(record, keys, $"{where} {name}", problems);
-            return true;
         }
     }
 }

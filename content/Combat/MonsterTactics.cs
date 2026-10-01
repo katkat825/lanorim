@@ -217,7 +217,7 @@ namespace Content.Combat
             if (spell.Does(Primitive.Heal) && !spell.Does(Primitive.Damage)) return HealPlan(fight, me, spell, range);
 
             double perTarget = Average(spell, Primitive.Damage) * 0.6 +
-                               (spell.Does(Primitive.Afflict) ? 5 : 0);
+                               (spell.Effects.Any(e => e.Handler.Inflicts(e).HasValue) ? 5 : 0);
 
             if (perTarget <= 0) return null;
 
@@ -334,8 +334,7 @@ namespace Content.Combat
 
         // a condition spell on something that already has the condition wastes the action
         static bool AlreadyHas(Actor target, Spell spell) =>
-            spell.Effects.Where(e => e.Kind == Primitive.Afflict)
-                 .Any(e => target.Has(e.Condition)) &&
+            spell.Effects.Any(e => e.Handler.Inflicts(e) is Condition c && target.Has(c)) &&
             !spell.Does(Primitive.Damage);
 
         static double Average(Spell spell, Primitive kind) =>

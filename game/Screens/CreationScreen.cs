@@ -35,8 +35,9 @@ namespace Game.Screens
 
             _pages = new List<Step>
             {
-                Step.Class, Step.Species, Step.Lineage, Step.Background, Step.Abilities, Step.Improvements,
-                Step.Skills, Step.Cantrips, Step.Spells, Step.SpellResource, Step.Alignment, Step.Name,
+                Step.Class, Step.Species, Step.Lineage, Step.Background, Step.Traits, Step.Abilities,
+                Step.Improvements, Step.Skills, Step.Cantrips, Step.Spells, Step.SpellResource, Step.Equipment,
+                Step.Alignment, Step.Name,
             };
         }
 
@@ -66,6 +67,7 @@ namespace Game.Screens
         bool Asks(Step step) => step switch
         {
             Step.Lineage => _making.NeedsLineage,
+            Step.Traits => _making.HasTraits,
             Step.Improvements => _making.ImprovementPicks > 0,
             Step.Cantrips => _making.Class?.Casts == true && _making.CantripPicks > 0,
             Step.Spells => _making.Class?.Casts == true && _making.SpellPicks > 0,
@@ -80,6 +82,7 @@ namespace Game.Screens
             Step.Species when _making.Species == null => ScreenWords.StepKey(Step.Species),
             Step.Lineage when _making.Lineage == null => ScreenWords.StepKey(Step.Lineage),
             Step.Background when _making.Background == null => ScreenWords.StepKey(Step.Background),
+            Step.Traits when _making.Next == Step.Traits => ScreenWords.StepKey(Step.Traits),
             Step.Abilities when !_making.Scores.IsLegalPointBuy(out _) => ScreenWords.PointsLeft,
             Step.Improvements when _making.ImprovementPicksLeft > 0 => ScreenWords.PicksLeft,
             Step.Skills when _making.SkillPicksLeft > 0 || _making.ExpertisePicksLeft > 0 => ScreenWords.PicksLeft,
@@ -126,6 +129,8 @@ namespace Game.Screens
                 case Step.Species: Choices(_making.SpeciesChoices, s => s.NameKey, s => _making.Species == s, s => _making.Pick(s), s => s.DescriptionKey); break;
                 case Step.Lineage: Choices(_making.LineageChoices, s => s.NameKey, s => _making.Lineage == s, s => _making.PickLineage(s), s => s.DescriptionKey); break;
                 case Step.Background: Choices(_making.Backgrounds, b => b.NameKey, b => _making.Background == b, b => _making.Pick(b), b => b.DescriptionKey); break;
+                case Step.Traits: Traits(); break;
+                case Step.Equipment: Equipment(); break;
                 case Step.Abilities: Scores(); break;
                 case Step.Improvements: Improvements(); break;
                 case Step.Skills: Skills(); break;

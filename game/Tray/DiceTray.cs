@@ -83,6 +83,9 @@ namespace Game.Tray
             // a smaller tray round the same dice, if one is asked for (DiceTray.Sizing)
             Resize();
 
+            // the rim's grain along its rails (TrayGrain)
+            TrayGrain.Apply(GetNodeOrNull(TrayModelPath));
+
             // the skin sets the friction and bounce, so it goes on before anything is thrown
             ApplySkin();
 

@@ -14,41 +14,8 @@ namespace Content.Schema
     public static class ConsequenceReader
     {
         public static bool TryRead(string text, out IReadOnlyList<Consequence> consequences,
-                                   out IReadOnlyList<string> problems)
-        {
-            var found = new List<Consequence>();
-            var trouble = new List<string>();
-
-            consequences = found;
-            problems = trouble;
-
-            if (!Json.TryParse(text, out JsonDocument document, out string bad))
-            {
-                trouble.Add(bad);
-                return false;
-            }
-
-            using (document)
-            {
-                foreach (JsonElement entry in document.RootElement.Items("consequences"))
-                {
-                    Consequence one = ReadOne(entry, trouble);
-
-                    if (one != null) found.Add(one);
-                }
-
-                if (found.Count == 0 && trouble.Count == 0)
-                    trouble.Add("no consequences in it");
-            }
-
-            // a pool with nothing on one side is a natural 20 that does nothing, which is the one
-            // thing the delta is for
-            if (found.All(c => c.Polarity != Polarity.Bane)) trouble.Add("no banes in the pool");
-
-            if (found.All(c => c.Polarity != Polarity.Boon)) trouble.Add("no boons in the pool");
-
-            return trouble.Count == 0;
-        }
+                                   out IReadOnlyList<string> problems) =>
+            Entries.TryRead(text, out consequences, out problems);
 
         // every key a consequence takes
         public static readonly IReadOnlyList<string> Keys = new[]
@@ -56,18 +23,21 @@ namespace Content.Schema
             "id", "polarity", "kind", "ability", "condition", "amount", "scales_with_level", "weight",
         };
 
-        static Consequence ReadOne(JsonElement entry, List<string> problems)
+        // the file: { "consequences": [ ... ] }, each entry read by ReadOne (EntryList)
+        public static readonly EntryList<Consequence> Entries =
+            new EntryList<Consequence>("consequences", "consequence", Keys, ReadOne, BothSides);
+
+        // a pool with nothing on one side is a natural 20 that does nothing, which is the one
+        // thing the delta is for
+        static void BothSides(List<Consequence> found, List<string> problems)
         {
-            string id = entry.Text("id");
+            if (found.All(c => c.Polarity != Polarity.Bane)) problems.Add("no banes in the pool");
 
-            if (!Json.IsId(id))
-            {
-                problems.Add($"'{id}' is not a consequence id");
-                return null;
-            }
+            if (found.All(c => c.Polarity != Polarity.Boon)) problems.Add("no boons in the pool");
+        }
 
-            Keyed.OnlyKnown(entry, Keys, id, problems);
-
+        static Consequence ReadOne(JsonElement entry, string id, List<string> problems)
+        {
             string polarityText = entry.Text("polarity", "bane");
 
             Polarity polarity = polarityText == "boon" ? Polarity.Boon : Polarity.Bane;

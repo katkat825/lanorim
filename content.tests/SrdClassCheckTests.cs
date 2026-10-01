@@ -188,18 +188,19 @@ namespace Content.Tests
         [Fact]
         public void IndomitableRerollsAFailedSaveWithTheFightersLevel()
         {
+            // a human fighter: Indomitable's reroll adds the level, the Human's Resourceful nothing (task E 1.3)
             Hero fighter = Made("fighter", 9);
-            Assert.Equal(1, fighter.Actor.SaveRerolls);
+            Assert.Equal(new[] { 9, 0 }, fighter.Actor.SaveRerolls.OrderByDescending(b => b));
 
-            // a 1, then a 10 + 9 + the save modifier
+            // a 1, then a 10 + 9 + the save modifier: the biggest reroll is spent first
             Attempt save = Checks.Save(new StandardResolver(new ScriptedRng(1, 10)), fighter.Actor,
                                        Ability.Wisdom, 18);
 
             Assert.True(save.Succeeded);
-            Assert.Equal(0, fighter.Actor.SaveRerolls);
+            Assert.Equal(new[] { 0 }, fighter.Actor.SaveRerolls);
 
             fighter.LongRest();
-            Assert.Equal(1, fighter.Actor.SaveRerolls);
+            Assert.Equal(2, fighter.Actor.SaveRerolls.Count);
         }
 
         [Fact]

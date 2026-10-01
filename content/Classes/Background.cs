@@ -36,6 +36,9 @@ namespace Content.Classes
 
         public int Gold { get; }
 
+        // the gold instead of the gear (SRD 5.2.1 p.83: 50 GP for every background)
+        public int GoldInstead { get; init; }
+
         // Lanorim's own, not the SRD's (Recluse): the word a spell that isn't the SRD's carries
         public bool NotInSrd { get; init; }
 
@@ -110,60 +113,34 @@ namespace Content.Classes
     public static class BackgroundReader
     {
         // every key a background takes
-        public static readonly IReadOnlyList<string> Keys = new[] { "id", "skills", "abilities", "gear", "gold", "not_in_srd" };
+        public static readonly IReadOnlyList<string> Keys = new[] { "id", "skills", "abilities", "gear", "gold", "gold_instead", "not_in_srd" };
+
+        // the file: { "backgrounds": [ ... ] }, each entry read by ReadOne (EntryList)
+        public static readonly EntryList<Background> Entries =
+            new EntryList<Background>("backgrounds", "background", Keys, ReadOne);
 
         public static bool TryRead(string text, out IReadOnlyList<Background> backgrounds,
-                                   out IReadOnlyList<string> problems)
+                                   out IReadOnlyList<string> problems) =>
+            Entries.TryRead(text, out backgrounds, out problems);
+
+        static Background ReadOne(JsonElement entry, string id, List<string> problems)
         {
-            var found = new List<Background>();
-            var trouble = new List<string>();
+            var skills = entry.SkillList("skills", problems, id).ToList();
 
-            backgrounds = found;
-            problems = trouble;
+            if (skills.Count != 2)
+                problems.Add($"{id}: {skills.Count} skills - SRD gives a background two");
 
-            if (!Json.TryParse(text, out JsonDocument document, out string bad))
+            var abilities = entry.AbilityList("abilities", problems, id).ToList();
+
+            if (abilities.Count != 3)
+                problems.Add($"{id}: {abilities.Count} abilities - SRD names three to " +
+                             "spend the +2 and +1 on");
+
+            return new Background(id, skills, abilities, entry.Strings("gear"), entry.Number("gold"))
             {
-                trouble.Add(bad);
-                return false;
-            }
-
-            using (document)
-            {
-                foreach (JsonElement entry in document.RootElement.Items("backgrounds"))
-                {
-                    string id = entry.Text("id");
-
-                    if (!Json.IsId(id))
-                    {
-                        trouble.Add($"'{id}' is not a background id");
-                        continue;
-                    }
-
-                    Keyed.OnlyKnown(entry, Keys, id, trouble);
-
-                    var skills = entry.SkillList("skills", trouble, id).ToList();
-
-                    if (skills.Count != 2)
-                        trouble.Add($"{id}: {skills.Count} skills - SRD gives a background two");
-
-                    var abilities = entry.AbilityList("abilities", trouble, id).ToList();
-
-                    if (abilities.Count != 3)
-                        trouble.Add($"{id}: {abilities.Count} abilities - SRD names three to " +
-                                    "spend the +2 and +1 on");
-
-                    found.Add(new Background(id, skills, abilities,
-                                             entry.Strings("gear"), entry.Number("gold"))
-                    {
-                        NotInSrd = entry.Flag("not_in_srd"),
-                    });
-                }
-
-                if (found.Count == 0 && trouble.Count == 0)
-                    trouble.Add("no backgrounds in it");
-            }
-
-            return trouble.Count == 0;
+                NotInSrd = entry.Flag("not_in_srd"),
+                GoldInstead = entry.Number("gold_instead"),
+            };
         }
     }
 }

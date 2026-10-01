@@ -18,7 +18,8 @@ namespace Content.Species
                     IReadOnlyDictionary<Ability, int> bumps = null,
                     IReadOnlyList<Feature> features = null,
                     IReadOnlyList<string> lineages = null,
-                    string lineageOf = null)
+                    string lineageOf = null,
+                    IReadOnlyList<Size> sizes = null)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Speed = Math.Max(0, speed);
@@ -26,6 +27,7 @@ namespace Content.Species
             Features = features ?? Array.Empty<Feature>();
             Lineages = lineages ?? Array.Empty<string>();
             LineageOf = lineageOf ?? "";
+            Sizes = sizes != null && sizes.Count > 0 ? sizes : new[] { Size.Medium };
         }
 
         public string Id { get; }
@@ -44,6 +46,13 @@ namespace Content.Species
         public string LineageOf { get; }
 
         public bool IsLineage => LineageOf.Length > 0;
+
+        // the sizes a hero of this species may be, the first the one it is unless the player picks another: SRD
+        // 5.2.1's Human and Tiefling are "Medium or Small, chosen when you select this species", the Halfling
+        // Small, the rest Medium (cc_task_e-shop-species-and-ui-notes.md 1.3)
+        public IReadOnlyList<Size> Sizes { get; }
+
+        public bool ChoosesSize => Sizes.Count > 1;
 
         public string NameKey => KeyConventions.SpeciesName(Id);
 
@@ -79,64 +88,32 @@ namespace Content.Species
     public static class SpeciesReader
     {
         public static bool TryRead(string text, out IReadOnlyList<Kind> species,
-                                   out IReadOnlyList<string> problems)
+                                   out IReadOnlyList<string> problems) =>
+            Entries.TryRead(text, out species, out problems);
+
+        // every key a species takes (its features' are FeatureReader.Keys)
+        public static readonly IReadOnlyList<string> Keys = new[]
         {
-            var found = new List<Kind>();
-            var trouble = new List<string>();
+            "id", "speed", "bumps", "features", "lineages", "lineage_of", "sizes",
+        };
 
-            species = found;
-            problems = trouble;
+        // the file: { "species": [ ... ] }, each entry read by ReadOne (EntryList)
+        public static readonly EntryList<Kind> Entries =
+            new EntryList<Kind>("species", "species", Keys, ReadOne, Lineages);
 
-            if (!Json.TryParse(text, out JsonDocument document, out string bad))
-            {
-                trouble.Add(bad);
-                return false;
-            }
-
-            using (document)
-            {
-                Keyed.OnlyKnown(document.RootElement, new[] { "species" }, "the species file", trouble);
-
-                foreach (JsonElement entry in document.RootElement.Items("species"))
-                {
-                    Kind kind = ReadOne(entry, trouble);
-
-                    if (kind != null) found.Add(kind);
-                }
-
-                if (found.Count == 0 && trouble.Count == 0)
-                    trouble.Add("no species in it - the file is an object with a 'species' array");
-            }
-
-            // a lineage that names a species nobody shipped is a dangling choice in the creator
+        // a lineage that names a species nobody shipped is a dangling choice in the creator
+        static void Lineages(List<Kind> found, List<string> problems)
+        {
             var ids = new HashSet<string>(found.Select(k => k.Id), StringComparer.Ordinal);
 
             foreach (Kind kind in found)
                 foreach (string lineage in kind.Lineages)
                     if (!ids.Contains(lineage))
-                        trouble.Add($"{kind.Id}: lineage '{lineage}' is not a species in this file");
-
-            return trouble.Count == 0;
+                        problems.Add($"{kind.Id}: lineage '{lineage}' is not a species in this file");
         }
 
-        // every key a species takes (its features' are FeatureReader.Keys)
-        public static readonly IReadOnlyList<string> Keys = new[]
+        static Kind ReadOne(JsonElement entry, string id, List<string> problems)
         {
-            "id", "speed", "bumps", "features", "lineages", "lineage_of",
-        };
-
-        static Kind ReadOne(JsonElement entry, List<string> problems)
-        {
-            string id = entry.Text("id");
-
-            if (!Json.IsId(id))
-            {
-                problems.Add($"'{id}' is not a species id");
-                return null;
-            }
-
-            Keyed.OnlyKnown(entry, Keys, id, problems);
-
             Dictionary<Ability, int> bumps = entry.AbilityRecord("bumps", problems, id);
 
             var features = new List<Feature>();
@@ -149,7 +126,7 @@ namespace Content.Species
             }
 
             return new Kind(id, entry.WalkingSpeed(id, problems), bumps, features,
-                            entry.Strings("lineages"), entry.Text("lineage_of"));
+                            entry.Strings("lineages"), entry.Text("lineage_of"), entry.SizeList("sizes", problems, id));
         }
     }
 }

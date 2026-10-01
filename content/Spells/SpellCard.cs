@@ -178,9 +178,9 @@ namespace Content.Spells
 
         void ReadCaster(Caster caster)
         {
-            if (RollsToHit) AttackBonus = caster.AttackModifier;
+            if (RollsToHit) AttackBonus = caster.AttackModifierFor(Spell);
 
-            if (Save.HasValue) SaveDc = caster.SaveDc;
+            if (Save.HasValue) SaveDc = caster.SaveDcFor(Spell);
 
             Castable = caster.CanCast(Spell, Spell.Level);
 

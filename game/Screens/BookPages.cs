@@ -48,6 +48,11 @@ namespace Game.Screens
         {
             SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
             MouseFilter = MouseFilterEnum.Ignore;
+
+            // TURNED TEXT IS SAMPLED SMOOTHLY (cc_task_e-shop-species-and-ui-notes.md 2.2: "weirdly glitchy looking at that
+            // angle"). The project's canvas filter is nearest (project.godot), which draws a glyph turned by PageTilt
+            // pixel by pixel - stair-stepped strokes, letters that break up. Linear here, and the words under it inherit it
+            TextureFilter = TextureFilterEnum.Linear;
             AddChild(Left);
             AddChild(Right);
         }

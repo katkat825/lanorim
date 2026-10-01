@@ -66,7 +66,7 @@ namespace Game.Screens
             {
                 GameState.SaveProbesApart();
                 QuickStart(args[at + 1], at + 2 < args.Length && !args[at + 2].StartsWith("--") ? args[at + 2] : "fighter",
-                           Arg(args, "--learn"));
+                           Arg(args, "--learn"), args.Contains("--gold"));
                 return;
             }
 
@@ -207,6 +207,7 @@ namespace Game.Screens
             if (making.Class?.Id != cls) making.Pick(GameState.Content.Class(cls));
             making.Pick(GameState.Content.Kind("human"));
             making.Pick(GameState.Content.Background("soldier"));
+            making.SuggestTraits();
 
             foreach (var skill in making.SkillChoices.Take(making.SkillPicksLeft).ToList()) making.Train(skill);
             foreach (var skill in making.Skills.Take(making.ExpertisePicksLeft).ToList()) making.Master(skill);
@@ -249,7 +250,8 @@ namespace Game.Screens
         // a character made with every default, for the headless checks
         // `--learn mage_armor,shield`: those spells learned first, the rest of the picks as usual (a
         // probe or a picture that needs a particular spell)
-        void QuickStart(string campaign, string cls, string learn = null)
+        // `--gold`: the class's and the background's gold instead of their gear, so the run opens in the starting shop
+        void QuickStart(string campaign, string cls, string learn = null, bool gold = false)
         {
             Package pack = GameState.Package(campaign);
 
@@ -271,6 +273,12 @@ namespace Game.Screens
                 else GD.PushWarning($"launch: '{id}' is not a spell a level 1 {cls} can learn");
 
             Defaults(making, cls, learn: true);
+
+            if (gold)
+            {
+                making.PickClassKit(Content.Sheet.KitChoice.Gold);
+                making.PickBackgroundKit(Content.Sheet.KitChoice.Gold);
+            }
 
             making.Call("Probe");
 

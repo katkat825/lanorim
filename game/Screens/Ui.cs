@@ -24,6 +24,11 @@ namespace Game.Screens
         public static Label Plain(string words) =>
             new Label { Text = words ?? "", AutowrapMode = TextServer.AutowrapMode.WordSmart };
 
+        // an empty label in one of the theme's variations, centred, for words set later: the HUD's status line,
+        // pips and preview
+        public static Label Centred(string variation) =>
+            new Label { ThemeTypeVariation = variation, HorizontalAlignment = HorizontalAlignment.Center };
+
         public static Label Title(string key, params object[] args)
         {
             Label label = Label(key, args);

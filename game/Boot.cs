@@ -57,6 +57,7 @@ namespace Game
             making.Pick(srd.Class("fighter"));
             making.Pick(srd.Kind("human"));
             making.Pick(srd.Background("soldier"));
+            making.SuggestTraits();
 
             foreach (Skill skill in making.SkillChoices.Take(making.SkillPicksLeft))
                 making.Train(skill);

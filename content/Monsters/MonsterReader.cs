@@ -16,37 +16,8 @@ namespace Content.Monsters
     public static class MonsterReader
     {
         public static bool TryRead(string text, out IReadOnlyList<Monster> monsters,
-                                   out IReadOnlyList<string> problems)
-        {
-            var found = new List<Monster>();
-            var trouble = new List<string>();
-
-            monsters = found;
-            problems = trouble;
-
-            if (!Json.TryParse(text, out JsonDocument document, out string bad))
-            {
-                trouble.Add(bad);
-                return false;
-            }
-
-            using (document)
-            {
-                Keyed.OnlyKnown(document.RootElement, new[] { "monsters" }, "the monsters file", trouble);
-
-                foreach (JsonElement entry in document.RootElement.Items("monsters"))
-                {
-                    Monster monster = ReadOne(entry, trouble);
-
-                    if (monster != null) found.Add(monster);
-                }
-
-                if (found.Count == 0 && trouble.Count == 0)
-                    trouble.Add("no monsters in it - the file is an object with a 'monsters' array");
-            }
-
-            return trouble.Count == 0;
-        }
+                                   out IReadOnlyList<string> problems) =>
+            Entries.TryRead(text, out monsters, out problems);
 
         // every key a statblock takes, and the keys of its attacks, their on-hit riders, its special
         // actions and its spellcasting
@@ -56,6 +27,10 @@ namespace Content.Monsters
             "tags", "scores", "skills", "expertise", "saves", "instincts", "manoeuvres", "attacks",
             "multiattack", "defenses", "immune", "actions", "spellcasting", "not_in_srd", "traits",
         };
+
+        // the file: { "monsters": [ ... ] }, each entry read by ReadOne (EntryList)
+        public static readonly EntryList<Monster> Entries =
+            new EntryList<Monster>("monsters", "monster", Keys, ReadOne);
 
         // a statblock's attack: its name, whether it is held, and the SRD weapon it is if it is one
         // (cc_task_godfiles-dupes-efficiency.md #10); the rest is what every attack takes
@@ -70,18 +45,8 @@ namespace Content.Monsters
         // inside an action's "recharge": {"d6": 5} is SRD's "Recharge 5-6"
         public static readonly IReadOnlyList<string> RechargeKeys = new[] { "d6" };
 
-        static Monster ReadOne(JsonElement entry, List<string> problems)
+        static Monster ReadOne(JsonElement entry, string id, List<string> problems)
         {
-            string id = entry.Text("id");
-
-            if (!Json.IsId(id))
-            {
-                problems.Add($"'{id}' is not a monster id");
-                return null;
-            }
-
-            Keyed.OnlyKnown(entry, Keys, id, problems);
-
             var scores = new AbilityScores();
 
             foreach (KeyValuePair<Ability, int> score in entry.AbilityRecord("scores", problems, id))

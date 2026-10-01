@@ -311,7 +311,11 @@ namespace Content.Classes
                     break;
 
                 case Trait.Training:
-                    foreach (Skill skill in Skills) actor.Train(skill);
+                    // with 'skill_picks' its skills are the choices (Keen Senses' three), and the pick is trained
+                    // where the creator's are (Hero.Build); with none listed, any skill (Skillful)
+                    if (SkillPicks == 0)
+                        foreach (Skill skill in Skills) actor.Train(skill);
+
                     foreach (Ability save in Saves) actor.TrainSave(save);
                     break;
 

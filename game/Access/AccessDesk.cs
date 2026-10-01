@@ -187,15 +187,11 @@ namespace Game.Access
             var column = Ui.Column(8, Ui.Title(HelpCard.TitleKey));
 
             foreach (string line in HelpCard.Lines)
-                column.AddChild(new Label { Text = Ui.Say(line), AutowrapMode = TextServer.AutowrapMode.WordSmart });
+                column.AddChild(Ui.Label(line));
 
             // the keys, each as the Controls page says it
             foreach (Act act in Enum.GetValues<Act>())
-                column.AddChild(new Label
-                {
-                    Text = Ui.Say(act.NameKey(), string.Join(" / ", Keyboard.Keys(act.Id()))),
-                    AutowrapMode = TextServer.AutowrapMode.WordSmart,
-                });
+                column.AddChild(Ui.Label(act.NameKey(), string.Join(" / ", Keyboard.Keys(act.Id()))));
 
             card.AddChild(column);
             _layer.AddChild(card);

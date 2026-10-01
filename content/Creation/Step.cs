@@ -9,6 +9,11 @@ namespace Content.Creation
         Species,
         Lineage,
         Background,
+
+        // the species' own choices: Skillful's skill, Keen Senses', a lineage's spellcasting ability, Medium or
+        // Small (Creation.Traits.cs). stopped on only while a skill or the ability is still to pick
+        Traits,
+
         Abilities,
 
         // a character made above level 4 spends its ability score improvements here, one by one.
@@ -29,6 +34,10 @@ namespace Content.Creation
         // never opens this step gets slots, which is the right default. It is a Step so the UI has
         // somewhere to put it; ChoosesResource says whether to show it at all.
         SpellResource,
+
+        // the class's gear or its gold instead, and the background's (Creation.Kit.cs). Never stopped on either:
+        // pre-answered with the gear
+        Equipment,
 
         // ALSO NEVER STOPPED ON, for the same reason: pre-answered (true neutral), so a player who
         // skips it still has the field the sheet requires. make Next stop here if it should be

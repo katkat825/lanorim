@@ -11,7 +11,8 @@ namespace Core.Magic
     // ZONES: put down, moved, drifting, pulsing, carrying auras, and taken up again
     public sealed partial class Incantation
     {
-        readonly List<(Encounter fight, SpellZone zone)> _zones = new();
+        // which zones this incantation's spells laid on which fight
+        readonly ZoneLedger _zones = new();
 
         // what a zone's pulse did, for whoever is showing it - the fight log, the table
         public event Action<SpellZone, Actor, Pulses, IReadOnlyList<Landing>> Pulsed;
@@ -34,7 +35,7 @@ namespace Core.Magic
                 Ring = aim.Mode == "ring",
             };
 
-            _zones.Add((fight, zone));
+            _zones.Add(fight, zone);
 
             // Forcecage: the outline goes up as walls, and comes down with the zone
             if (area.Encloses != Edge.None)
@@ -108,14 +109,7 @@ namespace Core.Magic
         static string AuraId(string spell) => spell + "_aura";
 
         // the Forcecage the creature is in, if going to that square would take it out
-        internal SpellZone Caged(Encounter fight, Actor creature, Cell to)
-        {
-            if (!(fight.Field.Where(creature) is Cell here)) return null;
-
-            return _zones.Where(z => z.fight == fight && z.zone.Area.Encloses != Edge.None)
-                         .Select(z => z.zone)
-                         .FirstOrDefault(z => z.Within(here) && !z.Within(to));
-        }
+        internal SpellZone Caged(Encounter fight, Actor creature, Cell to) => _zones.Caged(fight, creature, to);
 
         // who is inside each aura now: the aura's sways go on whoever stepped in and come off
         // whoever stepped out
@@ -126,8 +120,7 @@ namespace Core.Magic
             foreach (Placement held in _placed.Where(p => p.Spec.WhileInZone &&
                                                           p.Condition != Condition.None).ToList())
             {
-                SpellZone zone = _zones.Where(z => z.fight == fight && z.zone.Source == held.Spell)
-                                       .Select(z => z.zone).FirstOrDefault();
+                SpellZone zone = _zones.On(fight).FirstOrDefault(z => z.Source == held.Spell);
 
                 if (zone == null || !(fight.Field.Where(held.Target) is Cell at) ||
                     !zone.Covers(fight.Field, at))
@@ -135,7 +128,7 @@ namespace Core.Magic
             }
 
             // Moonbeam: out of the beam, it can shape-shift again
-            foreach ((Encounter where, SpellZone zone) in _zones.Where(z => z.fight == fight).ToList())
+            foreach (SpellZone zone in _zones.On(fight))
             {
                 if (!zone.Acts.Any(e => e.RevertsShape)) continue;
 
@@ -146,7 +139,7 @@ namespace Core.Magic
                         actor.Boons.EndId(reverted);
             }
 
-            foreach ((Encounter where, SpellZone zone) in _zones.Where(z => z.fight == fight).ToList())
+            foreach (SpellZone zone in _zones.On(fight))
             {
                 List<SpellEffect> auras = zone.Auras.ToList();
 
@@ -172,11 +165,8 @@ namespace Core.Magic
         // away from the caster, washing over whoever it now covers
         void Drift(Encounter fight, Actor whose)
         {
-            foreach ((Encounter where, SpellZone zone) in _zones.Where(z => z.fight == fight &&
-                                                                           ReferenceEquals(z.zone.Owner, whose) &&
-                                                                           z.zone.Area.Drifts > 0 &&
-                                                                           z.zone.Centre.HasValue)
-                                                               .ToList())
+            foreach (SpellZone zone in _zones.On(fight).Where(z => ReferenceEquals(z.Owner, whose) &&
+                                                                   z.Area.Drifts > 0 && z.Centre.HasValue))
             {
                 Cell? from = fight.Field.Where(whose);
 
@@ -208,8 +198,7 @@ namespace Core.Magic
             }
         }
 
-        public IEnumerable<SpellZone> ZonesOf(Actor caster) =>
-            _zones.Where(z => ReferenceEquals(z.zone.Owner, caster)).Select(z => z.zone);
+        public IEnumerable<SpellZone> ZonesOf(Actor caster) => _zones.Of(caster);
 
         // the zone acting on one creature at one moment: the spell's zone effects whose pulses
         // include it, each resolved against that creature exactly as a cast would, at the level
@@ -252,33 +241,15 @@ namespace Core.Magic
         void EndZones(Actor caster, string spell)
         {
             // an aura's sways go with it, from everybody it was on
-            foreach ((Encounter fight, SpellZone zone) in
-                     _zones.Where(z => ReferenceEquals(z.zone.Owner, caster) &&
-                                       z.zone.Source == spell && z.zone.Auras.Any()).ToList())
+            foreach ((Encounter fight, SpellZone zone) in _zones.Of(caster, spell).Where(z => z.Zone.Auras.Any()))
                 foreach (Actor actor in fight.Actors)
                     actor.Boons.EndId(AuraId(spell));
 
-            foreach ((Encounter fight, SpellZone zone) in
-                     _zones.Where(z => ReferenceEquals(z.zone.Owner, caster) &&
-                                       z.zone.Source == spell).ToList())
+            foreach ((Encounter fight, SpellZone zone) in _zones.Of(caster, spell))
             {
                 fight.EndZones(spell, caster);
-                _zones.Remove((fight, zone));
+                _zones.Remove(fight, zone);
             }
-        }
-
-        // a Globe of Invulnerability between the caster and the target: the target stands in a
-        // spell-blocking zone the caster is outside, and the spell is of a level it stops
-        static bool Shielded(Encounter fight, Actor caster, Actor target, int castAt)
-        {
-            Cell? inside = fight.Field.Where(target);
-            Cell? from = fight.Field.Where(caster);
-
-            if (!inside.HasValue || !from.HasValue) return false;
-
-            return fight.Zones.Any(z => z.BlocksSpellsUpTo > 0 && castAt <= z.BlocksSpellsUpTo &&
-                                        z.Covers(fight.Field, inside.Value) &&
-                                        !z.Covers(fight.Field, from.Value));
         }
     }
 }

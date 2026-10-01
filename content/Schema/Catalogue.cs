@@ -5,7 +5,8 @@ using System.Linq;
 namespace Content.Schema
 {
     // A CATALOGUE BY ID: every spell, item, monster or Wild Shape form the game knows, with the
-    // problems its files had (SpellBook, ItemShelf, Bestiary, FormShelf). built once, usually from
+    // problems its files had (SpellBook, ItemShelf, Bestiary, FormShelf; Listing for the classes,
+    // species and backgrounds, in their files' order). built once, usually from
     // Srd.ReadAll, and handed round read-only. what it keeps, finds and counts is the same for all of
     // them; each adds its own order and its own questions (cc_task_dedupe-methods.md #3). not the
     // campaign Shelf, which is what packs are installed
@@ -17,12 +18,15 @@ namespace Content.Schema
         protected Catalogue(IEnumerable<T> things, Func<T, string> id, Func<T, IEnumerable<string>> keys,
                             IEnumerable<string> problems)
         {
+            var said = (problems ?? Enumerable.Empty<string>()).ToList();
+
+            // a second of one id is a problem, never a quiet overwrite: the first stays
             foreach (T thing in things ?? Enumerable.Empty<T>())
-                if (thing != null)
-                    _byId[id(thing)] = thing;
+                if (thing != null && !_byId.TryAdd(id(thing), thing))
+                    said.Add($"'{id(thing)}' is defined twice - the first one is kept");
 
             _keys = keys;
-            Problems = (problems ?? Enumerable.Empty<string>()).ToList();
+            Problems = said;
         }
 
         public IReadOnlyList<string> Problems { get; }

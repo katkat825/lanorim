@@ -59,6 +59,10 @@ namespace Content.Classes
         // the gold the starting kit comes with (SRD 5.2.1's option A)
         public int Gold { get; init; }
 
+        // the gold instead of the kit (SRD 5.2.1's last option: a Fighter's 155 GP). taken, the hero shops first
+        // (cc_task_e-shop-species-and-ui-notes.md 1.4)
+        public int GoldInstead { get; init; }
+
         // tool proficiencies: a Rogue's Thieves' Tools, a Druid's Herbalism Kit. carried on the
         // sheet; no v1 check reads them yet
         public IReadOnlyList<string> Tools { get; init; } = Array.Empty<string>();

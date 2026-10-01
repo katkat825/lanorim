@@ -132,7 +132,7 @@ namespace Core.Magic
             int previous = landings.Count;
 
             // what lands when the spell ends (Haste's lethargy) waits for the ending
-            foreach (SpellEffect effect in effects.Where(e => InMode(e, aim) && e.Lands != Lands.OnEnd))
+            foreach (SpellEffect effect in effects.Where(e => e.InMode(aim.Mode) && e.Lands != Lands.OnEnd))
             {
                 // who the effect just before this one actually landed on, for one that follows it
                 HashSet<Actor> hit = new HashSet<Actor>(
@@ -145,8 +145,5 @@ namespace Core.Magic
                         landings, squares, covered, saves, effect.Follows ? hit : null);
             }
         }
-
-        static bool InMode(SpellEffect effect, Aim aim) =>
-            effect.Mode.Length == 0 || effect.Mode == aim.Mode;
     }
 }

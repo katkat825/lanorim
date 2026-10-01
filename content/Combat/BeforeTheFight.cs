@@ -33,7 +33,7 @@ namespace Content.Combat
                          .Where(s => !s.IsCantrip && !s.Answers && !s.Concentration)
                          .Where(s => Outlasting.Contains(SpellCard.Of(s).Lasts))
                          .Where(s => s.Effects.All(e => e.AimKind is AimKind.Caster or AimKind.Creature or AimKind.Creatures))
-                         .Where(CombatSession.Kindly)
+                         .Where(s => s.Kindly())
                          .Where(s => caster.CanCast(s, s.Level))
                          .Where(s => !hero.Actor.Boons.Has(s.Id))
                          .OrderBy(s => s.Level).ThenBy(s => s.Id, System.StringComparer.Ordinal)

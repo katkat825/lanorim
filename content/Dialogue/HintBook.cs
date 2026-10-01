@@ -10,31 +10,13 @@ namespace Content.Dialogue
     // a campaign's hints/ folder: one problem, three rungs, each rung naming a BEAT rather than a
     // line. That indirection is the point - a hint phrased by only one companion is a hint gated on
     // which class you picked, and the spine check catches that the moment a voice is missing one.
-    public sealed class HintBook
+    public sealed class HintBook : IdBook<Hint>
     {
         public const string Extension = ".json";
 
-        readonly Dictionary<string, Hint> _hints = new Dictionary<string, Hint>(StringComparer.Ordinal);
-
-        readonly List<ContentProblem> _problems = new List<ContentProblem>();
-
-        HintBook(string campaign) => Campaign = campaign ?? "";
-
-        public string Campaign { get; }
-
-        public IReadOnlyCollection<string> Ids => _hints.Keys;
-
-        public IReadOnlyList<ContentProblem> Problems => _problems;
-
-        public bool Has(string id) => id != null && _hints.ContainsKey(id);
-
-        public Hint Of(string id) => id != null && _hints.TryGetValue(id, out Hint hint) ? hint : null;
-
-        public IEnumerable<Hint> All =>
-            _hints.Keys.OrderBy(i => i, StringComparer.Ordinal).Select(i => _hints[i]);
-
-        public int Count => _hints.Count;
-
+        HintBook(string campaign) : base(campaign, "hints")
+        {
+        }
 
         public static HintBook Read(string folder, string campaign)
         {
@@ -44,7 +26,7 @@ namespace Content.Dialogue
                                 "a hints file is a list of problems - { \"hints\": [ { \"id\": " +
                                 "\"the_stair_door\", \"rungs\": [ \"hinges_are_new\", " +
                                 "\"somebody_replaced_it\", \"the_pins_lift_out\" ] } ] }",
-                                "a hint", Fields, book._problems, book.One);
+                                "a hint", Fields, book.Said, book.One);
 
             return book;
         }
@@ -53,20 +35,16 @@ namespace Content.Dialogue
 
         void One(JsonElement entry, string file, string where)
         {
-            if (!entry.TryGetProperty("id", out JsonElement id) ||
-                id.ValueKind != JsonValueKind.String || !ContentId.IsLocal(id.GetString()))
-            {
-                _problems.Add(new ContentProblem(
-                    file, $"{where}.id",
-                    "a hint needs the problem it is about - lowercase a-z, 0-9 and underscore. " +
-                    "The ladder counts asks per problem, so this is what it counts"));
-                return;
-            }
+            string id = IdOf(entry, file, where,
+                             "a hint needs the problem it is about - lowercase a-z, 0-9 and underscore. " +
+                             "The ladder counts asks per problem, so this is what it counts");
+
+            if (id == null) return;
 
             if (!entry.TryGetProperty("rungs", out JsonElement rungs) ||
                 rungs.ValueKind != JsonValueKind.Array)
             {
-                _problems.Add(new ContentProblem(
+                Said.Add(new ContentProblem(
                     file, $"{where}.rungs",
                     $"a hint needs its {HintLadder.Rungs} rungs, as beat ids - an observation, a " +
                     "nudge, then something close to the answer"));
@@ -80,7 +58,7 @@ namespace Content.Dialogue
             {
                 if (rung.ValueKind != JsonValueKind.String || !ContentId.IsLocal(rung.GetString()))
                 {
-                    _problems.Add(new ContentProblem(
+                    Said.Add(new ContentProblem(
                         file, $"{where}.rungs[{at}]",
                         $"'{PackJson.Shown(rung)}' is not a beat id - a rung names a beat in this " +
                         "campaign's beats/ folder, so every companion has to phrase it"));
@@ -93,7 +71,7 @@ namespace Content.Dialogue
 
             if (named.Count != HintLadder.Rungs)
             {
-                _problems.Add(new ContentProblem(
+                Said.Add(new ContentProblem(
                     file, $"{where}.rungs",
                     $"this hint has {named.Count} rungs and a ladder has {HintLadder.Rungs} - an " +
                     "observation, a nudge, then something close to the answer. Fewer and asking " +
@@ -101,19 +79,16 @@ namespace Content.Dialogue
                 return;
             }
 
-            if (_hints.ContainsKey(id.GetString()))
+            if (Has(id))
             {
-                _problems.Add(new ContentProblem(
+                Said.Add(new ContentProblem(
                     file, $"{where}.id",
-                    $"'{id.GetString()}' already has a ladder in this campaign"));
+                    $"'{id}' already has a ladder in this campaign"));
                 return;
             }
 
-            _hints[id.GetString()] = new Hint(id.GetString(), named);
+            Add(id, new Hint(id, named));
         }
-
-        public override string ToString() =>
-            $"{_hints.Count} hints" + (_problems.Count > 0 ? $", {_problems.Count} problems" : "");
     }
 
     public sealed class Hint

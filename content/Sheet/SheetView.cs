@@ -39,6 +39,12 @@ namespace Content.Sheet
 
         public string AlignmentKey { get; private set; }
 
+        // Medium or Small, and the ability the species' spells are cast with when it has any (null when not)
+        // (cc_task_e-shop-species-and-ui-notes.md 1.3)
+        public string SizeKey { get; private set; }
+
+        public string SpeciesSpellAbilityKey { get; private set; }
+
         public string BackgroundKey { get; private set; }
 
         // ability score improvements the level has given and the player has not spent: the sheet
@@ -142,6 +148,8 @@ namespace Content.Sheet
                 SpeciesKey = hero.Species.NameKey,
                 LineageKey = hero.Lineage?.NameKey,
                 AlignmentKey = hero.Alignment.NameKey(),
+                SizeKey = actor.Size.UiNameKey("size"),
+                SpeciesSpellAbilityKey = hero.SpeciesSpellAbility?.NameKey(),
                 BackgroundKey = hero.Background?.NameKey,
                 PendingImprovements = hero.PendingImprovements,
 

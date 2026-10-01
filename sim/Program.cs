@@ -32,6 +32,7 @@ namespace Sim
                 case "classes": return Classes.Run(args.Skip(1).ToArray(), Find);
                 case "mage-balance": return MageBalance.Run(args.Skip(1).ToArray(), Find);
                 case "trace": return Classes.Trace(args.Skip(1).ToArray(), Find);
+                case "versus": return Versus.Run(args.Skip(1).ToArray(), Find);
                 case "help": return Help();
 
                 default:

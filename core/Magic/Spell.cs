@@ -153,6 +153,22 @@ namespace Core.Magic
 
         public bool Does(Primitive primitive) => Effects.Any(e => e.Kind == primitive);
 
+        // A SPELL FOR FRIENDS, the one definition (cc_task_d-seams-and-duplication.md §4): every effect of the
+        // mode picked only helps (IPrimitiveHandler.Helps), or it heals, wards, relieves or stabilizes at all.
+        // judged by what lands on the cast, not when it ends (Haste's lethargy is the price of the gift); a null
+        // mode is every mode. the Charmed check asks it (nothing else may be aimed at the charmer) and so does
+        // a hero's targeting (a kind spell goes on friends and the caster, the rest on foes)
+        // a mode with nothing landing on the cast at all is not kind (All of nothing would say it was)
+        public bool Kindly(string mode = null)
+        {
+            if (Effects.Any(e => e.Handler.KindWhateverElse)) return true;
+
+            var cast = Effects.Where(e => (string.IsNullOrEmpty(mode) || e.InMode(mode)) && e.Lands != Lands.OnEnd)
+                              .ToList();
+
+            return cast.Count > 0 && cast.All(e => e.Handler.Helps(e));
+        }
+
         public string NameKey => KeyConventions.SpellName(Id);
 
         public string DescriptionKey => KeyConventions.SpellDescription(Id);

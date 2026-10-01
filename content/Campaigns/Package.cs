@@ -148,6 +148,11 @@ namespace Content.Campaigns
         public MerchantDef Merchant(string id) =>
             Merchants.FirstOrDefault(m => string.Equals(m.Id, id, StringComparison.Ordinal));
 
+        // the shop a hero who took gold visits before the first scene: the campaign's own `starting_shop` merchant if
+        // it wrote one (to replace the stock, or extend it by listing the SRD's and more), else the SRD's
+        // (cc_task_e-shop-species-and-ui-notes.md 1.4)
+        public MerchantDef StartingShop => Merchant(MerchantReader.StartingShopId) ?? MerchantReader.StartingShop;
+
         public override string ToString() =>
             Manifest == null
                 ? $"{Id}: unreadable, {Problems.Count} problems"

@@ -5,6 +5,9 @@ using Core.Characters;
 using Core.Combat;
 using Core.Space;
 
+using static Core.Magic.SpellReach;
+using static Core.Magic.SpellShapes;
+
 namespace Core.Magic
 {
     public sealed partial class Incantation
@@ -63,8 +66,7 @@ namespace Core.Magic
 
             // a repeating shift that reaches the zone MOVES the zone - Moonbeam's beam, a Flaming
             // Sphere rolled - and whoever it now covers is washed over as if they had walked in
-            foreach (SpellEffect move in spell.Effects.Where(e => e.Lands.Repeats() && e.Kind == Primitive.Shift &&
-                                                                  e.AimKind == AimKind.Zone))
+            foreach (SpellEffect move in spell.Effects.Where(e => e.Lands.Repeats() && e.Handler.MovesTheZone(e)))
                 if (MoveZone(caster, spell, move, aim, fight) is string refused)
                     return Casting.Refused(spell, caster.Actor, castAt, refused);
 
@@ -89,7 +91,7 @@ namespace Core.Magic
 
             Run(caster, spell,
                 spell.Effects.Where(e => e.Lands.Repeats() &&
-                                         !(e.Kind == Primitive.Shift && e.AimKind == AimKind.Zone)),
+                                         !e.Handler.MovesTheZone(e)),
                 aim, castAt, fight, null, landings, squares, covered, again: true);
 
             return new Casting(spell, caster.Actor, castAt, true, null, landings, squares,

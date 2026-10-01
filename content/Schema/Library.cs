@@ -14,8 +14,8 @@ namespace Content.Schema
     public sealed class Library
     {
         Library(SpellBook spells, ItemShelf items,
-                IReadOnlyList<CharacterClass> classes, IReadOnlyList<Kind> species,
-                IReadOnlyList<Background> backgrounds, Bestiary bestiary,
+                Listing<CharacterClass> classes, Listing<Kind> species,
+                Listing<Background> backgrounds, Bestiary bestiary,
                 Core.Resolution.ConsequencePool consequences, FormShelf forms,
                 IReadOnlyList<string> problems)
         {
@@ -34,11 +34,12 @@ namespace Content.Schema
 
         public ItemShelf Items { get; }
 
-        public IReadOnlyList<CharacterClass> Classes { get; }
+        // in their files' order, found by id
+        public Listing<CharacterClass> Classes { get; }
 
-        public IReadOnlyList<Kind> Species { get; }
+        public Listing<Kind> Species { get; }
 
-        public IReadOnlyList<Background> Backgrounds { get; }
+        public Listing<Background> Backgrounds { get; }
 
         public Bestiary Bestiary { get; }
 
@@ -53,14 +54,11 @@ namespace Content.Schema
 
         public bool Sound => Problems.Count == 0;
 
-        public CharacterClass Class(string id) =>
-            Classes.FirstOrDefault(c => string.Equals(c.Id, id, StringComparison.Ordinal));
+        public CharacterClass Class(string id) => Classes.Find(id);
 
-        public Kind Kind(string id) =>
-            Species.FirstOrDefault(s => string.Equals(s.Id, id, StringComparison.Ordinal));
+        public Kind Kind(string id) => Species.Find(id);
 
-        public Background Background(string id) =>
-            Backgrounds.FirstOrDefault(b => string.Equals(b.Id, id, StringComparison.Ordinal));
+        public Background Background(string id) => Backgrounds.Find(id);
 
         // the seven the player picks from: a lineage is a second step inside its species, not a
         // thing on the first list
@@ -72,9 +70,9 @@ namespace Content.Schema
         public IEnumerable<string> Keys() =>
             Spells.Keys()
                   .Concat(Items.Keys())
-                  .Concat(Classes.SelectMany(c => c.Keys()))
-                  .Concat(Species.SelectMany(s => s.Keys()))
-                  .Concat(Backgrounds.SelectMany(b => b.Keys()))
+                  .Concat(Classes.Keys())
+                  .Concat(Species.Keys())
+                  .Concat(Backgrounds.Keys())
                   .Concat(Bestiary.Keys())
                   .Concat(Consequences.All.SelectMany(c => c.Keys()))
                   .Concat(Forms.Keys())
@@ -158,14 +156,12 @@ namespace Content.Schema
             var consequences = Schema.Srd.ReadAll<Core.Resolution.Consequence>(
                 "consequences", ConsequenceReader.TryRead, problems);
 
-            var classes = Schema.Srd.ReadAll<CharacterClass>(
-                "classes", ClassReader.TryRead, problems);
+            var classes = Listed<CharacterClass>("classes", ClassReader.TryRead, c => c.Id, c => c.Keys(), problems);
 
-            var species = Schema.Srd.ReadAll<Kind>(
-                "species", SpeciesReader.TryRead, problems);
+            var species = Listed<Kind>("species", SpeciesReader.TryRead, s => s.Id, s => s.Keys(), problems);
 
-            var backgrounds = Schema.Srd.ReadAll<Background>(
-                "backgrounds", BackgroundReader.TryRead, problems);
+            var backgrounds = Listed<Background>("backgrounds", BackgroundReader.TryRead, b => b.Id, b => b.Keys(),
+                                                 problems);
 
             // a shared feature is written once and named by id (srd/features/shared.json): one that
             // nothing names is dead data
@@ -203,6 +199,18 @@ namespace Content.Schema
             return new Library(spells, items, classes, species, backgrounds, bestiary,
                                new Core.Resolution.ConsequencePool(consequences), forms,
                                problems);
+        }
+
+        // one SRD folder as a catalogue in its files' order; a second of one id is said with the folder
+        static Listing<T> Listed<T>(string folder, ListReader<T> reader, Func<T, string> id,
+                                    Func<T, IEnumerable<string>> keys, List<string> problems)
+            where T : class
+        {
+            var listing = new Listing<T>(Schema.Srd.ReadAll(folder, reader, problems), id, keys);
+
+            problems.AddRange(listing.Problems.Select(p => $"{folder}: {p}"));
+
+            return listing;
         }
 
         static IEnumerable<string> Missing(IEnumerable<string> got, IEnumerable<string> wanted,

@@ -9,9 +9,9 @@ namespace Content.Campaigns
         public const char Separator = '.';
 
         // held to one key segment so a bad folder name is refused at load, not in a later locale audit
-        public static bool IsCampaign(string campaign) =>
-            !string.IsNullOrEmpty(campaign) && IsSegment(campaign);
+        public static bool IsCampaign(string campaign) => IsLocal(campaign);
 
+        // THE ID RULE, everywhere (Json.IsId is this): one key segment, lowercase a-z, 0-9 and underscore
         public static bool IsLocal(string id) => !string.IsNullOrEmpty(id) && IsSegment(id);
 
         static bool IsSegment(string s) =>

@@ -18,8 +18,7 @@ namespace Core.Magic
         {
             int ended = 0;
 
-            foreach (SpellZone zone in _zones.Where(z => z.fight == fight && z.zone.Covers(fight.Field, square))
-                                             .Select(z => z.zone).ToList())
+            foreach (SpellZone zone in _zones.On(fight).Where(z => z.Covers(fight.Field, square)))
             {
                 if (forceOnly && !zone.Spell.ForceCreation) continue;
 

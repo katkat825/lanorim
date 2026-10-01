@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Content.Classes;
 using Content.Schema;
 using Content.Sheet;
@@ -16,6 +17,7 @@ namespace Content.Creation
           : Species == null ? Step.Species
           : NeedsLineage && Lineage == null ? Step.Lineage
           : Background == null ? Step.Background
+          : TraitsOpen ? Step.Traits
           : !Scores.IsLegalPointBuy(out _) ? Step.Abilities
           : ImprovementPicksLeft > 0 ? Step.Improvements
           : SkillPicksLeft > 0 || ExpertisePicksLeft > 0 ? Step.Skills
@@ -36,6 +38,8 @@ namespace Content.Creation
                 if (Species == null) problems.Add("no species picked");
                 if (NeedsLineage && Lineage == null) problems.Add($"{Species.Id} needs a lineage");
                 if (Background == null) problems.Add("no background picked");
+
+                problems.AddRange(TraitProblems());
 
                 if (!Scores.IsLegalPointBuy(out string spend)) problems.Add(spend);
 
@@ -68,9 +72,14 @@ namespace Content.Creation
                                 Resource)
             {
                 Alignment = Alignment,
+                SpellAbility = SpellAbility,
+                Size = Size,
+                ClassKit = ClassKit,
+                BackgroundKit = BackgroundKit,
             };
 
-            hero.Build(_backgroundSpend, _skills, _expertise, Library.Items, _spells, _improvements);
+            hero.Build(_backgroundSpend, _skills.Concat(_traitSkills), _expertise, Library.Items, _spells,
+                       _improvements);
 
             return hero;
         }

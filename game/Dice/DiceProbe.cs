@@ -41,6 +41,12 @@ namespace Game.Dice
         int _thrown;
         Die[] _handful;
 
+        // `--alternate d6`: every other throw is a handful of this shape, not counted, so the same bodies change shape
+        // between throws the way play's do (a d20 to hit, a d6 for damage). the sweeps of one shape never did, and so
+        // never saw a d6's turned hull carried onto the d20 after it (cc_task_e-shop-species-and-ui-notes.md 2.1)
+        Die[] _between;
+        bool _onBetween;
+
         public override void _Ready()
         {
             if (Tray == null)
@@ -55,6 +61,15 @@ namespace Game.Dice
             _tally = new FaceTally(Shape.Sides());
 
             _handful = Enumerable.Repeat(Shape, Math.Clamp(Handful, 1, Tray.Seats)).ToArray();
+
+            string[] args = OS.GetCmdlineUserArgs();
+            int alternate = Array.IndexOf(args, "--alternate");
+
+            if (alternate >= 0 && alternate + 1 < args.Length && DieExtensions.TryParse(args[alternate + 1], out Die other))
+            {
+                _between = Enumerable.Repeat(other, _handful.Length).ToArray();
+                GD.Print($"probe   each throw after a handful of {other.Label()}, not counted");
+            }
 
             Tray.Rolled += Landed;
 
@@ -76,6 +91,13 @@ namespace Game.Dice
 
         void Landed(TrayRoll roll)
         {
+            if (_onBetween)
+            {
+                _onBetween = false;
+                Tray.Throw(_handful);
+                return;
+            }
+
             foreach (Felt felt in roll.Felt)
             {
                 // a face outside the die is a bug in the solid or the face table, not a result:
@@ -100,7 +122,8 @@ namespace Game.Dice
 
             if (_thrown < Throws)
             {
-                Tray.Throw(_handful);
+                _onBetween = _between != null;
+                Tray.Throw(_onBetween ? _between : _handful);
                 return;
             }
 

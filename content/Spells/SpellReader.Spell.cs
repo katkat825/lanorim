@@ -12,18 +12,8 @@ namespace Content.Spells
 {
     public static partial class SpellReader
     {
-        static Spell ReadOne(JsonElement entry, List<string> problems)
+        static Spell ReadOne(JsonElement entry, string id, List<string> problems)
         {
-            string id = entry.Text("id");
-
-            if (!Json.IsId(id))
-            {
-                problems.Add($"'{id}' is not a spell id - lowercase a-z, 0-9 and underscore only");
-                return null;
-            }
-
-            Keyed.OnlyKnown(entry, SpellKeys, id, problems);
-
             int level = entry.Number("level", -1);
 
             if (level < 0 || level > 9)
@@ -157,13 +147,13 @@ namespace Content.Spells
 
             // an effect that acts through the zone needs a zone to act through, and a zone with
             // nothing acting through it is only a marker - which is allowed, it is what a zone was
-            bool hasZone = effects.Any(e => e.Kind == Primitive.Zone);
+            bool hasZone = effects.Any(e => e.Handler.MakesAZone);
 
-            if (effects.Any(e => e.AimKind == AimKind.Zone && e.Kind != Primitive.Shift) && !hasZone)
+            if (effects.Any(e => e.AimKind == AimKind.Zone && !e.Handler.MovesTheZone(e)) && !hasZone)
                 problems.Add($"{id}: an effect reaches 'zone' but the spell makes no zone");
 
             // one zone to a spell - or to each of its modes: Forcecage is a cage or a box
-            if (effects.Where(e => e.Kind == Primitive.Zone).GroupBy(e => e.Mode).Any(g => g.Count() > 1))
+            if (effects.Where(e => e.Handler.MakesAZone).GroupBy(e => e.Mode).Any(g => g.Count() > 1))
                 problems.Add($"{id}: one zone to a spell, or to each of its modes");
 
             // stopping a spell needs a spell to stop, and only the cast window has one in hand

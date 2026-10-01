@@ -24,7 +24,12 @@ namespace Game.Dice
 
             Mass = Density * solid.Volume;
 
-            GetNode<CollisionShape3D>("CollisionShape3D").Shape = DieParts.BuildHull(solid);
+            // the hull goes on square: a d6's turn (TurnTheCube) must not outlive it. a die that was a d6 last throw and
+            // a d20 this one landed on a turned hull its faces weren't read by - cocked at the same tilt every time,
+            // nudged, re-thrown (cc_task_e-shop-species-and-ui-notes.md 2.1)
+            CollisionShape3D hull = GetNode<CollisionShape3D>("CollisionShape3D");
+            hull.Shape = DieParts.BuildHull(solid);
+            hull.Basis = Basis.Identity;
             GetNode<MeshInstance3D>("MeshInstance3D").Mesh = DieParts.BuildMesh(solid);
 
             Node existing = GetNodeOrNull(DieParts.NumbersNode);

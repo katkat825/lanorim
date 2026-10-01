@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Content.Campaigns;
@@ -50,13 +51,20 @@ namespace Content.Play
         // the node's start, which is what an autosave at a chapter or a fight is anyway)
         public static CampaignRun Resume(SaveGame save, Library library, Package pack,
                                          IResolver heroDice, IRng gm, SaveLibrary saves,
+                                         out IReadOnlyList<ContentProblem> problems) =>
+            Resume(save, library, pack, _ => heroDice, gm, saves, out problems);
+
+        // the same, with the hero's dice made for the hero once the save has brought it back: a table's
+        // resolver knows whose throws are the player's by the hero (GameState.MakeResolver)
+        public static CampaignRun Resume(SaveGame save, Library library, Package pack,
+                                         Func<Hero, IResolver> heroDice, IRng gm, SaveLibrary saves,
                                          out IReadOnlyList<ContentProblem> problems)
         {
             Hero hero = HeroSaves.Restore(save.Hero, library, out problems);
 
             if (hero == null) return null;
 
-            var run = new CampaignRun(library, pack, hero, heroDice, gm, saves, save.Slot)
+            var run = new CampaignRun(library, pack, hero, heroDice(hero), gm, saves, save.Slot)
             {
                 MapId = save.Map,
             };

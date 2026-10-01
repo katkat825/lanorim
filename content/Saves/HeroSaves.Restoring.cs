@@ -86,12 +86,16 @@ namespace Content.Saves
                     $"'{saved.Alignment}' is not an alignment - this hero is being read as " +
                     "neutral"));
 
+            (Ability? spellAbility, Size? size) = SpeciesChoices(saved, species, file, found);
+
             var hero = new Hero(saved.Name, cls, species, background,
                                 AbilityScores.From(saved.Scores.ToDictionary(p => p.Key,
                                                                              p => p.Value)),
                                 saved.Level, lineage, saved.Resource)
             {
                 Alignment = alignment,
+                SpellAbility = spellAbility,
+                Size = size,
             };
 
             // BUILT, NOT PATCHED: the species, the background's spend, the class and the
@@ -107,11 +111,40 @@ namespace Content.Saves
             Improvements(saved, hero, file, found);
 
             hero.DiscardWarningDismissed = saved.DiscardWarningDismissed;
+            hero.ShopsFirst = saved.ShopsFirst;
 
             RestoreKit(saved, library, hero, file, found);
             RestoreDay(saved, library, hero, file, found);
 
             return hero;
+        }
+
+        // the species' choices (cc_task_e-shop-species-and-ui-notes.md 1.3): read where they can be, a caution where not, and
+        // nothing at all from a save made before them (the best ability allowed, the species' first size)
+        static (Ability? SpellAbility, Size? Size) SpeciesChoices(SavedHero saved, Kind species, string file,
+                                                                  List<ContentProblem> found)
+        {
+            Ability? spellAbility = null;
+
+            if (!string.IsNullOrEmpty(saved.SpellAbility))
+            {
+                if (EnumWords.TryParse(saved.SpellAbility, out Ability ability)) spellAbility = ability;
+                else
+                    found.Add(ContentProblem.Caution(file, "hero.spell_ability",
+                        $"'{saved.SpellAbility}' is not an ability - the species' spells use the best one allowed"));
+            }
+
+            Size? size = null;
+
+            if (!string.IsNullOrEmpty(saved.Size))
+            {
+                if (EnumWords.TryParse(saved.Size, out Size read) && species.Sizes.Contains(read)) size = read;
+                else
+                    found.Add(ContentProblem.Caution(file, "hero.size",
+                        $"'{saved.Size}' is not a size a {saved.Species} may be - read as {species.Sizes[0].Id()}"));
+            }
+
+            return (spellAbility, size);
         }
 
         static IEnumerable<AbilityImprovement> Improvements(SavedHero saved, string file,

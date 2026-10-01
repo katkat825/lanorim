@@ -13,9 +13,12 @@ namespace Core.Space
             (1, -1), (1, 1), (-1, 1), (-1, -1),
         };
 
-        // occupied is required, not defaulted - a route through an occupant looks right with one piece and breaks with two
+        // occupied is required, not defaulted - a route through an occupant looks right with one piece and breaks with two.
+        // stepCost is what one step onto a square costs the mover (null: the map's own, difficult ground double), and
+        // allowed whether it may take a step at all (null: any) - the same two a flood takes (Reach), so a clicked route
+        // never costs more than the squares a turn can reach (cc_task_e-shop-species-and-ui-notes.md 2.5)
         public static IReadOnlyList<Cell> Between(MapLayout map, Cell from, Cell to, Func<Cell, bool> occupied,
-                                                  bool flying = false)
+                                                  Func<Cell, int> stepCost = null, Func<Cell, Cell, bool> allowed = null)
         {
             if (map == null || occupied == null) return null;
 
@@ -43,7 +46,9 @@ namespace Core.Space
 
                     if (!CanStep(map, here, next, dx, dy, occupied)) continue;
 
-                    int through = cost + (flying ? 1 : map.At(next).MoveCost());
+                    if (allowed != null && !allowed(here, next)) continue;
+
+                    int through = cost + (stepCost?.Invoke(next) ?? map.At(next).MoveCost());
 
                     if (best.TryGetValue(next, out int already) && already <= through) continue;
 
@@ -64,7 +69,8 @@ namespace Core.Space
         // used to run Between to every square on the map, one A* each (cc_task_godfiles-dupes-
         // efficiency.md #16). the start is in it at 0
         public static Dictionary<Cell, int> Reach(MapLayout map, Cell from, Func<Cell, bool> occupied,
-                                                  Func<Cell, int> stepCost, int budget)
+                                                  Func<Cell, int> stepCost, int budget,
+                                                  Func<Cell, Cell, bool> allowed = null)
         {
             var best = new Dictionary<Cell, int> { [from] = 0 };
 
@@ -83,6 +89,8 @@ namespace Core.Space
                     var next = new Cell(here.X + dx, here.Y + dy);
 
                     if (!CanStep(map, here, next, dx, dy, occupied)) continue;
+
+                    if (allowed != null && !allowed(here, next)) continue;
 
                     int through = at.Cost + stepCost(next);
 

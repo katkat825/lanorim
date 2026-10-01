@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Core.Characters;
 using Core.Combat;
@@ -6,9 +7,12 @@ using Core.Space;
 
 namespace Core.Magic
 {
-    public sealed partial class Incantation
+    // WHETHER A CAST CAN REACH: range and sight, a weapon's reach, the area a bolt must fall under, a Globe in the
+    // way, and a creature the effect cannot touch at all. no state of its own: Incantation asks it before
+    // anything lands (cc_task_d-seams-and-duplication.md §8, out of Incantation.Reach, .Targeting and .Zones)
+    internal static class SpellReach
     {
-        static string OutOfReach(Caster caster, Spell spell, Aim aim, Encounter fight)
+        internal static string OutOfReach(Caster caster, Spell spell, Aim aim, Encounter fight)
         {
             Cell? here = fight.Field.Where(caster.Actor);
 
@@ -77,6 +81,62 @@ namespace Core.Magic
                 return $"{aim.Square.Value} is out of range";
 
             return null;
+        }
+
+        // whether this creature is one the effect can touch at all: Hold Person's Humanoid, an
+        // elf's Trance against Sleep, Power Word Stun's 150 hit points. a creature it cannot touch
+        // is untouched - no save, nothing lands - the way SRD's "is unaffected" reads
+        internal static bool Touches(SpellEffect effect, Actor target)
+        {
+            if (!effect.TagRules.Touch(target)) return false;
+
+            if (effect.HitPoints != null && !effect.HitPoints.Lets(target)) return false;
+
+            if (effect.NeedsSight && target.Has(Condition.Blinded)) return false;
+
+            if (effect.MaxSize.HasValue && target.CurrentSize > effect.MaxSize.Value) return false;
+
+            return true;
+        }
+
+        // Call Lightning: a bolt must fall under the cloud. at the cast the cloud is not there yet,
+        // so it is where it will be; after, it is where it is
+        internal static string UnderTheZone(Caster caster, Spell spell, Aim aim, Encounter fight,
+                                            SpellZone made)
+        {
+            if (!spell.Effects.Any(e => e.WithinZone) || !aim.Square.HasValue) return null;
+
+            SpellEffect area = spell.Effects.FirstOrDefault(e => e.Handler.MakesAZone);
+
+            if (area == null) return null;
+
+            bool under;
+
+            if (made != null)
+                under = made.Covers(fight.Field, aim.Square.Value);
+            else
+            {
+                Cell? centre = area.OnCaster ? fight.Field.Where(caster.Actor) : aim.Square;
+
+                under = centre.HasValue &&
+                        Battlefield.Distance(centre.Value, aim.Square.Value) <= area.Radius;
+            }
+
+            return under ? null : "it has to fall under the spell's area";
+        }
+
+        // a Globe of Invulnerability between the caster and the target: the target stands in a
+        // spell-blocking zone the caster is outside, and the spell is of a level it stops
+        internal static bool Shielded(Encounter fight, Actor caster, Actor target, int castAt)
+        {
+            Cell? inside = fight.Field.Where(target);
+            Cell? from = fight.Field.Where(caster);
+
+            if (!inside.HasValue || !from.HasValue) return false;
+
+            return fight.Zones.Any(z => z.BlocksSpellsUpTo > 0 && castAt <= z.BlocksSpellsUpTo &&
+                                        z.Covers(fight.Field, inside.Value) &&
+                                        !z.Covers(fight.Field, from.Value));
         }
     }
 }

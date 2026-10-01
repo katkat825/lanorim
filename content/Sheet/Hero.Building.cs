@@ -32,6 +32,8 @@ namespace Content.Sheet
 
             Species.Outfit(Actor, Level);
             Lineage?.Outfit(Actor, Level);
+
+            Actor.Size = Size ?? Species.Sizes[0];
             Background?.Outfit(Actor, backgroundSpend);
 
             Class.Outfit(Actor, Level, chosenSkills);
@@ -60,7 +62,7 @@ namespace Content.Sheet
             // casts a day and nothing else (SRD 5.2.1: the High Elf's, the Tiefling's legacy)
             else if (Features.Any(f => f.Spells.Count > 0 || f.InnateSpell != null))
             {
-                Caster = new Caster(Actor, InnateAbility());
+                Caster = new Caster(Actor, SpellAbility ?? InnateAbility());
             }
 
             Prepare();
@@ -92,10 +94,15 @@ namespace Content.Sheet
         public IReadOnlyList<AbilityImprovement> RefusedImprovements { get; private set; } =
             Array.Empty<AbilityImprovement>();
 
+        // the class's gear and the background's, each with its gold - or each one's gold instead (KitChoice)
         void Kit(ItemShelf shelf)
         {
-            foreach (string id in Class.StartingGear.Concat(Background?.Gear ??
-                                                            Enumerable.Empty<string>()))
+            IEnumerable<string> gear =
+                (ClassKit == KitChoice.Gear ? Class.StartingGear : Enumerable.Empty<string>())
+                .Concat(BackgroundKit == KitChoice.Gear ? Background?.Gear ?? Enumerable.Empty<string>()
+                                                        : Enumerable.Empty<string>());
+
+            foreach (string id in gear)
             {
                 Item item = shelf.Find(id);
 
@@ -104,17 +111,26 @@ namespace Content.Sheet
                 Pack.Take(item);
             }
 
-            Pack.Earn((Background?.Gold ?? 0) + Class.Gold);
+            Pack.Earn((ClassKit == KitChoice.Gear ? Class.Gold : Class.GoldInstead) +
+                      (Background == null ? 0 : BackgroundKit == KitChoice.Gear ? Background.Gold : Background.GoldInstead));
 
-            // put the best of it on: the highest armor class body armor it may wear, a shield if
-            // the class trains with one, and the biggest weapon
-            foreach (Item armor in Pack.Stacks.Select(s => s.Item)
-                                      .Where(i => i.Kind == ItemKind.Armor &&
-                                                  i.Armor.HasValue &&
-                                                  Class.ArmorTraining.Contains(i.Armor.Value.Category))
-                                      .OrderByDescending(i => i.Armor.Value.BaseArmorClass)
-                                      .Take(1))
-                Wear(armor);
+            ShopsFirst = ClassKit == KitChoice.Gold || BackgroundKit == KitChoice.Gold && Background != null;
+
+            WearTheBest();
+        }
+
+        // PUT THE BEST OF THE PACK ON, into whatever is free: the highest armor class body armor it may wear, the biggest
+        // weapon, a shield if the class trains with one. the starting kit, and what the starting shop sold
+        public void WearTheBest()
+        {
+            if (Equipment.In(Slot.Body) == null)
+                foreach (Item armor in Pack.Stacks.Select(s => s.Item)
+                                          .Where(i => i.Kind == ItemKind.Armor &&
+                                                      i.Armor.HasValue &&
+                                                      Class.ArmorTraining.Contains(i.Armor.Value.Category))
+                                          .OrderByDescending(i => i.Armor.Value.BaseArmorClass)
+                                          .Take(1))
+                    Wear(armor);
 
             // the biggest weapon it trains with, melee before ranged; a one-handed one only when
             // there is a shield to carry with it (the Barbarian's greataxe, not a handaxe)
@@ -130,16 +146,18 @@ namespace Content.Sheet
             Item weapon = (shielded ? arms.FirstOrDefault(i => i.Slot != Slot.TwoHand) : null)
                        ?? arms.FirstOrDefault();
 
-            if (weapon != null) Wear(weapon);
+            if (weapon != null && Equipment.In(Slot.MainHand) == null && Equipment.In(Slot.TwoHand) == null)
+                Wear(weapon);
 
-            if (Class.Shields)
+            if (Class.Shields && Equipment.In(Slot.Shield) == null && Equipment.In(Slot.TwoHand) == null)
                 foreach (Item shield in Pack.Stacks.Select(s => s.Item)
                                             .Where(i => i.Kind == ItemKind.Shield).Take(1))
                     Wear(shield);
 
-            foreach (Item trinket in Pack.Stacks.Select(s => s.Item)
-                                         .Where(i => i.Slot == Slot.Trinket).Take(1))
-                Wear(trinket);
+            if (Equipment.In(Slot.Trinket) == null)
+                foreach (Item trinket in Pack.Stacks.Select(s => s.Item)
+                                             .Where(i => i.Slot == Slot.Trinket).Take(1))
+                    Wear(trinket);
         }
     }
 }

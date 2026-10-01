@@ -137,6 +137,19 @@ namespace Content.Play
             if (Now != Scene.Shop) return Now;
 
             Shop = null;
+
+            // the starting shop: what was bought goes on where nothing is worn yet, and the story begins
+            if (_startAfterShop != null)
+            {
+                string node = _startAfterShop;
+
+                _startAfterShop = null;
+                Hero.ShopsFirst = false;
+                Hero.WearTheBest();
+
+                return Start(node);
+            }
+
             Reply(new Answer());
 
             return Settle();

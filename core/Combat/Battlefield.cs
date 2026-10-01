@@ -77,20 +77,38 @@ namespace Core.Combat
 
             if (!from.HasValue) return null;
 
-            return Route.Between(Map, from.Value, to, c => Occupies(c, actor), actor.IsFlying);
+            return Route.Between(Map, from.Value, to, c => Occupies(c, actor), c => StepCost(actor, c),
+                                 (a, b) => !Forbids(actor, a, b));
         }
 
         public int CostOf(IReadOnlyList<Cell> route) => Route.Cost(Map, route);
 
-        // a flyer's route costs a square a square, difficult ground or not; a prone creature
-        // crawls, one extra square for each (SRD 5.2.1 Crawling)
-        public int CostOf(IReadOnlyList<Cell> route, Actor mover)
-        {
-            int steps = Math.Max(0, (route?.Count ?? 1) - 1);
-            int cost = mover != null && mover.IsFlying ? steps : CostOf(route);
+        // what the route costs this mover, step by step as Walk pays it (StepCost)
+        public int CostOf(IReadOnlyList<Cell> route, Actor mover) =>
+            route == null ? 0 : route.Skip(1).Sum(c => StepCost(mover, c));
 
-            return mover != null && mover.Has(Condition.Prone) && !mover.IsFlying ? cost + steps : cost;
+        // WHAT THE FIGHT ADDS TO A STEP (cc_task_e-shop-species-and-ui-notes.md 2.5): ground a spell made difficult (Spike
+        // Growth, Web), and whether the mover drags a creature it grapples. the encounter sets both on its field
+        public Func<Cell, Actor, bool> MadeRough { get; set; }
+
+        public Func<Actor, bool> Drags { get; set; }
+
+        // ONE STEP ONTO A SQUARE, IN SQUARES - the one cost the route (RouteFor), the flood (Reachable) and the walk
+        // (Encounter.Walk) all pay, so a clicked route is never dearer than walking it square by square. difficult
+        // ground is double, whether the map made it or a spell did, and the two don't stack (SRD's difficult terrain is a
+        // yes or a no); a flyer ignores the map's. crawling one more (SRD 5.2.1 Prone), dragging the grappled one more
+        public int StepCost(Actor mover, Cell to)
+        {
+            bool flying = mover?.IsFlying == true;
+            bool rough = !flying && Map.At(to).MoveCost() > 1 || (MadeRough?.Invoke(to, mover) ?? false);
+            bool crawling = mover != null && !flying && mover.Has(Condition.Prone);
+            bool dragging = mover != null && (Drags?.Invoke(mover) ?? false);
+
+            return (rough ? 2 : 1) + (crawling ? 1 : 0) + (dragging ? 1 : 0);
         }
+
+        // a step it may not take: SRD 5.2.1 Frightened, one closer to what it fears
+        public bool Forbids(Actor mover, Cell from, Cell to) => CloserToFear(mover, from, to);
 
         // SRD 5.2.1 Frightened: "can't willingly move closer to the source of its fear"
         public bool CloserToFear(Actor mover, Cell from, Cell to) =>
@@ -108,23 +126,19 @@ namespace Core.Combat
             if (!from.HasValue || budgetSquares <= 0) return new Dictionary<Cell, int>();
 
             Dictionary<Cell, int> flood = Route.Reach(Map, from.Value, c => Occupies(c, actor), c => StepCost(actor, c),
-                                                      budgetSquares);
+                                                      budgetSquares, (a, b) => !Forbids(actor, a, b));
 
             // in the map's own order, not the flood's: the AI takes the first of equally good
             // squares, so the order is part of what a fight does
             var reached = new Dictionary<Cell, int>();
 
             foreach (Cell cell in Map.Cells)
-                if (cell != from.Value && flood.TryGetValue(cell, out int cost) && !CloserToFear(actor, from.Value, cell))
+                if (cell != from.Value && flood.TryGetValue(cell, out int cost))
                     reached[cell] = cost;
 
             return reached;
         }
 
-        // what one step onto a square costs this mover: a square a square flying, difficult ground
-        // double on foot, one more crawling (SRD 5.2.1 Crawling)
-        int StepCost(Actor mover, Cell to) =>
-            mover.IsFlying ? 1 : Map.At(to).MoveCost() + (mover.Has(Condition.Prone) ? 1 : 0);
 
         // a radius AoE: every square whose centre is within the radius and which the burst's
         // origin can see. the lines, cones and cubes below obey the same two rules - on the map,

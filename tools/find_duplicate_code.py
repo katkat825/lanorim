@@ -44,6 +44,9 @@ ALLOWED=[
     ({'BeatBook.Read','HintBook.Read'}, "each book's own list, example and fields, over ListFile.ReadFolder"),
     ({'EncounterReader.ReadOne','LootReader.ReadOne'}, "each table's own keys; the shared steps are TableReader's"),
     ({'BoardTiles.Panel','BoardTiles.Rubble'}, 'two models stood up by Standing, turned differently'),
+    ({'Background.TryRead','ClassReader.TryRead','Form.TryRead','ItemReader.TryRead','MonsterReader.TryRead',
+      'ConsequenceReader.TryRead','Species.TryRead','SpellReader.TryRead','MerchantReader.TryRead'},
+     "each reader's ListReader entry point, handing its own file to its own EntryList (the shared steps are EntryList's)"),
 ]
 
 def files_in(dirs):

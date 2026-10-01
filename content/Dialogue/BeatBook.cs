@@ -11,30 +11,13 @@ namespace Content.Dialogue
     // a campaign's beats/ folder. A file holds a LIST of beats rather than one apiece: the spine is
     // read and edited as a whole, and a hundred two-line files is a worse writing surface than one
     // hundred-line file, which is the thing W is meant to get right.
-    public sealed class BeatBook
+    public sealed class BeatBook : IdBook<Beat>
     {
         public const string Extension = ".json";
 
-        readonly Dictionary<string, Beat> _beats = new Dictionary<string, Beat>(StringComparer.Ordinal);
-
-        readonly List<ContentProblem> _problems = new List<ContentProblem>();
-
-        BeatBook(string campaign) => Campaign = campaign ?? "";
-
-        public string Campaign { get; }
-
-        public IReadOnlyCollection<string> Ids => _beats.Keys;
-
-        public IReadOnlyList<ContentProblem> Problems => _problems;
-
-        public bool Has(string id) => id != null && _beats.ContainsKey(id);
-
-        public Beat Of(string id) => id != null && _beats.TryGetValue(id, out Beat beat) ? beat : null;
-
-        public IEnumerable<Beat> All =>
-            _beats.Keys.OrderBy(i => i, StringComparer.Ordinal).Select(i => _beats[i]);
-
-        public int Count => _beats.Count;
+        BeatBook(string campaign) : base(campaign, "beats")
+        {
+        }
 
         // Every phrasing the spine CAN use: the DM's floor, and one per beat per voice.
         //
@@ -68,7 +51,7 @@ namespace Content.Dialogue
             ListFile.ReadFolder(folder, Extension, "beats",
                                 "a beats file is a list of intents - " +
                                 "{ \"beats\": [ { \"id\": \"warn_bridge_trapped\", \"kind\": \"plot\" } ] }",
-                                "a beat", Fields, book._problems, book.One);
+                                "a beat", Fields, book.Said, book.One);
 
             return book;
         }
@@ -77,15 +60,11 @@ namespace Content.Dialogue
 
         void One(JsonElement entry, string file, string where)
         {
-            if (!entry.TryGetProperty("id", out JsonElement id) ||
-                id.ValueKind != JsonValueKind.String || !ContentId.IsLocal(id.GetString()))
-            {
-                _problems.Add(new ContentProblem(
-                    file, $"{where}.id",
-                    "a beat needs an id - lowercase a-z, 0-9 and underscore. Every companion is " +
-                    "keyed off it, so it is the name of the intent and not of a line"));
-                return;
-            }
+            string id = IdOf(entry, file, where,
+                             "a beat needs an id - lowercase a-z, 0-9 and underscore. Every companion is " +
+                             "keyed off it, so it is the name of the intent and not of a line");
+
+            if (id == null) return;
 
             BeatKind kind = BeatKind.Plot;
 
@@ -93,7 +72,7 @@ namespace Content.Dialogue
             {
                 if (word.ValueKind != JsonValueKind.String || !EnumWords.TryParse(word.GetString(), out kind))
                 {
-                    _problems.Add(new ContentProblem(
+                    Said.Add(new ContentProblem(
                         file, $"{where}.kind",
                         $"'{PackJson.Shown(word)}' is not a kind of beat - it is one of " +
                         $"{Vocabulary.Offer(EnumWords.Ids<BeatKind>())}"));
@@ -106,19 +85,16 @@ namespace Content.Dialogue
                 ? said.GetString()
                 : "";
 
-            if (_beats.ContainsKey(id.GetString()))
+            if (Has(id))
             {
-                _problems.Add(new ContentProblem(
+                Said.Add(new ContentProblem(
                     file, $"{where}.id",
-                    $"'{id.GetString()}' is already a beat in this campaign - one intent, written " +
+                    $"'{id}' is already a beat in this campaign - one intent, written " +
                     "once, is the whole idea"));
                 return;
             }
 
-            _beats[id.GetString()] = new Beat(id.GetString(), kind, note);
+            Add(id, new Beat(id, kind, note));
         }
-
-        public override string ToString() =>
-            $"{_beats.Count} beats" + (_problems.Count > 0 ? $", {_problems.Count} problems" : "");
     }
 }

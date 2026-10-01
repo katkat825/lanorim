@@ -384,9 +384,7 @@ namespace Content.Combat
 
             if (effects.Any(e => e.AimKind.IsDirected())) return Targeting.Direction;
 
-            if (effects.Any(e => e.AimKind.NeedsATargetSquare() ||
-                                 e.Kind == Primitive.Shift && e.AimKind == AimKind.Caster ||
-                                 e.Kind == Primitive.Shift && e.AimKind == AimKind.Zone))
+            if (effects.Any(e => e.AimKind.NeedsATargetSquare() || e.Handler.AimsAtASquare(e)))
                 return Targeting.Square;
 
             if (effects.Any(e => e.AimKind == AimKind.Creatures)) return Targeting.Creatures;

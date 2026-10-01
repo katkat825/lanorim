@@ -3,6 +3,6 @@
 
   "backgrounds": [
     { "id": "recluse", "skills": ["medicine", "nature"], "abilities": ["con", "wis", "int"],
-      "gear": ["quarterstaff"], "gold": 16, "not_in_srd": true }
+      "gear": ["quarterstaff"], "gold": 16, "gold_instead": 50, "not_in_srd": true }
   ]
 }

@@ -5,6 +5,7 @@ using Content.Creation;
 using Content.Sheet;
 using Content.Spells;
 using Core.Characters;
+using Core.Localization;
 using Core.Magic;
 using Godot;
 
@@ -102,6 +103,114 @@ namespace Game.Screens
                     _making.Unimprove();
                     Draw();
                 }));
+        }
+
+        // THE SPECIES' OWN CHOICES (cc_task_e-shop-species-and-ui-notes.md 1.3): a section each for the skill, the
+        // spellcasting ability and the size, whichever this species and lineage have; under the list, what each
+        // trait is, in the species' own words
+        void Traits()
+        {
+            if (_making.TraitSkillPicks > 0)
+            {
+                _body.AddChild(Ui.Label(ScreenWords.TraitSkill));
+
+                foreach (Skill skill in _making.TraitSkills.Concat(_making.TraitSkillChoices).Distinct().OrderBy(s => (int)s).ToList())
+                {
+                    Skill one = skill;
+
+                    Button button = Ui.Button(one.NameKey(), () =>
+                    {
+                        if (_making.TraitSkills.Contains(one)) _making.UnpickTraitSkill(one);
+                        else _making.PickTraitSkill(one);
+                        Update();
+                    });
+
+                    button.ToggleMode = true;
+                    _updates.Add(() =>
+                    {
+                        bool have = _making.TraitSkills.Contains(one);
+                        button.SetPressedNoSignal(have);
+                        button.Disabled = !have && _making.TraitSkillPicksLeft == 0;
+                    });
+
+                    _body.AddChild(button);
+                }
+            }
+
+            if (_making.SpellAbilityChoices.Count > 0)
+            {
+                _body.AddChild(Ui.Label(ScreenWords.TraitSpellAbility));
+                Toggles(_making.SpellAbilityChoices, a => Ui.Say(a.NameKey()), a => _making.SpellAbility == a, a => _making.PickSpellAbility(a));
+            }
+
+            if (_making.ChoosesSize)
+            {
+                _body.AddChild(Ui.Label(ScreenWords.TraitSize));
+                Toggles(_making.SizeChoices, s => Ui.Say(s.UiNameKey("size")), s => _making.Size == s, s => _making.PickSize(s));
+            }
+
+            _describe = () => string.Join("\n", _making.TraitFeatures.Select(f => Ui.Say(f.NameKey) + ": " + Ui.Say(f.DescriptionKey)));
+        }
+
+        // THE STARTING EQUIPMENT (cc_task_e-shop-species-and-ui-notes.md 1.4): the class's gear or its gold, the background's
+        // or its gold; under the list, what the gear is. gold for either opens the shop before the campaign
+        void Equipment()
+        {
+            _body.AddChild(Ui.Label(ScreenWords.KitFromClass));
+            Toggles(Enum.GetValues<KitChoice>(), k => Kit(k, _making.ClassGold(k)), k => _making.ClassKit == k,
+                    k => { _making.PickClassKit(k); return true; });
+
+            if (_making.Background != null)
+            {
+                _body.AddChild(Ui.Label(ScreenWords.KitFromBackground));
+                Toggles(Enum.GetValues<KitChoice>(), k => Kit(k, _making.BackgroundGold(k)), k => _making.BackgroundKit == k,
+                        k => { _making.PickBackgroundKit(k); return true; });
+            }
+
+            _describe = () =>
+            {
+                var said = new List<string>();
+
+                if (_making.ClassKit == KitChoice.Gear) said.Add(Gear(_making.Class.StartingGear));
+                if (_making.BackgroundKit == KitChoice.Gear && _making.Background != null) said.Add(Gear(_making.Background.Gear));
+
+                said.Add(Ui.Say(ScreenWords.KitStartsWith, Ui.Say(Content.Screens.PackView.GoldKey, _making.StartingGold)));
+
+                if (_making.ClassKit == KitChoice.Gold || _making.BackgroundKit == KitChoice.Gold)
+                    said.Add(Ui.Say(ScreenWords.KitShopFirst));
+
+                return string.Join("\n", said);
+            };
+        }
+
+        static string Kit(KitChoice choice, int gold) =>
+            Ui.Say(choice == KitChoice.Gear ? ScreenWords.KitGear : ScreenWords.KitGold,
+                   Ui.Say(Content.Screens.PackView.GoldKey, gold));
+
+        // "Greataxe, Handaxe ×4"
+        string Gear(IEnumerable<string> ids) =>
+            string.Join(", ", ids.GroupBy(id => id)
+                                 .Select(g => _making.Library.Items.Find(g.Key) is { } item
+                                     ? Ui.Say(item.NameKey) + (g.Count() > 1 ? $" ×{g.Count()}" : "")
+                                     : g.Key));
+
+        // one of a few, pressed in when chosen: a section of a page (Choices is a whole page). `words` is what the
+        // button says, already said
+        void Toggles<T>(IEnumerable<T> things, Func<T, string> words, Func<T, bool> chosen, Func<T, bool> pick)
+        {
+            foreach (T thing in things.ToList())
+            {
+                T one = thing;
+                Button button = Ui.Button(words(one), () =>
+                {
+                    pick(one);
+                    Update();
+                }, true);
+
+                button.ToggleMode = true;
+                _updates.Add(() => button.SetPressedNoSignal(chosen(one)));
+                _body.AddChild(button);
+            }
         }
 
         void Skills()

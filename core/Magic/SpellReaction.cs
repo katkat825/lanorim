@@ -41,7 +41,7 @@ namespace Core.Magic
         // armor class the spell puts on its own caster: Shield's five. read off the primitives,
         // not the spell's name
         public int Deflects =>
-            Spell.Effects.Where(e => e.Kind == Primitive.Sway && e.AimKind == AimKind.Caster)
+            Spell.Effects.Where(e => e.Handler.CarriesABoon && e.AimKind == AimKind.Caster)
                  .Sum(e => e.Boon.ArmorClass);
 
         public bool AlsoAnswers(Moment moment) =>

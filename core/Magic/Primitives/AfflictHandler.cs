@@ -9,6 +9,11 @@ namespace Core.Magic
     {
         public Primitive Kind => Primitive.Afflict;
 
+        public Condition? Inflicts(SpellEffect effect) => effect.Condition;
+
+        // Invisible is the one condition a creature is glad of (Invisibility, Greater Invisibility)
+        public bool Helps(SpellEffect effect) => effect.Condition == Condition.Invisible;
+
         public IReadOnlyList<string> Keys { get; } = new[]
         {
             "disarms", "pinned",

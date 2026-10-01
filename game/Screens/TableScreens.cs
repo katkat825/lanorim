@@ -191,7 +191,7 @@ namespace Game.Screens
 
                 if (_view.AtTheCounter && r.SellsFor >= 0)
                 {
-                    line.AddChild(Ui.Button($"{Ui.Say(PackView.SellKey)} {r.SellsFor}", () =>
+                    line.AddChild(Ui.Button($"{Ui.Say(PackView.SellKey)} {Ui.Say(PackView.GoldKey, r.SellsFor)}", () =>
                     {
                         if (_view.NeedsSellConfirmation(r.Item.Id) && _confirming != "sell:" + r.Item.Id)
                         {
@@ -259,7 +259,7 @@ namespace Game.Screens
                 {
                     ShopRow r = row;
                     shelf.AddChild(Ui.Row(6,
-                        Ui.Plain($"{Ui.Say(r.NameKey)}  {r.Price}"),
+                        Ui.Plain($"{Ui.Say(r.NameKey)}  {Ui.Say(PackView.GoldKey, r.Price)}"),
                         Ui.Button(PackView.BuyKey, () => { _view.Buy(r.Item.Id); Redraw(); })
                           .Greyed(!r.Affordable, Merchant.LineFor(Rebuff.NoGold))));
                 }
@@ -291,6 +291,13 @@ namespace Game.Screens
                 Ui.Label(ScreenWords.SheetLevel, _sheet.Level),
                 Ui.Label(ScreenWords.SheetHp, _sheet.HitPoints, _sheet.MaxHitPoints),
                 Ui.Label(ScreenWords.SheetAc, _sheet.ArmorClass)));
+
+            var origin = Ui.Row(24, Ui.Label(ScreenWords.SheetSize, Ui.Say(_sheet.SizeKey)));
+
+            if (_sheet.SpeciesSpellAbilityKey != null)
+                origin.AddChild(Ui.Label(ScreenWords.SheetSpeciesSpells, Ui.Say(_sheet.SpeciesSpellAbilityKey)));
+
+            Body.AddChild(origin);
 
             // one line each, never wrapped: a wrapping label in a row was squeezed to nothing (found by
             // check-layout, 2026-10-01)

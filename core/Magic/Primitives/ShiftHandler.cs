@@ -17,6 +17,11 @@ namespace Core.Magic
     {
         public Primitive Kind => Primitive.Shift;
 
+        public bool MovesTheZone(SpellEffect effect) => effect.AimKind == AimKind.Zone;
+
+        // Misty Step's landing, or the zone's new place
+        public bool AimsAtASquare(SpellEffect effect) => effect.AimKind is AimKind.Caster or AimKind.Zone;
+
         public IReadOnlyList<string> Keys { get; } = new[] { "push", "teleports", "passenger", "unseen", "rams" };
 
         public IEnumerable<string> Check(SpellEffect effect, int spellLevel)

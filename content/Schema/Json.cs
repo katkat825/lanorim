@@ -189,17 +189,9 @@ namespace Content.Schema
         }
 
         // ids are one key segment: lowercase, digits and underscore, because they end up in a
-        // localization key and a bad one has to be refused at load, not in a later audit
-        public static bool IsId(string id)
-        {
-            if (string.IsNullOrEmpty(id)) return false;
-
-            foreach (char c in id)
-                if (!((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_'))
-                    return false;
-
-            return true;
-        }
+        // localization key and a bad one has to be refused at load, not in a later audit. the rule
+        // is ContentId's, written once
+        public static bool IsId(string id) => Campaigns.ContentId.IsLocal(id);
 
         // --- lists of one kind of word, each word checked -------------------------------------
 
@@ -212,6 +204,11 @@ namespace Content.Schema
                                                          List<string> problems = null, string where = null) =>
             Words(element, name, problems, where, (string w, out Ability a) => EnumWords.TryParse(w, out a),
                   "an ability (str, dex, con, int, wis, cha)");
+
+        public static IReadOnlyList<Size> SizeList(this JsonElement element, string name,
+                                                   List<string> problems = null, string where = null) =>
+            Words(element, name, problems, where, (string w, out Size s) => EnumWords.TryParse(w, out s),
+                  "a size (tiny, small, medium, large, huge, gargantuan)");
 
         public static IReadOnlyList<DamageType> DamageTypeList(this JsonElement element, string name,
                                                                List<string> problems = null, string where = null) =>
@@ -270,6 +267,27 @@ namespace Content.Schema
 
             problems.Add($"{where}: a weight is a whole number, 1 or more");
             return 1;
+        }
+
+        // a record, { ... }, under one name: false when it isn't there, or isn't an object (said); its own keys
+        // are checked. the upcast, an escape, a repeat save - every small record an effect carries
+        public static bool Record(this JsonElement element, string name, IReadOnlyList<string> keys, string where,
+                                  List<string> problems, out JsonElement record)
+        {
+            record = default;
+
+            if (!element.Has(name)) return false;
+
+            record = element.GetProperty(name);
+
+            if (record.ValueKind != JsonValueKind.Object)
+            {
+                problems.Add($"{where}: '{name}' is a record, {{...}}");
+                return false;
+            }
+
+            Keyed.OnlyKnown(record, keys, $"{where} {name}", problems);
+            return true;
         }
 
         // {"str": 14, "dex": 16} - a number for each ability: a statblock's scores, a form's, a

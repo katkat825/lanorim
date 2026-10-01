@@ -467,6 +467,9 @@ namespace Content.Tests
 
             Assert.False(cast.Cast(wizard, Book.Find("hex"), Aim.At(charmer), fight: fight).Cast);
             Assert.True(cast.Cast(wizard, Book.Find("bless"), Aim.At(charmer), fight: fight).Cast);
+
+            // a gift is not hostile (Spell.Kindly, cc_task_d-seams-and-duplication.md §4): refused before 2026-10-01
+            Assert.True(cast.Cast(wizard, Book.Find("invisibility"), Aim.At(charmer), fight: fight).Cast);
         }
 
 

@@ -23,61 +23,24 @@ namespace Content.Campaigns
                                                              List<ContentProblem> problems) =>
             PackFolder.Read(Path.Combine(folder, sub), ".json", sub, problems).Select(f => (f.File, f.Text));
 
-        static IReadOnlyList<Monster> ReadMonsters(string folder, string campaign,
-                                                   List<ContentProblem> problems)
+        // one folder of a list file type (monsters/, items/, spells/), each file read by the type's
+        // EntryList, each problem said with its file and the entry it is in
+        static IReadOnlyList<T> ReadFolder<T>(string folder, string sub, EntryList<T> reader, Func<T, string> id,
+                                              List<ContentProblem> problems)
+            where T : class
         {
-            var all = new List<Monster>();
+            var all = new List<T>();
 
-            foreach ((string file, string text) in Jsons(folder, MonstersFolder, problems))
+            foreach ((string file, string text) in Jsons(folder, sub, problems))
             {
-                MonsterReader.TryRead(text, out IReadOnlyList<Monster> read,
-                                      out IReadOnlyList<string> trouble);
+                var trouble = new List<ContentProblem>();
 
-                foreach (string one in trouble)
-                    problems.Add(new ContentProblem(file, "", one));
+                all.AddRange(reader.Read(text, trouble));
 
-                all.AddRange(read);
+                problems.AddRange(trouble.Select(p => new ContentProblem(file, p.Where, p.What)));
             }
 
-            return Scoped(all, m => m.Id, MonstersFolder, problems);
-        }
-
-        static IReadOnlyList<Item> ReadItems(string folder, string campaign,
-                                             List<ContentProblem> problems)
-        {
-            var all = new List<Item>();
-
-            foreach ((string file, string text) in Jsons(folder, ItemsFolder, problems))
-            {
-                ItemReader.TryRead(text, out IReadOnlyList<Item> read,
-                                   out IReadOnlyList<string> trouble);
-
-                foreach (string one in trouble)
-                    problems.Add(new ContentProblem(file, "", one));
-
-                all.AddRange(read);
-            }
-
-            return Scoped(all, i => i.Id, ItemsFolder, problems);
-        }
-
-        static IReadOnlyList<Spell> ReadSpells(string folder, string campaign,
-                                               List<ContentProblem> problems)
-        {
-            var all = new List<Spell>();
-
-            foreach ((string file, string text) in Jsons(folder, SpellsFolder, problems))
-            {
-                SpellReader.TryRead(text, out IReadOnlyList<Spell> read,
-                                    out IReadOnlyList<string> trouble);
-
-                foreach (string one in trouble)
-                    problems.Add(new ContentProblem(file, "", one));
-
-                all.AddRange(read);
-            }
-
-            return Scoped(all, s => s.Id, SpellsFolder, problems);
+            return Scoped(all, id, sub, problems);
         }
 
         // A TABLE IS READ LAST because it names the things read before it. A monster it calls for

@@ -9,26 +9,8 @@ namespace Core.Magic
     // and condition it put out, wherever those landed
     public sealed partial class Incantation
     {
-        // who is holding what up
-        readonly Dictionary<Actor, List<Thread>> _held = new();
-
-        // one thread per thing the held spell did to somebody. keeping the condition on the thread
-        // is what lets a dropped concentration lift exactly what it put there and nothing else.
-        readonly struct Thread
-        {
-            public Thread(Actor target, string spellId, Condition condition)
-            {
-                Target = target;
-                SpellId = spellId;
-                Condition = condition;
-            }
-
-            public Actor Target { get; }
-
-            public string SpellId { get; }
-
-            public Condition Condition { get; }
-        }
+        // who is holding what up: a thread per thing a held spell did to somebody
+        readonly ConcentrationLedger _held = new();
 
         void Hold(Actor caster, string spellId)
         {
@@ -40,13 +22,8 @@ namespace Core.Magic
         }
 
         internal void Remember(Actor caster, Actor touched, string spellId,
-                               Condition condition = Condition.None)
-        {
-            if (!_held.TryGetValue(caster, out List<Thread> threads))
-                _held[caster] = threads = new List<Thread>();
-
-            threads.Add(new Thread(touched, spellId, condition));
-        }
+                               Condition condition = Condition.None) =>
+            _held.Remember(caster, touched, spellId, condition);
 
         void Unwind(Actor caster, string spellId)
         {
@@ -54,13 +31,11 @@ namespace Core.Magic
             // has not yet put anything on anybody
             EndZones(caster, spellId);
 
-            if (!_held.TryGetValue(caster, out List<Thread> threads)) return;
-
             // who it was on, and the fight and caster it was cast with - for what it does as it
             // ends (Haste's lethargy)
             var ending = new List<(Caster caster, Actor target, Encounter fight)>();
 
-            foreach (Thread thread in threads.Where(t => t.SpellId == spellId).ToList())
+            foreach (ConcentrationLedger.Thread thread in _held.Of(caster, spellId))
             {
                 Placement any = _placed.FirstOrDefault(p => ReferenceEquals(p.Target, thread.Target) &&
                                                             p.Spell == spellId);
@@ -83,7 +58,7 @@ namespace Core.Magic
                                        p.Spell == spellId);
             }
 
-            threads.RemoveAll(t => t.SpellId == spellId);
+            _held.Drop(caster, spellId);
 
             foreach ((Caster who, Actor target, Encounter fight) in ending)
                 Ending(who, spellId, target, fight);

@@ -36,6 +36,18 @@ namespace Core.Magic
         // INT for a Mage, WIS for a Cleric or Druid, CHA for a Paladin
         public Ability Ability { get; }
 
+        // A SPELL CAST WITH ANOTHER ABILITY: a species' spells use the one the player chose for the lineage or
+        // legacy (SRD 5.2.1 pp.84-86, "Intelligence, Wisdom, or Charisma"), whatever the class casts with
+        readonly Dictionary<string, Ability> _castsWith = new(StringComparer.Ordinal);
+
+        public void CastWith(string spellId, Ability ability)
+        {
+            if (!string.IsNullOrEmpty(spellId)) _castsWith[spellId] = ability;
+        }
+
+        public Ability AbilityFor(Spell spell) =>
+            spell != null && _castsWith.TryGetValue(spell.Id, out Ability own) ? own : Ability;
+
         // the flat known/equipped model: the spells on your sheet are the ones you can cast. no
         // slot table, no daily preparation (decisions_checklist.md section 1).
         public IReadOnlyList<Spell> Known => _known;
@@ -89,10 +101,16 @@ namespace Core.Magic
 
         // SRD: 8 + proficiency + the casting ability's modifier - or, for a monster, the number its
         // statblock prints (FixedDc), because a statblock's DC is data, not a formula
-        public int SaveDc => FixedDc ?? 8 + Actor.ProficiencyBonus + Actor.AbilityModifier(Ability);
+        public int SaveDc => SaveDcFor(null);
 
-        public int AttackModifier =>
-            FixedAttack ?? Actor.ProficiencyBonus + Actor.AbilityModifier(Ability);
+        public int AttackModifier => AttackModifierFor(null);
+
+        // the same, for one spell: with the ability it is cast with (AbilityFor)
+        public int SaveDcFor(Spell spell) =>
+            FixedDc ?? 8 + Actor.ProficiencyBonus + Actor.AbilityModifier(AbilityFor(spell));
+
+        public int AttackModifierFor(Spell spell) =>
+            FixedAttack ?? Actor.ProficiencyBonus + Actor.AbilityModifier(AbilityFor(spell));
 
         public int? FixedDc { get; set; }
 

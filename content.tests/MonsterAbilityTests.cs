@@ -178,7 +178,7 @@ namespace Content.Tests
         }
 
         // one monster turn, played by its own brain, beside a hero that will not drop
-        static List<string> OneTurn(string id)
+        static List<string> OneTurn(string id, Condition already = Condition.None)
         {
             Monster monster = Srd.Bestiary.Find(id);
             Assert.True(MapReader.TryRead(Hall, out MapLayout map, out string problem), problem);
@@ -188,6 +188,7 @@ namespace Content.Tests
 
             Actor me = monster.Spawn();
             Actor hero = Hero(hp: 500);
+            hero.Apply(already);
             Caster caster = monster.CasterFor(me, Srd.Spells);
 
             fight.Enlist(me, new Cell(3, 2), monster.Budget(caster));
@@ -217,8 +218,17 @@ namespace Content.Tests
             // "The bear makes one Bite attack and one Claw attack"
             Assert.Equal(new[] { "bear_bite", "bear_claw" }, OneTurn("brown_bear").OrderBy(a => a));
 
-            Assert.Equal(new[] { "ghoul_bite", "ghoul_bite" }, OneTurn("ghoul"));
             Assert.Equal(2, OneTurn("goblin_boss").Count);
+        }
+
+        // THE GHOUL'S CLAW (cc_task_e-shop-species-and-ui-notes.md 1.1): an attack that would put a condition on the
+        // target that it doesn't have yet comes first - the Claw, which is an Attack action of one - and once the
+        // target is Paralyzed it is the Multiattack's two Bites
+        [Fact]
+        public void AGhoulClawsAHeroThatIsNotParalyzedAndBitesOneThatIs()
+        {
+            Assert.Equal(new[] { "ghoul_claw" }, OneTurn("ghoul"));
+            Assert.Equal(new[] { "ghoul_bite", "ghoul_bite" }, OneTurn("ghoul", Condition.Paralyzed));
         }
 
         [Fact]

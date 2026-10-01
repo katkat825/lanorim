@@ -1,0 +1,19 @@
+{
+  "_": "The starting shop (cc_task_e-shop-species-and-ui-notes.md 1.4): what a hero who took the gold instead of the gear can buy before the campaign begins. The SRD 5.2.1 mundane weapons and armor (pp.89-93), potions of healing and the adventuring basics, at the SRD prices in the item files. No arrows, bolts or quivers: ammunition is free (decisions_checklist.md). A campaign replaces it by writing a merchant with this id in its own merchants/ folder. It buys back at the item's own sell percentage, the in-game merchants' rate.",
+  "merchants": [
+    {
+      "id": "starting_shop",
+      "stock": [
+        "club", "dagger", "greatclub", "handaxe", "javelin", "light_hammer", "mace", "quarterstaff", "sickle",
+        "spear", "dart", "light_crossbow", "shortbow", "sling",
+        "battleaxe", "flail", "glaive", "greataxe", "greatsword", "halberd", "lance", "longsword", "maul",
+        "morningstar", "pike", "rapier", "scimitar", "shortsword", "trident", "warhammer", "war_pick", "whip",
+        "blowgun", "hand_crossbow", "heavy_crossbow", "longbow",
+        "padded_armor", "leather_armor", "studded_leather_armor", "hide_armor", "chain_shirt", "scale_mail",
+        "breastplate", "half_plate_armor", "ring_mail", "chain_mail", "splint_armor", "plate_armor", "shield",
+        "potion_of_healing", "antitoxin", "torch", "rope", "thieves_tools",
+        "holy_symbol", "druidic_focus", "arcane_focus"
+      ]
+    }
+  ]
+}

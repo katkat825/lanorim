@@ -60,11 +60,7 @@ namespace Core.Magic
         internal static string RevertedId(string spell) => spell + ".reverted";
 
         // a concentration thread let go of without ending what it did: Flesh to Stone's stone
-        void Forget(Actor caster, Actor target, string spell)
-        {
-            if (_held.TryGetValue(caster, out List<Thread> threads))
-                threads.RemoveAll(t => ReferenceEquals(t.Target, target) && t.SpellId == spell);
-        }
+        void Forget(Actor caster, Actor target, string spell) => _held.Forget(caster, target, spell);
 
         // ending a spell on one creature: its boons, the conditions it put there, its books - and
         // anything it does as it ends (Haste's lethargy)

@@ -19,7 +19,7 @@ namespace Game.Dice
                 _inFlight = false;
                 _lostRethrows++;
 
-                DieRecoveryStep step = Recovery.Escaped(new EscapedDie(_lostRethrows, _flightTime));
+                DieRecoveryStep step = Recovery.Escaped(new StrayDie(_lostRethrows, _flightTime));
 
                 if (step.Action == DieRecoveryAction.Rethrow)
                 {
@@ -50,7 +50,7 @@ namespace Game.Dice
 
                 _restless++;
 
-                DieRecoveryStep step = Recovery.Restless(new RestlessDie(_restless, _flightTime));
+                DieRecoveryStep step = Recovery.Restless(new StrayDie(_restless, _flightTime));
 
                 if (step.Action == DieRecoveryAction.Nudge)
                 {

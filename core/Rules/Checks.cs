@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Core.Characters;
 using Core.Dice;
 using Core.Resolution;
@@ -88,13 +89,14 @@ namespace Core.Rules
 
             // SRD 5.2.1 Indomitable (p.48): a failed save rerolled, adding the Fighter's level -
             // spent the moment a save fails
-            if (save.Failed && actor.SaveRerolls > 0)
+            if (save.Failed && actor.SaveRerolls.Count > 0)
             {
-                actor.SaveRerolls--;
+                int bonus = actor.SaveRerolls.Max();
+                actor.SaveRerolls.Remove(bonus);
 
                 save = Mighty(actor, ability,
                               resolver.Resolve(RollKind.Save,
-                                               actor.SaveModifier(ability) + dice + actor.SaveRerollBonus,
+                                               actor.SaveModifier(ability) + dice + bonus,
                                                dc, actor.SaveAdvantage(ability).And(extra), actor));
             }
 

@@ -47,6 +47,54 @@ namespace Content.Tests
             Assert.All(after.Bar.Where(o => before.ContainsKey(o.Id)), o => Assert.Equal(before[o.Id], o.Hotkey));
         }
 
+        // UNARMED STRIKE IN MORE ACTIONS WITH A WEAPON IN HAND (cc_task_e-shop-species-and-ui-notes.md 2.6); with none, a button
+        [Fact]
+        public void UnarmedStrikeIsInMoreActionsWhileAWeaponIsInHand()
+        {
+            CombatSession armed = Session(Made("fighter"), new[] { Goblin(8, 3) });
+            var hud = new CombatHud(armed);
+
+            Assert.True(armed.Hero.HoldsAWeapon);
+            Assert.Contains(hud.Manoeuvres, o => o.Kind == OptionKind.Attack && o.Attack == Content.Sheet.Hero.UnarmedStrike);
+            Assert.DoesNotContain(hud.Buttons, o => o.Kind == OptionKind.Attack && o.Attack == Content.Sheet.Hero.UnarmedStrike);
+            Assert.Contains(hud.Buttons, o => o.Kind == OptionKind.Attack);
+
+            // the bar's numbers still run buttons first, then the menus
+            List<int> buttons = Keys(hud.Buttons);
+            Assert.Equal(Enumerable.Range(1, buttons.Count), buttons);
+
+            Content.Sheet.Hero bare = Made("fighter");
+            bare.TakeOff(Content.Items.Slot.TwoHand);
+            bare.TakeOff(Content.Items.Slot.MainHand);
+
+            CombatSession unarmed = Session(bare, new[] { Goblin(8, 3) });
+            var empty = new CombatHud(unarmed);
+
+            Assert.False(bare.HoldsAWeapon);
+            Assert.Contains(empty.Buttons, o => o.Kind == OptionKind.Attack && o.Attack == Content.Sheet.Hero.UnarmedStrike);
+            Assert.DoesNotContain(empty.Manoeuvres, o => o.Kind == OptionKind.Attack && o.Attack == Content.Sheet.Hero.UnarmedStrike);
+        }
+
+        // THE STRIP FOLLOWS THE TABLE (cc_task_e-shop-species-and-ui-notes.md 2.7): the session is on the hero's next turn
+        // while the board still plays a goblin's back; the strip and F2 say the goblin's
+        [Fact]
+        public void WhileAMonstersTurnIsPlayedBackTheStripSaysItsTurnNotYours()
+        {
+            CombatSession session = Session(Made("fighter"), new[] { Goblin(8, 3) });
+            Core.Characters.Actor goblin = session.Fight.Actors.First(a => a != session.Hero.Actor);
+
+            Assert.True(new CombatHud(session).ShowsHerosTurn);
+
+            var played = new CombatHud(session, null, goblin);
+
+            Assert.False(played.ShowsHerosTurn);
+            Assert.Equal(Core.Localization.KeyConventions.MonsterName("goblin"), played.TurnShownNameKey);
+            Assert.Same(goblin, played.Order.Single(c => c.Current).Actor);
+
+            Assert.Contains(Whereabouts.Of(null, session, goblin), s => s.Key == Whereabouts.TheirTurnKey);
+            Assert.DoesNotContain(Whereabouts.Of(null, session, goblin), s => s.Key == Whereabouts.YourTurnKey);
+        }
+
         [Fact]
         public void ThePipsCountWhatIsLeftAgainstWhatTheTurnHad()
         {

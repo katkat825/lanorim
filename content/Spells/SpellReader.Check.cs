@@ -12,7 +12,9 @@ namespace Content.Spells
         static void Check(SpellEffect effect, string spellId, int level, bool radiusSaid,
                           List<string> problems)
         {
-            if ((effect.Kind == Primitive.Zone || effect.Kind == Primitive.Illuminate) &&
+            IPrimitiveHandler handler = effect.Handler;
+
+            if (handler.CoversGround &&
                 effect.AimKind != AimKind.Square && effect.AimKind != AimKind.Wall && effect.Radius <= 0 &&
                 !radiusSaid)
                 // a square zone is sized by its side; everything else by its radius. a zone of one
@@ -42,11 +44,10 @@ namespace Content.Spells
             if (effect.AimKind == AimKind.Square && effect.Length <= 0)
                 problems.Add($"{spellId}: a square needs a 'length' in squares");
 
-            if (effect.AimKind == AimKind.Wall && effect.Kind != Primitive.Zone)
+            if (effect.AimKind == AimKind.Wall && !handler.MakesAZone)
                 problems.Add($"{spellId}: only a zone is put down as a wall");
 
-            if (effect.AddsModifier && effect.Kind != Primitive.Damage &&
-                effect.Kind != Primitive.Heal)
+            if (effect.AddsModifier && !handler.Allows("add_modifier"))
                 problems.Add($"{spellId}: 'add_modifier' on a {effect.Kind.Id()} - it adds to " +
                              "damage or healing");
 
@@ -54,7 +55,7 @@ namespace Content.Spells
             // (the only two there are). a duration only a spell has: no feature or item has a caster
 
             if (effect.AimKind == AimKind.Zone && effect.Pulses == Pulses.None &&
-                effect.Kind != Primitive.Shift && !(effect.Kind == Primitive.Sway && effect.Linger.WhileInZone))
+                !handler.MovesTheZone(effect) && !handler.LastsWhileInTheZone(effect))
                 problems.Add($"{spellId}: an effect that reaches 'zone' has to say when, with " +
                              "'pulses'");
 
@@ -64,10 +65,10 @@ namespace Content.Spells
             if (effect.CoreOnly && effect.AimKind != AimKind.Zone)
                 problems.Add($"{spellId}: 'core_only' narrows what reaches the zone");
 
-            if (effect.Affects == Affects.Foes && effect.Kind != Primitive.Zone && !effect.AimKind.IsArea())
+            if (effect.Affects == Affects.Foes && !handler.MakesAZone && !effect.AimKind.IsArea())
                 problems.Add($"{spellId}: 'affects': 'foes' is for a zone or an area");
 
-            if (effect.Affects == Affects.Allies && effect.Kind != Primitive.Zone)
+            if (effect.Affects == Affects.Allies && !handler.MakesAZone)
                 problems.Add($"{spellId}: 'affects': 'allies' belongs on the zone");
 
             if (effect.Lands == Lands.OnRepeat || effect.Lands == Lands.NowAndOnRepeat)
@@ -78,7 +79,7 @@ namespace Content.Spells
                 problems.Add($"{spellId}: 'switches' narrows an effect that lands on the repeat");
 
             if ((effect.Lands == Lands.EachTurn || effect.Lands == Lands.NextTurnEnd) &&
-                effect.Kind != Primitive.Damage)
+                !handler.Allows(effect.Lands.Id()))
                 problems.Add($"{spellId}: damage lands 'next_turn_end' or 'each_turn'; nothing else does");
 
             if (effect.Points > 1 && effect.AimKind != AimKind.Burst)
@@ -94,7 +95,7 @@ namespace Content.Spells
             if (!effect.Upcast.IsNothing && level == 0)
                 problems.Add($"{spellId}: a cantrip cannot be upcast; it grows with your level");
 
-            if (effect.Upcast.Radius > 0 && effect.Kind != Primitive.Zone)
+            if (effect.Upcast.Radius > 0 && !handler.MakesAZone)
                 problems.Add($"{spellId}: an 'upcast' 'radius' grows a zone");
 
             if (effect.Upcast.BlocksSpellsUpTo > 0 && effect.BlocksSpellsUpTo <= 0)

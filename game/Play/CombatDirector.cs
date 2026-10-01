@@ -106,6 +106,11 @@ namespace Game.Play
 
         bool Presenting => !_steps.IsEmpty || _wait > 0;
 
+        // whose turn the table is playing back while it is behind the rules; null when it has caught up
+        Actor _showing;
+
+        public Actor TurnShown => Presenting ? _showing : null;
+
         // choosing an option, or aiming the one picked. Targeting is still the hero's move: when it
         // was left out, picking an attack switched off the click that aims it, the right-click and
         // Esc that cancel it, and the bar, and the strip said "enemy turn" (cc_ui_issues_9-25-2026.md)
@@ -175,6 +180,8 @@ namespace Game.Play
             switch (step.What)
             {
                 case "turn":
+                    _showing = step.Actor;
+
                     if (Camera != null && GameState.Settings.FollowEnemies && !step.Hero && Board.Of(step.Actor) is { } mini)
                         Camera.Following = mini.GlobalPosition;
                     break;

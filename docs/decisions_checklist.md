@@ -137,12 +137,22 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   uses it ("there should already have been an off-hand"). (`09-25 Q9`) *Built 2026-10-03.*
 - **[DECIDED 2026-10-01] Spell-effect key names** (`docs/spell_effect_reference.md`): fine as chosen. (09-27 run)
 - **[DEFER] Feats · Multiclassing · Encumbrance.** *(Feats also listed in `deferred.md`.)*
+- **[DECIDED 2026-10-01] Ammunition and Loading:** a delta from the SRD. Bows fire freely and crossbows ignore Loading,
+  matching kits that carry no arrows or quivers. (`09-25 Q10`) *Recorded 2026-10-05; nothing to build: v1 never
+  counted ammunition or modelled Loading.*
 
 ## 2. Content scope for v1
 
 - **[DECIDED] Races/ancestries** — **7 v1 species: Human, Elf, Dragonborn, Tiefling, Dwarf, Halfling,
   Orc** (`v1_species_roster.md`); Gnome/Goliath deferred. Light to implement; minis reusable; v1 may
   ignore species for the mini. The cost knee is the visual pipeline, not the mechanics.
+  - **[DECIDED 2026-10-01] Species traits faithful to the SRD, as small choices in the creator** (`09-25 Q17`):
+    Skillful (any skill), Keen Senses (Insight, Perception or Survival), the lineage's or legacy's spellcasting
+    ability (Intelligence, Wisdom or Charisma), Medium or Small (Human, Tiefling), and the Wood Elf's Druidcraft and
+    Longstrider. *Built 2026-10-05: a Traits step after the background; each choice saved and on the sheet. Size is
+    recorded and on the actor; it changes little yet (a creature's size limits, never Small against Medium).
+    **Resourceful** is the reroll Indomitable already was: the first failed save after a long rest is rolled again.
+    Druidcraft and Longstrider are on no class's list (`content/srd/spells/species_spells.json`).*
 - **[DECIDED, approach] Backgrounds** — SRD; light (skills/flavor). *(2026-09-24: 5 of the 9 in the data may not be SRD 5.2.1 — a review list is being produced; decision pending.)* *(2026-09-25: confirmed against the SRD text: only Acolyte, Criminal, Sage and Soldier are SRD 5.2.1 (SRD p.83). The removals are `cc_task_review-naming-and-backgrounds.md`'s.)* *(2026-09-28: applied. Five backgrounds: the four SRD ones and **Recluse**, Lanorim's own, first-party and marked `not_in_srd`, in its own file beside the SRD's.)*
 - **[DECIDED, approach] Monsters** — full SRD pool + custom per campaign. Statblocks are
   cheap; *special abilities are the cost* (§6).
@@ -167,6 +177,11 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
     boss shot point-blank at Disadvantage. Now a rule: an attack without Disadvantage first, then average damage, then
     the statblock's order; target ties go to the turn order.*
   - **[IRRELEVANT 2026-10-01] Help and Surprise:** companions don't fight. (`09-25 Q12`)
+  - **[DECIDED 2026-10-01] The Ghoul uses its Claw** while its target isn't Paralyzed, its Multiattack (two Bites)
+    when it is. (`09-25b Q4`) *Built 2026-10-05 as a rule for every monster: an attack whose hit would put a condition
+    on the target that it doesn't have yet comes first (`Tactics.Best`, `Rider.Adds`). Paralyzed lasts until the end of
+    the target's next turn, so it is over before the ghoul acts again: the Claw costs the hero turns, and the ghoul
+    rarely gets to bite a paralysed hero. Ghoul fights got easier, not harder (`RUN_LOG_2026-10-05.md` 1.1).*
 - **[DECIDED 2026-10-01] Bard:** its spells stay on the Mage list (the route). A Bard class is deferred, and may
   never be added. (`09-25 Q19`)
 - **[DEFERRED 2026-10-01] Firearms** (Musket, Pistol, SRD): not in v1. (`09-25 Q16`)
@@ -185,6 +200,13 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   flagged in the list. *(2026-09-25: was 131. Kathleen deferred Feather Fall, Heat Metal, Plane Shift, Reverse
   Gravity, Antimagic Field, Earthquake and True Polymorph (`deferred.md`) and cut Suggestion.)*
 - **[DECIDED] Starting gear & loot tables** — per class.
+  - **[DECIDED 2026-10-01] Kits** (`09-25 Q18`): **skipped, by design:** class equipment packs (Explorer's Pack and the
+    like), arrows and quivers (ammunition is free), the wizard's spellbook as an item (the Mage knows their spells),
+    and background tool proficiencies. **Deferred:** attunement (`deferred.md`). **Built:** the SRD's choice of each
+    class's and background's gear or the gold instead, and a **starting shop** for that gold before the campaign
+    begins (Kathleen's addition). *Built 2026-10-05: the creator's Equipment step; the shop is the merchant every shop
+    is, stocked from `content/srd/merchants/starting_shop.json` unless the campaign writes its own `starting_shop`
+    merchant. Taking the gear means no shop.*
 - **[DECIDED] Characters per campaign / save slots** — carry the old "5 per campaign"
 
 ## 3. The video-game glue (SRD is silent)

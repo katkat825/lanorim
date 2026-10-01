@@ -12,6 +12,15 @@ namespace Content.Play
         {
             node ??= Pack.Manifest?.Start ?? "";
 
+            // THE STARTING SHOP (cc_task_e-shop-species-and-ui-notes.md 1.4): a hero who took gold instead of gear
+            // spends it before the first scene. Leaving it (LeaveShop) starts the story where this would have
+            if (Hero.ShopsFirst && Pack.StartingShop != null)
+            {
+                _startAfterShop = node;
+                Shop = Pack.StartingShop;
+                return Now = Scene.Shop;
+            }
+
             if (!Talk.Start(node))
             {
                 Now = Scene.Over;
@@ -22,6 +31,11 @@ namespace Content.Play
 
             return Settle();
         }
+
+        // where the story starts once the starting shop is left; null when the shop open isn't that one
+        string _startAfterShop;
+
+        public bool InStartingShop => _startAfterShop != null;
 
         // the Continue button
         public Scene Next()

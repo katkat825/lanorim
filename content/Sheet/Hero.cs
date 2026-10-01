@@ -53,6 +53,23 @@ namespace Content.Sheet
         // identity only - nothing reads it but the sheet (character_sheet_decisions.md)
         public Alignment Alignment { get; set; } = Alignment.Neutral;
 
+        // THE SPECIES' CHOICES (cc_task_e-shop-species-and-ui-notes.md 1.3): the ability its lineage's or legacy's
+        // spells are cast with (null: the best of those it allows, as before the choice existed), and Medium or
+        // Small (null: the species' first). set before Build, which puts them on the actor and the caster
+        public Ability? SpellAbility { get; set; }
+
+        public Size? Size { get; set; }
+
+        // the starting-equipment choices (cc_task_e-shop-species-and-ui-notes.md 1.4): the class's gear or its gold
+        // instead, and the background's. read by Build's kit; not saved, since a built hero's pack is what it has
+        public KitChoice ClassKit { get; set; }
+
+        public KitChoice BackgroundKit { get; set; }
+
+        // took gold for either, and hasn't been to the starting shop yet: the campaign opens it before its first
+        // scene. saved, so a save made in the shop goes back to it
+        public bool ShopsFirst { get; set; }
+
         // the player types a name, so it is not a localization key - it is the one string in the
         // game that is neither authored nor translated
         public string Name { get; set; }
@@ -104,6 +121,9 @@ namespace Content.Sheet
         // everyone has an Unarmed Strike (SRD 5.2.1 p.190)
         public IEnumerable<Attack> Attacks =>
             Form != null ? Form.Attacks : Equipment.Attacks.Select(Wielded).Append(UnarmedStrike);
+
+        // a weapon in a hand, the hero's own (not a borrowed shape's claws)
+        public bool HoldsAWeapon => Form == null && Equipment.Attacks.Any();
 
         // a weapon as this hero swings it: the proficiency bonus only with a weapon the class
         // trains with, and a Versatile weapon's bigger die with both hands free for it (SRD 5.2.1

@@ -31,6 +31,19 @@ namespace Game.Screens
         public static readonly string Suggested = K("create", "take_suggested");
         public static readonly string ChosenOf = K("create", "chosen_of");
 
+        // the Traits page's three sections (cc_task_e-shop-species-and-ui-notes.md 1.3)
+        public static readonly string TraitSkill = K("create", "trait_skill");
+        public static readonly string TraitSpellAbility = K("create", "trait_spell_ability");
+        public static readonly string TraitSize = K("create", "trait_size");
+
+        // the Equipment page (1.4)
+        public static readonly string KitFromClass = K("create", "kit_from_class");
+        public static readonly string KitFromBackground = K("create", "kit_from_background");
+        public static readonly string KitGear = K("create", "kit_gear");
+        public static readonly string KitGold = K("create", "kit_gold");
+        public static readonly string KitStartsWith = K("create", "kit_starts_with");
+        public static readonly string KitShopFirst = K("create", "kit_shop_first");
+
         public static readonly string PauseTitle = K("pause", "title");
         public static readonly string Resume = K("pause", "resume");
         public static readonly string Save = K("pause", "save");
@@ -73,6 +86,8 @@ namespace Game.Screens
         public static readonly string SheetTitle = K("sheet", "title");
         public static readonly string SheetLevel = K("sheet", "level");
         public static readonly string SheetHp = K("sheet", "hit_points");
+        public static readonly string SheetSize = K("sheet", "size");
+        public static readonly string SheetSpeciesSpells = K("sheet", "species_spells");
         public static readonly string SheetAc = K("sheet", "armor_class");
         public static readonly string SheetSpells = K("sheet", "spells");
         public static readonly string SheetFeatures = K("sheet", "features");
@@ -87,13 +102,15 @@ namespace Game.Screens
                 ThrowPrompt, VerdictHit, VerdictCritical, VerdictMiss, VerdictSaved, VerdictFailed, TurnHint, AimHint, CameRound, YourTurn, FightWon, FightFled,
                 OnYourself, CaptionCast, CaptionCastOn, CaptionChanged,
                 BeforeFightTitle, BeforeFightLine, BeforeFightCast, ToTheFight,
-                SheetTitle, SheetLevel, SheetHp, SheetAc, SheetSpells, SheetFeatures,
+                SheetTitle, SheetLevel, SheetHp, SheetAc, SheetSpells, SheetFeatures, SheetSize, SheetSpeciesSpells,
+                TraitSkill, TraitSpellAbility, TraitSize,
+                KitFromClass, KitFromBackground, KitGear, KitGold, KitStartsWith, KitShopFirst,
                 AskCard.TurnsTheHitKey,
             }
             .Concat(new[]
             {
-                Step.Class, Step.Species, Step.Lineage, Step.Background, Step.Abilities, Step.Improvements,
-                Step.Skills, Step.Cantrips, Step.Spells, Step.SpellResource, Step.Alignment, Step.Name,
+                Step.Class, Step.Species, Step.Lineage, Step.Background, Step.Traits, Step.Abilities, Step.Improvements,
+                Step.Skills, Step.Cantrips, Step.Spells, Step.SpellResource, Step.Equipment, Step.Alignment, Step.Name,
             }.Select(StepKey))
             .Concat(System.Enum.GetValues<Core.Combat.Stat>().SelectMany(s => new[] { YouChanged(s), TheyChanged(s) }));
     }

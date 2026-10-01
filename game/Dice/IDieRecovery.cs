@@ -4,10 +4,11 @@ namespace Game.Dice
     {
         DieRecoveryStep Cocked(in CockedDie die);
 
-        DieRecoveryStep Escaped(in EscapedDie die);
+        // out of the tray
+        DieRecoveryStep Escaped(in StrayDie die);
 
         // still moving after DieBody.MaxFlightSeconds: jittering against a wall or on a neighbour
-        DieRecoveryStep Restless(in RestlessDie die);
+        DieRecoveryStep Restless(in StrayDie die);
     }
 
     public enum DieRecoveryAction
@@ -63,28 +64,17 @@ namespace Game.Dice
         }
     }
 
-    public readonly struct EscapedDie
+    // a die that escaped the tray, or is still moving when it should have settled: how often this throw has
+    // done it and how long it has been in the air. one shape for both (they were EscapedDie and RestlessDie,
+    // cc_task_d-seams-and-duplication.md §9)
+    public readonly struct StrayDie
     {
-        // including this one - first escape of a throw is 1
-        public readonly int EscapesSoFar;
-
-        public readonly double FlightSeconds;
-
-        public EscapedDie(int escapesSoFar, double flightSeconds)
-        {
-            EscapesSoFar = escapesSoFar;
-            FlightSeconds = flightSeconds;
-        }
-    }
-
-    public readonly struct RestlessDie
-    {
-        // including this one - the first time a throw runs out of time is 1
+        // including this one - the first escape of a throw, or the first time it runs out of time, is 1
         public readonly int TimesSoFar;
 
         public readonly double FlightSeconds;
 
-        public RestlessDie(int timesSoFar, double flightSeconds)
+        public StrayDie(int timesSoFar, double flightSeconds)
         {
             TimesSoFar = timesSoFar;
             FlightSeconds = flightSeconds;

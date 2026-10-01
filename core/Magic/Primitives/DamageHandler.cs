@@ -14,6 +14,9 @@ namespace Core.Magic
     {
         public Primitive Kind => Primitive.Damage;
 
+        // a burning: the only thing that lands on each turn, or at the end of the next
+        public bool Allows(string setting) => setting is "add_modifier" or "each_turn" or "next_turn_end";
+
         public IReadOnlyList<string> Keys { get; } = new[]
         {
             "slays_at_or_below", "dust", "raises", "leaps", "extra_dice", "reverts_shape",

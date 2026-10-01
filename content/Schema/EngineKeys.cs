@@ -51,6 +51,10 @@ namespace Content.Schema
             // the nine alignments, for the identity block of the sheet
             foreach (string key in Content.Sheet.Alignments.Keys()) yield return key;
 
+            // Medium or Small on the creator's Traits page and the sheet
+            foreach (Core.Characters.Size size in System.Enum.GetValues<Core.Characters.Size>())
+                yield return Core.Localization.KeyConventions.UiNameKey(size, "size");
+
             // what the spell card says about when and how a spell is cast, and its school
             foreach (string key in Content.Spells.SpellCard.Keys()) yield return key;
 

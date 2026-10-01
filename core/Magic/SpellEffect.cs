@@ -95,6 +95,12 @@ namespace Core.Magic
         // Blindness/Deafness, Enlarge/Reduce, Greater Restoration's list
         public string Mode { get; init; } = "";
 
+        // its primitive's handler: what play and the reader ask of an effect instead of its Kind
+        public IPrimitiveHandler Handler => PrimitiveHandlers.For(Kind);
+
+        // part of the cast in this mode: it has none, or it is this one
+        public bool InMode(string mode) => Mode.Length == 0 || Mode == mode;
+
         // for a sway: the boon it puts on, whole - what it adds, which rolls, which way it leans,
         // what it forbids. read by content/Schema/BoonSpecReader.cs, the same reader a class stance
         // and an item use. its Duration is this effect's
