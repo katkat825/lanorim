@@ -4,7 +4,7 @@ using Core.Space;
 
 namespace Game.Board
 {
-    public sealed class BoardTiles
+    public sealed partial class BoardTiles
     {
 
         // lower than a mini is tall, so a piece is never hidden behind a wall at the table angle
@@ -43,6 +43,12 @@ namespace Game.Board
 
         public PackedScene RubbleModel { get; set; }
 
+        // where walls turn, end or meet (BoardTiles.Pillars.cs); null for none
+        public PackedScene PillarModel { get; set; }
+
+        // how tall the modelled walls, rock and pillars stand, and which come down for the camera (Cutaway.cs)
+        public Cutaway Cutaway { get; set; }
+
         public Material Paint { get; set; }
 
         public void Build(Node3D under, MapLayout map)
@@ -55,6 +61,8 @@ namespace Game.Board
             foreach (Cell at in map.Cells) Raise(under, Piece(map, at));
 
             foreach (Border on in map.Borders) Raise(under, Piece(map, on));
+
+            Pillars(under, map);
         }
 
         // redraw one line from the map - a door opened mid-fight; the caller must have changed the
@@ -65,6 +73,9 @@ namespace Game.Board
 
             Clear(under, NameFor(on));
             Raise(under, Piece(map, on));
+
+            Cutaway?.Map(map);
+            Cutaway?.Cut(Cutaway.Facing);
         }
 
         static void Raise(Node3D under, Node3D piece)
@@ -77,6 +88,8 @@ namespace Game.Board
             Node standing = under?.GetNodeOrNull(named);
 
             if (standing == null) return;
+
+            Cutaway?.Forget(named);
 
             // detached before free, so a same-frame rebuild cannot find it
             under.RemoveChild(standing);
@@ -127,9 +140,10 @@ namespace Game.Board
         // uniform scale: a modular kit's wall already fits a line, so nothing is stretched
         Node3D Panel(Border on)
         {
-            Node3D panel = Standing(WallModel, NameFor(on), Centre(on), _metrics.CellSize, out _);
+            Node3D panel = Standing(WallModel, NameFor(on), Centre(on), _metrics.CellSize, out Aabb bounds);
 
             panel.Rotation = new Vector3(0f, Facing(on), 0f);
+            Cutaway?.Line(panel, bounds, on);
 
             return panel;
         }
@@ -144,6 +158,7 @@ namespace Game.Board
             float deep = bounds.Size.Z > 0f ? _metrics.CellSize / bounds.Size.Z : across;
 
             rock.Scale = new Vector3(across, across, deep);
+            Cutaway?.Square(rock, bounds, at);
 
             return rock;
         }
@@ -176,6 +191,7 @@ namespace Game.Board
             };
 
             piece.AddChild(model);
+            Cutaway?.Doorway(piece, bounds, on);
 
             Node3D leaf = FindLeaf(model);
 

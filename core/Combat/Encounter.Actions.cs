@@ -30,6 +30,17 @@ namespace Core.Combat
             return true;
         }
 
+        // SRD Prone: standing up costs half your speed (Turn.StandUp). Told like any condition ending, so
+        // the board stands the piece back up (cc_task_working-notes-10-01.md 1.2: the rules cleared Prone and
+        // the mini stayed on its back, because nothing said so)
+        public bool StandUp(Turn turn)
+        {
+            if (turn == null || !turn.StandUp()) return false;
+
+            Observer.ConditionChanged(turn.Actor, Condition.Prone, false);
+            return true;
+        }
+
         public const string Hidden = "hidden";
 
         // SRD 5.2.1 Hide (p.183): a DC 15 Dexterity (Stealth) check, only while no enemy sees you

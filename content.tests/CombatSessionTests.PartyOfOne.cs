@@ -24,6 +24,37 @@ namespace Content.Tests
             Assert.True(session.Confirm(session.Hero.Actor).Done);
         }
 
+        // ON YOURSELF BY ACCIDENT NO MORE (cc_task_open-questions-answers.md 3.5): Invisibility (a condition a creature is
+        // glad of), Haste (whose lethargy only lands when it ends) and Enlarge (saved against only by the unwilling)
+        // could only be aimed at foes, so a party of one could never cast them on themselves
+        [Theory]
+        [InlineData("invisibility")]
+        [InlineData("greater_invisibility")]
+        [InlineData("haste")]
+        public void AGiftASpellGivesGoesOnYou(string spell)
+        {
+            CombatSession session = Session(Made("mage", 9, spell), new[] { Goblin(9, 3) }, new Loaded(10));
+
+            session.Select(session.Options().First(o => o.Id == "spell:" + spell));
+
+            Assert.True(session.OnlyTargetIsYou, spell);
+            Assert.True(session.Confirm(session.Hero.Actor).Done, spell);
+        }
+
+        [Fact]
+        public void EnlargeGoesOnYouAndReduceOnAFoe()
+        {
+            CombatSession session = Session(Made("mage", 5, "enlarge_reduce"), new[] { Goblin(2, 0) }, new Loaded(10));
+            ActionOption option = session.Options().First(o => o.Id == "spell:enlarge_reduce");
+
+            session.Select(option, "enlarge");
+            Assert.True(session.OnlyTargetIsYou);
+
+            session.Select(option, "reduce");
+            Assert.DoesNotContain(session.Hero.Actor, session.LegalTargets());
+            Assert.NotEmpty(session.LegalTargets());
+        }
+
         [Fact]
         public void AHarmfulSpellIsNeverAimedAtYou()
         {

@@ -22,8 +22,11 @@ namespace Content.Inventory
 
         public IEnumerable<Item> All => Slots.All.Select(In).Where(i => i != null);
 
+        // an off-hand weapon swings from the off hand: the same weapon, Hand.Off, which is how the Light bonus attack
+        // tells two daggers apart (Hero.Hitting)
         public IEnumerable<Attack> Attacks =>
-            All.Where(i => i.Attack != null).Select(i => i.Attack);
+            Slots.All.Where(s => In(s)?.Attack != null)
+                 .Select(s => s == Slot.OffHand ? In(s).Attack.With(hand: Hand.Off) : In(s).Attack);
 
         // why not, so the UI can grey the button and say something. null means it may be worn.
         public string Refuses(Item item, Actor actor, string className)
@@ -40,14 +43,19 @@ namespace Content.Inventory
             return null;
         }
 
-        // returns what came off - the caller puts those back in the pack
-        public IReadOnlyList<Item> Wear(Item item, Actor actor, string className = null)
+        // returns what came off - the caller puts those back in the pack. `into` is the slot when it isn't the item's
+        // own: a one-handed Light weapon held in the off hand (SRD 5.2.1 Light; cc_task_open-questions-answers.md 3.1)
+        public IReadOnlyList<Item> Wear(Item item, Actor actor, string className = null, Slot? into = null)
         {
             if (Refuses(item, actor, className) != null) return Array.Empty<Item>();
 
+            Slot to = into ?? item.Slot;
+
+            if (to != item.Slot && !(to == Slot.OffHand && item.FitsOffHand)) return Array.Empty<Item>();
+
             var removed = new List<Item>();
 
-            foreach (Slot slot in item.Slot.Conflicts().Concat(new[] { item.Slot }).Distinct())
+            foreach (Slot slot in to.Conflicts().Concat(new[] { to }).Distinct())
             {
                 Item was = In(slot);
 
@@ -57,7 +65,7 @@ namespace Content.Inventory
                 removed.Add(was);
             }
 
-            _worn[item.Slot] = item;
+            _worn[to] = item;
 
             Apply(actor);
 

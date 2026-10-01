@@ -8,6 +8,14 @@ namespace Core.Characters
     {
         // --- what a feature grants that isn't a number ------------------------------------------
 
+        // a statblock's named traits, each played by the fight at its own moment (Knack.cs, Encounter.Knacks.cs)
+        public Knack Knacks { get; set; }
+
+        public bool Has(Knack knack) => knack != Knack.None && (Knacks & knack) == knack;
+
+        // what a save against a spell leans on, beyond the save's own: a statblock's Magic Resistance (the imp)
+        public Advantage AgainstSpells => Has(Knack.MagicResistance) ? Advantage.Advantage : Advantage.Flat;
+
         // a feature's standing advantages are boons for good, with the same leans as a spell's:
         // Danger Sense, Remarkable Athlete, Fey Ancestry. they used to be string keys ("save:dex",
         // "save_vs:charmed") in a table of their own (cc_task_dedupe-leftovers.md Part A)

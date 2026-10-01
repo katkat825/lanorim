@@ -21,6 +21,10 @@ continuous_cd = true
 angular_damp = 0.3
 script = ExtResource("1_die")
 Size = 20
+; the throw for the small tray (2026-10-03): DieBody's 0.8-1.3 m/s times the root of its 0.65 footprint, which the
+; code resize used to apply - how far a die carries goes with the square of its speed
+ThrowSpeedMin = 0.645
+ThrowSpeedMax = 1.048
 Ink = Color(0.93, 0.9, 0.82, 1)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

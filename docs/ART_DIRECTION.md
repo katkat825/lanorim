@@ -5,7 +5,7 @@
 Harvested from the original art direction (2026-08-02) and **updated for lanorim's confirmed direction.**
 What changed since the original: the table is now **table-only** — no 3D room, no DM hands; the GM screen is
 a **bent quad with a static parallax image** on the player side. Dice are **standard polyhedral (d20 + mods)**,
-not the old three-die "best-two" pool. The asset base is **Quaternius + KayKit** (KayKit brought back as a second base for kitbash — `decisions_checklist.md` §4). **The visual
+not the old three-die "best-two" pool. The asset base is **Quaternius first, KayKit second**: Quaternius is the primary base and KayKit the secondary one, fine when needed for kitbash (Kathleen, 2026-10-01; `decisions_checklist.md` §4). **The visual
 signature — one palette + the painted-miniature shader — is unchanged and carries over intact; it is the
 single most valuable thing to harvest from the old build.**
 
@@ -77,7 +77,8 @@ Modular tiles on the grid — floor, wall, door, stair, pit, rubble — composed
 Unexplored area can be **blank table**, revealed as the player advances: cheap fog-of-war and exactly how a
 DM reveals a dungeon. **The map builder is how these get made** (yours and Workshop authors'). The table
 around the map — felt, a rulebook, pencils, a lamp, a mug ring — is the best cheap investment in identity,
-and it's where menus/saves/loading live, as objects rather than UI panels.
+and it's where the campaign book (menus, saves, loading, help) lives; the no-menus presentation is gone, and
+dialog is a popup with a Continue button. *(2026-10-03: aligned with decisions_checklist.md)*
 
 ## 8. The visual signature — one palette + one shader (beating the CC0 problem)
 

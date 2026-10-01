@@ -87,7 +87,7 @@ namespace Core.Magic
 
             suffered += MarksPaid(c);
 
-            if (c.Fight != null && suffered > 0) c.Fight.Hurt(c.Caster.Actor, target, suffered);
+            if (c.Fight != null && suffered > 0) c.Fight.Hurt(c.Caster.Actor, target, suffered, type, Critical(c), rolled);
 
             After(c, suffered);
 

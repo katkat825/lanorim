@@ -54,7 +54,7 @@ namespace Content.Monsters
         {
             "id", "hit_points", "armor_class", "speed", "challenge_times_ten", "hit_die", "mini", "size",
             "tags", "scores", "skills", "expertise", "saves", "instincts", "manoeuvres", "attacks",
-            "multiattack", "defenses", "immune", "actions", "spellcasting",
+            "multiattack", "defenses", "immune", "actions", "spellcasting", "not_in_srd", "traits",
         };
 
         // a statblock's attack: its name, whether it is held, and the SRD weapon it is if it is one
@@ -138,6 +138,10 @@ namespace Content.Monsters
                 Actions = actions,
                 Spellcasting = casting,
                 BonusManoeuvres = bonus,
+                NotInSrd = entry.Flag("not_in_srd"),
+                Knacks = entry.FlagList<Knack>("traits", "a trait v1 plays (pack_tactics, bloodied_fury, " +
+                                                         "magic_resistance, undead_fortitude, sunlight_sensitivity)",
+                                               problems, id),
                 Expertise = expertise,
             };
         }

@@ -119,13 +119,13 @@ namespace Core.Magic
                     int suffered = whose.Suffer(Math.Max(0, _resolver.Roll(placed.Burns, placed.Caster?.Actor)),
                                                 placed.DamageType);
 
-                    fight.Hurt(placed.Caster?.Actor, whose, suffered);
+                    fight.Hurt(placed.Caster?.Actor, whose, suffered, placed.DamageType);
 
                     // SRD 5.2.1 Searing Smite: "takes 1d6 Fire damage and then makes a
                     // Constitution saving throw" - a success ends it. the save track of a burning
                     // comes here, right after the burn, and not at the end of the turn
                     if (placed.Spec.RepeatSave is RepeatSave track && _placed.Contains(placed) && !whose.IsDown &&
-                        Checks.Save(_resolver, whose, track.Ability, placed.Dc).Succeeded)
+                        Checks.Save(_resolver, whose, track.Ability, placed.Dc, whose.AgainstSpells).Succeeded)
                         Lift(whose, placed.Spell, fight);
                 }
             }
@@ -154,7 +154,7 @@ namespace Core.Magic
                         int suffered = placed.Target.Suffer(
                             Math.Max(0, _resolver.Roll(placed.Later, placed.Caster?.Actor)), placed.DamageType);
 
-                        fight.Hurt(placed.Caster?.Actor, placed.Target, suffered);
+                        fight.Hurt(placed.Caster?.Actor, placed.Target, suffered, placed.DamageType);
                     }
 
                     Drop(placed, fight);
@@ -302,6 +302,8 @@ namespace Core.Magic
             // the same advantage on a save to end it
             if (hold.Condition != Condition.None && creature.AdvantageOnSaveAgainst(hold.Condition))
                 extra = extra.And(Advantage.Advantage);
+
+            extra = extra.And(creature.AgainstSpells);
 
             Attempt save = Checks.Save(_resolver, creature, track.Ability, hold.Dc, extra);
 

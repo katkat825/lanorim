@@ -14,6 +14,20 @@ namespace Content.Tests
         public void TheMonsterFileLoadsWithoutAProblem() =>
             Assert.True(Srd.Bestiary.Sound, string.Join("\n", Srd.Bestiary.Problems));
 
+        // CUSTOM MONSTERS, OUT OF THE CC-BY FILE (Kathleen, 2026-10-01, OPEN_QUESTIONS 2): Lanorim's own statblocks
+        // live in lanorim.json and say so; the SRD's file holds only the SRD's
+        [Fact]
+        public void LanorimsOwnStatblocksAreMarkedAndOutOfTheSrdFile()
+        {
+            Assert.True(MonsterReader.TryRead(Content.Schema.Srd.Read("monsters/monsters.json"), out IReadOnlyList<Monster> srd, out _));
+            Assert.True(MonsterReader.TryRead(Content.Schema.Srd.Read("monsters/lanorim.json"), out IReadOnlyList<Monster> ours, out _));
+
+            Assert.All(srd, m => Assert.False(m.NotInSrd, m.Id));
+            Assert.All(ours, m => Assert.True(m.NotInSrd, m.Id));
+            Assert.Equal(new[] { "death_knight", "goblin_archer" }, ours.Select(m => m.Id).OrderBy(id => id));
+            Assert.NotNull(Srd.Bestiary.Find("death_knight"));
+        }
+
         [Fact]
         public void TheGoblinOfTheFirstSliceIsThere()
         {

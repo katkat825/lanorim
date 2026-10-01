@@ -10,6 +10,8 @@ namespace Game.Dice
             // listen before the kick: the state's contacts are what the last step solved, so reading them after a teleport describes an address the die has left
             if (_reportContacts) Listen(state);
 
+            Calm(state);
+
             if (!_kickQueued) return;
             _kickQueued = false;
 
@@ -72,6 +74,8 @@ namespace Game.Dice
             }
 
             _wasStruck = struck;
+            _contactsNow = contacts;
+            _onDieNow = againstDie;
         }
     }
 }

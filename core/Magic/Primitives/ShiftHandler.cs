@@ -100,7 +100,7 @@ namespace Core.Magic
             // Forcecage: magical travel out of it needs a Charisma save
             if (effect.Teleports && c.Magic.Caged(fight, target, to) is SpellZone cage)
             {
-                Attempt save = Checks.Save(c.Resolver, target, Ability.Charisma, cage.Caster.SaveDc);
+                Attempt save = Checks.Save(c.Resolver, target, Ability.Charisma, cage.Caster.SaveDc, target.AgainstSpells);
 
                 if (save.Failed) return new Landing(effect, target, false, 0, save);
             }

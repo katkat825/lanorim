@@ -3,7 +3,8 @@
 ; THE TRAY IS AN OBJECT, NOT A ROOM. It has no camera, no light and no environment of its own, so
 ; opening this scene alone renders black - which is correct. Open res://table.tscn to see it.
 ;
-; THE MODEL IS THE TRAY. models/tray/dice_tray_basic_rectangle.glb is one continuous mesh in two
+; THE MODEL IS THE TRAY. models/tray/dice_tray_basic_rectangle_updated.glb (Kathleen's, 2026-10-01: the
+; authored rectangle with its rim raised to twice the height) is one continuous mesh in two
 ; surfaces - Tray_Wood for the rim and Tray_Liner for the floor - and the .import binds those to
 ; tray_wood047.tres and felt_green.tres. It replaced five box primitives whose leaning walls left a
 ; visible gap where they met the floor box; a modelled tray has no seam to gap.
@@ -19,11 +20,10 @@
 ; sounds, and no longer changes what it looks like - a skin that should look different needs a
 ; model, or a shader on this node.
 ;
-; Scaled to 0.33: the model is authored 1.6 x 2.0 units and that would be a two-metre tray on a
-; 2.2 x 1.7 m table. 0.33 puts the felt at 0.494 x 0.617 m - within 3% of the 0.64 x 0.49 felt the
-; dice tuning and the fairness sweep were measured on, so the dice keep the room they had. It is
-; more portrait than the old tray because the model is. THE SCALE IS ON THIS MESH ONLY, never on
-; the tray node - see the warning in table.tscn about scaling rigid bodies.
+; Scaled to 0.2145, the old 0.33 times the 0.65 footprint of 2026-10-02: the model is authored 1.6 x 2.0 units, and
+; this puts the felt at 0.321 x 0.401 m with the rim 0.075 m above it - the size the code resize measured best, now
+; in the model, uniform, with no stretched wood grain. THE SCALE IS ON THIS MESH ONLY, never on the tray node - see
+; the warning in table.tscn about scaling rigid bodies.
 ;
 ; The floor is one box and the walls are four more, in TWO StaticBody3D: physics_material_override
 ; lives on the body, not on the shape, so a felt floor and wooden walls have to be two bodies or
@@ -31,20 +31,20 @@
 ; tray's idea of where the felt ends without anything here being told twice.
 ;
 ; The walls are VERTICAL, because the model's are. The boxes they replaced leaned out by eight
-; degrees to turn a climbing die back down rather than stop it dead; the modelled rim is straight
-; and only 0.057 m above the felt where the old wall stood 0.115. Both of those make it easier for
-; a die to leave, so check-dice.ps1 is the thing that says whether it matters - run it after any
-; change to this file.
+; degrees to turn a climbing die back down rather than stop it dead; the modelled rim is straight.
+; check-dice.ps1 is the thing that says whether a change here matters - run it after any change to this file.
 ;
 ; SMALLER, WITH TALLER WALLS (cc_task_ui-issues-10-01.md 6, 2026-10-02). Kathleen: "make the tray smaller so
-; that when it's brought to you the dice are easier to see". Footprint 0.65 and WallHeight 1.25 on the node
-; below resize the model and the collision in code before the tray measures itself (DiceTray.Sizing) - the
-; numbers in this file stay the authored tray's. The felt is 0.321 x 0.401 m and the rim 0.071 m above it,
-; and the throw is softer by the root of the footprint. Measured over 1000 throws of 2d20 and 250 of 4d6:
+; that when it's brought to you the dice are easier to see". It was first done in code (Footprint 0.65 and
+; WallHeight 1.25 on the node, DiceTray.Sizing, which stretched the rim's wood); since 2026-10-03 it is the
+; updated model at 0.2145, the collision below fitted to it, the release points and the dice's seats moved in by
+; the footprint, and the throw softer by the root of it (die.tscn's ThrowSpeedMin/Max). Footprint and WallHeight
+; are 1 again; they still resize whatever model is here, for trying a size (--tray-footprint, --tray-walls). The
+; 2026-10-02 measurements of the code resize: Measured over 1000 throws of 2d20 and 250 of 4d6:
 ; at 1/1, 5 and 18 dice left the tray; at 0.65/0.65 (a plain shrink, walls 37 mm) 73 and 107; at 0.65/1
 ; 10 and 23; at 0.65/1.25, 1 and 10. All uniform. Eight d20s at once in it cocked on each other on 7% of
 ; dice (1.4% in the authored tray) and four on 1.2%, so MostAtOnce = 4: a Fireball's 8d6 goes up as two
-; handfuls. Set Footprint and WallHeight back to 1 and MostAtOnce to 0 for the authored tray.
+; handfuls.
 ;
 ; EIGHT SEATS. A check is one d20, advantage is two, and damage is a handful - eight covers a
 ; Fireball's 8d6 in one throw. Anything larger (Meteor Swarm is 20d6) the tray throws in
@@ -59,119 +59,117 @@
 [ext_resource type="Script" path="res://Tray/DiceTray.cs" id="1_tray"]
 [ext_resource type="PackedScene" uid="uid://bl4n0r1md1e01" path="res://Dice/die.tscn" id="2_die"]
 [ext_resource type="Resource" path="res://Tray/skins/wood.tres" id="3_skin"]
-[ext_resource type="PackedScene" uid="uid://d4m8rp1kphxu" path="res://models/tray/dice_tray_basic_rectangle.glb" id="4_model"]
+[ext_resource type="PackedScene" path="res://models/tray/dice_tray_basic_rectangle_updated.glb" id="4_model"]
 
-; the liner quad, to the millimetre: 1.4955 x 1.8694 model units at 0.33
+; the liner quad, to the millimetre: 1.4956 x 1.8694 model units at 0.2145
 [sub_resource type="BoxShape3D" id="Shape_floor"]
-size = Vector3(0.493517, 0.02, 0.616896)
+size = Vector3(0.320806, 0.02, 0.400986)
 
-; the model's inner faces at x = +-0.2468 and its outer at +-0.264, so the box IS the wall
+; the model's inner faces at x = +-0.1604 and its outer at +-0.1716, so the box IS the wall, as tall as the rim
 [sub_resource type="BoxShape3D" id="Shape_wall_x"]
-size = Vector3(0.017242, 0.068034, 0.66)
+size = Vector3(0.011197, 0.081596, 0.429)
 
 ; and the same across the ends. These run the full outer width, so they overlap the side walls in
 ; the corners rather than meeting them - a static body cannot gap against itself that way
 [sub_resource type="BoxShape3D" id="Shape_wall_z"]
-size = Vector3(0.528, 0.068034, 0.021552)
+size = Vector3(0.3432, 0.081596, 0.014007)
 
 [node name="DiceTray" type="Node3D"]
 script = ExtResource("1_tray")
 Skin = ExtResource("3_skin")
-Footprint = 0.65
-WallHeight = 1.25
 MostAtOnce = 4
 
-; y = -0.0593467 drops the model's underside onto y = 0, so the tray's origin is the face it
+; y = -0.038567 drops the model's underside onto y = 0, so the tray's origin is the face it
 ; stands on and table.tscn can set it down without knowing anything about the mesh
 [node name="TrayModel" parent="." instance=ExtResource("4_model")]
-transform = Transform3D(0.33, 0, 0, 0, 0.33, 0, 0, 0, 0.33, 0, -0.0593467, 0)
+transform = Transform3D(0.2145, 0, 0, 0, 0.2145, 0, 0, 0, 0.2145, 0, -0.038567, 0)
 
 [node name="TrayFloor" type="StaticBody3D" parent="."]
 
-; centre 0.0007663 puts the top of the box on 0.0107663, which is where the liner is. Dice rest on
+; centre -0.002986 puts the top of the box on 0.007014, which is where the liner is. Dice rest on
 ; the felt they can see, not a millimetre above or below it
 [node name="Floor" type="CollisionShape3D" parent="TrayFloor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0007663, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.002986, 0)
 shape = SubResource("Shape_floor")
 
 [node name="TrayWalls" type="StaticBody3D" parent="."]
 
 [node name="WallEast" type="CollisionShape3D" parent="TrayWalls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.255379, 0.034017, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.166002, 0.040798, 0)
 shape = SubResource("Shape_wall_x")
 
 [node name="WallWest" type="CollisionShape3D" parent="TrayWalls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.255379, 0.034017, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.166002, 0.040798, 0)
 shape = SubResource("Shape_wall_x")
 
 [node name="WallNear" type="CollisionShape3D" parent="TrayWalls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.034017, 0.319224)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.040798, 0.207497)
 shape = SubResource("Shape_wall_z")
 
 [node name="WallFar" type="CollisionShape3D" parent="TrayWalls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.034017, -0.319224)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.040798, -0.207497)
 shape = SubResource("Shape_wall_z")
 
 [node name="ThrowPoints" type="Node3D" parent="."]
 
 [node name="ThrowPoint1" type="Marker3D" parent="ThrowPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24, 0.185)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.236248, 0.12025)
 
 [node name="ThrowPoint2" type="Marker3D" parent="ThrowPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14, 0.225, 0.165)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.091, 0.221248, 0.10725)
 
 [node name="ThrowPoint3" type="Marker3D" parent="ThrowPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14, 0.225, 0.165)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.091, 0.221248, 0.10725)
 
 [node name="ThrowPoint4" type="Marker3D" parent="ThrowPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.19, 0.205, 0.135)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1235, 0.201248, 0.08775)
 
 [node name="ThrowPoint5" type="Marker3D" parent="ThrowPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19, 0.205, 0.135)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1235, 0.201248, 0.08775)
 
 [node name="ThrowPoint6" type="Marker3D" parent="ThrowPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.275, 0.105)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0455, 0.271248, 0.06825)
 
 [node name="ThrowPoint7" type="Marker3D" parent="ThrowPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.275, 0.105)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0455, 0.271248, 0.06825)
 
 [node name="ThrowPoint8" type="Marker3D" parent="ThrowPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.305, 0.075)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.301248, 0.04875)
 
 [node name="Dice" type="Node3D" parent="."]
 
 ; Die1 is the one the game throws most: a check, a save, an attack. Its seat is the middle of the
 ; near edge, straight in front of the player, because that is the die they will be watching.
 [node name="Die1" parent="Dice" instance=ExtResource("2_die")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24, 0.185)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.236248, 0.12025)
 Size = 20
 
 ; and Die2 is the second d20, for advantage and disadvantage - both are thrown and both are shown,
 ; because the player is owed the die that did not count as well as the one that did
 [node name="Die2" parent="Dice" instance=ExtResource("2_die")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14, 0.225, 0.165)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.091, 0.221248, 0.10725)
 Size = 20
 
 [node name="Die3" parent="Dice" instance=ExtResource("2_die")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14, 0.225, 0.165)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.091, 0.221248, 0.10725)
 Size = 6
 
 [node name="Die4" parent="Dice" instance=ExtResource("2_die")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.19, 0.205, 0.135)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1235, 0.201248, 0.08775)
 Size = 6
 
 [node name="Die5" parent="Dice" instance=ExtResource("2_die")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19, 0.205, 0.135)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1235, 0.201248, 0.08775)
 Size = 6
 
 [node name="Die6" parent="Dice" instance=ExtResource("2_die")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.275, 0.105)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0455, 0.271248, 0.06825)
 Size = 8
 
 [node name="Die7" parent="Dice" instance=ExtResource("2_die")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.275, 0.105)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0455, 0.271248, 0.06825)
 Size = 8
 
 [node name="Die8" parent="Dice" instance=ExtResource("2_die")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.305, 0.075)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.301248, 0.04875)
 Size = 12

@@ -12,11 +12,28 @@ namespace Content.Tests
     {
         static readonly Library Srd = Library.Srd();
 
+        // RAISE DEAD JOINS IT (cc_task_open-questions-answers.md 3.5). Kathleen: "ditch any spells that can't be used
+        // by a party of one unless they can be used out of combat". Both have an out-of-combat use on an NPC, but a
+        // campaign has no way to ask the hero to cast a spell outside a fight (no <<cast>> request; 2026-10-03), so
+        // both are off the solo lists until it does. Every other spell was checked and works alone
         [Fact]
-        public void SpareTheDyingIsTheOneSpellAPartyOfOneCantCast()
+        public void SpareTheDyingAndRaiseDeadAreTheSpellsAPartyOfOneCantCast()
         {
-            Assert.Equal(new[] { "spare_the_dying" },
-                         Srd.Spells.All.Where(s => s.Solo == Solo.Unavailable).Select(s => s.Id));
+            Assert.Equal(new[] { "raise_dead", "spare_the_dying" },
+                         Srd.Spells.All.Where(s => s.Solo == Solo.Unavailable).Select(s => s.Id).OrderBy(id => id));
+        }
+
+        [Theory]
+        [InlineData("cleric", 9)]
+        [InlineData("paladin", 17)]
+        [InlineData("mage", 9)]
+        public void CreationNeverOffersRaiseDead(string cls, int level)
+        {
+            var making = new Creation.Creation(Srd, Srd.Backgrounds);
+            making.StartAt(level);
+            making.Pick(Srd.Class(cls));
+
+            Assert.DoesNotContain(making.SpellChoices, s => s.Id == "raise_dead");
         }
 
         [Theory]

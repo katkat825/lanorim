@@ -127,8 +127,14 @@ and goes to the table; `--auto` plays it to the end; `--autodice` / `--autostory
 themselves but leave the fights to you; `--start <node>` starts the story elsewhere; `--show
 book|tutorials|create|settings` opens a launch screen (`--show book --open <campaign>` that campaign's two pages,
 `--book-overlay` the menu on panels instead of the pages); `--gm-screen <skin>` stands another GM screen on the
-table; `--tray-footprint 0.65 --tray-walls 1` tries a smaller dice tray (`DiceTray.Sizing`); `--shot <file>
---after <frames>` saves a picture and quits.
+table, and `--gm-tallness 1` at its authored height; `--tray-footprint 0.65 --tray-walls 1` tries a smaller dice
+tray (`DiceTray.Sizing`); `--shot <file> --after <frames>` saves a picture and quits. For checks: `--prone-probe` (in a
+fight: Prone lies down in its square, Stand Up stands up), `--access-probe` (Tab, Shift+Tab, F1, F2, F3 at the table),
+`table.tscn -- --dice d20 --throws N --handful H --tray-skin gamblers` (the fairness sweep; add `--fixed-fps 60` before
+`--path` to run it as fast as it can), `table.tscn -- --open-door` (the demonstration's door, open).
+
+The physics runs at **120 ticks a second** (`project.godot`): at Godot's default 60 a d4 or d6 lying on a face rocks
+on its corners for good (`game/Dice/DieBody.Wobble.cs`).
 
 **After `game/locale/game.csv` changes, re-import it:**
 

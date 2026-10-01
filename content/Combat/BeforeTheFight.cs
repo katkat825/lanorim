@@ -36,7 +36,7 @@ namespace Content.Combat
                          .Where(CombatSession.Kindly)
                          .Where(s => caster.CanCast(s, s.Level))
                          .Where(s => !hero.Actor.Boons.Has(s.Id))
-                         .OrderBy(s => s.Level).ThenBy(s => s.Id)
+                         .OrderBy(s => s.Level).ThenBy(s => s.Id, System.StringComparer.Ordinal)
                          .ToList();
         }
 

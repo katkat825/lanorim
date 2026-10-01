@@ -959,6 +959,15 @@ spell.web.description,"Level 2. Fills a 20-foot cube with webs: difficult terrai
 spell.web.name,Web
 spell.wish.description,Level 9. Its effect is told by the narrator. (v1 ships a bounded version of this spell.)
 spell.wish.name,Wish
+ui.access.button,"{0}, on the bar."
+ui.access.nothing_to_reach,There is nothing on the table to reach.
+ui.access.piece,"{0}: {1} of {2} hit points, {3} squares away."
+ui.access.piece_beside,"{0}: {1} of {2} hit points, beside you."
+ui.access.reading_off,No longer reading aloud.
+ui.access.reading_on,Reading aloud.
+ui.access.tray,The dice tray: {0}.
+ui.access.tray_empty,"The dice tray, empty."
+ui.access.you,"You: {0} of {1} hit points."
 ui.act.help.name,Open the rules: {0}
 ui.act.reach_back.name,Move back to the last one: {0}
 ui.act.reach_next.name,Move to the next thing on the table: {0}
@@ -1067,6 +1076,8 @@ ui.combat_action.end_turn.name,End turn
 ui.combat_action.flee.name,Leave the map
 ui.combat_action.grapple.name,Grapple
 ui.combat_action.hide.name,Hide
+ui.combat_action.off_hand.name,(off hand)
+ui.combat_action.open_door.name,Open door
 ui.combat_action.shake.name,Shake awake
 ui.combat_action.shove.name,Shove
 ui.combat_action.shove_prone.name,Knock prone
@@ -1109,7 +1120,6 @@ ui.controls.mouse_pick,"Left-click an option to pick it, a lit square to walk th
 ui.controls.mouse_pinch,Pinch on a trackpad to zoom
 ui.controls.mouse_tray,Click the tray to throw the dice waiting on it
 ui.controls.mouse_wheel,"The wheel zooms. While you aim a line or a cone, the wheel turns it and Shift and the wheel zoom"
-ui.controls.not_yet,(not working yet)
 ui.controls.reserved,{0} is kept for the action bar. Pick another key.
 ui.controls.taken,{0} already does something else. Pick another key.
 ui.controls.title,Controls
@@ -1149,6 +1159,15 @@ ui.duration.turn_end.name,Until the end of the turn
 ui.end.blurb,The story is over. Your character waits in the book.
 ui.end.demo,This is the end of the demo.
 ui.end.title,The End
+ui.help.attack,"Pick an attack or a spell on the bar, then click the creature to aim it at."
+ui.help.close,F1 or Esc closes this.
+ui.help.dice,Your own rolls are thrown on the dice tray. The game master's are rolled behind the screen.
+ui.help.keys,These are the keys. Change them in Settings.
+ui.help.more,"More actions holds Dash, Disengage, Hide, Stand up, opening a door and the rest."
+ui.help.move,Click a lit square to walk there. Q and E turn the table; the wheel zooms.
+ui.help.story,"The game master tells the story. Read a line, then Continue; a choice is yours to make."
+ui.help.title,Help
+ui.help.turn,"In a fight, on your turn you have two actions, a bonus action and your movement. End Turn when you're done."
 ui.improvement.none_pending.name,There is no ability score improvement to spend.
 ui.improvement.one_each.name,+1 to two abilities
 ui.improvement.over_twenty.name,No ability score can go above 20.
@@ -1189,6 +1208,7 @@ ui.log.damage_lessened.name,"{0} hits {1}: {2}, for {3} {5} damage; {1} loses {4
 ui.log.death_save_dead.name,{0} rolls {1} on the death save. It is over.
 ui.log.death_save_up.name,{0} rolls {1} on the death save and gets back up.
 ui.log.diverted.name,{0}'s blow strikes one of {1}'s images instead.
+ui.log.door_opened.name,{0} opens the door.
 ui.log.down.name,{0} goes down.
 ui.log.fled.name,You get away.
 ui.log.hit.name,Hit: {0} hits {1} ({2} against Armor Class {3}).
@@ -1234,13 +1254,21 @@ ui.pack.gold,{0} gp
 ui.pack.leave,Leave
 ui.pack.make_room,Your pack is full. Choose what to leave behind.
 ui.pack.new_item,New
+ui.pack.off_hand,Off hand
 ui.pack.quest_items,Quest items
 ui.pack.sell,Sell
 ui.pack.sell_equipped,You are using this. Sell it anyway?
+ui.pack.slot_body,Body
+ui.pack.slot_main_hand,Main hand
+ui.pack.slot_off_hand,Off hand
+ui.pack.slot_shield,Shield
+ui.pack.slot_trinket,Trinket
+ui.pack.slot_two_hand,Both hands
 ui.pack.slots,{0} of {1} slots
 ui.pack.title,Pack
 ui.pack.unequip,Unequip
 ui.pack.use,Use
+ui.pack.worn,Worn
 ui.pause.load,Load
 ui.pause.pack,Pack
 ui.pause.resume,Resume
@@ -1278,6 +1306,7 @@ ui.settings.enemy_speed,Enemy turn speed
 ui.settings.follow_enemies,Camera follows enemies
 ui.settings.game,Game
 ui.settings.reactions,Reactions
+ui.settings.read_aloud,Read aloud
 ui.settings.skip_physical_dice,Skip throwing the dice
 ui.settings.speed_fast,Fast
 ui.settings.speed_instant,Instant
@@ -1311,3 +1340,11 @@ ui.tutorial.intermediate_blurb,"Reactions, spells and conditions, and reading a 
 ui.tutorial.not_yet,Not written yet.
 ui.tutorial.tests,Test campaigns
 ui.tutorial.title,Learn to play
+ui.where.book,"The campaign book: the contents, or a campaign's pages."
+ui.where.campaign,{0}.
+ui.where.foes,Enemies still standing: {0}.
+ui.where.health,{0} has {1} of {2} hit points.
+ui.where.round,"A fight, round {0}."
+ui.where.story,The story goes on between fights.
+ui.where.their_turn,It is the {0}'s turn.
+ui.where.your_turn,It is your turn.

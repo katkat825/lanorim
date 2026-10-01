@@ -14,6 +14,10 @@ config/name="Lanorim"
 run/main_scene="res://launch.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 
+[autoload]
+
+AccessDesk="*res://Access/AccessDesk.cs"
+
 [audio]
 
 general/text_to_speech=true
@@ -111,6 +115,12 @@ zoom_out={
 [internationalization]
 
 locale/translations=PackedStringArray("res://locale/game.en.translation")
+
+[physics]
+
+; the dice need 120: at Godot's default 60 a d4 or d6 lying on a face rocks round its corners for good
+; (game/Dice/DieBody.Wobble.cs says why). The old build ran 120 too; the harvest left this section behind
+common/physics_ticks_per_second=120
 
 [rendering]
 

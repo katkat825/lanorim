@@ -70,8 +70,8 @@ namespace Game.Screens
                 foreach (Control words in Words()) words.AddThemeFontSizeOverride("font_size", size);
             }
 
-            Stand(Left, left);
-            Stand(Right, right);
+            Stand(Left, left, _book.PageTilt);
+            Stand(Right, right, -_book.PageTilt);
 
             if (_judged || !_book.Still) return;
 
@@ -80,10 +80,18 @@ namespace Game.Screens
             if (size < Math.Max(_book.ContentsFontMin, _forceBelow)) TooSmall?.Invoke(size);
         }
 
-        static void Stand(Control page, Rect2 on)
+        // turned toward the spine (BookTable.PageTilt) about the page's outer top corner: the left page's top
+        // left, the right page's top right. Clicks, focus and the reader follow a turned Control as they are
+        static void Stand(Control page, Rect2 on, float tilt)
         {
-            page.Position = on.Position;
-            page.Size = on.Size;
+            // turned, a column leans out at its foot; narrowed by half that lean on its outer side so its lines
+            // stay on the page
+            float lean = on.Size.Y * Mathf.Abs(Mathf.Sin(Mathf.DegToRad(tilt))) * 0.5f;
+
+            page.Position = on.Position + new Vector2(tilt >= 0f ? lean : 0f, 0f);
+            page.Size = on.Size - new Vector2(lean, 0f);
+            page.PivotOffset = tilt >= 0f ? Vector2.Zero : new Vector2(page.Size.X, 0f);
+            page.RotationDegrees = tilt;
             page.Visible = true;
         }
 

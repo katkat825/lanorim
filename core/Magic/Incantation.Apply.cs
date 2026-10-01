@@ -97,6 +97,9 @@ namespace Core.Magic
                 if (effect.Kind == Primitive.Afflict && target.AdvantageOnSaveAgainst(effect.Condition))
                     extra = extra.And(Advantage.Advantage);
 
+                // a statblock's Magic Resistance: advantage on every save against a spell
+                extra = extra.And(target.AgainstSpells);
+
                 // SRD cover adds to Dexterity saves against what comes from the far side of it
                 int cover = effect.Save == Ability.Dexterity && fight != null
                     ? fight.Cover(caster.Actor, target)
@@ -131,12 +134,6 @@ namespace Core.Magic
 
             return PrimitiveHandlers.For(effect.Kind).Apply(contact);
         }
-
-        // a sway that only helps its bearer: no penalty, no mark, nothing leaning against it
-        static bool Kindly(SpellEffect effect) =>
-            effect.Boon.Flat >= 0 && effect.Boon.Mark == null &&
-            (effect.Boon.Leans & (Leans.DisadvantageOnAttacks | Leans.AdvantageAgainst |
-                                  Leans.DisadvantageOnChecks | Leans.DisadvantageOnSaves)) == 0;
 
         // the DC: the caster's, or 8 + proficiency + the ability the spell names (a Dragonborn's
         // breath is Constitution's, SRD 5.2.1 p.84)

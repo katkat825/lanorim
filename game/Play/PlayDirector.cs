@@ -111,6 +111,13 @@ namespace Game.Play
             _combat.Mount(_ui);
             _combat.Finished += FightOver;
 
+            // the keyboard's own keys (Game.Access.AccessDesk): Tab reaches the fight's pieces and bar and the tray,
+            // F2 says where in the campaign we are
+            Game.Access.AccessDesk.Reaching = Reachables;
+            Game.Access.AccessDesk.Where = () => Content.Screens.Whereabouts.Of(Run, _combat.Session);
+
+            if (args.Contains(ProneProbe.Flag)) AddChild(new ProneProbe { Name = "ProneProbe", Combat = _combat });
+
             // the GM's rolls behind the screen: heard, captioned, never shown
             GameState.Resolver.Rolled += roll =>
             {
@@ -147,8 +154,26 @@ namespace Game.Play
             _dice?.Abandon();
             _rules?.Dispose();
 
+            Game.Access.AccessDesk.Reaching = null;
+            Game.Access.AccessDesk.Where = null;
+
             if (GameState.HeroDice == _dice) GameState.HeroDice = null;
 
+        }
+
+        // the fight's pieces and bar, then the dice tray and what it last said
+        System.Collections.Generic.IReadOnlyList<Game.Access.Reachable> Reachables()
+        {
+            var reach = new System.Collections.Generic.List<Game.Access.Reachable>(_combat?.Reachables() ?? new System.Collections.Generic.List<Game.Access.Reachable>());
+
+            if (reach.Count == 0) return reach;
+
+            string faces = Table.Tray?.Last is { } roll ? string.Join(", ", roll.Values) : "";
+            reach.Add(new Game.Access.Reachable(faces.Length > 0
+                ? Game.Screens.Ui.Say(Content.Screens.AccessWords.TrayKey, faces)
+                : Game.Screens.Ui.Say(Content.Screens.AccessWords.TrayEmptyKey)));
+
+            return reach;
         }
 
         bool _quitting;

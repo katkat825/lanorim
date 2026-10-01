@@ -101,6 +101,15 @@ namespace Game.Table
 
             GD.Print($"table   {Board}, {map}");
 
+            // `--open-door`: the demonstration's door opened, for a picture of the door model swung on its hinge
+            // (cc_task_open-questions-answers.md 2.1)
+            if (System.Array.IndexOf(OS.GetCmdlineUserArgs(), "--open-door") >= 0)
+            {
+                var door = new Border(new Cell(7, 4), true);
+                _field.OpenDoor(door);
+                Board.Reopen(_field.Map, door);
+            }
+
             // THE REACH IS NOT LIT ON BOOT ANY MORE, and that is the whole of the "washed out
             // squares" report. Board.ShowReach lights every square the hero could walk to, which on
             // this map is about a third of it - so opening the scene painted a third of the

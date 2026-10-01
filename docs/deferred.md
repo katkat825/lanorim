@@ -16,6 +16,7 @@
 - discarded items are dropped and can be retrieved later
 
 - offer a way for an item to be equipped in multiple slots at player choice (skills that allow use of a main-hand weapon in an off-hand. items that can be either main-hand or off-hand)
+    - *2026-10-03: the off hand itself is built (a one-handed Light weapon, for the Light bonus attack: `inventory_decisions.md`). What stays parked is any other main-hand item in the off hand, and skills that allow it.*
 
 - player can mark favorite items that are then not sellable and have a favorite icon (also player can toggle off the favorite status on an item)
 
@@ -76,3 +77,20 @@
     - Light (cantrip): 4 squares. SRD 5.2.1 p.144.
     - Produce Flame (cantrip): 4 squares. SRD 5.2.1 p.156.
     - Flaming Sphere (level 2): 4 squares. SRD 5.2.1 p.132.
+
+- deferred by Kathleen's answers (2026-10-01, `_design_docs/OPEN_QUESTIONS.md`, recorded 2026-10-03; each is also a line in `decisions_checklist.md`):
+    - **[DEFER]** Massive damage killing outright (SRD 5.2.1: damage that leaves you at 0 HP with some left over equal to or more than your HP maximum). Whether damage at 0 HP brings a fresh single death save is open (`_design_docs/OPEN_QUESTIONS.md` §0); as built, it doesn't. (`09-25 Q3`) *(2026-10-03: aligned with decisions_checklist.md)*
+    - **[DEFER]** Spell components: material and costly components aren't tracked. (`09-24 Q6`, `09-25 Q5`)
+    - **[DEFER]** Monster senses (Darkvision, Blindsight…), sizes past one square, and other speeds (fly, climb, swim). (`09-25 Q7`)
+    - **[DEFER]** The SRD conditions v1 doesn't play yet, and their small clauses. (OPEN_QUESTIONS §1)
+    - **[DEFER]** Firearms (Musket, Pistol): SRD, left out of v1. (`09-25 Q16`)
+    - **[DEFER]** A Bard class, maybe for good: its spells are on the Mage's list. (`09-25 Q19`)
+
+- "build if easy, defer if not" (Kathleen, 2026-10-01): the ones that weren't easy (2026-10-03, `cc_task_open-questions-answers.md`; what was built is in `_design_docs/RUN_LOG_2026-10-03_answers.md`):
+    - **[DEFER]** **Weapon Mastery** (SRD 5.2.1, the biggest narrate-only class feature). What it would take: the eight mastery properties as attack riders (Cleave, Graze, Nick, Push, Sap, Slow, Topple, Vex; Topple, Sap, Vex, Push and Slow fit existing riders and boons, Cleave, Graze and Nick are new turn rules), a mastery word on every SRD weapon, each class's count of mastered weapons by level and a creation and level-up step to choose them, saves, the bar saying which weapon has which, and tests per property. About three to four days.
+    - **[DEFER]** Monster traits not built (Pack Tactics, Bloodied Fury, Magic Resistance, Undead Fortitude and Sunlight Sensitivity's attack half are): **Spider Climb** (v1 has no climbing), **Web Walker** (a web's restraint sparing the spider: a tag rule on the Web zone, an hour's work once spiders cast webs), **Sunlight Sensitivity's ability-check half** (no checks are rolled in a fight), **monster reactions** (the goblin boss's Redirect Attack, the mage's Protective Magic as one 3/day pool: the reaction window would have to retarget an attack mid-swing, and a statblock's uses would need a shared pool), **Shape-Shift** (werewolf, imp: a second statblock to switch to), the **+1d4 with Advantage** rider (goblin, goblin boss), the **boar's Charge** and the **werewolf's curse**. About two days for all of them, Redirect Attack the largest.
+    - **[DEFER]** **The goblin boss's Redirect Attack**: not easy (above) and not reusable beyond goblins; the boss is a campaign that won't ship. Its Shortbow is already in the statblock.
+    - **[DEFER]** **Burning webs** (SRD Web: fire burns a 5-foot cube of it away in a round, 2d4 Fire to whoever starts a turn in the fire). A zone is one whole area; burning part of it means cutting squares out of a zone. About a day. Collapsing webs need nothing: v1 always lays a web across a floor, which the SRD says holds it up.
+    - **[DEFER]** **Gaseous Form entering and occupying another creature's space**: the battlefield holds one creature a square, and movement, targeting, areas and the board all lean on that. Two to three days; until then Gaseous Form stays on the allow-list.
+    - **[DEFER]** **A `<<cast spell>>` request**, so a campaign can ask the hero to cast a spell outside a fight (Spare the Dying on a dying guard, Raise Dead on a murdered innkeeper, Identify, Speak with Dead). A new request verb read like the others, a yes/no card, the slot spent through the incantation with no fight, and the answer in a Yarn variable. About a day. Until it exists, Spare the Dying and Raise Dead aren't offered to a party of one.
+    - Decided as they are, not deferred: **Telekinesis on unattended objects** (the narrator's; a fight's only object is a door), **Enhance Ability's per-target ability** (a party of one only ever targets itself), **Shillelagh and True Strike** taking the better option (the one a player would choose), **Hunter's Mark's tracking advantage** (finding is exploration, the narrator's).

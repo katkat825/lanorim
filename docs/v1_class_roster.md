@@ -30,7 +30,7 @@ Decisions baked in (2026-09-21):
 
 **Barbarian** — *Path of the Berserker*. STR, d12. Furious frontline survivor.
 Keep Rage, Unarmored Defense, Reckless Attack, Weapon Mastery, Danger Sense.
-Adapt: Rage's per-day use table → one bounded stance (cost/cooldown); **Extra Attack → +1 action**
+Adapt: Rage keeps the SRD's per-day use table (2 to 6 uses by level, one back on a short rest), a single stance you switch on *(2026-10-03: aligned with decisions_checklist.md)*; **Extra Attack → +1 action**
 (stacks on the base 2, so a raging Barbarian at the Extra-Attack level gets 3 actions). *Companion: bonded wolf.*
 
 **Fighter** — *Champion*. STR or DEX, d10. Disciplined weapon master.
@@ -56,7 +56,7 @@ identity are a small curated growth catalog, not build platforms. *Companion: bo
 **Cleric** — *Life Domain*. WIS, d8. Armored divine champion and healer.
 Keep Spellcasting, Channel Divinity, healing, radiant offense, undead turning.
 Adapt: Divine Intervention → an authored miracle menu / campaign hook, not a freeform request. An optional
-armored-smite / protection growth route covers most of Paladin without a sixth class. *Companion: saint's fragment.*
+armored-smite / protection growth route is the Cleric's own; Paladin ships as the 7th class. *(2026-10-03: aligned with decisions_checklist.md)* *Companion: saint's fragment.*
 
 **Paladin** — *Oath of Devotion*. STR + CHA, d10. Holy knight — armored melee, burst smite, protective conviction.
 Keep Lay on Hands, Spellcasting (the paladin list is already inside the v1 spell set), Channel Divinity,
@@ -138,7 +138,7 @@ Every class and subclass was checked against the SRD 5.2.1 text, feature by feat
 - **Kept on purpose:** Action Surge is +1 action (§1). The Bard's spells stay on the Mage list and Hunter's Mark on
   the Druid's (the route-covered classes above). There's no spellbook (Mage above). Stroke of Luck, Overchannel,
   Turn Undead, Natural Recovery and Archdruid stay narrate-only, and their wrong mechanics are gone.
-- **Still open:** Weapon Mastery (Q13). The four `*_weapon_mastery` features are narrate.
+- **Decided 2026-10-01:** Weapon Mastery (Q13): build if easy, defer if not. Until then the four `*_weapon_mastery` features are narrate. *(2026-10-03: aligned with decisions_checklist.md)*
 - **For Kathleen, a flag, not a change:** the Barbarian line above says "Rage's per-day use table → one bounded
   stance (cost/cooldown)". The build now follows the SRD table (2/3/4/5/6 uses, one back on a short rest), as the
   SRD-check task asked. It's still a single stance you switch on. If "cost/cooldown" meant something other than

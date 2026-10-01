@@ -119,6 +119,10 @@ namespace Content.Items
 
         public bool IsEquippable => Slot != Slot.None;
 
+        // SRD 5.2.1 Light (p.89): a one-handed Light weapon may be held in the off hand, for the Light bonus attack
+        // (cc_task_open-questions-answers.md 3.1; Kathleen: "there should already have been an off-hand")
+        public bool FitsOffHand => Kind == ItemKind.Weapon && Slot == Slot.MainHand && Attack?.Light == true;
+
         // a quest item that does nothing for the character takes no slot
         public bool TakesASlot => Kind != ItemKind.Quest;
 
@@ -159,8 +163,9 @@ namespace Content.Items
         {
             Slot.TwoHand => new[] { Slot.MainHand, Slot.OffHand, Slot.Shield },
             Slot.MainHand => new[] { Slot.TwoHand },
-            Slot.OffHand => new[] { Slot.TwoHand },
-            Slot.Shield => new[] { Slot.TwoHand },
+            // the off hand holds a weapon or a shield, not both (cc_task_open-questions-answers.md 3.1)
+            Slot.OffHand => new[] { Slot.TwoHand, Slot.Shield },
+            Slot.Shield => new[] { Slot.TwoHand, Slot.OffHand },
             _ => Array.Empty<Slot>(),
         };
     }

@@ -40,6 +40,11 @@ namespace Content.Screens
 
         public bool LogOpen { get; set; }
 
+        // the in-game reader speaks what is on the table aloud (Game.Access.Narrator); F3 turns it on and off from
+        // anywhere (cc_task_open-questions-answers.md 4.2). Off until asked: a game that starts talking at somebody
+        // who didn't want it is a game they turn off
+        public bool ReadAloud { get; set; }
+
         public ReactionSettings Reactions { get; } = new ReactionSettings();
 
         // seconds an enemy's move is given at each speed; Instant is none
@@ -63,6 +68,7 @@ namespace Content.Screens
                 json.WriteBoolean("follow_enemies", FollowEnemies);
                 json.WriteBoolean("bring_tray", BringTrayToMe);
                 json.WriteBoolean("log_open", LogOpen);
+                json.WriteBoolean("read_aloud", ReadAloud);
 
                 json.WritePropertyName("reactions");
                 json.WriteStartObject();
@@ -107,6 +113,7 @@ namespace Content.Screens
                 settings.FollowEnemies = Flag(root, "follow_enemies", true);
                 settings.BringTrayToMe = Flag(root, "bring_tray", true);
                 settings.LogOpen = Flag(root, "log_open", false);
+                settings.ReadAloud = Flag(root, "read_aloud", false);
 
                 if (root.TryGetProperty("reactions", out JsonElement reactions) &&
                     reactions.ValueKind == JsonValueKind.Object)
@@ -139,9 +146,11 @@ namespace Content.Screens
         public static readonly string FollowKey = ScreenKeys.Key("settings", "follow_enemies");
         public static readonly string BringTrayKey = ScreenKeys.Key("settings", "bring_tray");
         public static readonly string ReactionsKey = ScreenKeys.Key("settings", "reactions");
+        public static readonly string ReadAloudKey = ScreenKeys.Key("settings", "read_aloud");
 
         public static IEnumerable<string> Keys() =>
             Enum.GetValues<CombatSpeed>().Select(SpeedKey)
-                .Concat(new[] { TitleKey, GameTabKey, AccessTabKey, EnemySpeedKey, SkipDiceKey, FollowKey, BringTrayKey, ReactionsKey });
+                .Concat(new[] { TitleKey, GameTabKey, AccessTabKey, EnemySpeedKey, SkipDiceKey, FollowKey, BringTrayKey, ReactionsKey,
+                                ReadAloudKey });
     }
 }

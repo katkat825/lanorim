@@ -100,6 +100,13 @@ namespace Core.Magic
         // and an item use. its Duration is this effect's
         public BoonSpec Boon { get; init; } = BoonSpec.Nothing;
 
+        // a boon that only helps its bearer: no penalty, no mark, nothing leaning against it (Bless, Enlarge; not
+        // Bane, not Reduce). the Charmed check and a party of one's targeting both ask it
+        public bool OnlyHelps =>
+            Boon.Flat >= 0 && Boon.Mark == null &&
+            (Boon.Leans & (Leans.DisadvantageOnAttacks | Leans.AdvantageAgainst |
+                           Leans.DisadvantageOnChecks | Leans.DisadvantageOnSaves)) == 0;
+
         // what it leaves on a creature it lands on, and how that ends: the way out, the save
         // track, what damage does to it. read by content/Spells/LingerSpecReader.cs
         public LingerSpec Linger { get; init; } = LingerSpec.Nothing;

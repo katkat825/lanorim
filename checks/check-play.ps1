@@ -38,14 +38,29 @@ $played -split "`n" |
 $thrown = ([regex]::Matches($played, '(?m)^tray\s+Die')).Count
 Write-Host "  $thrown throws on the tray"
 
-$errors = $played -split "`n" | Where-Object { $_ -match '^(ERROR|SCRIPT ERROR)' -or $_ -match 'FAILED' }
+$errors = @($played -split "`n" | Where-Object { $_ -match '^(ERROR|SCRIPT ERROR)' -or $_ -match 'FAILED' })
+
+# PRONE AND STANDING ON THE BOARD (cc_task_working-notes-10-01.md 1.2): the hero knocked Prone in a real fight
+# lies inside its square, and Stand Up, taken the way the More Actions menu takes it, stands the mini up
+Write-Host ''
+Write-Host 'prone, then Stand Up, on the board:' -ForegroundColor DarkGray
+
+Invoke-Godot $Godot @('--headless', '--path', 'game', 'res://launch.tscn', '--',
+                      '--begin', 'sample_millbrook', $Class, '--start', 'cellar', '--autodice', '--autostory',
+                      '--prone-probe') $log
+
+$prone = Get-Content $log -Raw
+
+$prone -split "`n" | Where-Object { $_ -match '^prone ' } | ForEach-Object { Write-Host "  $_" }
+
+$errors += @($prone -split "`n" | Where-Object { $_ -match '^prone\s+FAILED' })
 
 Remove-Item $log -ErrorAction SilentlyContinue
 
 Write-Host ''
 
-if ($played -match 'play\s+the end' -and $thrown -gt 0 -and $errors.Count -eq 0) {
-    Pass 'launch to table to the end of the campaign, dice on the tray'
+if ($played -match 'play\s+the end' -and $thrown -gt 0 -and $prone -match 'prone\s+check passed' -and $errors.Count -eq 0) {
+    Pass 'launch to table to the end of the campaign, dice on the tray; Prone lies down and Stand Up stands up'
 }
 
 foreach ($line in $errors) { Write-Host "  $line" -ForegroundColor Red }

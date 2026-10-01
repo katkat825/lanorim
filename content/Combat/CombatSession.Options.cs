@@ -28,6 +28,7 @@ namespace Content.Combat
             options.AddRange(AgainOptions());
             options.AddRange(ManoeuvreOptions());
             options.AddRange(HeldOptions());
+            options.AddRange(DoorOptions());
             options.AddRange(UnarmedOptions());
             options.AddRange(ShakeOptions());
             options.AddRange(ItemOptions());
@@ -47,7 +48,7 @@ namespace Content.Combat
         IEnumerable<ActionOption> AttackOptions() =>
             Hero.Attacks.Select(attack => new ActionOption
             {
-                Id = "attack:" + attack.Id,
+                Id = "attack:" + attack.Id + (attack.Hand == Hand.Off ? OffHand : ""),
                 Kind = OptionKind.Attack,
                 NameKey = attack.NameKey,
                 Cost = Spend.Action,
@@ -57,19 +58,25 @@ namespace Content.Combat
                 WhyNotKey = WhyNotAttack(attack),
             }).ToList();
 
+        // an off-hand weapon's options say so in their id: a dagger in each hand is two options
+        public const string OffHand = "@off";
+
+        // "(off hand)", after the weapon's name on the bar
+        public static readonly string OffHandKey = UiName("off_hand");
+
         // SRD 5.2.1 Light (p.89): after an attack with a Light weapon, the other Light weapon
         // attacks with the bonus action, without the ability modifier on its damage
         IEnumerable<ActionOption> LightBonusOptions()
         {
             if (!ReferenceEquals(Hero.LightTurn, Turn)) yield break;
 
-            foreach (Attack other in Hero.Attacks.Where(a => a.Light && a.Id != Hero.LightWeapon))
+            foreach (Attack other in Hero.Attacks.Where(a => a.Light && a.Hand != Hero.LightHand && a.Hand != Hand.None))
             {
                 bool bonus = Turn.Can(Spend.Bonus);
 
                 yield return new ActionOption
                 {
-                    Id = "bonus_attack:" + other.Id,
+                    Id = "bonus_attack:" + other.Id + (other.Hand == Hand.Off ? OffHand : ""),
                     Kind = OptionKind.Attack,
                     NameKey = other.NameKey,
                     Cost = Spend.Bonus,
@@ -266,6 +273,35 @@ namespace Content.Combat
             }
         }
 
+        // A SHUT DOOR BESIDE THE HERO (cc_task_open-questions-answers.md 2.1): one option a door, free while the
+        // turn's one object interaction is unspent and an action after it (SRD 5.2.1, Encounter.Doors.cs). Two
+        // doors beside you are told apart by which side they are on
+        IEnumerable<ActionOption> DoorOptions()
+        {
+            if (!(Fight.Field.Where(Hero.Actor) is Core.Space.Cell here)) yield break;
+
+            Spend cost = Encounter.DoorCost(Turn);
+
+            foreach (Core.Space.Border door in Fight.DoorsBeside(Hero.Actor))
+            {
+                string side = door.Vertical ? (door.Cell.X == here.X ? "west" : "east")
+                                            : (door.Cell.Y == here.Y ? "north" : "south");
+
+                string why = !Hero.Actor.CanAct ? Why("cannot_act") : Turn.Can(cost) ? null : Why("no_action");
+
+                yield return new ActionOption
+                {
+                    Id = "open_door_" + side,
+                    Kind = OptionKind.OpenDoor,
+                    NameKey = UiName("open_door"),
+                    Cost = cost,
+                    Door = door,
+                    Enabled = why == null,
+                    WhyNotKey = why,
+                };
+            }
+        }
+
         // what costs nothing: Action Surge, running for it, and ending the turn
         IEnumerable<ActionOption> FreeOptions()
         {
@@ -284,7 +320,7 @@ namespace Content.Combat
         public static IEnumerable<string> ActionKeys() =>
             new[] { "dash", "disengage", "hide", "bonus_dash", "bonus_disengage", "bonus_hide",
                     "stand_up", "break_free", "shake", "surge", "flee", "end_turn",
-                    "grapple", "shove", "shove_prone" }
+                    "grapple", "shove", "shove_prone", "open_door", "off_hand" }
                 .Select(UiName)
                 .Concat(Keys())
                 .Concat(ReactionPolicies.Keys());

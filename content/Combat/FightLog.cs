@@ -46,7 +46,7 @@ namespace Content.Combat
         public static IEnumerable<string> Keys() =>
             new[] { "initiative", "round", "turn", "moved", "hit", "critical", "miss", "damage",
                     "damage_lessened", "save_made", "save_failed",
-                    "opportunity", "reacted", "condition_on", "condition_off", "down", "death_save_up",
+                    "opportunity", "reacted", "condition_on", "condition_off", "down", "door_opened", "death_save_up",
                     "death_save_dead", "won", "lost", "fled", "roll_table", "roll_hidden", "diverted",
                     "roll_attack", "roll_save", "roll_check", "roll_initiative", "cast", "cast_on" }
                 .Concat(Enum.GetValues<Stat>().Select(ChangedWord))
@@ -187,6 +187,8 @@ namespace Content.Combat
             Add(applied ? "condition_on" : "condition_off", actor, condition.NameKey());
 
         public override void Downed(Actor actor) => Add("down", actor);
+
+        public override void DoorOpened(Actor actor, Core.Space.Border door) => Add("door_opened", actor);
 
         public override void DeathSaved(Actor actor, Attempt attempt) =>
             Add(attempt.Succeeded ? "death_save_up" : "death_save_dead", actor, attempt.Total);

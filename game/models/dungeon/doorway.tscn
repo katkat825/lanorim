@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+; A DOORWAY: the arch and its door (Quaternius, Updated Modular Dungeon, CC0), from the pack's OBJ and .mtl
+; (tools/pull-models.ps1). BoardTiles.Doorway fits the arch to one grid line and hangs the leaf - the child
+; whose name ends in _door - on a hinge at its edge, so DoorPiece swings it open. Shut is this scene as it
+; is; open is the leaf swung (DoorPiece.Open), so one scene is both. Both meshes are modelled about the same
+; origin, so the door stands in the arch as the pack lays it.
+
+[ext_resource type="Mesh" path="res://models/dungeon/Arch.obj" id="1_arch"]
+[ext_resource type="Mesh" path="res://models/dungeon/Arch_Door.obj" id="2_door"]
+
+[node name="doorway" type="Node3D"]
+
+[node name="Arch" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_arch")
+
+[node name="Arch_door" type="MeshInstance3D" parent="."]
+mesh = ExtResource("2_door")

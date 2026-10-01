@@ -211,6 +211,7 @@
       "school": "necromancy",
       "range": 0,
       "classes": ["mage", "cleric", "paladin"],
+      "solo": "unavailable",
       "effects": [
         {
           "primitive": "heal",

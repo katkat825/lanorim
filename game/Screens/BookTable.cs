@@ -63,7 +63,7 @@ namespace Game.Screens
         // the title sits in the band between them), its colour, and its outline
         [Export(PropertyHint.Range, "0.2,1,0.01")] public float TitleWidth { get; set; } = 0.62f;
 
-        [Export(PropertyHint.Range, "0,1,0.01")] public float TitleAt { get; set; } = 0.46f;
+        [Export(PropertyHint.Range, "0,1,0.01")] public float TitleAt { get; set; } = 0.55f;
 
         [Export] public Color TitleColour { get; set; } = new Color(0.95f, 0.82f, 0.48f);
 
@@ -90,6 +90,13 @@ namespace Game.Screens
         [Export] public int ContentsFontMin { get; set; } = 22;
 
         [Export(PropertyHint.Range, "1,3,0.05")] public float ContentsLine { get; set; } = 1.9f;
+
+        // THE WORDS FOLLOW THE PAGES (cc_task_working-notes-10-01.md 2.2: "angle the Continue, Tutorial, Settings
+        // etc. inward and downward just slightly so they look like they're curving with the pages"). Each page's
+        // column turns this many degrees toward the spine about its outer top corner, so a line runs down toward
+        // the gutter the way the page's own edge does (about 8 degrees at the top of the page, 6 at the foot,
+        // measured off the 1280x720 screenshot). 0 sets them level
+        [Export(PropertyHint.Range, "0,15,0.5")] public float PageTilt { get; set; } = 6f;
 
         Node3D _closed;
         Node3D _open;

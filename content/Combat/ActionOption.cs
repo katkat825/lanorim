@@ -41,6 +41,9 @@ namespace Content.Combat
         // a Shove's choice: "push" five feet, or "prone"
         public string ShoveMode { get; init; } = "";
 
+        // the door an Open door option opens: one option per shut door beside the hero, so there is nothing to aim
+        public Core.Space.Border? Door { get; init; }
+
         public Spell Spell { get; init; }
 
         public Feature Feature { get; init; }

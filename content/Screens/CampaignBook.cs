@@ -25,6 +25,9 @@ namespace Content.Screens
                 .Concat(CombatHud.Keys())
                 .Concat(GameSettings.Keys())
                 .Concat(DeathView.Keys())
+                .Concat(Whereabouts.Keys())
+                .Concat(HelpCard.Keys())
+                .Concat(AccessWords.Keys())
                 .Concat(Maps.MapEditor.Keys())
                 .Concat(Maps.PropCatalogue.Srd().Keys())
                 .Distinct();

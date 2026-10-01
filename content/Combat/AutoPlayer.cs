@@ -136,8 +136,8 @@ namespace Content.Combat
                                           .DefaultIfEmpty(0)
                                           .Max();
 
-            foreach (var c in candidates.OrderByDescending(c => c.damage)
-                                        .ThenBy(c => c.option.Id, StringComparer.Ordinal))
+            // a tie goes to the option first on the action bar (a stable sort); it was the option's id until 2026-10-03
+            foreach (var c in candidates.OrderByDescending(c => c.damage))
             {
                 bool leveled = c.option.Spell != null && c.option.Spell.Level > 0;
 
@@ -219,7 +219,7 @@ namespace Content.Combat
             Actor quarry = fight.Field.Enemies(me)
                                 .Where(e => !e.IsDown)
                                 .OrderBy(e => fight.Field.Distance(me, e))
-                                .ThenBy(e => e.Id, StringComparer.Ordinal)
+                                .ThenBy(fight.InitiativeRank)
                                 .FirstOrDefault();
 
             if (quarry == null || !(fight.Field.Where(quarry) is Cell there) || !(fight.Field.Where(me) is Cell here))

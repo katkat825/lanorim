@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+; A PILLAR where walls turn, end or meet (Quaternius, Updated Modular Dungeon, CC0). Fitted to a share
+; of a square (BoardTiles.PillarWidth); as tall as the walls.
+; The pack ships no glTF, so this is its OBJ and .mtl (tools/pull-models.ps1) in a one-node scene, like
+; game/models/minis/rat.tscn. The painted shader on the board relights the .mtl's flat colours.
+
+[ext_resource type="Mesh" path="res://models/dungeon/Column.obj" id="1_mesh"]
+
+[node name="pillar" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_mesh")

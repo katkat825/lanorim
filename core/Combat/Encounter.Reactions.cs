@@ -194,6 +194,9 @@ namespace Core.Combat
             bool close = Field.Distance(attacker, target) <= 1;
             int cover = Cover(attacker, target);
 
+            // a statblock's Pack Tactics, Bloodied Fury, Sunlight Sensitivity (Encounter.Knacks.cs)
+            extra = extra.And(KnackLean(attacker, target, attack));
+
             Attempt attempt = Strike.Roll(_resolver, attacker, target, attack, extra, close,
                                           Sees(attacker, target), Sees(target, attacker), cover,
                                           FearInSight(attacker));
@@ -236,9 +239,8 @@ namespace Core.Combat
                 Observer.Dealt(new Harm(attacker, target, attack.NameKey, attack.DamageFor(attacker, attempt.IsCritical),
                                         blow.Rolled, blow.Suffered, attack.DamageTypeFor(attacker, target)));
 
-            if (blow.Downed) Observer.Downed(target);
-
-            if (blow.Hit && blow.Suffered > 0) Hurt(attacker, target, blow.Suffered);
+            if (blow.Hit && blow.Suffered > 0)
+                Hurt(attacker, target, blow.Suffered, attack.DamageTypeFor(attacker, target), attempt.IsCritical, blow.Rolled);
 
             // SRD 5.2.1's smites: a bonus action taken right after the attacker's own hit
             if (blow.Hit) Offer(Moment.Struck(attacker, target, blow), attacker);
@@ -248,17 +250,26 @@ namespace Core.Combat
 
         // hit points came off a creature. whatever keeps books on damage hears it first (a Sleep
         // ends, a Hideous Laughter saves again), then the creature is offered its reaction to
-        // being hurt if it is still standing to take one
-        public void Hurt(Actor attacker, Actor target, int suffered)
+        // being hurt if it is still standing to take one. the type, a critical and the damage
+        // before the hit-point floor are for what keeps a creature up (Undead Fortitude)
+        public void Hurt(Actor attacker, Actor target, int suffered, DamageType type = DamageType.None,
+                         bool critical = false, int dealt = 0)
         {
             if (target == null || suffered <= 0) return;
+
+            if (target.IsDown) HoldsOn(target, System.Math.Max(dealt, suffered), type, critical);
 
             // SRD 5.2.1 Unconscious: it drops whatever it's holding
             if (target.Has(Condition.Unconscious)) Drop(target);
 
             Damaged?.Invoke(attacker, target, suffered);
 
-            if (!target.IsDown) Offer(Moment.Damaged(attacker, target, suffered), target);
+            // EVERY FALL IS TOLD, a spell's as much as a sword's: until 2026-10-03 only a swing told it, so a
+            // monster a spell killed neither toppled on the board nor went down in the log. Told after whatever
+            // can keep a creature up has had its say (Undead Fortitude above, Relentless Endurance on Damaged),
+            // so one that stays up was never said to fall
+            if (target.IsDown) Observer.Downed(target);
+            else Offer(Moment.Damaged(attacker, target, suffered), target);
         }
 
         // (attacker, target, hit points lost). the attacker may be null - a zone with nobody's

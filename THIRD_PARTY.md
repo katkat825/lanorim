@@ -27,8 +27,8 @@ confirmed at the one-hour IP/legal review before the game sells.
 
 Every 3D asset in lanorim comes from **Quaternius** (quaternius.com): characters, dungeon and other
 environments (village, wilderness, sci-fi), monsters, and animals/companions. One creator, one style
-family — this *is* the game's look. **KayKit is the second base** (CC0, for kitbash — see *3D assets — KayKit* below;
-`docs/decisions_checklist.md` §4).
+family — this *is* the game's look. **Quaternius is the primary base; KayKit is the secondary one**, fine when needed
+(CC0, for kitbash — see *3D assets — KayKit* below; `docs/decisions_checklist.md` §4; Kathleen, 2026-10-01).
 
 **Licence — Quaternius Asset License (QAL) v1.0** (quaternius.com/license.html; the version in effect at
 download time governs). Commercial use permitted, **no attribution required**, perpetual and irrevocable
@@ -47,12 +47,12 @@ Packs in use (all from quaternius.com; downloaded 2026-09-21 into `lanorim/asset
 
 | Pack | Role | Notes |
 |---|---|---|
-| Ultimate Animated Character Pack | Characters / heroes | The player-mini source. Pulled into the project so far: `Goblin_Male` → `game/models/minis/`. The hero mini is **`rogue_v3.glb`, Kathleen’s own model** (v2 until 2026-09-30; v3 drops the hood) (source in the gitignored `assets/modified/`, processed copy committed). Its skinned body rides this pack’s armature — 25 joints, `CharacterArmature`, the pack’s 17 clip names — so that part is a QAL derivative and ships baked into the game like any other, not redistributable raw. **Its cloak (and v2's hood) are separate unskinned meshes named `character_skeleton_mage_cloak` and `Skeleton_Rogue_Hood`, which are KayKit Skeletons names — provenance UNCONFIRMED and owed an entry of its own if so.** If they are KayKit, the licence is CC0 and KayKit Skeletons 1.1 is already listed in the KayKit section below (KayKit is a second base, not retired — `docs/decisions_checklist.md` §4); what's owed is confirming the source and noting it here. `Ninja_Male` is still in the repo, now unreferenced. |
+| Ultimate Animated Character Pack | Characters / heroes | The player-mini source. Pulled into the project so far: `Goblin_Male` → `game/models/minis/`. The hero mini is **`rogue_v3.glb`, Kathleen’s own model** (v2 until 2026-09-30; v3 drops the hood) (source in the gitignored `assets/modified/`, processed copy committed). Its skinned body rides this pack’s armature — 25 joints, `CharacterArmature`, the pack’s 17 clip names — so that part is a QAL derivative and ships baked into the game like any other, not redistributable raw. **Its cape is from KayKit Skeletons 1.1's `Skeleton_Rogue` (CC0; Kathleen confirmed 2026-10-01)**, an unskinned mesh named `character_skeleton_mage_cloak` that `RigidParts` rides on the Torso bone. **The hood (`Skeleton_Rogue_Hood`, same pack) is removed**: rogue_v2 wore it, rogue_v3 doesn't, and `rogue_v2.glb` is no longer in the project. KayKit Skeletons 1.1 is listed in the KayKit section below. `Ninja_Male` is still in the repo, now unreferenced. |
 | Ultimate Fantasy RTS | Characters + fantasy buildings | Extra unit/character variety. |
 | Bestiary – Dungeon Monsters Kit [Standard] | Monsters | Standard/free tier = Imp + Puglin only; full 7-monster set is a paid upgrade. |
 | Ultimate Animated Animals | Companions + beast minis | Wolf, fox, etc. — companion source *and* quadruped-beast enemies. **The companions** (Kathleen, 2026-10-01: “Quaternius animals, not KayKit skeletons”): `Wolf`, `Fox`, `ShibaInu`, `Horse_White` and `Stag` pulled 2026-10-02 into `game/models/companions/` with `tools/pull-models.ps1` (glTF, buffers embedded, no texture files; each carries its own clips). Which is which: `game/Table/CompanionModels.cs`. |
 | Easy Animated Enemy Pack | Monster minis (vermin) | Spider, rat, snake, frog — the vermin/spider archetypes. |
-| Updated Modular Dungeon | On-map dungeon environment | Primary battle-map kit. |
+| Updated Modular Dungeon | On-map dungeon environment | Primary battle-map kit. **This pack's own `License.txt` says CC0 1.0** (not QAL). **The board's walls, doors and pillars since 2026-10-03** (`cc_task_working-notes-10-01.md` 2.5): `Wall_Modular` (a wall on a grid line, and stretched deep, a `#` square's block of rock), `Arch` + `Arch_Door` (a doorway; the door is the leaf that swings), `Column` (where walls turn, end or meet), pulled with `tools/pull-models.ps1` into `game/models/dungeon/` as OBJ + `.mtl` (the pack ships no glTF; the tool now takes an OBJ when there is no glTF, and brings each `.mtl` colour from Blender's linear light to sRGB, or the tan stone imports nearly black). Each is wrapped in a one-node `.tscn` (`wall`, `doorway`, `pillar`), wired in `game/Board/board.tscn`, and relit by the painted shader. |
 | Ultimate Modular Ruins Pack | Environment (ruins) | On-map / setting. |
 | Ultimate Modular Sci-Fi | Environment (sci-fi) | Future/other-setting campaigns. |
 | Medieval Village MegaKit [Standard] | Environment (village) | Big village kit. |
@@ -115,7 +115,7 @@ licence, Workshop caveat).
 creatures for **companion** minis — verify each licence at purchase and add its row. Going with what we have
 for now.
 
-## 3D assets — KayKit (CC0 — a second base)
+## 3D assets — KayKit (CC0 — the secondary base: Quaternius first, KayKit when needed)
 
 KayKit (Kay Lousberg, [kaylousberg.itch.io](https://kaylousberg.itch.io)) is the **second base 3D source**
 alongside Quaternius, used for **kitbash** — cannibalizing parts across packs and mixing them to build what's
@@ -130,7 +130,7 @@ Packs in use (all CC0; in `lanorim/assets/`):
 |---|---|---|
 | KayKit Adventurers 2.0 | [kaykit-adventurers](https://kaylousberg.itch.io/kaykit-adventurers) | Hero / character parts. Pulled 2026-10-01 into `game/models/props/kaykit_adventurers_2_0_free/`: `spellbook_closed` and `spellbook_open` (with `mage_texture.png`), the campaign book on the launch screen (`game/book.tscn`). |
 | KayKit Dungeon Pack 1.1 | [kaykit-dungeon-pack](https://kaylousberg.itch.io/kaykit-dungeon-pack) | Dungeon environment / tiles |
-| KayKit Skeletons 1.1 | [kaykit-skeletons](https://kaylousberg.itch.io/kaykit-skeletons) | *Was* the companions from 2026-10-01 until Kathleen chose Quaternius animals the same day; the four skeletons and the `Rig_Medium` clips were removed from `game/models/companions/` on 2026-10-02 and nothing in the game uses the pack now. Still listed because the pack's `Skeleton_Rogue` carries a mesh named `Skeleton_Rogue_Hood`, the same name as rogue_v2's hood (the provenance question above), so the hood very likely came from here (CC0); Kathleen to confirm. |
+| KayKit Skeletons 1.1 | [kaykit-skeletons](https://kaylousberg.itch.io/kaykit-skeletons) | *Was* the companions from 2026-10-01 until Kathleen chose Quaternius animals the same day; the four skeletons and the `Rig_Medium` clips were removed from `game/models/companions/` on 2026-10-02 and nothing in the game uses the pack now. Still listed because **the hero's cape comes from this pack's `Skeleton_Rogue`** (CC0; Kathleen, 2026-10-01), and so did rogue_v2's hood, which rogue_v3 no longer has. |
 | KayKit Fantasy Weapons Bits 1.0 | kaylousberg.itch.io | Weapon / gear parts |
 | KayKit Furniture Bits 1.0 | kaylousberg.itch.io | Furniture / table dressing |
 | KayKit RPG Tools Bits 1.0 | kaylousberg.itch.io | Tabletop props |
@@ -304,7 +304,7 @@ outside licence applies. *(Open: whether to also release any of these on itch.io
 
 | Asset | Files | Note |
 |---|---|---|
-| Dice trays | `assets/dice_trays/dice_tray_basic_rectangle.glb`, `dice_tray_basic_square.glb` → staged to `game/models/tray/` | Modeled to fix the rim/floor gap the box-primitive tray had. Two material slots: `Tray_Wood` (rim/frame) + `Tray_Liner` (floor); wear `tray_wood047.tres` and `tray_felt/felt_green.tres`. |
+| Dice trays | `assets/dice_trays/dice_tray_basic_rectangle.glb`, `dice_tray_basic_square.glb`, `dice_tray_basic_rectangle_updated.glb` (2026-10-01: the rectangle with its rim twice as tall; **the one in use since 2026-10-03**, at 0.2145 in `dice_tray.tscn`) → staged to `game/models/tray/` | Modeled to fix the rim/floor gap the box-primitive tray had. Two material slots: `Tray_Wood` (rim/frame) + `Tray_Liner` (floor); wear `tray_wood047.tres` and `tray_felt/felt_green.tres`. |
 | GM screens | `assets/gm_screens/gm_screen_blank.glb` + `_cave`, `_dead-forest`, `_plains`, `_snowy-mountains` → staged to `game/models/gm_screen/` | First-party GM-screen models with the background art attached (see Admurin note above). One per campaign; blank for none. |
 
 ### Retired from lanorim

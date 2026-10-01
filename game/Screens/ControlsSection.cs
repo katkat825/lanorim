@@ -26,7 +26,6 @@ namespace Game.Screens
         public static readonly string ChangeKey = K("change");
         public static readonly string TakenKey = K("taken");
         public static readonly string ReservedKey = K("reserved");
-        public static readonly string NotYetKey = K("not_yet");
         public static readonly string HotkeysKey = K("hotkeys");
         public static readonly string GoOnKey = K("go_on");
         public static readonly string CancelKey = K("cancel");
@@ -40,18 +39,12 @@ namespace Game.Screens
 
         public static IEnumerable<string> Keys() => new[]
         {
-            TitleKey, KeyboardKey, MouseKey, ChangeKey, TakenKey, ReservedKey, NotYetKey, HotkeysKey, GoOnKey,
+            TitleKey, KeyboardKey, MouseKey, ChangeKey, TakenKey, ReservedKey, HotkeysKey, GoOnKey,
             CancelKey, MousePickKey, MouseCancelKey, MouseWheelKey, MousePinchKey, MouseHoverKey, MouseTrayKey, BeginKey,
         };
 
-        // THE ACTS NOTHING IN LANORIM ANSWERS YET. They came over from the old build's Access layer and are
-        // in the InputMap, but no screen here handles them (Tab moves the focus because it is Godot's own
-        // ui_focus_next, not because reach_next does). Listed, and said to be not working, rather than
-        // promised. Take one off this list when something answers it
-        static readonly HashSet<Act> Unanswered = new()
-        {
-            Act.ReachNext, Act.ReachBack, Act.Help, Act.WhereAreWe, Act.ReadAloud,
-        };
+        // every act is answered since 2026-10-03: Tab, Shift+Tab, F1, F2 and F3 by Game.Access.AccessDesk
+        // (cc_task_open-questions-answers.md 4.2), so no line says "(not working yet)" any more
 
         // keys the table uses outside the acts, which a rebinding may not take
         static bool Reserved(Key key) => key is >= Key.Key1 and <= Key.Key9;
@@ -110,7 +103,7 @@ namespace Game.Screens
             bool listening = Bindings.Armed == act;
 
             string keys = listening ? Ui.Say(Acts.Waiting) : string.Join(" / ", Keyboard.Keys(act.Id()));
-            string words = Ui.Say(act.NameKey(), keys) + (Unanswered.Contains(act) ? " " + Ui.Say(NotYetKey) : "");
+            string words = Ui.Say(act.NameKey(), keys);
 
             _actKeys[act] = listening ? "" : keys;
             _lines.Add(words);

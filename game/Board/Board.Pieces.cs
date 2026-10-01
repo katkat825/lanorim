@@ -55,6 +55,7 @@ namespace Game.Board
 
             mini.Name = actor.Id;
             mini.Paint = Paint;
+            mini.CellSize = Metrics.CellSize;
 
             // set before the piece enters the tree: Mini.Stand runs in _Ready and measures whatever
             // figure it finds, so a model handed over after AddChild would be scaled off the
@@ -101,6 +102,11 @@ namespace Game.Board
 
         // and it went over. THE BODY STAYS ON THE MAP
         public void Topple(Actor actor) => Of(actor)?.Topple();
+
+        // Prone: laid down inside its own square; and stood back up, upright and centred (Mini.Prone.cs)
+        public void LieDown(Actor actor) => Of(actor)?.LieDown();
+
+        public void StandUp(Actor actor) => Of(actor)?.GetUp();
 
         // OFF THE BOARD FOR A WHILE (Banishment, Maze): the piece stands on the table beside the map,
         // just past its east edge, one square down for each piece already there, until the spell

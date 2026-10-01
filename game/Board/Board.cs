@@ -40,6 +40,16 @@ namespace Game.Board
 
         [Export] public PackedScene RubbleModel { get; set; }
 
+        // where walls turn, end or meet (BoardTiles.Pillars.cs)
+        [Export] public PackedScene PillarModel { get; set; }
+
+        // THE MODELLED WALLS' HEIGHT, in metres (cc_task_working-notes-10-01.md 2.5: "about mini height"; the
+        // hero stands 0.156, a monster 0.1875), and a cut-away wall's: one between the camera and floor it would
+        // hide comes down to WallLow, and goes back up when the camera comes round (Cutaway.cs)
+        [Export] public float WallTall { get; set; } = 0.16f;
+
+        [Export] public float WallLow { get; set; } = 0.03f;
+
         // the painted-miniature shader, which goes on everything (ART_DIRECTION section 8)
         [Export] public Material Paint { get; set; }
 

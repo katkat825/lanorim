@@ -88,6 +88,8 @@ namespace Game.Board
 
             float scale = tall <= 0f ? 1f : FigureHeight / tall;
 
+            _onBase = figure.Position.Y;
+
             figure.Scale = Vector3.One * scale;
 
             // only the height is corrected: centring the bounding box would push an off-centre figure's feet off the square
@@ -234,6 +236,9 @@ namespace Game.Board
 
             _toppled = true;
             _step = null;
+
+            // a piece that dies lying down goes over from standing, like any other death
+            if (IsProne && Figure is Node3D figure) figure.Transform = _standing;
 
             // the procedural tip-over. A death is a mini going over and lying on the map, and
             // it stays there - a room that fills with toppled pieces is a better record of a hard

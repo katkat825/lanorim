@@ -35,6 +35,7 @@ note: examples are simply one of many examples and used to express the point rat
 - dying results in reloading to the last save point
 
 - at 0 hp player has the option of death saving throw. on failures character is dead > game is reloaded to last save. on success, character revives with 1 hp
+  - superseded 2026-10-03 by decisions_checklist.md §1 (Death save): the single death save always happens at 0 HP (not an option), at the start of the hero's turn as built
     - saving throw is a d20 with no modifiers. rolling >= 10 is successful
 
 ## skill checks
@@ -102,10 +103,13 @@ note: examples are simply one of many examples and used to express the point rat
 
 # open questions
 - continue button on the dialog?
+  - superseded 2026-10-03 by decisions_checklist.md §3 (Dialog presentation): yes, a Continue button
 
 - dialog as a pop-up or as a CC style bottom of the screen?
+  - superseded 2026-10-03 by decisions_checklist.md §3 (Dialog presentation): a popup
 
 - is fleeing combat an option?
+  - superseded 2026-10-03 by decisions_checklist.md §3 (Fleeing combat): yes, step off an open map edge (built)
 
 - [DEFERRED] Are backpack/horse/cart inventories separate containers or simply additive character capacity?
     - is inventory globally accessible? maybe there's a lost and found in every town where you can get all of your inventory back?  

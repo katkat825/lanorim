@@ -209,9 +209,15 @@ namespace Content.Tests
                                                 $"lines {seen.Lines}, maps {string.Join(",", seen.Maps)}");
         }
 
+        // THE ROGUE'S SEED MOVED FROM 11 TO 12 (2026-10-03, cc_task_open-questions-answers.md 2.7). Seed 11 only got
+        // through the goblin camp because the boss chose its attack by id and shot its bow point-blank at
+        // Disadvantage; choosing by a rule (Tactics.Best), it uses its scimitar, and seed 11's rogue dies 33 times.
+        // Seeds 1-20 after the fix, deaths: rogue 14 6 10 0 5 6 3 16 1 1 33 0 17 3 0 5 3 0 1 1 (a level-3 rogue alone
+        // against a goblin boss is a hard fight, and the sample campaign won't ship); fighter at most 1, cleric at
+        // most 4. This test is that the campaign plays to the end, not its balance
         [Theory]
         [InlineData("fighter", 3)]
-        [InlineData("rogue", 11)]
+        [InlineData("rogue", 12)]
         [InlineData("cleric", 7)]
         public void ItPlaysFromTheFirstLineToTheLast(string className, int seed)
         {

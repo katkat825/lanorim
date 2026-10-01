@@ -56,7 +56,7 @@ Phases 0–3 build to exactly that. Get it working end to end before adding brea
 
 ## Phase 3 — First combat → **slice complete**
 - Turn loop, initiative, 2/1/1 action economy — **(Claude)**
-- Grid movement + range checks + radius AoE + opportunity attacks — **(Claude)**
+- Grid movement + range checks + radius, line and cone AoE + opportunity attacks — **(Claude)** *(2026-10-03: aligned with decisions_checklist.md)*
 - One goblin + basic approach/attack AI — logic **(Claude)** → place its mini **(You)**
 - Combat interaction UX (how you issue an action) — design **(You)** → implement **(Claude)**
 - Conditions subset + damage types / simple resistance — **(Claude)**

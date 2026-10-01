@@ -4,7 +4,7 @@
 the identity section of the character sheet or the character profile section of settings will contain the following fields, all required:
 - character name
 - class & level
-- race
+- species *(2026-10-03: aligned with SRD 5.2.1)*
 - alignment
 - background
 

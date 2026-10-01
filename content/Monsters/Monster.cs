@@ -47,6 +47,12 @@ namespace Content.Monsters
 
         public string Id { get; }
 
+        // Lanorim's own statblock, not SRD 5.2.1's: kept out of the CC-BY file (content/srd/monsters/lanorim.json)
+        public bool NotInSrd { get; init; }
+
+        // the statblock's named traits v1 plays: Pack Tactics, Undead Fortitude... (Core.Characters.Knack)
+        public Knack Knacks { get; init; }
+
         public int HitPoints { get; }
 
         public int ArmorClass { get; }
@@ -202,6 +208,7 @@ namespace Content.Monsters
             foreach (Condition immune in ImmuneTo) actor.MakeImmune(immune);
 
             actor.QuickOnBonus = BonusManoeuvres;
+            actor.Knacks = Knacks;
 
             return actor;
         }

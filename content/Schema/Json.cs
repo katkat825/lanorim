@@ -228,16 +228,21 @@ namespace Content.Schema
         // "manoeuvres": ["dash", "disengage", "hide"] - what a bonus action may be spent on: a
         // rogue's Cunning Action, a goblin's Nimble Escape
         public static Manoeuvre ManoeuvreList(this JsonElement element, string name,
-                                              List<string> problems = null, string where = null)
+                                              List<string> problems = null, string where = null) =>
+            element.FlagList<Manoeuvre>(name, "dash, disengage or hide", problems, where);
+
+        // a list of words, each one value of a [Flags] enum, read as the one value they make together: the
+        // manoeuvres above, a statblock's "traits" (Knack). each word checked, so a misspelt one is refused
+        public static T FlagList<T>(this JsonElement element, string name, string expected,
+                                    List<string> problems = null, string where = null) where T : struct, Enum
         {
-            Manoeuvre all = Manoeuvre.None;
+            long all = 0;
 
-            foreach (Manoeuvre m in Words(element, name, problems, where,
-                                          (string w, out Manoeuvre m) => EnumWords.TryParse(w, out m),
-                                          "dash, disengage or hide"))
-                all |= m;
+            foreach (T value in Words(element, name, problems, where, (string w, out T v) => EnumWords.TryParse(w, out v),
+                                      expected))
+                all |= Convert.ToInt64(value);
 
-            return all;
+            return (T)Enum.ToObject(typeof(T), all);
         }
 
         // "speed": a creature's walking speed in feet - a statblock's, a species', a form's. 30

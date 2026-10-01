@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3]
+
+; A WALL, one grid line long (Quaternius, Updated Modular Dungeon, CC0). 2 x 2 units and 0.44 thick,
+; stood up on its line and fitted to a square by BoardTiles; Board.Cutaway sets how tall. Also the
+; block of rock that fills a # square (stretched deep to fill it).
+; The pack ships no glTF, so this is its OBJ and .mtl (tools/pull-models.ps1) in a one-node scene, like
+; game/models/minis/rat.tscn. The painted shader on the board relights the .mtl's flat colours.
+
+[ext_resource type="Mesh" path="res://models/dungeon/Wall_Modular.obj" id="1_mesh"]
+
+[node name="wall" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_mesh")

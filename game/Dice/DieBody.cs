@@ -73,13 +73,17 @@ namespace Game.Dice
 
         [Export] public int MaxLostRethrows { get; set; } = 3;
 
-        // A DIE THAT NEVER STOPS: wedged against a wall or on a neighbour it can jitter above the rest speeds for good,
-        // never sleeping, and the tray waits on it forever (check-play hung on this). a throw still moving after this
-        // long is thrown again, like an escaped die, with less energy each time; a normal throw settles well inside it.
-        // damping was tried first and made it worse: a damped die sliding off a neighbour slides slowly, never stops
+        // THE HARD CEILING. A die still moving this long after it left the hand is nudged once, given
+        // AfterNudgeSeconds, and then read as it lies (frozen where it is). Never thrown again, never an endless
+        // wait: Kathleen saw the old answer, a re-throw, as a die that "keeps wobbling" and then jumps. The wobble
+        // itself was the physics step (DieBody.Wobble.cs); since 120 ticks a second this is a backstop that a
+        // 2000-throw sweep never reached
         [Export] public float MaxFlightSeconds { get; set; } = 6f;
 
-        [Export] public int MaxRestlessRethrows { get; set; } = 3;
+        [Export] public float AfterNudgeSeconds { get; set; } = 2f;
+
+        // how many times the ceiling nudges before it reads the die as it lies
+        [Export] public int MaxRestlessNudges { get; set; } = 1;
 
         // a settled die moving again this long - knocked loose by another's landing - is watched as a throw again
         [Export] public float KnockedLooseSeconds { get; set; } = 0.3f;
@@ -160,7 +164,7 @@ namespace Game.Dice
         double _stillTime;
 
         // see MaxFlightSeconds and KnockedLooseSeconds
-        int _restlessRethrows;
+        int _restless;
         double _looseTime;
         bool _knocked;
 

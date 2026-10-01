@@ -65,7 +65,7 @@ namespace Core.Characters
 
             // SRD 5.2.1: Unconscious includes Prone, and "when this condition ends, you remain
             // Prone" - so the prone is its own condition, not a part that leaves with it
-            if (added && condition == Condition.Unconscious) _conditions.Add(Condition.Prone);
+            if (added && condition == Condition.Unconscious) _proneFromFalling = _conditions.Add(Condition.Prone);
 
             // Petrified: immunity to Poisoned, which ends one already there
             if (added && condition == Condition.Petrified) _conditions.Remove(Condition.Poisoned);
@@ -88,8 +88,13 @@ namespace Core.Characters
 
         public bool IsPinned(Condition condition) => _pinned.Contains(condition);
 
+        // the Prone that came with falling unconscious, not one the creature had already: StaysUp takes only that
+        bool _proneFromFalling;
+
         public bool Remove(Condition condition)
         {
+            if (condition == Condition.Prone) _proneFromFalling = false;
+
             _sources.Remove(condition);
             _pinned.Remove(condition);
 

@@ -103,7 +103,7 @@ namespace Game.Table
                 }
                 : null;
 
-        static string Arg(string[] args, string flag)
+        internal static string Arg(string[] args, string flag)
         {
             int at = Array.IndexOf(args ?? Array.Empty<string>(), flag);
             return at >= 0 && at + 1 < args.Length ? args[at + 1] : null;

@@ -26,6 +26,7 @@ namespace Game.Play
             public bool Hit;
             public LogLine Line;
             public bool Hero;
+            public Border? Door;
         }
 
         readonly ConcurrentQueue<Step> _steps;
@@ -48,12 +49,37 @@ namespace Game.Play
         public override void Struck(Blow blow) =>
             Add(new Step { What = "strike", Actor = blow.Attacker, Other = blow.Target, Hit = blow.Hit, Hero = _isHero(blow.Attacker) });
 
+        // PRONE IS A PLACE ON THE BOARD, NOT A DEATH (cc_task_working-notes-10-01.md 1.2): Prone lays the piece
+        // down in its square and its end stands it back up. Unconscious brings Prone with it (SRD 5.2.1), so it
+        // lays the piece down too; every other condition is a wobble
         public override void ConditionChanged(Actor actor, Condition condition, bool applied)
         {
+            if (condition is Condition.Prone or Condition.Unconscious)
+            {
+                if (applied || condition == Condition.Prone) Add(new Step { What = applied ? "prone" : "stand", Actor = actor });
+                return;
+            }
+
             if (applied) Add(new Step { What = "wobble", Actor = actor });
         }
 
-        public override void Downed(Actor actor) => Add(new Step { What = "down", Actor = actor, Hero = _isHero(actor) });
+        // a monster at 0 is out, and topples (death); a hero at 0 is unconscious and Prone, and lies in its
+        // square until the death save says otherwise
+        public override void Downed(Actor actor)
+        {
+            bool hero = _isHero(actor);
+            Add(new Step { What = hero ? "prone" : "down", Actor = actor, Hero = hero });
+        }
+
+        // the hero's save failed: that is the death, and the topple that never stands up
+        public override void DeathSaved(Actor actor, Attempt attempt)
+        {
+            if (!attempt.Succeeded) Add(new Step { What = "down", Actor = actor, Hero = _isHero(actor) });
+        }
+
+        // a shut door opened (Encounter.Doors.cs): it swings on the board
+        public override void DoorOpened(Actor actor, Border door) =>
+            Add(new Step { What = "door", Actor = actor, Door = door, Hero = _isHero(actor) });
 
         // Banishment, Maze: off the board and beside it, and back. the square it comes back to
         // follows as a Moved of one square

@@ -134,6 +134,29 @@ namespace Content.Screens
 
         public int Use(string itemId, IResolver resolver) => Hero.Use(itemId, resolver);
 
+        // --- what is worn, and the off hand (cc_task_open-questions-answers.md 3.1) -------------------------------
+        //
+        // A weapon, armour or a shield in the pack can be put on; a one-handed Light weapon can be held in the off hand
+        // instead (SRD 5.2.1 Light), which is what the Light bonus attack swings. What comes off goes back in the pack
+
+        Item InPack(string itemId) => Pack.FirstOf(itemId)?.Item;
+
+        public bool CanEquip(string itemId) =>
+            InPack(itemId) is Item item && item.IsEquippable && Hero.Equipment.Refuses(item, Hero.Actor, Hero.Class.Id) == null;
+
+        public bool Equip(string itemId) => CanEquip(itemId) && Hero.Wear(InPack(itemId));
+
+        public bool CanHoldInOffHand(string itemId) => CanEquip(itemId) && InPack(itemId).FitsOffHand;
+
+        public bool HoldInOffHand(string itemId) => CanHoldInOffHand(itemId) && Hero.HoldInOffHand(InPack(itemId));
+
+        public IReadOnlyList<(Slot Slot, Item Item)> Worn =>
+            Slots.All.Where(s => Hero.Equipment.In(s) != null).Select(s => (s, Hero.Equipment.In(s))).ToList();
+
+        public bool TakeOff(Slot slot) => Hero.TakeOff(slot);
+
+        public static string SlotKey(Slot slot) => ScreenKeys.Key("pack", "slot_" + Core.Words.EnumWords.Id(slot));
+
         Item Find(string itemId) => _shelf?.Find(itemId) ?? Pack.FirstOf(itemId)?.Item;
 
         public static readonly string TitleKey = ScreenKeys.Key("pack", "title");
@@ -143,6 +166,8 @@ namespace Content.Screens
         public static readonly string UseKey = ScreenKeys.Key("pack", "use");
         public static readonly string EquipKey = ScreenKeys.Key("pack", "equip");
         public static readonly string UnequipKey = ScreenKeys.Key("pack", "unequip");
+        public static readonly string OffHandKey = ScreenKeys.Key("pack", "off_hand");
+        public static readonly string WornKey = ScreenKeys.Key("pack", "worn");
         public static readonly string DiscardKey = ScreenKeys.Key("pack", "discard");
         public static readonly string DiscardWarningKey = ScreenKeys.Key("pack", "discard_warning");
         public static readonly string DontWarnAgainKey = ScreenKeys.Key("pack", "dont_warn_again");
@@ -156,9 +181,9 @@ namespace Content.Screens
         public static IEnumerable<string> Keys() =>
             new[]
             {
-                TitleKey, GoldKey, SlotsKey, QuestKey, UseKey, EquipKey, UnequipKey, DiscardKey,
+                TitleKey, GoldKey, SlotsKey, QuestKey, UseKey, EquipKey, UnequipKey, OffHandKey, WornKey, DiscardKey,
                 DiscardWarningKey, DontWarnAgainKey, BuyKey, SellKey, SellEquippedKey, NewItemKey,
                 MakeRoomKey, LeaveKey,
-            };
+            }.Concat(Slots.All.Select(SlotKey));
     }
 }

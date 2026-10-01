@@ -64,9 +64,9 @@ namespace Core.Characters
         // the same attack, trained or not, with other damage dice or none of the ability on the
         // damage (the Light bonus attack)
         public Attack With(bool? proficient = null, DiceRoll? damage = null, bool? addsAbility = null,
-                           int? damageBonus = null) =>
+                           int? damageBonus = null, Hand? hand = null) =>
             new Attack(Id, damage ?? Damage, DamageType, Ability, proficient ?? Proficient, Reach, Range,
-                       LongRange, Hand, Finesse, AttackBonus, damageBonus ?? DamageBonus,
+                       LongRange, hand ?? Hand, Finesse, AttackBonus, damageBonus ?? DamageBonus,
                        addsAbility ?? AddsAbilityToDamage)
             {
                 Thrown = Thrown,

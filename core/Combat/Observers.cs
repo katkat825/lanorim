@@ -46,6 +46,9 @@ namespace Core.Combat
 
         void ConditionChanged(Actor actor, Condition condition, bool applied);
 
+        // a shut door opened (Encounter.Doors.cs)
+        void DoorOpened(Actor actor, Core.Space.Border door);
+
         void Downed(Actor actor);
 
         // taken off the board by a spell (Banishment, Maze), or put back on it. the table stands
@@ -101,6 +104,8 @@ namespace Core.Combat
 
         public virtual void ConditionChanged(Actor actor, Condition condition, bool applied) { }
 
+        public virtual void DoorOpened(Actor actor, Core.Space.Border door) { }
+
         public virtual void Downed(Actor actor) { }
 
         public virtual void Away(Actor actor, bool away) { }
@@ -146,6 +151,8 @@ namespace Core.Combat
         public void ConditionChanged(Actor actor, Condition condition, bool applied) =>
             Each(w => w.ConditionChanged(actor, condition, applied));
 
+        public void DoorOpened(Actor actor, Core.Space.Border door) => Each(w => w.DoorOpened(actor, door));
+
         public void Downed(Actor actor) => Each(w => w.Downed(actor));
 
         public void Away(Actor actor, bool away) => Each(w => w.Away(actor, away));
@@ -188,6 +195,8 @@ namespace Core.Combat
             _log.Add($"{actor.Id} is {(applied ? "now" : "no longer")} {condition.Id()}");
 
         public override void Downed(Actor actor) => _log.Add($"{actor.Id} goes down");
+
+        public override void DoorOpened(Actor actor, Core.Space.Border door) => _log.Add($"{actor.Id} opens the door at {door}");
 
         public override void Away(Actor actor, bool away) =>
             _log.Add($"{actor.Id} {(away ? "is taken off the board" : "comes back")}");

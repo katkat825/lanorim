@@ -19,6 +19,9 @@ namespace Game.Board
 
             Undress();
 
+            _cutaway = new Cutaway(Metrics) { Tall = WallTall, Low = WallLow };
+            _cutaway.Map(map);
+
             _tiles = new BoardTiles(Metrics)
             {
                 Wall = WallMaterial,
@@ -27,10 +30,14 @@ namespace Game.Board
                 WallModel = WallModel,
                 DoorwayModel = DoorwayModel,
                 RubbleModel = RubbleModel,
+                PillarModel = PillarModel,
                 Paint = Paint,
+                Cutaway = _cutaway,
             };
 
             _tiles.Build(_tileRoot, map);
+
+            _cutaway.Cut(TowardCamera());
 
             LayTheMat();
         }
@@ -204,6 +211,16 @@ namespace Game.Board
         public void Reopen(MapLayout map, Border at)
         {
             Map = map;
+            _cutaway?.Map(map);
+
+            // A MODELLED DOOR SWINGS OPEN AND STAYS (cc_task_open-questions-answers.md 2.1): its arch is still part
+            // of the wall, and the leaf swings on its hinge (DoorPiece). Rebuilding the line from the map, which now
+            // says the gap is open, used to take the whole doorway away
+            if (_tileRoot.GetNodeOrNull<DoorPiece>(BoardTiles.NameFor(at)) is DoorPiece door)
+            {
+                door.Open(cleanly: true);
+                return;
+            }
 
             _tiles?.Update(_tileRoot, map, at);
         }

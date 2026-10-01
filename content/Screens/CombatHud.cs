@@ -125,7 +125,7 @@ namespace Content.Screens
 
         static bool IsManoeuvre(ActionOption o) =>
             o.Kind is OptionKind.Dash or OptionKind.Disengage or OptionKind.Hide or OptionKind.Grapple or
-                OptionKind.Shove or OptionKind.StandUp or OptionKind.BreakFree or OptionKind.Shake;
+                OptionKind.Shove or OptionKind.StandUp or OptionKind.BreakFree or OptionKind.Shake or OptionKind.OpenDoor;
 
         // THE HOTKEYS, THE HUD'S WAY (docs/combat_ux.md, Keys): the bar's buttons from the left, then the
         // Spells menu, then More actions - so the buttons on the bar are 1, 2, 3 and not "1, 2, 9" with the

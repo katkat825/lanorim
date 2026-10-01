@@ -87,7 +87,7 @@ picked. Any of them can still be renamed back in the reader and the data. The ru
 | `obscures` | `"light"` \| `"heavy"` \| `"magical_darkness"` |
 | `duration` | `"instant"` \| `"concentration"` \| `"encounter"` \| `"rest"` \| `"long_rest"` \| `"next_turn"` \| `"next_turn_end"` \| `"turn_end"` \| `"caster_next_turn"` \| `"caster_next_turn_end"` \| `"permanent"` (a feature's boons) |
 | `tag_rules` | a record of tag: outcome, the outcome `"only"` \| `"untouched"` \| `"auto_save"` \| `"auto_fail"` \| `"save_disadvantage"` |
-| `forbids` | a list of `"actions"`, `"reactions"`, `"attacks"`, `"casting"`, `"opportunity_attacks"`, `"shifting"` |
+| `forbids` | a list of `"actions"`, `"reactions"`, `"attacks"`, `"casting"`, `"opportunity_attacks"`, `"shifting"`, `"objects"` |
 | `leans` | pipes of `advantage_on_attacks`, `disadvantage_on_attacks`, `advantage_against`, `disadvantage_against`, `advantage_on_checks`, `disadvantage_on_checks`, `advantage_on_saves`, `disadvantage_on_saves`, `advantage_on_initiative` |
 | `touches` | pipes of `attacks`, `saves`, `checks`, `damage`, `armor_class` |
 | `speed_change` | feet, signed (`-10`), or `"double"` \| `"half"` \| `"zero"` |
@@ -143,7 +143,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `range` | squares | how far it reaches; 0 is touch or self | | spell file, species, monster | existing |
 | `concentration` | flag | the caster holds it, one at a time | | spell file | existing |
 | `ritual` | flag | it may be cast as a ritual | | spell file | existing |
-| `approximated` | flag | it doesn't do what the SRD spell does, so it ships renamed | | spell file | existing |
+| `approximated` | flag | it doesn't do what the SRD spell does, so it ships renamed, unless it is on the HARD RULE's allow-list (`decisions_checklist.md` §1), which keeps its SRD name *(2026-10-03: aligned with decisions_checklist.md)* | | spell file | existing |
 | `classes` | list of class ids | the class lists it is on | | spell file | existing |
 | `casting_time` | `action`, `bonus_action`, `reaction` | what casting it costs out of the turn | | spell file, species | existing: the SRD's name on a spell's card; its words are `Spend`'s, the same as `use_time` and `grants` (leftovers #13) |
 | `trigger` | a moment | what a reaction spell (or a smite) answers | | spell file | existing |
@@ -344,7 +344,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `not_vs_truesight` | flag | its disadvantage against doesn't fool Truesight (Blur) | | sway | existing |
 | `wards_spell` | spell id | the named spell's damage is turned away (Shield and Magic Missile) | | sway | existing |
 | `weapon_dice` | signed dice, `"1d4"` or `"-1d4"` | dice on or off weapon damage, never below 1 (Enlarge, Reduce) | `weapon_dice` + `weapon_dice_less` | sway | the sign says on or off (3a #5) |
-| `forbids` | list of `actions`, `reactions`, `attacks`, `casting`, `opportunity_attacks`, `shifting` | what the bearer may not do | `no_actions`, `no_reactions`, `no_attacks`, `no_casting`, `no_opportunity_attacks` | sway | one list for five bans (3a #10) |
+| `forbids` | list of `actions`, `reactions`, `attacks`, `casting`, `opportunity_attacks`, `shifting`, `objects` (a door stays shut: Gaseous Form, 2026-10-03) | what the bearer may not do | `no_actions`, `no_reactions`, `no_attacks`, `no_casting`, `no_opportunity_attacks` | sway | one list for five bans (3a #10) |
 | `action_or_bonus` | flag | an action or a bonus action, not both, and one attack (Slow) | | sway | existing |
 | `limited_action` | flag | one extra action for a weapon attack, Dash, Disengage or Hide (Haste) | | sway | existing |
 | `speed_change` | feet (signed), or `double`, `half`, `zero` | walking speed changed: feet added or taken (Ray of Frost's -10), or doubled, halved or made 0 | `speed` (feet) on a boon | sway | `speed` means a creature's walking speed everywhere else (leftovers #12) |
@@ -614,6 +614,8 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `immune` | list of conditions | conditions it can't have | `condition_immunities` | monster | the boon's word (leftovers #2) |
 | `actions` | list of actions | its special actions, each an inline spell | | monster | existing |
 | `spellcasting` | record | its spellcasting | | monster | existing |
+| `traits` | list of `pack_tactics`, `bloodied_fury`, `magic_resistance`, `undead_fortitude`, `sunlight_sensitivity` | the statblock's named traits v1 plays, each at its own moment (`Core.Characters.Knack`, `Encounter.Knacks.cs`); a fight set in `sunlight` (its setting) is what Sunlight Sensitivity reads | | monster | a feature's boons can't say "an ally beside the target", "while Bloodied" or "against spells", tags are what a creature is, not a rule, and an instinct is how the AI fights (2026-10-03) |
+| `not_in_srd` | flag | Lanorim's own, not an SRD 5.2.1 statblock (`death_knight`, `goblin_archer`, in `content/srd/monsters/lanorim.json`) | | monster | a spell's and a background's word for the same idea, reused (2026-10-03) |
 
 ### `monster.attack`: a statblock's attack (the `attack` keys), named, and held or not
 

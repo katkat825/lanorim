@@ -31,12 +31,13 @@ namespace Game.Tray
         [Export] public TraySkin Skin { get; set; }
 
         // dice launched on the same frame collide in the air, which is where most cocked landings
-        // came from in the old build. a couple of ticks apart and they arrive as a handful
-        [Export] public int LaunchStaggerTicks { get; set; } = 3;
+        // came from in the old build. a couple of ticks apart and they arrive as a handful.
+        // PHYSICS TICKS, at 120 a second (project.godot): 6 is the 50 ms the tray was measured with at 60
+        [Export] public int LaunchStaggerTicks { get; set; } = 6;
 
         // the rattle starts before the die leaves the hand, because that is the order the sound
-        // happens in at a table
-        [Export] public int RattleLeadTicks { get; set; } = 14;
+        // happens in at a table. 28 ticks is the 233 ms it has always sounded at
+        [Export] public int RattleLeadTicks { get; set; } = 28;
 
         // the answer. fired once a throw, after every die is still
         public event Action<TrayRoll> Rolled;

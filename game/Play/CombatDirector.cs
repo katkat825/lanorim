@@ -76,7 +76,13 @@ namespace Game.Play
             Screen?.StandBehind(Board);
             Companion?.StandBy(Board, Screen);
 
-            foreach ((Actor actor, Cell at) in places) Board.Place(actor, at);
+            foreach ((Actor actor, Cell at) in places)
+            {
+                Board.Place(actor, at);
+
+                // a fight resumed from a save: whoever lay down when it was saved is lying down still
+                if (actor.Has(Condition.Prone)) Board.LieDown(actor);
+            }
 
             _hud.Visible = true;
         }
@@ -200,6 +206,18 @@ namespace Game.Play
 
                 case "wobble":
                     if (!_skipping) Board.Wobble(step.Actor);
+                    break;
+
+                case "prone":
+                    Board.LieDown(step.Actor);
+                    break;
+
+                case "stand":
+                    Board.StandUp(step.Actor);
+                    break;
+
+                case "door" when step.Door is Border door && Battle != null:
+                    Board.Reopen(Battle.Fight.Field.Map, door);
                     break;
 
                 // a fallen foe is cleared off the mat by the companion; the hero stays where they fell

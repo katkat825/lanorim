@@ -258,10 +258,10 @@
           "fly_speed": 10,
           "defenses": {"bludgeoning": "resistant", "piercing": "resistant", "slashing": "resistant"},
           "immune": ["prone"],
-          "forbids": ["attacks", "casting"],
+          "forbids": ["attacks", "casting", "objects"],
           "on_damage": "ends_at_zero",
           "duration": "concentration",
-          "note": "SRD 5.2.1 (SRD p.134): a willing creature you touch becomes a misty cloud, concentration up to 1 hour. Its only movement is a Fly Speed of 10 feet; Resistance to Bludgeoning, Piercing and Slashing; Immunity to Prone; Advantage on Str, Dex and Con saves; it can't attack or cast spells; the spell ends on it at 0 HP. +1 creature per slot level above 3. Not carried: entering and occupying another creature's space (one piece to a square), and the Magic action to end it on itself. Kept under the SRD name by Kathleen (2026-09-25)"
+          "note": "SRD 5.2.1 (SRD p.134): a willing creature you touch becomes a misty cloud, concentration up to 1 hour. Its only movement is a Fly Speed of 10 feet; Resistance to Bludgeoning, Piercing and Slashing; Immunity to Prone; Advantage on Str, Dex and Con saves; it can't attack, cast spells or manipulate objects (a door stays shut to it, 2026-10-03); the spell ends on it at 0 HP. +1 creature per slot level above 3. Not carried: entering and occupying another creature's space (one piece to a square: Battlefield holds one creature a square), and the Magic action to end it on itself (a caster on itself drops concentration for free, which does the same). Kept under the SRD name on the allow-list (Kathleen, 2026-09-25) until a square can hold two"
         },
         {
           "primitive": "sway",

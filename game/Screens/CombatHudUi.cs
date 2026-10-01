@@ -260,7 +260,8 @@ namespace Game.Screens
         static readonly Color Chosen = new Color(1.2f, 1.1f, 0.8f);
 
         // the number is only on an option you can take now: a greyed one has none to press
-        static string Label(ActionOption o) => (o.Hotkey > 0 && o.Enabled ? o.Hotkey + " " : "") + Ui.Say(o.NameKey);
+        static string Label(ActionOption o) => (o.Hotkey > 0 && o.Enabled ? o.Hotkey + " " : "") + Ui.Say(o.NameKey) +
+                                               (o.Attack?.Hand == Core.Characters.Hand.Off ? " " + Ui.Say(CombatSession.OffHandKey) : "");
 
         static bool IsSelected(CombatSession session, ActionOption o) =>
             ReferenceEquals(session.Selected, o) || session.Selected?.Id == o.Id;
@@ -289,6 +290,10 @@ namespace Game.Screens
 
             _bar.AddChild(menu);
         }
+
+        // what Tab reaches on the bar (AccessDesk): every button showing, the menus too
+        public IEnumerable<Button> BarButtons =>
+            _bar == null ? Enumerable.Empty<Button>() : _bar.GetChildren().OfType<Button>().Where(b => b.Visible).ToList();
 
         Button OptionButton(CombatSession session, ActionOption o)
         {

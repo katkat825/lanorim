@@ -225,7 +225,7 @@ namespace Content.Saves
                     continue;
                 }
 
-                hero.Equipment.Wear(item, hero.Actor, hero.Class.Id);
+                hero.Equipment.Wear(item, hero.Actor, hero.Class.Id, slot);
             }
         }
 

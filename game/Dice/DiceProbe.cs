@@ -34,6 +34,9 @@ namespace Game.Dice
         // how many dice of that shape go up at once; capped at what the tray seats
         public int Handful { get; set; } = 8;
 
+        // `--tray-skin gamblers`: sweep another skin, since bounce decides how a die settles. null keeps the scene's
+        public string Skin { get; set; }
+
         FaceTally _tally;
         int _thrown;
         Die[] _handful;
@@ -47,11 +50,16 @@ namespace Game.Dice
                 return;
             }
 
+            if (Skin != null) Tray.Wear(Skin);
+
             _tally = new FaceTally(Shape.Sides());
 
             _handful = Enumerable.Repeat(Shape, Math.Clamp(Handful, 1, Tray.Seats)).ToArray();
 
             Tray.Rolled += Landed;
+
+            GD.Print($"probe   physics {ProjectSettings.GetSetting("physics/3d/physics_engine")}, " +
+                     $"{Engine.PhysicsTicksPerSecond} ticks a second");
 
             GD.Print($"probe   {Throws} throws of {_handful.Length} x {Shape.Label()} " +
                      $"= {Throws * _handful.Length} faces, tray {Tray.SkinName}");

@@ -35,7 +35,8 @@ namespace Game.Dice
                 return;
             }
 
-            if (_flightTime > MaxFlightSeconds)
+            // the ceiling, or a die seen wobbling (DieBody.Wobble.cs) before it: no use waiting out the rest
+            if (_flightTime > (_restless > 0 ? AfterNudgeSeconds : MaxFlightSeconds) || _restless == 0 && Wobbling)
             {
                 _inFlight = false;
 
@@ -47,18 +48,25 @@ namespace Game.Dice
                     return;
                 }
 
-                _restlessRethrows++;
+                _restless++;
 
-                DieRecoveryStep step = Recovery.Restless(new RestlessDie(_restlessRethrows, _flightTime));
+                DieRecoveryStep step = Recovery.Restless(new RestlessDie(_restless, _flightTime));
+
+                if (step.Action == DieRecoveryAction.Nudge)
+                {
+                    GD.Print($"{Name}: still moving after {_flightTime:0.00}s - nudge {_restless}");
+                    Nudge();
+                    return;
+                }
 
                 if (step.Action == DieRecoveryAction.Rethrow)
                 {
-                    GD.Print($"{Name}: still moving after {_flightTime:0.00}s - rethrow {_restlessRethrows} at {step.Energy:0.00} energy");
+                    GD.Print($"{Name}: still moving after {_flightTime:0.00}s - rethrow {_restless} at {step.Energy:0.00} energy");
                     Launch(_lastThrowFrom, step.Energy);
                     return;
                 }
 
-                GD.Print($"{Name}: STILL moving after {_restlessRethrows} rethrows - forcing a settle");
+                GD.Print($"{Name}: STILL moving after {_restless - 1} nudges - reading it as it lies");
                 GiveUp();
                 return;
             }
@@ -69,6 +77,7 @@ namespace Game.Dice
             bool still = LinearVelocity.Length() < RestLinearSpeed
                       && AngularVelocity.Length() < RestAngularSpeed;
             _stillTime = still ? _stillTime + delta : 0;
+            WatchWobble(delta, still);
 
             if (!Sleeping && _stillTime < RestHoldSeconds) return;
 
@@ -111,7 +120,8 @@ namespace Game.Dice
             SettledValue = value;
 
             if (LogSettles)
-                GD.Print($"{Name}: settled after {_flightTime:0.00}s showing {value} (alignment {alignment:0.000}){(Sleeping ? " (asleep)" : "")}");
+                GD.Print($"{Name}: settled after {_flightTime:0.00}s showing {value} (alignment {alignment:0.000}), " +
+                         $"centre {(TraySpace?.ToLocal(GlobalPosition) ?? GlobalPosition).Y * 1000f:0} mm up{(Sleeping ? " (asleep)" : "")}");
 
             EmitSignal(SignalName.Settled, value);
         }
@@ -136,6 +146,7 @@ namespace Game.Dice
             _flightTime = 0;
             _stillTime = 0;
             SettledValue = 0;
+            ForgetWobble();
         }
 
         // the end that always terminates: frozen where it lies, so it is at rest for the tray as well as settled, and

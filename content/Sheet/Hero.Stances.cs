@@ -142,8 +142,7 @@ namespace Content.Sheet
 
             int back = intercept.StaysUpAt?.At(Level) ?? 1;
 
-            Actor.Health.Revive(Math.Max(1, back));
-            Actor.Remove(Condition.Unconscious);
+            Actor.StaysUp(back);
 
             return true;
         }

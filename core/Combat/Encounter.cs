@@ -51,6 +51,15 @@ namespace Core.Combat
 
         public IEnumerable<Actor> Actors => _order.Select(r => r.Actor);
 
+        // WHERE A CREATURE IS IN THE TURN ORDER, the explicit last word wherever creatures tie (who a monster goes for,
+        // who a spell picks): an id used to settle those, so renaming one changed who got hit
+        // (cc_task_open-questions-answers.md 2.7). One not in the fight comes last
+        public int InitiativeRank(Actor actor)
+        {
+            int at = _order.FindIndex(r => ReferenceEquals(r.Actor, actor));
+            return at < 0 ? int.MaxValue : at;
+        }
+
         int _next;
 
         public ActionBudget BudgetFor(Actor actor) =>

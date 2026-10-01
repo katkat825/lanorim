@@ -113,7 +113,7 @@ namespace Core.Magic
             if (aim.Creatures.Any(t => caster.Actor.HasFrom(Condition.Charmed, t)) &&
                 spell.Effects.Any(e => !(e.Kind == Primitive.Heal || e.Kind == Primitive.Ward ||
                                          e.Kind == Primitive.Relieve || e.Kind == Primitive.Stabilize ||
-                                         e.Kind == Primitive.Sway && !e.Save.HasValue && Kindly(e))))
+                                         e.Kind == Primitive.Sway && !e.Save.HasValue && e.OnlyHelps)))
                 return Casting.Refused(spell, caster.Actor, castAt, "charmed by the target");
 
             bool bonus = spell.CastingTime == Spend.Bonus;

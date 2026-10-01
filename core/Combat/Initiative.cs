@@ -55,6 +55,9 @@ namespace Core.Combat
                 .OrderByDescending(r => r.Total)
                 .ThenByDescending(r => r.Actor.Side == Allegiance.Hero)
                 .ThenByDescending(r => r.Actor.AbilityModifier(Ability.Dexterity))
+                // THE ONE PLACE AN ID IS THE RULE, ON PURPOSE (2026-10-03): two creatures that tie on the roll, the side
+                // and Dexterity go in id order. A roll-off would spend the seeded dice and move every fight after it;
+                // the id is fixed for a creature, and this is the turn order every other tie now defers to
                 .ThenBy(r => r.Actor.Id, StringComparer.Ordinal)
                 .ToList();
         }

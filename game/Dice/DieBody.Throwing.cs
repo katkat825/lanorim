@@ -8,7 +8,7 @@ namespace Game.Dice
         {
             _rng.Randomize();
 
-            Recovery ??= new NudgeThenRethrow(MaxNudges, MaxCockedRethrows, MaxLostRethrows, MaxRestlessRethrows);
+            Recovery ??= new NudgeThenRethrow(MaxNudges, MaxCockedRethrows, MaxLostRethrows, MaxRestlessNudges);
 
             // re-apply: an [Export] setter never runs for the default value, so without this the physics server would watch nothing while the field says true
             ReportContacts = _reportContacts;
@@ -42,7 +42,7 @@ namespace Game.Dice
         {
             _cockedRethrows = 0;
             _lostRethrows = 0;
-            _restlessRethrows = 0;
+            _restless = 0;
             Launch(from);
         }
 
@@ -50,9 +50,14 @@ namespace Game.Dice
         // energy scales the horizontal push; at zero the die drops inside the tray and cannot escape
         void Launch(Transform3D from, float energy = 1f)
         {
+            TurnTheCube();
+
             _lastThrowFrom = from;
             SettledValue = 0;
             _nudges = 0;
+
+            // a throw, even a cocked or escaped die's second, gets the whole ceiling again
+            _restless = 0;
 
             // the next contact is this throw's first impact, whatever the last one left behind
             _hits = 0;
@@ -77,6 +82,30 @@ namespace Game.Dice
                 Linear = direction * _rng.RandfRange(ThrowSpeedMin, ThrowSpeedMax) * energy,
                 Angular = RandomAxis() * _rng.RandfRange(SpinMin, SpinMax),
             });
+        }
+
+        // THE d6 ROLLED LOW (found 2026-10-03, after the move to 120 ticks): faces 1, 2 and 3 came up more than 4, 5
+        // and 6, about 4% each way - pooled chi-squared 35 to 40 on 32,000-48,000 faces, far past the 0.1% line. They
+        // are the cube's positive axes (+Y, +Z, +X). The physics never sees a number, so the lean was the engine's: the
+        // solver works through a body's own axes in a fixed order and leans, near a tie, toward the positive ones. A
+        // true box shape leaned the same way. So each throw turns the cube's collision shape by one of its 24
+        // rotations: the same cube to the eye and to the physics, but which of its faces the engine takes for +X is
+        // dealt afresh every throw, and the lean is shared by all six. Measured the same way after: chi-squared 8.4 on
+        // 32,000 faces, uniform, no one-sided drift. The other solids' sweeps were uniform, so only the cube turns
+        void TurnTheCube()
+        {
+            if (Size != Core.Dice.Die.D6 || GetNodeOrNull<CollisionShape3D>("CollisionShape3D") is not CollisionShape3D shape)
+                return;
+
+            Vector3[] axes = { Vector3.Right, Vector3.Up, Vector3.Back };
+
+            int i = _rng.RandiRange(0, 2);
+            int j = (i + _rng.RandiRange(1, 2)) % 3;
+
+            Vector3 x = axes[i] * (_rng.Randf() < 0.5f ? -1f : 1f);
+            Vector3 y = axes[j] * (_rng.Randf() < 0.5f ? -1f : 1f);
+
+            shape.Basis = new Basis(x, y, x.Cross(y));
         }
 
         // a small lift and spin in place to topple a die on an edge or a neighbour, deliberately weak so one throw still looks like one
@@ -107,6 +136,7 @@ namespace Game.Dice
             _stillTime = 0;
             _knocked = false;
             _looseTime = 0;
+            ForgetWobble();
 
             // a die given up on was frozen where it lay; any kick is a fresh throw
             Freeze = false;

@@ -82,7 +82,9 @@ edges, End Turn is the bar's right end, and the log is top left. Sizes are `res:
 ## Reactions
 
 A reaction the hero could take (Shield, Counterspell, an opportunity attack, a smite on a hit) is governed by
-the **reaction policy** for that reaction, set in **Settings → Reactions**:
+the **reaction policy** for that reaction, set in **Settings → Reactions**. A smite rides the same policy but
+spends the **bonus action**, not the reaction: Divine Smite's casting time is a bonus action taken right after
+the hit. *(2026-10-03: aligned with SRD 5.2.1)*
 
 | Policy | What happens |
 |---|---|

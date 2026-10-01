@@ -182,6 +182,13 @@ namespace Game.Screens
                 if (!r.Quest && !r.Item.Heals.IsNothing)
                     line.AddChild(Ui.Button(PackView.UseKey, () => { _view.Use(r.Item.Id, _dice); Redraw(); }));
 
+                // put it on, or hold a Light weapon in the off hand (cc_task_open-questions-answers.md 3.1)
+                if (_view.CanEquip(r.Item.Id))
+                    line.AddChild(Ui.Button(PackView.EquipKey, () => { _view.Equip(r.Item.Id); Redraw(); }));
+
+                if (_view.CanHoldInOffHand(r.Item.Id))
+                    line.AddChild(Ui.Button(PackView.OffHandKey, () => { _view.HoldInOffHand(r.Item.Id); Redraw(); }));
+
                 if (_view.AtTheCounter && r.SellsFor >= 0)
                 {
                     line.AddChild(Ui.Button($"{Ui.Say(PackView.SellKey)} {r.SellsFor}", () =>
@@ -226,6 +233,18 @@ namespace Game.Screens
                     never.Toggled += on => { if (on) _view.DismissDiscardWarning(); };
                     mine.AddChild(never);
                 }
+            }
+
+            // what is worn and held, each with Unequip: it goes back in the pack (cc_task_open-questions-answers.md 3.1)
+            if (_view.Worn.Count > 0) mine.AddChild(Ui.Label(PackView.WornKey));
+
+            foreach ((Content.Items.Slot slot, Content.Items.Item item) in _view.Worn)
+            {
+                Content.Items.Slot s = slot;
+                var worn = Ui.Row(6, Ui.Plain($"{Ui.Say(PackView.SlotKey(s))}: {Ui.Say(item.NameKey)}"));
+                worn.GetChild<Label>(0).SizeFlagsHorizontal = SizeFlags.ExpandFill;
+                worn.AddChild(Ui.Button(PackView.UnequipKey, () => { _view.TakeOff(s); Redraw(); }));
+                mine.AddChild(worn);
             }
 
             if (!_view.AtTheCounter)

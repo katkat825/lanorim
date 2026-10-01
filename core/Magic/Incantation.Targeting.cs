@@ -40,10 +40,12 @@ namespace Core.Magic
                 return;
             }
 
-            // Slow's "up to six creatures of your choice": the caster's foes first, then by id, so
-            // the same cast picks the same six
+            // Slow's "up to six creatures of your choice": the caster's foes first, the nearest of them, then the turn
+            // order, so the same cast picks the same six (by id until 2026-10-03, so a name chose them)
             if (effect.UpTo > 0 && targets.Count > effect.UpTo)
                 targets = targets.OrderBy(t => t.Side == caster.Actor.Side ? 1 : 0)
+                                 .ThenBy(t => fight?.Field.Distance(caster.Actor, t) ?? 0)
+                                 .ThenBy(t => fight?.InitiativeRank(t) ?? 0)
                                  .ThenBy(t => t.Id, StringComparer.Ordinal)
                                  .Take(effect.UpTo).ToList();
 

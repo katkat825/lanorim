@@ -80,13 +80,13 @@ namespace Game.Dice
     public readonly struct RestlessDie
     {
         // including this one - the first time a throw runs out of time is 1
-        public readonly int RethrowsSoFar;
+        public readonly int TimesSoFar;
 
         public readonly double FlightSeconds;
 
-        public RestlessDie(int rethrowsSoFar, double flightSeconds)
+        public RestlessDie(int timesSoFar, double flightSeconds)
         {
-            RethrowsSoFar = rethrowsSoFar;
+            TimesSoFar = timesSoFar;
             FlightSeconds = flightSeconds;
         }
     }

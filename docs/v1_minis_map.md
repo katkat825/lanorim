@@ -100,7 +100,9 @@ Quaternius rather than fighting someone else's textures.
 
 Every monster archetype is sourced from **owned** assets (heroes, companions, humanoids, undead, brutes,
 fiends, beasts, vermin/spider, dragons from the kit, and the ooze as a reskinned rock). **No monster
-purchase is required for v1.**
+purchase is required for v1.** Dragons and exotic monsters (vermin, oozes, elementals, trolls) are still the
+known gap to commission or buy later; the kit, reskin and Ogre entries above are the stand-ins until then.
+*(2026-10-03: aligned with decisions_checklist.md)*
 
 Minor / optional leftovers:
 

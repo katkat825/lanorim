@@ -123,6 +123,7 @@ namespace Game.Table
                     Shape = shape,
                     Throws = throws,
                     Handful = handful,
+                    Skin = Shot.Arg(OS.GetCmdlineUserArgs(), "--tray-skin"),
                 });
 
                 return;

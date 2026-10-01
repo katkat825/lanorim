@@ -21,12 +21,16 @@ namespace Game.Table
     // the model has wins, so the dogs' Idle_2_HeadLow and the deer's Idle_Headlow are both "head low".
     public partial class CompanionFigure : Node3D
     {
-        // how tall it stands, in metres: the board's wolf mini is 0.11
-        [Export] public float Height { get; set; } = 0.11f;
+        // how tall it stands, in metres. Twice the board's wolf mini (0.11) since 2026-10-03 (Kathleen: "make
+        // companions twice as big"); it keeps its whole body off the map whichever way it faces (Reach)
+        [Export] public float Height { get; set; } = 0.22f;
 
         // its home, from the GM screen's right-hand front corner, in metres (+X right, +Z toward the map): in the
         // gap between the screen and the map, a little right of the screen
         [Export] public Vector3 FromGmScreen { get; set; } = new Vector3(0.18f, 0f, 0.12f);
+
+        // how far its body reaches from where it stands, measured when it is dressed (0 before)
+        public float Reach { get; private set; }
 
         // how far from home it wanders, and never nearer the map's far edge than this
         [Export] public float WanderRadius { get; set; } = 0.12f;
@@ -99,7 +103,12 @@ namespace Game.Table
             if (paint != null) PaintedModel.Paint(_model, paint, "companion");
 
             Aabb box = PaintedModel.Bounds(_model);
-            if (box.Size.Y > 0.0001f) _model.Scale = Vector3.One * (Height / box.Size.Y);
+            float scale = box.Size.Y > 0.0001f ? Height / box.Size.Y : 1f;
+            _model.Scale = Vector3.One * scale;
+
+            // nose or tail, the furthest it reaches from where it stands, whichever way it turns
+            Reach = Mathf.Max(Mathf.Max(Mathf.Abs(box.Position.X), Mathf.Abs(box.End.X)),
+                              Mathf.Max(Mathf.Abs(box.Position.Z), Mathf.Abs(box.End.Z))) * scale;
 
             _model.RotationDegrees = new Vector3(0f, ForwardDegrees, 0f);
 
@@ -147,9 +156,11 @@ namespace Game.Table
                 : board.Position + new Vector3(board.MatWidth * 0.5f, 0f, -board.MatDepth * 0.5f);
 
             Vector3 home = corner + FromGmScreen;
-            float nearest = farEdge - MapClearance;
 
-            _roaming = new Roaming((home.X, home.Z), WanderRadius, corner.X + 0.02, nearest,
+            // its body as well as its feet: a nose turned toward the map never reaches it, nor a tail the screen
+            float nearest = farEdge - MapClearance - Reach;
+
+            _roaming = new Roaming((home.X, home.Z), WanderRadius, corner.X + 0.02 + Reach, nearest,
                                    new SeededRng(System.Environment.TickCount), WalkEvery, WalkJitter);
 
             Position = new Vector3((float)_roaming.Home.X, board.Position.Y, (float)_roaming.Home.Z);

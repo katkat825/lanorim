@@ -120,17 +120,18 @@ namespace Content.Sheet
             if (blow != null && attack.Light && spend == Spend.Action)
             {
                 LightTurn = turn;
-                LightWeapon = attack.Id;
+                LightHand = attack.Hand;
             }
 
             return blow;
         }
 
-        // the turn a Light weapon was attacked with, and which: the other Light weapon may then
-        // attack with the bonus action, without the ability modifier on its damage
+        // the turn a Light weapon was attacked with, and in which hand: the Light weapon in the other hand may then
+        // attack with the bonus action, without the ability modifier on its damage. by hand, not by id: a dagger in
+        // each hand is two weapons with one id (it was the id until 2026-10-03, when nothing could be held off-hand)
         public Turn LightTurn { get; private set; }
 
-        public string LightWeapon { get; private set; } = "";
+        public Hand LightHand { get; private set; } = Hand.None;
 
         public Attack LightBonusAttack(Attack attack) =>
             attack.With(addsAbility: false,

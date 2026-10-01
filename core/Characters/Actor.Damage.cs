@@ -77,6 +77,17 @@ namespace Core.Characters
             return taken;
         }
 
+        // DROPPED TO 0 AND STAYED UP INSTEAD: the Orc's Relentless Endurance, the Barbarian's Relentless Rage, the
+        // zombie's Undead Fortitude - each "drops to 1 Hit Point instead". It never fell, so the Unconscious goes and
+        // so does the Prone that came with it (before 2026-10-03 a hero who stayed up was left lying down)
+        public void StaysUp(int hitPoints)
+        {
+            Health.Revive(System.Math.Max(1, hitPoints));
+            Remove(Condition.Unconscious);
+
+            if (_proneFromFalling) Remove(Condition.Prone);
+        }
+
         // SRD 5.2.1 Stable: at 0 hit points but no longer rolling death saves. Spare the Dying.
         // taking damage ends it; healing above 0 makes it moot
         public bool Stable { get; private set; }

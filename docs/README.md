@@ -9,8 +9,6 @@ docs are the source of truth for what the game is and what gets built.
   video-game glue, art, and product. *What the game is.*
 - **`v1_build_checklist.md`** — the end-to-end build scope with a "definition of done." *What gets built,
   and when it's finished.*
-- **`v1_build_order.md`** — the sequence to build v1 in playable slices, with every task tagged **who does
-  it** (you / Claude / a tool). *The order, and the division of labor.*
 
 **The rest:**
 

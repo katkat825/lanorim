@@ -74,7 +74,7 @@ namespace Core.Combat
                 return;
             }
 
-            if (me.Has(Condition.Prone)) turn.StandUp();
+            if (me.Has(Condition.Prone)) fight.StandUp(turn);
 
             // a creature with nothing in hand and nothing natural to fight with goes back for its
             // weapon first
@@ -105,9 +105,16 @@ namespace Core.Combat
 
             if (turn.Ended || !me.CanAct) return;
 
+            OpenTheWay(fight, turn, quarry);
+
             if (!Reaches(fight, me, quarry)) Approach(fight, turn, quarry);
 
+            // walked up to a door: through it, with what movement is left
+            if (OpenTheWay(fight, turn, quarry) && !Reaches(fight, me, quarry)) Approach(fight, turn, quarry);
+
             Swing(fight, turn, quarry);
+
+            NextInReach(fight, turn, quarry);
 
             fight.EndTurn();
         }
@@ -128,24 +135,44 @@ namespace Core.Combat
                 : candidates.OrderBy(a => fight.Field.Distance(me, a))
                             .ThenBy(a => a.Health.Current);
 
-            // the id last, so the same fight from the same seed picks the same target every time
-            return ranked.ThenBy(a => a.Id, StringComparer.Ordinal).FirstOrDefault();
+            // the turn order last, so the same fight from the same seed picks the same target every time and a
+            // name never decides it (it was the id until 2026-10-03)
+            return ranked.ThenBy(fight.InitiativeRank).FirstOrDefault();
         }
 
         bool Reaches(Encounter fight, Actor me, Actor target) =>
             Best(fight, me, target) != null;
 
-        // the attack that can be used from where it is standing; the biggest average damage among
-        // those, so a monster with a bow and a bite uses the right one at the right distance
+        // WHICH ATTACK, AS A RULE (cc_task_open-questions-answers.md 2.7): of the attacks it can use from where it
+        // stands, one it can make without Disadvantage first, then the biggest average damage, then the
+        // statblock's own order (OrderBy is a stable sort, so the statblock has the last word). Until 2026-10-03 a
+        // tie went to the attack's id, alphabetically: a goblin's scimitar and shortbow both average 5, the boss's
+        // "goblin_shortbow" sorted before "scimitar", so beside the hero it shot point-blank at Disadvantage - and
+        // renaming the id made the rogue lose the goblin camp 33 times in the sample campaign's test
         Attack Best(Encounter fight, Actor me, Actor target, Turn turn = null) =>
             Attacks.Where(a => me.CanUse(a))
                    .Where(a => turn == null || turn.Allows(a))
                    .Where(a => fight.Field.InRange(me, target, a.Reaches))
                    .Where(a => !Is(Instinct.Skirmisher) || !a.IsRanged ||
                                fight.Field.Distance(me, target) > 1)
-                   .OrderByDescending(a => a.DamageFor(me).Average)
-                   .ThenBy(a => a.Id, StringComparer.Ordinal)
+                   .OrderBy(a => fight.Band(me, target, a) == Core.Resolution.Advantage.Disadvantage)
+                   .ThenByDescending(a => a.DamageFor(me).Average)
                    .FirstOrDefault();
+
+        // SWITCHING TARGETS MID-MULTIATTACK (cc_task_open-questions-answers.md 2.6): SRD 5.2.1 lets each attack of a
+        // Multiattack pick its own target, so when the quarry drops partway through, the attacks left go at the next
+        // creature it would choose that is already in reach. It doesn't walk for them: one target for the walk
+        void NextInReach(Encounter fight, Turn turn, Actor quarry)
+        {
+            Actor me = turn.Actor;
+
+            while (quarry.IsDown && turn.CanAttack && !fight.Over && me.CanAct &&
+                   Choose(fight, me) is Actor next && Reaches(fight, me, next))
+            {
+                quarry = next;
+                Swing(fight, turn, quarry);
+            }
+        }
 
         void Swing(Encounter fight, Turn turn, Actor target)
         {
@@ -157,6 +184,30 @@ namespace Core.Combat
 
                 if (fight.Hit(turn, target, attack) == null) return;
             }
+        }
+
+        // MONSTERS OPEN DOORS TOO (cc_task_open-questions-answers.md 2.1): a shut door beside it, with its quarry
+        // nearer the far side, it opens with the turn's free object interaction (Encounter.Doors.cs) and walks on.
+        // Only the free one: it never spends an action on a door it could spend on its quarry
+        static bool OpenTheWay(Encounter fight, Turn turn, Actor quarry)
+        {
+            Actor me = turn.Actor;
+
+            if (!turn.CanInteract || !(fight.Field.Where(me) is Cell here) || !(fight.Field.Where(quarry) is Cell theirs))
+                return false;
+
+            foreach (Border door in fight.DoorsBeside(me))
+            {
+                Cell far = door.Vertical
+                    ? new Cell(door.Cell.X == here.X ? here.X - 1 : here.X + 1, here.Y)
+                    : new Cell(here.X, door.Cell.Y == here.Y ? here.Y - 1 : here.Y + 1);
+
+                if (Battlefield.Distance(far, theirs) >= Battlefield.Distance(here, theirs)) continue;
+
+                return fight.OpenDoor(turn, door);
+            }
+
+            return false;
         }
 
         void Approach(Encounter fight, Turn turn, Actor target)

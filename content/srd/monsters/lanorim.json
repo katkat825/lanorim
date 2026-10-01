@@ -1,0 +1,34 @@
+{
+  "_": "Lanorim's own statblocks - first-party, NOT SRD 5.2.1 and not WotC's, so NOT in the CC-BY monsters file beside this one; covered by the repo's LICENSE (all rights reserved). Each carries not_in_srd, the word a spell and a background that aren't the SRD's carry. death_knight: Kathleen, 2026-10-01 (OPEN_QUESTIONS 2): custom monsters are allowed, just out of the CC-BY file. goblin_archer: Kathleen's own since 2026-09-24. Same keys as monsters.json.",
+
+  "monsters": [
+    {
+      "id": "goblin_archer", "not_in_srd": true, "hit_points": 7, "armor_class": 13, "speed": 30,
+      "challenge_times_ten": 2, "hit_die": "d6", "mini": "goblin", "size": "small",
+      "tags": ["humanoid", "goblinoid"],
+      "scores": {"str": 8, "dex": 16, "con": 10, "int": 10, "wis": 8, "cha": 8},
+      "skills": ["stealth"],
+      "instincts": ["skirmisher"],
+      "attacks": [
+        {"id": "goblin_shortbow", "weapon": "shortbow", "held": true},
+        {"id": "goblin_dagger", "damage": "1d4", "damage_type": "piercing", "ability": "dex", "finesse": true, "held": true}
+      ]
+    },
+
+    {
+      "id": "death_knight", "not_in_srd": true, "hit_points": 180, "armor_class": 20, "speed": 30,
+      "challenge_times_ten": 170, "hit_die": "d10", "mini": "death_knight",
+      "tags": ["undead", "sleepless"],
+      "scores": {"str": 20, "dex": 11, "con": 20, "int": 12, "wis": 16, "cha": 18},
+      "saves": ["dex", "wis", "cha"],
+      "defenses": {"poison": "immune", "necrotic": "immune"},
+      "multiattack": 2,
+      "instincts": ["finisher"],
+      "immune": ["poisoned"],
+      "attacks": [
+        {"id": "dread_longsword", "damage": "2d8", "damage_type": "slashing", "damage_bonus": 5, "held": true},
+        {"id": "hellfire_orb", "damage": "6d6", "damage_type": "fire", "ability": "cha", "range": 24, "long_range": 48}
+      ]
+    }
+  ]
+}

@@ -19,5 +19,8 @@ namespace Content.Combat
         EndTurn,
         Grapple,
         Shove,
+
+        // a shut door beside the hero (Encounter.Doors.cs): free once a turn, then an action
+        OpenDoor,
     }
 }

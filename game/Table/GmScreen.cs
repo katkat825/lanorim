@@ -33,6 +33,12 @@ namespace Game.Table
         // may run off the top of the screen)
         [Export] public float Height { get; set; } = 0.6f;
 
+        // SHORTER, SAME WIDTH (Kathleen, 2026-10-01: "make the gm screen 20% shorter, but maintain the width"):
+        // the model scaled to Height as above, then up and down alone by this. 1 is the model as authored. It
+        // squashes the art with the panels; the run log of 2026-10-03 says whether that shows and how to do it
+        // in Blender instead
+        [Export(PropertyHint.Range, "0.3,1,0.01")] public float Tallness { get; set; } = 0.8f;
+
         // which way the model faces, in degrees about the table's up: its art is on its back, so it
         // is turned to show the players the art and the GM (beyond the board) the inside
         [Export] public float TurnDegrees { get; set; } = 180f;
@@ -44,6 +50,11 @@ namespace Game.Table
 
         public override void _Ready()
         {
+            // `--gm-tallness 1`: the screen as authored, for a picture beside the shorter one
+            if (float.TryParse(Shot.Arg(OS.GetCmdlineUserArgs(), "--gm-tallness"), System.Globalization.NumberStyles.Float,
+                               System.Globalization.CultureInfo.InvariantCulture, out float tallness))
+                Tallness = Mathf.Clamp(tallness, 0.3f, 1f);
+
             Wear(Skin);
 
             // the GM's dice, heard and not seen: the tray's own wood impacts, quieter and from here
@@ -94,8 +105,9 @@ namespace Game.Table
             if (box.Size.Y > 0.0001f)
             {
                 float scale = Height / box.Size.Y;
-                _model.Scale = Vector3.One * scale;
-                box = new Aabb(box.Position * scale, box.Size * scale);
+                var by = new Vector3(scale, scale * Tallness, scale);
+                _model.Scale = by;
+                box = new Aabb(box.Position * by, box.Size * by);
             }
 
             // Bounds is in the model's own space; turned, it is where it stands in this node's

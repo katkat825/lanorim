@@ -25,5 +25,9 @@ namespace Core.Characters
 
         // can't shape-shift: a creature Moonbeam turned back, while it is still in the beam
         Shifting = 1 << 5,
+
+        // can't manipulate objects: Gaseous Form's mist (SRD 5.2.1). The one object a fight has is a door, so a door
+        // stays shut to it (Encounter.Doors.cs; 2026-10-03)
+        Objects = 1 << 6,
     }
 }

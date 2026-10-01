@@ -138,9 +138,10 @@ namespace Content.Combat
 
             Plan best = null;
 
+            // in the statblock's order, so on a tie its first spell wins (it was the spell id, alphabetically, until
+            // 2026-10-03: cc_task_open-questions-answers.md 2.7)
             foreach (Spell spell in _caster.Known.Where(s => s.CastingTime == time && !s.Answers &&
-                                                            !tried.Contains(s.Id))
-                                           .OrderBy(s => s.Id, StringComparer.Ordinal))
+                                                            !tried.Contains(s.Id)))
             {
                 if (!_caster.CanCast(spell, spell.Level)) continue;
 
@@ -183,7 +184,10 @@ namespace Content.Combat
             foreach (Actor enemy in fight.Field.Enemies(me).Where(a => !a.IsDown))
                 foreach (Attack attack in _monster.Attacks.Where(me.CanUse))
                 {
-                    double value = attack.DamageFor(me).Average * 0.65;
+                    // about two in three hit; at Disadvantage (a bow point-blank) about two in five, as Tactics.Best
+                    // weighs it
+                    double hits = fight.Band(me, enemy, attack) == Core.Resolution.Advantage.Disadvantage ? 0.65 * 0.65 : 0.65;
+                    double value = attack.DamageFor(me).Average * hits;
 
                     if (!fight.Field.InRange(me, enemy, attack.Reaches)) value *= 0.5;
 
@@ -245,7 +249,7 @@ namespace Content.Combat
                                                  (ReferenceEquals(a, me) ||
                                                   fight.Field.InRange(me, a, range)))
                               .OrderBy(a => a.Health.Current)
-                              .ThenBy(a => a.Id, StringComparer.Ordinal)
+                              .ThenBy(fight.InitiativeRank)
                               .FirstOrDefault();
 
             if (hurt == null) return null;
@@ -287,7 +291,7 @@ namespace Content.Combat
         {
             Plan best = null;
 
-            foreach (Actor enemy in enemies.OrderBy(a => a.Id, StringComparer.Ordinal))
+            foreach (Actor enemy in enemies.OrderBy(fight.InitiativeRank))
             {
                 if (!(fight.Field.Where(enemy) is Cell at)) continue;
 
@@ -316,7 +320,7 @@ namespace Content.Combat
                                               !AlreadyHas(e, spell))
                                   .OrderBy(e => Is(Instinct.Finisher) ? e.Health.Current : 0)
                                   .ThenBy(e => fight.Field.Distance(me, e))
-                                  .ThenBy(e => e.Id, StringComparer.Ordinal)
+                                  .ThenBy(fight.InitiativeRank)
                                   .FirstOrDefault();
 
             return target == null ? null : new Plan { Spell = spell, Aim = Aim.At(target), Value = perTarget };

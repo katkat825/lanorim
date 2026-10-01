@@ -13,7 +13,8 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 ---
 
 ## Other
-- **[OPEN] combat leveling** - need a way to account for leveling in the combat engine! just because I plan a campaign for them to follow the possible side quests in line with the main quests doesn't mean it'll happen. need to think that through.
+- **[DECIDED 2026-10-01] combat leveling** - need a way to account for leveling in the combat engine! just because I plan a campaign for them to follow the possible side quests in line with the main quests doesn't mean it'll happen. need to think that through. **The campaign decides leveling** (`<<level N>>` where it wants it); no engine change. (OPEN_QUESTIONS §1)
+- **[DECIDED 2026-10-01] Which doc wins when two disagree:** `decisions_checklist.md` first, then the SRD, then the rest. (OPEN_QUESTIONS §5, `09-28g Q1`; applied to `_design_docs/DOCS_OVERLAP.md` on 2026-10-03)
 
 ## 1. Rules — deltas from the SRD
 
@@ -36,6 +37,11 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   (exactly the number its Multiattack lists) — plus its move, a bonus action only if its statblock has one,
   and 1 reaction. This is what keeps one hero against a group fair. (Answers run-log question 15.)
 - **[DECIDED] Death save** — single d20 ≥ 10, no mods, intentional solo delta.
+  - **[DECIDED 2026-10-01] At 0 HP: the single death save** ("delta: at 0 hp do a single death saving throw"). (`09-25 Q3`)
+    **[OPEN 2026-10-03] Does damage taken while at 0 HP bring a save of its own?** Not built: the answer can be read
+    two ways (`_design_docs/OPEN_QUESTIONS.md`, top). As built, it doesn't: the save comes at the start of the turn.
+  - **[DEFERRED 2026-10-01] Massive damage** killing outright (SRD: damage at 0 HP equal to your HP maximum). (`09-25 Q3`; `deferred.md`)
+- **[DECIDED 2026-10-01] Rage uses:** SRD — 2 to 6 by level, one back on a short rest (as built). (`09-25 Q2`)
 - **[DECIDED] Attack & damage, initiative** — d20 + mods vs. AC; damage = weapon die + mod;
   initiative d20 + Dex. Flag if you want a delta.
 - **[DECIDED] Ability Score Improvements** — SRD grants an ASI/feat at set levels; feats are deferred, so at
@@ -47,8 +53,27 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED] Movement & grid scale** — SRD
 - **[DECIDED] Currency** — Confirmed gold-only.
 - **[DEFERRED] Damage types & resistances** — full SRD, tagged-but-simple, or flatten? (see §6) deferred or flatten
+- **[DECIDED 2026-10-01] Conditions as built, kept:** Stunned also stops movement (SRD 5.2.1 doesn't say so; `09-24 Q2`); Hide's "out of every enemy's sight" stands in as three-quarters cover (`09-25 Q13`); conditions' small clauses (Blinded/Deafened auto-failing checks, the charmer's social Advantage) are covered by "core effects only" (`09-25 Q14`). **[DEFERRED]** the other conditions.
+- **[DECIDED 2026-10-01] `on_save: half` with a condition:** go with the SRD, spell by spell. *(Checked 2026-10-03 against
+  SRD 5.2.1, all 21 spells with a save and a condition: in every one a successful save spares the condition, and the
+  data and code already do that; no spell in v1 halves its damage and still imposes a condition. The enum's comment
+  said otherwise and is fixed. List: `_design_docs/RUN_LOG_2026-10-03_answers.md` 1.4.)* (`09-25c Q3`)
+- **[DEFERRED 2026-10-01] Components:** material and costly components aren't tracked. (`09-24 Q6`, `09-25 Q5`)
+- **[DEFERRED 2026-10-01] Monster senses, size and other speeds:** no Darkvision, Large is one square, no fly/climb. (`09-25 Q7`)
+- **[DECIDED 2026-10-01] Spell durations:** SRD, whatever's easiest. (`09-25 Q4`) *The mapping as built is the decision
+  (2026-10-03):* **1 minute = the fight** (`encounter`); **10 minutes or 1 hour = until the next rest** (`rest`); **8 or
+  24 hours = until the next long rest** (`long_rest`); **concentration = until it's dropped, broken or the caster is
+  downed**, whatever the SRD's "up to"; "until the start/end of its (your) next turn" exactly as written. 1-minute spells
+  are **not** counted as 10 rounds: v1 has no round timer on a boon, zone or lingering effect (only Banishment's full
+  minute counts rounds), a timer on every one is not "easiest", and a fight rarely reaches ten rounds.
+- **[DECIDED 2026-10-01] Light in fights:** play it if easy, otherwise narrate. (`09-25 Q6`) *Narrated (2026-10-03):* no
+  fight is dark (a map has no light level, and Darkvision is deferred), so Light, Faerie Fire's glow and Moonbeam's
+  light would light nothing that isn't lit; playing them needs a lighting model first. Darkness already plays, as
+  heavily obscured squares. The dim radii stay in `deferred.md` for when light is played.
+- **[IRRELEVANT 2026-10-01] The sample campaign's ASI at level 4** (not 2): the sample campaign won't ship. (`09-24 Q8`)
 - **[DECIDED] Conditions** — v1 subset: prone, poisoned, stunned, frightened, restrained, grappled — core effects only; exhaustion's 6-level ladder deferred (decided in §6). **[UPDATED 2026-09-24]** The subset may grow to any SRD condition a faithful spell needs (blinded, charmed, deafened, incapacitated, invisible, paralyzed, petrified, …) — see *Spell fidelity* below. Exhaustion stays deferred.
-- **[DECIDED] Rest** — pin exact recovery to SRD (long rest = half hit dice + all slots; short rest spends hit dice) unless you simplify. except long rest = full hp recovery
+- **[DECIDED] Rest** — pin exact recovery to SRD (long rest = **all HP and all Hit Point Dice (SRD 5.2.1, "Regain All HP")** + all slots; short rest spends hit dice) unless you simplify. except long rest = full hp recovery *(2026-10-03: this line said "half hit dice"; the SRD and the code both return all of them, and Kathleen's answer (`09-25 Q1`, "returns all hp") agrees, so the line now says the SRD's. If half Hit Dice was meant as a delta, that's a later task.)*
+  - **[DECIDED 2026-10-01] `<<rest short>>`** spends Hit Point Dice until whole or out, as the default. (`09-24 Q9`)
 - **[DECIDED, updated 2026-09-23] Spellcasting** — SRD spell lists + effects + concentration **[DECIDED]**;
   **flat known/equipped model [DECIDED]** — the spells on your sheet are what you can cast: no daily
   preparation, no "Channeling" (that word is retired). *Which spells FUNCTION in v1* is settled
@@ -93,6 +118,24 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   SRD 5.2.1 spell, under its SRD name** — build the missing mechanics rather than approximate. Only a spell that
   genuinely can't be made faithful keeps a new name (the HARD RULE above). **A spell that isn't in SRD 5.2.1 at
   all is renamed** (new name, original wording) — it is not dropped.
+- **[DECIDED 2026-10-01] Spells trued up to the SRD:** Banishment, Maze and Gaseous Form become faithful and go back
+  to their SRD names; Slow, Heat Metal, Antimagic Field and Suggestion stay as they are. Searing Smite and Wall of
+  Fire are checked against the SRD text and fixed. (`09-24 Q1`, `09-24 Q4–5`) *2026-10-03: Banishment and Maze were already faithful;
+  Gaseous Form now can't manipulate objects and stays on the allow-list (occupying a creature's space is deferred);
+  Searing Smite and Wall of Fire match the SRD (`_design_docs/REVIEW_spell_names.md`).*
+- **[DECIDED 2026-10-01] The smaller spell calls** (webs, Telekinesis on objects, Enhance Ability upcasts,
+  Shillelagh/True Strike, Hunter's Mark tracking): each one, build if easy, defer if not. (`09-25 Q20`) *Burning webs deferred; the rest
+  decided as they are (`deferred.md`).*
+- **[DECIDED 2026-10-01] Spells a party of one can't use:** ditch any spell a party of one can never use, unless it
+  has a use out of combat (Fly on an NPC to get them over a cliff). (OPEN_QUESTIONS §3) *2026-10-03: a campaign can't yet ask the hero to
+  cast a spell outside a fight, so Spare the Dying and Raise Dead are off the solo lists (`solo: unavailable`; a
+  `<<cast>>` request is deferred). Every other spell works alone, and Invisibility, Greater Invisibility, Haste and Enlarge
+  can now be cast on yourself (they could only be aimed at foes).*
+- **[DECIDED 2026-10-01] Weapon Mastery:** build if easy, defer if not. (`09-24 Q13`, `09-25 Q8`) *Deferred 2026-10-03, with an
+  estimate (`deferred.md`).*
+- **[DECIDED 2026-10-01] An off-hand:** a hero can hold a Light weapon in the off hand, and the Light bonus attack
+  uses it ("there should already have been an off-hand"). (`09-25 Q9`) *Built 2026-10-03.*
+- **[DECIDED 2026-10-01] Spell-effect key names** (`docs/spell_effect_reference.md`): fine as chosen. (09-27 run)
 - **[DEFER] Feats · Multiclassing · Encumbrance.** *(Feats also listed in `deferred.md`.)*
 
 ## 2. Content scope for v1
@@ -103,6 +146,30 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED, approach] Backgrounds** — SRD; light (skills/flavor). *(2026-09-24: 5 of the 9 in the data may not be SRD 5.2.1 — a review list is being produced; decision pending.)* *(2026-09-25: confirmed against the SRD text: only Acolyte, Criminal, Sage and Soldier are SRD 5.2.1 (SRD p.83). The removals are `cc_task_review-naming-and-backgrounds.md`'s.)* *(2026-09-28: applied. Five backgrounds: the four SRD ones and **Recluse**, Lanorim's own, first-party and marked `not_in_srd`, in its own file beside the SRD's.)*
 - **[DECIDED, approach] Monsters** — full SRD pool + custom per campaign. Statblocks are
   cheap; *special abilities are the cost* (§6).
+  - **[DECIDED 2026-10-01] Custom monsters are allowed, outside the CC-BY file.** `death_knight` (not SRD 5.2.1)
+    stays as Lanorim's own, in `content/srd/monsters/lanorim.json`, marked `not_in_srd` (with `goblin_archer`).
+    (`09-25 Q15`, `09-25b Q1`)
+  - **[DECIDED 2026-10-01] Statblocks are trued up to the SRD:** a full audit of every SRD statblock
+    (`_design_docs/STATBLOCK_AUDIT_2026-10-03.md`). The werewolf's numbers and Shape-Shift are part of it.
+    (`09-25b Q5–6`, `09-25b Q9`)
+  - **[DECIDED 2026-10-01] Monster traits** (Pack Tactics, Undead Fortitude, Magic Resistance, reactions, shared
+    per-day pools…): build if easy, defer if not. (`09-25 Q11`) *Built 2026-10-03: Pack Tactics, Bloodied Fury, Magic
+    Resistance, Undead Fortitude and Sunlight Sensitivity's attack half (a fight set in "sunlight"), as a statblock's
+    `traits`. The rest deferred (`deferred.md`).*
+  - **[DECIDED 2026-10-01] Nimble Escape: no.** The AI never spends a bonus action on it; "these monsters are
+    difficult enough right now." (`09-25b Q8`)
+  - **[DECIDED 2026-10-01] The goblin boss's Shortbow and Redirect Attack:** only if easy and reusable; the goblin
+    boss belongs to a campaign that won't ship. (`09-25b Q7`) *Its Shortbow was already in the statblock; Redirect Attack deferred.*
+  - **[DECIDED 2026-10-01] Switching targets mid-Multiattack** (the SRD allows it): build if easy, defer if not.
+    (`09-25b Q10`) *Built 2026-10-03: the attacks left go at the next creature in reach.*
+  - **[DECIDED 2026-10-01] The `goblin_shortbow` id:** trace why renaming it changed play, so an id is never a hidden
+    rule. (Cowork review, 09-29) *Traced 2026-10-03: a monster's attack was tie-broken by id, so the goblin
+    boss shot point-blank at Disadvantage. Now a rule: an attack without Disadvantage first, then average damage, then
+    the statblock's order; target ties go to the turn order.*
+  - **[IRRELEVANT 2026-10-01] Help and Surprise:** companions don't fight. (`09-25 Q12`)
+- **[DECIDED 2026-10-01] Bard:** its spells stay on the Mage list (the route). A Bard class is deferred, and may
+  never be added. (`09-25 Q19`)
+- **[DEFERRED 2026-10-01] Firearms** (Musket, Pistol, SRD): not in v1. (`09-25 Q16`)
 - **[DECIDED] Level range & leveling** — milestone leveling, up to level 20; XP deferred (allowing both,
   campaign-chosen, is cheap and a fine fast-follow).
 - **[DECIDED] Classes & subclasses** — **7 v1 classes: Barbarian, Fighter, Rogue, Mage, Cleric,
@@ -127,6 +194,9 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   whether a random encounter happens and which one. (I earlier mis-said this was
   removed — what was removed is the *no-menus/hands/room* presentation, not the DM-as-narrator.) *Builds
   needed:* random-encounter tables (weighted table + trigger) and the hidden-roll surface. *(Both built at the code layer 2026-09-24 — `core/Tables`.)*
+- **[DECIDED 2026-10-01] Doors in a fight:** the SRD's rule; where the SRD is silent, opening one mid-fight costs
+  an action, unless a bonus action makes more sense. (`09-28g Q5`) *Built 2026-10-03: SRD 5.2.1 (Interacting with Things) has one object
+  interaction free each turn, so the first door a turn is free and a second is the Utilize action. Monsters open them too.*
 - **[OPEN] Combat interaction model — how faithful to 5e tactics?** Opportunity attacks, cover, LoS,
   flanking, AoE templates, targeting/range, and *how the player issues an action*. Biggest scope driver;
   also a cost hotspot (§6). suggest a simplified version for v1
@@ -150,6 +220,7 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED] Art cohesion** — **Quaternius** low-poly 3D is the game's look (everything — dungeon, hero, monsters, companions, 3D UI); 2D art only ever as framed content
   on a prop (GM-screen panel bent with the folds, or small accents), never environment/UI; all 2D from a
   single coherent source.
+- **[DECIDED 2026-10-01] KayKit is the secondary base:** Quaternius is primary; KayKit is fine when needed. (`09-24 Q14`)
 - **[DECIDED] 3D pack cohesion — two bases: Quaternius + KayKit.** Characters, dungeon and
   other environments (village, wilderness, sci-fi), monsters, and animals/companions all come from
   Quaternius — one style family, one licence (QAL), one relationship for any future commissions. Within
@@ -166,6 +237,18 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED] Audio** — carry "text before voice, no voiced words".
 - **[DEFERRED] Audio** — music, atmospheric sound effects.
 - **[DECIDED] Accessibility** — explicitly in v1 and at the highest depth we feasibly can.
+  - **[DECIDED 2026-10-01] The five dead keys** (Tab/Shift+Tab reach, F1 Help, F2 Where are we, F3 Read aloud):
+    build them. (`09-30 Q4`) *Built 2026-10-03 (`game/Access/AccessDesk.cs`).*
+- **[DECIDED 2026-10-01] Shadows on minis:** keep them, less speckled if easy. (`09-30 Q1`) *Done 2026-10-03: the lamp's shadow map
+  covers the table instead of 100 m.*
+- **[DECIDED 2026-10-01] Unavailable options:** hidden, as now. (`09-30 Q2`)
+- **[DECIDED 2026-10-01] The rogue's size:** the hood is gone, so it stands as it did before 09-30. (`09-30 Q3`)
+- **[DECIDED 2026-10-01] The tray's lift size:** good as it is (85% of the screen's height); its look is for Blender.
+  (`10-01 Q4`)
+- **[DECIDED 2026-10-01] The combat menus' "why":** greyed options say why after the name, no hover. Keep. (`10-01 Q5`)
+- **[DECIDED 2026-10-01] The missing grid squares:** already back; nothing to do. (`09-28g Q2`)
+- **[DECIDED 2026-10-01] The companion picks** (Wolf, Fox, Shiba Inu, white horse, stag): keep. (10-01 task)
+- **[DECIDED 2026-10-01] The rogue's cape** is KayKit Skeletons' `Skeleton_Rogue` (CC0); the hood is removed. (`10-01 Q7`)
 
 ## 5. Product
 
@@ -174,6 +257,10 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED] Workshop in v1**
 - **[DECIDED] Content rating / mature-content stance** (base game) is not mature-content. workshop mature content allowed
 - **[DECIDED-ish] Platform(s)** — PC/Steam first. how feasible is it to have this on other platforms?
+- **[DECIDED 2026-10-01] Git is Kathleen's:** she commits when she wants, in the groups she decides; a run log's
+  commit groups are suggestions only. (OPEN_QUESTIONS §5)
+- **[DECIDED 2026-10-01] The naming review, Part 1** (the Bark renames, `d`/`m` in `DiceRoll.Parse`, `n` in
+  `Battle`): won't apply. Back-end names stay as they are rather than risk a missed one. (`09-28g Q3`)
 - **[DECIDED] Naming** — player-facing name is **always Lanorim**; internal/dev use is either **Maps &
   Math Rocks** or Lanorim. (Workbook/xlsx filenames keep "maps_math_rocks" — fine, it's the internal name.)
 

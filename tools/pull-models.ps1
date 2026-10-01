@@ -24,7 +24,8 @@
 .PARAMETER Models
     Model names without extension, as they are inside the pack: wall, wall_doorway, Barbarian.
     Every file whose name matches, in any of the pack's format folders that this project can
-    import (.gltf, .glb and the .bin beside them), comes across.
+    import (.gltf, .glb and the .bin beside them), comes across. A pack with no glTF of a model
+    gives its .obj and .mtl instead (Quaternius's Updated Modular Dungeon).
 
 .PARAMETER Atlas
     The shared texture to bring with them. Defaults to every .png sitting in the same folder as
@@ -33,6 +34,7 @@
 .EXAMPLE
     .\tools\pull-models.ps1 -Pack KayKit_Dungeon_Pack_1.1_FREE -Into dungeon -Models wall,wall_doorway,rubble_large
     .\tools\pull-models.ps1 -Pack KayKit_Adventurers_2.0_FREE -Into heroes -Models Barbarian
+    .\tools\pull-models.ps1 -Pack "Updated Modular Dungeon - May 2019-20260921T174604Z-1-001" -Into dungeon -Models Wall_Modular,Arch,Arch_Door
 #>
 [CmdletBinding()]
 param(
@@ -84,6 +86,17 @@ try {
             $_.FullName -match '\.(gltf|glb|bin)$'
         }
 
+        # a pack with no glTF (Quaternius's Updated Modular Dungeon ships FBX, OBJ and .blend): the OBJ and the
+        # .mtl that carries its flat colours. Godot imports an .obj as a Mesh, so each wants a one-node .tscn
+        # around it (see game/models/minis/rat.tscn)
+        if (-not $found) {
+            $found = $zip.Entries | Where-Object {
+                $_.FullName -match "/obj/" -and
+                [System.IO.Path]::GetFileNameWithoutExtension($_.FullName) -eq $model -and
+                $_.FullName -match '\.(obj|mtl)$'
+            }
+        }
+
         if (-not $found) {
             Write-Warning "no model '$model' in $Pack - skipped"
             continue
@@ -109,6 +122,22 @@ try {
         [System.IO.Compression.ZipFileExtensions]::ExtractToFile($entry, $to, $true)
 
         Write-Host ("  {0,-28} {1,8:n0} bytes" -f (Split-Path $to -Leaf), $entry.Length)
+
+        # BLENDER WRITES AN .mtl's COLOURS IN LINEAR LIGHT AND GODOT READS THEM AS sRGB, so the pack's tan stone
+        # (Kd 0.22) came out nearly black on the board. Each Kd is brought to sRGB here, once, on the copy
+        if ($to -match '\.mtl$') {
+            $lines = Get-Content $to | ForEach-Object {
+                if ($_ -match '^Kd\s+(\S+)\s+(\S+)\s+(\S+)') {
+                    $rgb = 1..3 | ForEach-Object {
+                        $c = [double]::Parse($Matches[$_], [Globalization.CultureInfo]::InvariantCulture)
+                        $srgb = if ($c -le 0.0031308) { 12.92 * $c } else { 1.055 * [math]::Pow($c, 1 / 2.4) - 0.055 }
+                        $srgb.ToString('0.000000', [Globalization.CultureInfo]::InvariantCulture)
+                    }
+                    "Kd $($rgb -join ' ')"
+                } else { $_ }
+            }
+            Set-Content -Path $to -Value $lines -Encoding ascii
+        }
     }
 }
 finally {

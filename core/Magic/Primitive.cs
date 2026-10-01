@@ -130,10 +130,17 @@ namespace Core.Magic
         // there is no save
         None,
 
-        // half the damage, and any condition still lands
+        // half the damage on a successful save. Nothing else on the effect lands on a success - a
+        // condition, a sway, a push: Contact.Resisted is true for Half as for Negates, so AfflictHandler
+        // gives no condition (the comment here used to say it did; checked 2026-10-03,
+        // cc_task_open-questions-answers.md 1.4). A spell that halves its damage and still imposes a
+        // condition on a success would give the condition to its own afflict with no save; SRD 5.2.1 has
+        // none in v1. One that halves and spares the condition gives it to an afflict with 'same_save'
+        // and 'negates' (Sunbeam, Sunburst). Beware 'follows' after a Half: it lands where the damage
+        // landed, which is on a success too
         Half,
 
-        // nothing at all happens
+        // nothing at all happens: the effect doesn't land on a successful save
         Negates,
 
         // the effect lands only on a SUCCESSFUL save: Flesh to Stone's "on a successful save, its

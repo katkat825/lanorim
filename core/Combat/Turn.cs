@@ -174,6 +174,20 @@ namespace Core.Combat
         bool _tookAction;
         bool _tookBonus;
 
+        // SRD 5.2.1 Interacting with Things: one object or feature for free each turn, during the move or an action
+        // (a door: Encounter.Doors.cs). The first Interact is that free one; after it, the answer is no
+        bool _interacted;
+
+        public bool CanInteract => !_interacted;
+
+        public bool Interact()
+        {
+            if (_interacted) return false;
+
+            _interacted = true;
+            return true;
+        }
+
         public bool Take(Spend spend, int amount = 1)
         {
             if (!Can(spend, amount)) return false;

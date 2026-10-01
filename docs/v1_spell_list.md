@@ -14,13 +14,13 @@ fully FUNCTIONS in v1** (**62 MUST + 61 SHOULD**; it was 131 until 2026-09-25, w
 deferred and Suggestion cut), built by composing a small library of effect
 **primitives** (targeting, typed damage, healing/HP, timed effects + concentration, conditions,
 areas/multi-target, persistent zones, movement, visibility/light, reactions/countermagic, barriers,
-illusion/info). 106 of the 131 come "for free" once those ~12 foundation primitives exist; only the
-handful flagged **⚠ simplify** below need a bounded, authored approximation instead of a general system.
+illusion/info). 106 of the original 131 (123 since 2026-09-25) come "for free" once those ~12 foundation primitives exist; only the
+handful flagged **⚠ simplify** below need a bounded, authored approximation instead of a general system. *(2026-10-03: aligned with decisions_checklist.md)*
 Pure-utility spells outside this set are handled as narrative / campaign content rather than coded.
 
 **Resource model reminder:** these are the spells a caster can *know/equip*. **Cantrips are at-will; leveled spells spend either spell slots or spell points** — the player picks the mode at character creation (2026-09-23); upcasting spends a higher slot or more points; long rest refills. See `decisions_checklist.md` §1.
 
-**[C]** = requires concentration. **⚠** = its effect can't match the SRD, so it ships as a bounded approximation **under a NEW NAME** (see the naming rule below), not a general subsystem.
+**[C]** = requires concentration. **⚠** = its effect can't match the SRD, so it ships as a bounded approximation **under a NEW NAME** (see the naming rule below), not a general subsystem, unless it is on the approved allow-list, which keeps its SRD name. *(2026-10-03: aligned with decisions_checklist.md)*
 
 **Area shapes (2026-09-23):** v1 supports **radius/sphere, line, and cone** templates, and **reaction spells cast as real reactions** (see `decisions_checklist.md` §6). So Lightning Bolt (line), Cone of Cold / Burning Hands (cone), and Shield / Counterspell (reaction) are **faithful, not ⚠ approximations** — the ⚠ flags below are only the genuinely-hard spells. *(2026-09-24: Sunbeam is a 60-foot **line** in the SRD, not a cone — built as a line. 2026-09-25: the Blinded condition exists now, and Sunbeam is faithful under its SRD name, SRD p.166.)*
 
@@ -28,7 +28,7 @@ Pure-utility spells outside this set are handled as narrative / campaign content
 spell whose *own* mechanics differ from the SRD (dice, save, shape, duration, targets, condition) is renamed
 and never ships under the SRD name — rules-lawyer players will not forgive a familiar name that behaves wrong.
 Universal substitutions that hit every spell the same (the slots-or-points choice, milestone leveling, binary concentration) are
-disclosed once globally and don't count. So every ⚠ spell below needs a new name before it ships; the SRD name
+disclosed once globally and don't count. So every ⚠ spell below that isn't on the allow-list needs a new name before it ships *(2026-10-03: aligned with decisions_checklist.md)*; the SRD name
 survives only as a faithful reference card if we choose to show one. **The one exception** is the short
 allow-list Kathleen approved on 2026-09-25 (Find Familiar, Dominate Monster, Wish, Polymorph, Shapechange, Fly,
 Gaseous Form, Slow). Those keep their SRD names as bounded versions, each one named with its reason under the
@@ -89,11 +89,11 @@ HARD RULE in `decisions_checklist.md` §1 and in the naming test.
 - Counterspell — *Control*
 - Dispel Magic — *Control, Buff / debuff*
 - Fireball — *Damage*
-- [C] Fly — *Movement*
+- [C] Fly — *Movement* — ⚠ approved approximation, keeps its SRD name (allow-list): a Flying status, speed 60, no altitude. *(2026-10-03: aligned with decisions_checklist.md)*
 - [C] Haste — *Control, Buff / debuff*
 - [C] Hypnotic Pattern — *Damage, Control*
 - Lightning Bolt — *Damage*
-- [C] Slow — *Control, Buff / debuff*
+- [C] Slow — *Control, Buff / debuff* — ⚠ approved approximation, keeps its SRD name (allow-list): no Somatic-component clause. *(2026-10-03: aligned with decisions_checklist.md)*
 - [C] Spirit Guardians — *Damage*
 
 **Level 4**
@@ -135,7 +135,7 @@ HARD RULE in `decisions_checklist.md` §1 and in the naming test.
 
 ---
 
-## SHOULD — 69 spells
+## SHOULD — 61 spells (69 listed, 8 struck) *(2026-10-03: aligned with decisions_checklist.md)*
 
 
 **Cantrips**
