@@ -110,10 +110,10 @@ namespace Content.Tests
 
             Assert.True(missing.Length == 0, "not in the spell files: " + string.Join(", ", missing));
 
-            // 131 on the v1 list, 123 working (Kathleen, 2026-09-25), and the Wood Elf's two that are on no class's
-            // list (content/srd/spells/species_spells.json, cc_task_e-shop-species-and-ui-notes.md 1.3)
+            // 131 on the v1 list, 123 working (Kathleen, 2026-09-25), and the Wood Elf's two
+            // (content/srd/spells/species_spells.json), on the class lists the SRD gives them since cc_task_f 1.2
             Assert.Equal(62 + 61 + 2, Book.Count);
-            Assert.Equal(123, Book.All.Count(s => s.Classes.Count > 0));
+            Assert.Equal(125, Book.All.Count(s => s.Classes.Count > 0));
             Assert.False(Book.Find("dissonant_whispers").Renamed);
             Assert.False(Book.Find("dragons_breath").Renamed);
         }

@@ -51,7 +51,15 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED] Critical hits in combat** — double the damage dice plus the standard pool of consequences.
 - **[DECIDED] Armor Class** — derived from equipped armor + Dex (SRD, shields) 
 - **[DECIDED] Movement & grid scale** — SRD
-- **[DECIDED] Currency** — Confirmed gold-only.
+  - **[DEFERRED 2026-10-06] The route the board draws** can show a longer path than the one walked. What a click costs
+    and how far a turn reaches agree (`RUN_LOG_2026-10-05.md` 2.5); only the drawn path is off. "this can be ignored.
+    it does accurately let you go 6 squares out" (`10-05 Q4`). `deferred.md`.
+- **[DECIDED] Currency** — Confirmed gold-only. **Superseded 2026-10-06 (Kathleen, in chat, for her 10-05 note "make
+  it the srd selling price"): gold, silver and copper, as the SRD prices things.** Money is kept in copper and shown as
+  "2 gp", "5 sp" or "1 gp 5 sp"; there are no coins as items. Equipment sells for half its cost (SRD 5.2.1 Selling
+  Equipment), rounded down to the copper; gems and art keep their full value (an item's `sell_percent`), and a
+  campaign merchant may still set its own. Authors still write gold: an item's `cost` takes fractions (0.5 is 5 SP).
+  Old saves' gold converts. *Built 2026-10-06 (`RUN_LOG_2026-10-06.md` 1.5).*
 - **[DEFERRED] Damage types & resistances** — full SRD, tagged-but-simple, or flatten? (see §6) deferred or flatten
 - **[DECIDED 2026-10-01] Conditions as built, kept:** Stunned also stops movement (SRD 5.2.1 doesn't say so; `09-24 Q2`); Hide's "out of every enemy's sight" stands in as three-quarters cover (`09-25 Q13`); conditions' small clauses (Blinded/Deafened auto-failing checks, the charmer's social Advantage) are covered by "core effects only" (`09-25 Q14`). **[DEFERRED]** the other conditions.
 - **[DECIDED 2026-10-01] `on_save: half` with a condition:** go with the SRD, spell by spell. *(Checked 2026-10-03 against
@@ -152,7 +160,13 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
     Longstrider. *Built 2026-10-05: a Traits step after the background; each choice saved and on the sheet. Size is
     recorded and on the actor; it changes little yet (a creature's size limits, never Small against Medium).
     **Resourceful** is the reroll Indomitable already was: the first failed save after a long rest is rolled again.
-    Druidcraft and Longstrider are on no class's list (`content/srd/spells/species_spells.json`).*
+    Druidcraft and Longstrider are on no class's list (`content/srd/spells/species_spells.json`); since 2026-10-06, on the SRD's (below).*
+    - **[DECIDED 2026-10-06] Heroic Inspiration as built is fine for v1** (`10-05 Q2`). **[DEFERRED]** the real
+      button: reroll any die, at the player's choice (`deferred.md`).
+    - **[DECIDED 2026-10-06] A spell the game ships is on every v1 class list the SRD gives it** (`10-05 Q3`: "I'm
+      fine with the spell list growing"). Druidcraft and Longstrider are on the Druid's list, Longstrider on the Mage's.
+      *Built 2026-10-06 as one rule for every spell, with a guard test (`RUN_LOG_2026-10-06.md` 1.2,
+      `v1_spell_list.md`).*
 - **[DECIDED, approach] Backgrounds** — SRD; light (skills/flavor). *(2026-09-24: 5 of the 9 in the data may not be SRD 5.2.1 — a review list is being produced; decision pending.)* *(2026-09-25: confirmed against the SRD text: only Acolyte, Criminal, Sage and Soldier are SRD 5.2.1 (SRD p.83). The removals are `cc_task_review-naming-and-backgrounds.md`'s.)* *(2026-09-28: applied. Five backgrounds: the four SRD ones and **Recluse**, Lanorim's own, first-party and marked `not_in_srd`, in its own file beside the SRD's.)*
 - **[DECIDED, approach] Monsters** — full SRD pool + custom per campaign. Statblocks are
   cheap; *special abilities are the cost* (§6).
@@ -182,6 +196,7 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
     on the target that it doesn't have yet comes first (`Tactics.Best`, `Rider.Adds`). Paralyzed lasts until the end of
     the target's next turn, so it is over before the ghoul acts again: the Claw costs the hero turns, and the ghoul
     rarely gets to bite a paralysed hero. Ghoul fights got easier, not harder (`RUN_LOG_2026-10-05.md` 1.1).*
+    **[DECIDED 2026-10-06] Easier is fine:** "keep faithful to srd." No change. (`10-05 Q1`)
 - **[DECIDED 2026-10-01] Bard:** its spells stay on the Mage list (the route). A Bard class is deferred, and may
   never be added. (`09-25 Q19`)
 - **[DEFERRED 2026-10-01] Firearms** (Musket, Pistol, SRD): not in v1. (`09-25 Q16`)
@@ -206,7 +221,9 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
     class's and background's gear or the gold instead, and a **starting shop** for that gold before the campaign
     begins (Kathleen's addition). *Built 2026-10-05: the creator's Equipment step; the shop is the merchant every shop
     is, stocked from `content/srd/merchants/starting_shop.json` unless the campaign writes its own `starting_shop`
-    merchant. Taking the gear means no shop.*
+    merchant. Taking the gear means no shop.* **[DECIDED 2026-10-06] The starting shop always opens**, gear or
+    gold, with whatever gold the hero has; it's still skippable (`10-05 Q5`). The Equipment step shows the class's
+    and the background's gear as **one list**, each still with its own gear-or-gold choice.
 - **[DECIDED] Characters per campaign / save slots** — carry the old "5 per campaign"
 
 ## 3. The video-game glue (SRD is silent)

@@ -462,10 +462,10 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 |---|---|---|---|---|---|
 | `id` | id | the item's id | | item | existing |
 | `kind` | kind | what kind of item | | item | existing |
-| `cost` | number | its price | | item | existing |
+| `cost` | number, in gold | its price, as the SRD prints it: fractions for silver and copper (0.5 is 5 SP, 0.01 is 1 CP), read as copper (cc_task_f 1.5) | | item | existing |
 | `stackable` | flag | it stacks in the pack | | item | existing |
 | `sell_percent` | number | what a merchant pays for it | | item | existing |
-| `slot` | slot | where it is worn | | item | existing |
+| `slot` | slot: `main_hand`, `off_hand`, `two_hand`, `body`, `trinket` | where it is worn; a shield is `off_hand` (cc_task_f 1.6: there's no `shield` slot) | | item | existing |
 | `weapon` | record | it is a weapon | | item | existing |
 | `armor` | record | it is armor | | item | existing |
 | `classes` | list of class ids | only these classes may wear it | | item | existing |

@@ -34,6 +34,16 @@ allow-list Kathleen approved on 2026-09-25 (Find Familiar, Dominate Monster, Wis
 Gaseous Form, Slow). Those keep their SRD names as bounded versions, each one named with its reason under the
 HARD RULE in `decisions_checklist.md` §1 and in the naming test.
 
+**Class lists (2026-10-06, Kathleen's 10-05 answer):** a spell the game ships is on **every v1 class list the SRD
+5.2.1 gives it** — "I'm fine with the spell list growing". The SRD's Wizard, Warlock, Sorcerer and Bard lists feed
+the merged **Mage**; the Cleric, Druid and Paladin lists feed those classes; the Ranger's feeds none (Hunter's Mark
+on the Druid's is the one carried over by hand, `v1_class_roster.md`). The SRD's lists are in
+`content/srd/reference/spell_names.json` (written from the SRD text by `tools/srd_spell_lists.py`), and
+`SpellClassListTests` fails on a shipped spell missing from a list the SRD gives it. When the rule was applied, every
+spell already was, except the Wood Elf's two (now **125 spells on class lists**):
+- **Druidcraft** (cantrip): gained the **Druid** (SRD: Druid).
+- **Longstrider** (level 1): gained the **Druid** and the **Mage** (SRD: Bard, Druid, Ranger, Wizard).
+
 
 
 ---

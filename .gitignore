@@ -27,3 +27,6 @@ Thumbs.db
 
 # a snapshot test that fails writes what it saw beside its golden file; never commit it
 content.tests/Snapshots/*.actual.txt
+
+# exported builds (game/export_presets.cfg, checks/check-export.ps1): made from the tree, never committed
+/build/
