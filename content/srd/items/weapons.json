@@ -1,9 +1,9 @@
 {
-  "_": "SRD 5.2.1 weapons (p.91), CC-BY-4.0. Ranges are in squares: one square is five feet. category is simple or martial (class training reads it); the properties are SRD's (p.89-90): light, heavy, thrown (a melee weapon that can be thrown), versatile (the two-handed damage), finesse and reach. Ammunition and Loading are not tracked - a bow fires freely - and Weapon Mastery is still an open question. Costs are in gold, silver rounded up to 1 (the gold-only decision). The Musket and Pistol are left out for now (a tone call).",
+  "_": "SRD 5.2.1 weapons (p.91), CC-BY-4.0. Ranges are in squares: one square is five feet. category is simple or martial (class training reads it); the properties are SRD's (p.89-90): light, heavy, thrown (a melee weapon that can be thrown), versatile (the two-handed damage), finesse and reach. Ammunition and Loading are not tracked - a bow fires freely - and Weapon Mastery is still an open question. Costs are in gold as the SRD prints them, silver and copper as fractions (0.5 is 5 SP, 0.05 is 5 CP; cc_task_f 1.5). The Musket and Pistol are left out for now (a tone call).",
 
   "items": [
     {
-      "id": "club", "kind": "weapon", "cost": 1, "slot": "main_hand",
+      "id": "club", "kind": "weapon", "cost": 0.1, "slot": "main_hand",
       "weapon": { "damage": "1d4", "damage_type": "bludgeoning", "category": "simple",
                   "light": true }
     },
@@ -14,7 +14,7 @@
                   "long_range": 12 }
     },
     {
-      "id": "greatclub", "kind": "weapon", "cost": 1, "slot": "two_hand",
+      "id": "greatclub", "kind": "weapon", "cost": 0.2, "slot": "two_hand",
       "weapon": { "damage": "1d8", "damage_type": "bludgeoning", "category": "simple" }
     },
     {
@@ -23,7 +23,7 @@
                   "thrown": true, "range": 4, "long_range": 12 }
     },
     {
-      "id": "javelin", "kind": "weapon", "cost": 1, "slot": "main_hand",
+      "id": "javelin", "kind": "weapon", "cost": 0.5, "slot": "main_hand",
       "weapon": { "damage": "1d6", "damage_type": "piercing", "category": "simple", "thrown": true,
                   "range": 6, "long_range": 24 }
     },
@@ -37,7 +37,7 @@
       "weapon": { "damage": "1d6", "damage_type": "bludgeoning", "category": "simple" }
     },
     {
-      "id": "quarterstaff", "kind": "weapon", "cost": 1, "slot": "main_hand",
+      "id": "quarterstaff", "kind": "weapon", "cost": 0.2, "slot": "main_hand",
       "weapon": { "damage": "1d6", "damage_type": "bludgeoning", "category": "simple",
                   "versatile": "1d8" }
     },
@@ -51,7 +51,7 @@
                   "range": 4, "long_range": 12, "versatile": "1d8" }
     },
     {
-      "id": "dart", "kind": "weapon", "cost": 1, "slot": "main_hand",
+      "id": "dart", "kind": "weapon", "cost": 0.05, "slot": "main_hand",
       "weapon": { "damage": "1d4", "damage_type": "piercing", "category": "simple",
                   "finesse": true, "ability": "dex", "thrown": true, "range": 4, "long_range": 12 }
     },
@@ -66,7 +66,7 @@
                   "ability": "dex", "range": 16, "long_range": 64 }
     },
     {
-      "id": "sling", "kind": "weapon", "cost": 1, "slot": "main_hand",
+      "id": "sling", "kind": "weapon", "cost": 0.1, "slot": "main_hand",
       "weapon": { "damage": "1d4", "damage_type": "bludgeoning", "category": "simple",
                   "ability": "dex", "range": 6, "long_range": 24 }
     },

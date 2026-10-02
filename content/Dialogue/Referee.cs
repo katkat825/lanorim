@@ -176,8 +176,9 @@ namespace Content.Dialogue
         Settled Paid(Request request)
         {
             // taking more than the hero has takes what there is: a toll does not go into debt
-            if (request.Amount >= 0) _hero.Pack.Earn(request.Amount);
-            else _hero.Pack.Spend(Math.Min(_hero.Pack.Gold, -request.Amount));
+            // <<gold N>> is in gold; the purse is copper (Coins)
+            if (request.Amount >= 0) _hero.Pack.Earn(Coins.FromGold(request.Amount));
+            else _hero.Pack.Spend(Math.Min(_hero.Pack.Copper, Coins.FromGold(-request.Amount)));
 
             return new Settled(request, new Answer());
         }

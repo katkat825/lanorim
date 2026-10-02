@@ -66,8 +66,8 @@ namespace Content.Sheet
 
         public KitChoice BackgroundKit { get; set; }
 
-        // took gold for either, and hasn't been to the starting shop yet: the campaign opens it before its first
-        // scene. saved, so a save made in the shop goes back to it
+        // a new hero who hasn't been to the starting shop yet: the campaign opens it before its first scene, gear or
+        // gold (cc_task_f 1.3). saved, so a save made in the shop goes back to it
         public bool ShopsFirst { get; set; }
 
         // the player types a name, so it is not a localization key - it is the one string in the

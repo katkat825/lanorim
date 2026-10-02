@@ -385,7 +385,7 @@ namespace Content.Tests
             Haul haul = Spoils.Hand(pack, roll, Shelf);
 
             Assert.Equal(70, haul.Gold);
-            Assert.Equal(70, pack.Gold);
+            Assert.Equal(Coins.FromGold(70), pack.Copper); // a table's gold, into a purse of copper
             Assert.Equal(3, pack.CountOf("torch"));
             Assert.False(haul.MustMakeRoom);
         }
@@ -409,7 +409,7 @@ namespace Content.Tests
             Haul haul = Spoils.Hand(pack, roll, Shelf);
 
             // the gold costs no slot, so it is in; the two blades wait, in the order they were found
-            Assert.Equal(5, pack.Gold);
+            Assert.Equal(Coins.FromGold(5), pack.Copper);
             Assert.True(haul.MustMakeRoom);
             Assert.Equal(new[] { "longsword", "dagger" }, haul.Waiting.Select(o => o.Arriving.Id));
             Assert.True(pack.Has("shield"));

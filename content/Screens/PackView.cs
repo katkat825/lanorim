@@ -57,7 +57,8 @@ namespace Content.Screens
 
         public Pack Pack => Hero.Pack;
 
-        public int Gold => Pack.Gold;
+        // the purse, in copper (Coins); Money says it
+        public int Copper => Pack.Copper;
 
         public int Used => Pack.Used;
 
@@ -84,7 +85,7 @@ namespace Content.Screens
                           {
                               Item = item,
                               Price = Merchant.PriceOf(item),
-                              Affordable = Merchant.PriceOf(item) <= Gold,
+                              Affordable = Merchant.PriceOf(item) <= Copper,
                           })
                           .ToList();
 
@@ -157,10 +158,27 @@ namespace Content.Screens
 
         public static string SlotKey(Slot slot) => ScreenKeys.Key("pack", "slot_" + Core.Words.EnumWords.Id(slot));
 
+        // AN AMOUNT, AS COINS (cc_task_f 1.5): copper said as gold, silver and copper, the largest first, each only when
+        // there is some - "2 gp", "5 sp", "1 gp 5 sp" - and nothing at all as "0 gp". keys and counts; the screen says them
+        public static IReadOnlyList<(string Key, int Count)> Money(int copper)
+        {
+            (int gold, int silver, int coppers) = Coins.Split(copper);
+
+            var said = new List<(string, int)>();
+
+            if (gold > 0) said.Add((GoldKey, gold));
+            if (silver > 0) said.Add((SilverKey, silver));
+            if (coppers > 0) said.Add((CopperKey, coppers));
+
+            return said.Count > 0 ? said : new[] { (GoldKey, 0) };
+        }
+
         Item Find(string itemId) => _shelf?.Find(itemId) ?? Pack.FirstOf(itemId)?.Item;
 
         public static readonly string TitleKey = ScreenKeys.Key("pack", "title");
         public static readonly string GoldKey = ScreenKeys.Key("pack", "gold");
+        public static readonly string SilverKey = ScreenKeys.Key("pack", "silver");
+        public static readonly string CopperKey = ScreenKeys.Key("pack", "copper");
         public static readonly string SlotsKey = ScreenKeys.Key("pack", "slots");
         public static readonly string QuestKey = ScreenKeys.Key("pack", "quest_items");
         public static readonly string UseKey = ScreenKeys.Key("pack", "use");
@@ -181,7 +199,7 @@ namespace Content.Screens
         public static IEnumerable<string> Keys() =>
             new[]
             {
-                TitleKey, GoldKey, SlotsKey, QuestKey, UseKey, EquipKey, UnequipKey, OffHandKey, WornKey, DiscardKey,
+                TitleKey, GoldKey, SilverKey, CopperKey, SlotsKey, QuestKey, UseKey, EquipKey, UnequipKey, OffHandKey, WornKey, DiscardKey,
                 DiscardWarningKey, DontWarnAgainKey, BuyKey, SellKey, SellEquippedKey, NewItemKey,
                 MakeRoomKey, LeaveKey,
             }.Concat(Slots.All.Select(SlotKey));

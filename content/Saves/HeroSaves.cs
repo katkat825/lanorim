@@ -45,7 +45,7 @@ namespace Content.Saves
                 TemporaryHitPoints = actor.Health.Temporary,
                 HitDice = actor.Health.HitDice,
                 Resource = hero.Resource,
-                Gold = hero.Pack.Gold,
+                Copper = hero.Pack.Copper,
                 ExtraActions = hero.Budget.ExtraActionsLeft,
                 Form = hero.Form?.Id ?? "",
             };

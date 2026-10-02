@@ -233,7 +233,7 @@ namespace Content.Saves
                         $"{stack.Count - took} of '{stack.Item}' did not fit in the pack"));
             }
 
-            hero.Pack.Earn(saved.Gold);
+            hero.Pack.Earn(saved.Copper);
 
             foreach (Slot slot in saved.Worn.Keys.OrderBy(s => (int)s))
             {

@@ -92,7 +92,7 @@ namespace Content.Items
             }
 
             var item = new Item(id, kind,
-                                entry.Number("cost"),
+                                entry.Price("cost", id, problems),
                                 entry.Flag("stackable"),
                                 entry.Has("sell_percent") ? entry.Number("sell_percent") : -1,
                                 slot,
@@ -141,8 +141,8 @@ namespace Content.Items
                 problems.Add($"{item.Id}: a quest item that grants a boon takes a slot like " +
                              "anything else - give it another kind (inventory_decisions.md)");
 
-            if (item.Kind == ItemKind.Shield && item.Slot != Slot.Shield)
-                problems.Add($"{item.Id}: a shield goes in the shield slot");
+            if (item.Kind == ItemKind.Shield && item.Slot != Slot.OffHand)
+                problems.Add($"{item.Id}: a shield goes in the off hand (\"slot\": \"off_hand\")");
 
             if (item.Kind == ItemKind.Armor && item.Slot != Slot.Body)
                 problems.Add($"{item.Id}: armor goes on the body");

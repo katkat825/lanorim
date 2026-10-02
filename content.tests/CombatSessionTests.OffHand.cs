@@ -55,7 +55,7 @@ namespace Content.Tests
             Assert.Null(hero.Equipment.In(Slot.OffHand));
         }
 
-        // the off hand holds a weapon or a shield, not both
+        // the off hand holds a weapon or a shield, not both: a shield IS the off hand (cc_task_f 1.6)
         [Fact]
         public void AShieldAndAnOffHandWeaponShareTheHand()
         {
@@ -64,11 +64,50 @@ namespace Content.Tests
             hero.Pack.Take(ItemCalled("shield"));
             Assert.True(hero.Wear(ItemCalled("shield")));
 
-            Assert.Null(hero.Equipment.In(Slot.OffHand));
+            Assert.Equal("shield", hero.Equipment.In(Slot.OffHand)?.Id);
+            Assert.True(hero.Actor.HasShield);
             Assert.True(hero.Pack.Has("dagger"));
 
             Assert.True(hero.HoldInOffHand(ItemCalled("dagger")));
-            Assert.Null(hero.Equipment.In(Slot.Shield));
+            Assert.Equal("dagger", hero.Equipment.In(Slot.OffHand)?.Id);
+            Assert.False(hero.Actor.HasShield);
+            Assert.True(hero.Pack.Has("shield"));
+        }
+
+        // "change the pack ui for 'Shield: Shield' to be 'Off hand: Shield' like it is for a dagger" (Kathleen, 2026-10-05)
+        [Fact]
+        public void AShieldIsWornInTheOffHandAndThePackSaysSo()
+        {
+            Hero hero = DualWielder();
+
+            hero.Pack.Take(ItemCalled("shield"));
+            hero.Wear(ItemCalled("shield"));
+
+            var view = new Content.Screens.PackView(hero, Srd.Items);
+
+            Assert.Contains(view.Worn, w => w.Slot == Slot.OffHand && w.Item.Id == "shield");
+            Assert.Equal("ui.pack.slot_off_hand", Content.Screens.PackView.SlotKey(Slot.OffHand));
+            Assert.DoesNotContain(Slots.All, s => Core.Words.EnumWords.Id(s) == "shield");
+        }
+
+        // a save from before wore its shield in a "shield" slot; it comes back in the off hand
+        [Fact]
+        public void AnOldSavesShieldSlotIsTheOffHand()
+        {
+            Hero hero = DualWielder();
+
+            hero.Pack.Take(ItemCalled("shield"));
+            hero.Wear(ItemCalled("shield"));
+
+            string json = Content.Saves.SaveWriter.Write(new Content.Saves.SaveGame { Hero = Content.Saves.HeroSaves.Capture(hero) });
+            Assert.Contains("\"offhand\": \"shield\"", json);
+
+            string old = json.Replace("\"offhand\": \"shield\"", "\"shield\": \"shield\"");
+            Hero back = Content.Saves.HeroSaves.Restore(Content.Saves.SaveReader.Parse(old).Value.Hero, Srd, out var problems);
+
+            Assert.Empty(problems);
+            Assert.Equal("shield", back.Equipment.In(Slot.OffHand)?.Id);
+            Assert.True(back.Actor.HasShield);
         }
 
         // after an Attack action with the shortsword, the dagger in the other hand is offered as the bonus attack

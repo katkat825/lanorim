@@ -39,7 +39,7 @@ namespace Content.Tests
                     // point of writing only the active mode
                     Resource = SpellResourceMode.Points,
                     Points = 5,
-                    Gold = 16,
+                    Copper = 1650,
                     X = 1,
                     Y = 4,
                 },

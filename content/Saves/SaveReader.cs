@@ -121,7 +121,8 @@ namespace Content.Saves
                 HitPoints = entry.Number("hp", -1),
                 TemporaryHitPoints = entry.Number("temp_hp", 0),
                 HitDice = entry.Number("hit_dice", -1),
-                Gold = entry.Number("gold", 0),
+                Copper = entry.Has("copper") ? entry.Number("copper", 0)
+                                             : Inventory.Coins.FromGold(entry.Number("gold", 0)),
                 Points = entry.Number("spell_points", -1),
                 ExtraActions = entry.Number("extra_actions", -1),
                 Form = entry.Text("form"),
@@ -211,7 +212,8 @@ namespace Content.Saves
             if (entry.Has("worn"))
                 foreach (JsonProperty property in entry.GetProperty("worn").EnumerateObject())
                 {
-                    if (!EnumWords.TryName(property.Name, out Slot slot))
+                    // a save from before cc_task_f 1.6 wore a shield in a slot of its own; it is the off hand now
+                    if (!EnumWords.TryName(property.Name == "shield" ? EnumWords.Name(Slot.OffHand) : property.Name, out Slot slot))
                     {
                         problems.Add(ContentProblem.Caution(file, "hero.worn",
                             $"'{property.Name}' is not a slot anything is worn in"));

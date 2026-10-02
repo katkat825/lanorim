@@ -36,10 +36,11 @@ namespace Content.Items
     {
         [Unread] None = 0,
         MainHand,
+        // a Light weapon held for the Light bonus attack, or a shield: one or the other, never both (cc_task_f 1.6 - the
+        // shield had a slot of its own that conflicted with this one both ways, so it read "Shield: Shield")
         OffHand,
         TwoHand,
         Body,
-        Shield,
         Trinket,
     }
 
@@ -68,9 +69,10 @@ namespace Content.Items
             Uses = Math.Max(0, uses);
         }
 
-        // the game's cut on a sale; an item may raise its own, up to the full price
-        // (inventory_decisions.md)
-        public const int DefaultSellPercent = 40;
+        // what a sale pays of the cost; an item may raise its own, up to the full price (inventory_decisions.md). SRD 5.2.1
+        // Selling Equipment: "Equipment fetches half its cost when sold", while gems and art keep their full value (an
+        // item's own sell_percent, the gemstone's 100). it was 40 until cc_task_f 1.5
+        public const int DefaultSellPercent = 50;
 
         // one stack is this many; past it, the next one takes another slot
         public const int StackLimit = 99_999;
@@ -79,14 +81,12 @@ namespace Content.Items
 
         public ItemKind Kind { get; }
 
-        // gold. currency is gold-only (decisions_checklist.md section 1)
+        // in copper (Coins): the file writes it in gold, with fractions (Json.Price)
         public int Cost { get; }
 
         public bool Stackable { get; }
 
         public int SellPercent { get; }
-
-        public int SellPrice => Cost * SellPercent / 100;
 
         public Slot Slot { get; }
 
@@ -155,17 +155,16 @@ namespace Content.Items
     {
         public static readonly IReadOnlyList<Slot> All = new[]
         {
-            Slot.MainHand, Slot.OffHand, Slot.TwoHand, Slot.Body, Slot.Shield, Slot.Trinket,
+            Slot.MainHand, Slot.OffHand, Slot.TwoHand, Slot.Body, Slot.Trinket,
         };
 
         // a two-handed weapon takes both hands: equipping one takes the other two off
         public static IEnumerable<Slot> Conflicts(this Slot slot) => slot switch
         {
-            Slot.TwoHand => new[] { Slot.MainHand, Slot.OffHand, Slot.Shield },
+            Slot.TwoHand => new[] { Slot.MainHand, Slot.OffHand },
             Slot.MainHand => new[] { Slot.TwoHand },
-            // the off hand holds a weapon or a shield, not both (cc_task_open-questions-answers.md 3.1)
-            Slot.OffHand => new[] { Slot.TwoHand, Slot.Shield },
-            Slot.Shield => new[] { Slot.TwoHand, Slot.OffHand },
+            // the off hand holds a weapon or a shield, not both (cc_task_open-questions-answers.md 3.1): it is one slot
+            Slot.OffHand => new[] { Slot.TwoHand },
             _ => Array.Empty<Slot>(),
         };
     }

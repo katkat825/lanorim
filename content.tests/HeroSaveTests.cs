@@ -113,7 +113,7 @@ namespace Content.Tests
 
             // and what is carried, which the sheet does not show all of
             Assert.Equal(Carried(was), Carried(back));
-            Assert.Equal(was.Pack.Gold, back.Pack.Gold);
+            Assert.Equal(was.Pack.Copper, back.Pack.Copper);
             Assert.Equal(was.Equipment.Worn.OrderBy(p => p.Key).Select(p => (p.Key, p.Value.Id)),
                          back.Equipment.Worn.OrderBy(p => p.Key).Select(p => (p.Key, p.Value.Id)));
         }
@@ -313,7 +313,7 @@ namespace Content.Tests
             var save = new SaveGame { Hero = HeroSaves.Capture(mage) };
             save.Hero.Known.Add("wish_upon_a_star");
             save.Hero.Pack.Add(new SavedStack("bag_of_endless_socks", 2));
-            save.Hero.Worn[Slot.Shield] = "shield_of_nothing";
+            save.Hero.Worn[Slot.OffHand] = "shield_of_nothing";
 
             Read<SaveGame> read = SaveReader.Parse(SaveWriter.Write(save));
 

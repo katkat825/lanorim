@@ -520,7 +520,7 @@ namespace Content.Tests
             if (!hero.Pack.Has("greatsword")) hero.Pack.Take(greatsword);
 
             Assert.True(hero.Wear(greatsword));
-            Assert.Null(hero.Equipment.In(Items.Slot.Shield));
+            Assert.Null(hero.Equipment.In(Items.Slot.OffHand));
             Assert.Null(hero.Equipment.In(Items.Slot.MainHand));
             Assert.True(hero.Pack.Has("shield"));
         }
