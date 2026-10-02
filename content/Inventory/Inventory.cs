@@ -79,15 +79,16 @@ namespace Content.Inventory
 
         public bool IsFull => Free <= 0;
 
-        public int Gold { get; private set; }
+        // the purse, in copper pieces (Coins): written as gold, silver and copper
+        public int Copper { get; private set; }
 
-        public void Earn(int gold) => Gold += Math.Max(0, gold);
+        public void Earn(int copper) => Copper += Math.Max(0, copper);
 
-        public bool Spend(int gold)
+        public bool Spend(int copper)
         {
-            if (gold < 0 || gold > Gold) return false;
+            if (copper < 0 || copper > Copper) return false;
 
-            Gold -= gold;
+            Copper -= copper;
             return true;
         }
 
@@ -191,7 +192,7 @@ namespace Content.Inventory
         }
 
         public override string ToString() =>
-            $"{Used}/{Capacity} slots, {Gold} gold" +
+            $"{Used}/{Capacity} slots, {Copper} copper" +
             (_questItems.Count > 0 ? $", {_questItems.Count} quest items" : "");
     }
 }

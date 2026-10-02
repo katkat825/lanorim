@@ -116,10 +116,10 @@ namespace Content.Tests
             pack.Earn(100);
 
             Assert.True(pack.Spend(40));
-            Assert.Equal(60, pack.Gold);
+            Assert.Equal(60, pack.Copper);
 
             Assert.False(pack.Spend(100));
-            Assert.Equal(60, pack.Gold);
+            Assert.Equal(60, pack.Copper);
         }
     }
 
@@ -143,12 +143,12 @@ namespace Content.Tests
             Merchant shop = Shop("longsword");
             var pack = new Pack();
 
-            pack.Earn(100);
+            pack.Earn(Coins.FromGold(100));
 
             Deal deal = shop.Buy(pack, Srd.Items.Find("longsword"), Buyer(), "fighter");
 
             Assert.True(deal.Done);
-            Assert.Equal(85, pack.Gold);
+            Assert.Equal(Coins.FromGold(85), pack.Copper);
             Assert.True(pack.Has("longsword"));
         }
 
@@ -158,13 +158,13 @@ namespace Content.Tests
             Merchant shop = Shop("plate_armor");
             var pack = new Pack();
 
-            pack.Earn(10);
+            pack.Earn(Coins.FromGold(10));
 
             Deal deal = shop.Buy(pack, Srd.Items.Find("plate_armor"), Buyer(), "fighter");
 
             Assert.False(deal.Done);
             Assert.Equal(Rebuff.NoGold, deal.Rebuff);
-            Assert.Equal(10, pack.Gold);
+            Assert.Equal(Coins.FromGold(10), pack.Copper);
             Assert.Equal(0, pack.Used);
         }
 
@@ -176,13 +176,13 @@ namespace Content.Tests
 
             var pack = new Pack(1);
             pack.Take(Srd.Items.Find("shield"));
-            pack.Earn(1000);
+            pack.Earn(Coins.FromGold(1000));
 
             Deal deal = shop.Buy(pack, Srd.Items.Find("longsword"), Buyer(), "fighter");
 
             Assert.False(deal.Done);
             Assert.Equal(Rebuff.PackFull, deal.Rebuff);
-            Assert.Equal(1000, pack.Gold);
+            Assert.Equal(Coins.FromGold(1000), pack.Copper);
             Assert.False(pack.Has("longsword"));
         }
 
@@ -233,7 +233,7 @@ namespace Content.Tests
             Merchant shop = Shop("holy_symbol");
 
             var pack = new Pack();
-            pack.Earn(100);
+            pack.Earn(Coins.FromGold(100));
 
             Deal deal = shop.Buy(pack, Srd.Items.Find("holy_symbol"), Buyer(), "fighter");
 
@@ -252,7 +252,7 @@ namespace Content.Tests
             Deal deal = shop.Sell(pack, Srd.Items.Find("longsword"));
 
             Assert.True(deal.Done);
-            Assert.Equal(15 * Item.DefaultSellPercent / 100, pack.Gold);
+            Assert.Equal(Coins.FromGold(15) * Item.DefaultSellPercent / 100, pack.Copper);
             Assert.False(pack.Has("longsword"));
         }
 
@@ -261,7 +261,7 @@ namespace Content.Tests
         {
             Merchant shop = Shop();
 
-            Assert.Equal(50, shop.PaysFor(Srd.Items.Find("gemstone")));
+            Assert.Equal(Coins.FromGold(50), shop.PaysFor(Srd.Items.Find("gemstone")));
         }
 
         [Fact]
@@ -314,7 +314,7 @@ namespace Content.Tests
             var worn = new Equipment();
 
             worn.Wear(Srd.Items.Find("leather_armor"), hero, "fighter");
-            pack.Earn(2000);
+            pack.Earn(Coins.FromGold(2000));
 
             Deal deal = shop.Buy(pack, Srd.Items.Find("plate_armor"), hero, "fighter", 1, worn);
 

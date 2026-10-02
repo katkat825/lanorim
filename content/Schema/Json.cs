@@ -269,6 +269,22 @@ namespace Content.Schema
             return 1;
         }
 
+        // "cost": a price in gold, as the SRD writes it, with fractions for silver and copper (0.5 is 5 SP, 0.01 is
+        // 1 CP), read as copper (Coins, cc_task_f 1.5). 0 when it isn't written
+        public static int Price(this JsonElement entry, string name, string where, List<string> problems)
+        {
+            if (!entry.Has(name)) return 0;
+
+            JsonElement found = entry.GetProperty(name);
+
+            if (found.ValueKind == JsonValueKind.Number && found.TryGetDecimal(out decimal gold) && gold >= 0 &&
+                gold * Inventory.Coins.PerGold == decimal.Truncate(gold * Inventory.Coins.PerGold))
+                return (int)(gold * Inventory.Coins.PerGold);
+
+            problems.Add($"{where}: {name} is a price in gold, 0 or more, to the copper (0.5 is 5 SP, 0.01 is 1 CP)");
+            return 0;
+        }
+
         // a record, { ... }, under one name: false when it isn't there, or isn't an object (said); its own keys
         // are checked. the upcast, an escape, a repeat save - every small record an effect carries
         public static bool Record(this JsonElement element, string name, IReadOnlyList<string> keys, string where,

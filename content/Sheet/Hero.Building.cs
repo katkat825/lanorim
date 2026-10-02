@@ -94,15 +94,18 @@ namespace Content.Sheet
         public IReadOnlyList<AbilityImprovement> RefusedImprovements { get; private set; } =
             Array.Empty<AbilityImprovement>();
 
+        // the gear a hero starts with: the class's if they took it, then the background's if they took it, by item id
+        // (an item twice is two). the creator's one list counts these (Creation.StartingGear)
+        public static IEnumerable<string> KitGear(CharacterClass cls, KitChoice classKit,
+                                                  Background background, KitChoice backgroundKit) =>
+            (classKit == KitChoice.Gear ? cls?.StartingGear ?? Enumerable.Empty<string>() : Enumerable.Empty<string>())
+            .Concat(backgroundKit == KitChoice.Gear ? background?.Gear ?? Enumerable.Empty<string>()
+                                                    : Enumerable.Empty<string>());
+
         // the class's gear and the background's, each with its gold - or each one's gold instead (KitChoice)
         void Kit(ItemShelf shelf)
         {
-            IEnumerable<string> gear =
-                (ClassKit == KitChoice.Gear ? Class.StartingGear : Enumerable.Empty<string>())
-                .Concat(BackgroundKit == KitChoice.Gear ? Background?.Gear ?? Enumerable.Empty<string>()
-                                                        : Enumerable.Empty<string>());
-
-            foreach (string id in gear)
+            foreach (string id in KitGear(Class, ClassKit, Background, BackgroundKit))
             {
                 Item item = shelf.Find(id);
 
@@ -111,10 +114,12 @@ namespace Content.Sheet
                 Pack.Take(item);
             }
 
-            Pack.Earn((ClassKit == KitChoice.Gear ? Class.Gold : Class.GoldInstead) +
-                      (Background == null ? 0 : BackgroundKit == KitChoice.Gear ? Background.Gold : Background.GoldInstead));
+            Pack.Earn(Coins.FromGold((ClassKit == KitChoice.Gear ? Class.Gold : Class.GoldInstead) +
+                                     (Background == null ? 0
+                                         : BackgroundKit == KitChoice.Gear ? Background.Gold : Background.GoldInstead)));
 
-            ShopsFirst = ClassKit == KitChoice.Gold || BackgroundKit == KitChoice.Gold && Background != null;
+            // every new hero goes to the starting shop, gear or gold, with whatever gold they have (Kathleen, 2026-10-05)
+            ShopsFirst = true;
 
             WearTheBest();
         }
@@ -149,7 +154,7 @@ namespace Content.Sheet
             if (weapon != null && Equipment.In(Slot.MainHand) == null && Equipment.In(Slot.TwoHand) == null)
                 Wear(weapon);
 
-            if (Class.Shields && Equipment.In(Slot.Shield) == null && Equipment.In(Slot.TwoHand) == null)
+            if (Class.Shields && Equipment.In(Slot.OffHand) == null && Equipment.In(Slot.TwoHand) == null)
                 foreach (Item shield in Pack.Stacks.Select(s => s.Item)
                                             .Where(i => i.Kind == ItemKind.Shield).Take(1))
                     Wear(shield);

@@ -107,7 +107,7 @@ namespace Content.Inventory
             Item body = In(Slot.Body);
 
             actor.Armor = body?.Armor ?? ArmorProfile.Unarmored;
-            actor.HasShield = In(Slot.Shield) != null;
+            actor.HasShield = In(Slot.OffHand)?.Kind == ItemKind.Shield;
         }
 
         // every item boon is stamped with the same source, so one call takes all of them off and

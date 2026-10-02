@@ -33,13 +33,13 @@ namespace Content.Inventory
     public sealed class Deal
     {
         public Deal(bool done, Rebuff rebuff = Rebuff.None, Item item = null, int count = 0,
-                    int gold = 0)
+                    int copper = 0)
         {
             Done = done;
             Rebuff = rebuff;
             Item = item;
             Count = count;
-            Gold = gold;
+            Copper = copper;
         }
 
         public bool Done { get; }
@@ -50,15 +50,15 @@ namespace Content.Inventory
 
         public int Count { get; }
 
-        // gold that changed hands, positive either way
-        public int Gold { get; }
+        // money that changed hands, in copper (Coins), positive either way
+        public int Copper { get; }
 
         // what the shopkeeper says about it
         public string LineKey => Merchant.LineFor(Rebuff);
 
         public override string ToString() =>
             Done
-                ? $"{Count} x {Item?.Id} for {Gold} gold"
+                ? $"{Count} x {Item?.Id} for {Copper} copper"
                 : $"no deal: {Rebuff}";
     }
 
@@ -95,8 +95,11 @@ namespace Content.Inventory
                   .OrderBy(i => i.Cost)
                   .ThenBy(i => i.Id, StringComparer.Ordinal);
 
+        // in copper, as every amount is (Coins)
         public int PriceOf(Item item) => item?.Cost ?? 0;
 
+        // half the cost by default, SRD 5.2.1 (Item.DefaultSellPercent), or the item's own or this merchant's cut;
+        // rounded down to the copper, as the SRD rounds
         public int PaysFor(Item item)
         {
             if (item == null) return 0;
@@ -121,7 +124,7 @@ namespace Content.Inventory
 
             int price = PriceOf(item) * count;
 
-            if (pack.Gold < price) return new Deal(false, Rebuff.NoGold, item, count, price);
+            if (pack.Copper < price) return new Deal(false, Rebuff.NoGold, item, count, price);
 
             // the full-pack refusal is checked before the gold leaves, so a refused buy costs
             // nothing at all

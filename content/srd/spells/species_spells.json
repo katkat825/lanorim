@@ -1,12 +1,12 @@
 {
-  "_": "SRD 5.2.1 spells a species gives and no v1 class list has yet: the Wood Elf's Druidcraft and Longstrider (SRD p.85, the spells pp.126 and 138), CC-BY-4.0. On no class's list here: the SRD puts them on the Druid's (and Longstrider on the Ranger's and Wizard's too), and whether the v1 lists grow is Kathleen's (cc_task_e-shop-species-and-ui-notes.md 1.3). Ranges are in squares: one square is five feet.",
+  "_": "SRD 5.2.1 spells a species brought into the game: the Wood Elf's Druidcraft and Longstrider (SRD p.85, the spells pp.126 and 138), CC-BY-4.0. Like every spell the game ships, each is on every v1 class list the SRD gives it (Kathleen, 2026-10-05; SpellClassListTests): Druidcraft the Druid's; Longstrider the Druid's and the Mage's (the SRD's Wizard and Bard; the Ranger isn't a v1 class). Ranges are in squares: one square is five feet.",
   "spells": [
     {
       "id": "druidcraft",
       "level": 0,
       "school": "transmutation",
       "range": 6,
-      "classes": [],
+      "classes": ["druid"],
       "effects": [
         {
           "primitive": "narrate",
@@ -20,7 +20,7 @@
       "level": 1,
       "school": "transmutation",
       "range": 0,
-      "classes": [],
+      "classes": ["druid", "mage"],
       "effects": [
         {
           "primitive": "sway",

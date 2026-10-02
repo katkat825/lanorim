@@ -79,7 +79,7 @@ namespace Content.Inventory
 
             if (roll == null) return new Haul(0, null, null, null);
 
-            pack.Earn(roll.Gold);
+            pack.Earn(Coins.FromGold(roll.Gold));
 
             var taken = new List<Found>();
             var waiting = new List<Overflow>();

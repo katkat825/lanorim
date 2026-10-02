@@ -10,7 +10,9 @@ namespace Game.Play
 
         void OpenShop()
         {
-            if (_auto)
+            // every new hero opens on the starting shop (cc_task_f 1.3); a run that takes the story as it comes
+            // (--autostory, for a probe or a screenshot of a fight) walks on past it, as it does a line
+            if (_auto || _autoStory && Run.InStartingShop)
             {
                 Do(() => Run.LeaveShop());
                 return;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Content.Creation;
+using Content.Inventory;
 using Content.Sheet;
 using Content.Spells;
 using Core.Characters;
@@ -153,7 +154,8 @@ namespace Game.Screens
         }
 
         // THE STARTING EQUIPMENT (cc_task_e-shop-species-and-ui-notes.md 1.4): the class's gear or its gold, the background's
-        // or its gold; under the list, what the gear is. gold for either opens the shop before the campaign
+        // or its gold; under them, ONE list of everything the hero starts with, counts merged, and the gold (cc_task_f 1.4).
+        // every new hero visits the starting shop
         void Equipment()
         {
             _body.AddChild(Ui.Label(ScreenWords.KitFromClass));
@@ -169,15 +171,12 @@ namespace Game.Screens
 
             _describe = () =>
             {
-                var said = new List<string>();
+                IReadOnlyList<(string Item, int Count)> gear = _making.StartingGear;
+                var said = new List<string> { Ui.Say(ScreenWords.KitList) };
 
-                if (_making.ClassKit == KitChoice.Gear) said.Add(Gear(_making.Class.StartingGear));
-                if (_making.BackgroundKit == KitChoice.Gear && _making.Background != null) said.Add(Gear(_making.Background.Gear));
-
-                said.Add(Ui.Say(ScreenWords.KitStartsWith, Ui.Say(Content.Screens.PackView.GoldKey, _making.StartingGold)));
-
-                if (_making.ClassKit == KitChoice.Gold || _making.BackgroundKit == KitChoice.Gold)
-                    said.Add(Ui.Say(ScreenWords.KitShopFirst));
+                said.AddRange(gear.Count == 0 ? new[] { Ui.Say(ScreenWords.KitNoGear) } : gear.Select(Gear));
+                said.Add(Ui.Say(ScreenWords.KitStartsWith, Ui.Money(Coins.FromGold(_making.StartingGold))));
+                said.Add(Ui.Say(ScreenWords.KitShopFirst));
 
                 return string.Join("\n", said);
             };
@@ -185,14 +184,12 @@ namespace Game.Screens
 
         static string Kit(KitChoice choice, int gold) =>
             Ui.Say(choice == KitChoice.Gear ? ScreenWords.KitGear : ScreenWords.KitGold,
-                   Ui.Say(Content.Screens.PackView.GoldKey, gold));
+                   Ui.Money(Coins.FromGold(gold)));
 
-        // "Greataxe, Handaxe ×4"
-        string Gear(IEnumerable<string> ids) =>
-            string.Join(", ", ids.GroupBy(id => id)
-                                 .Select(g => _making.Library.Items.Find(g.Key) is { } item
-                                     ? Ui.Say(item.NameKey) + (g.Count() > 1 ? $" ×{g.Count()}" : "")
-                                     : g.Key));
+        // "Handaxe ×4"
+        string Gear((string Item, int Count) gear) =>
+            (_making.Library.Items.Find(gear.Item) is { } item ? Ui.Say(item.NameKey) : gear.Item) +
+            (gear.Count > 1 ? $" ×{gear.Count}" : "");
 
         // one of a few, pressed in when chosen: a section of a page (Choices is a whole page). `words` is what the
         // button says, already said

@@ -51,7 +51,7 @@
       "armor": { "category": "heavy", "base": 18, "strength": 15, "noisy": true }
     },
     {
-      "id": "shield", "kind": "shield", "cost": 10, "slot": "shield"
+      "id": "shield", "kind": "shield", "cost": 10, "slot": "off_hand"
     },
 
     {
@@ -71,7 +71,7 @@
       "_": "made by the Goodberry spell, never sold: gone at the next long rest (24 hours)"
     },
     {
-      "id": "torch", "kind": "tool", "cost": 1, "stackable": true
+      "id": "torch", "kind": "tool", "cost": 0.01, "stackable": true
     },
     {
       "id": "rope", "kind": "tool", "cost": 1, "stackable": true
