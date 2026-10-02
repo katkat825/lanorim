@@ -19,7 +19,7 @@ namespace Game.Board
 
             Undress();
 
-            _cutaway = new Cutaway(Metrics) { Tall = WallTall, Low = WallLow };
+            _cutaway = new Cutaway(Metrics) { Tall = WallTall, Low = WallLow, Lip = PostLip };
             _cutaway.Map(map);
 
             _tiles = new BoardTiles(Metrics)

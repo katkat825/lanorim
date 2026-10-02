@@ -36,15 +36,35 @@ namespace Game.Board
 
             if (MiniUnder(from, along) is Cell standing) return standing;
 
+            if (MatUnder(from, along) is not Vector3 hit) return null;
+
+            Cell cell = Metrics.At(hit);
+
+            return Map != null && Map.Contains(cell) ? cell : null;
+        }
+
+        // where a ray meets the mat, in the board's own space, or null when it misses
+        Vector3? MatUnder(Vector3 from, Vector3 along)
+        {
             var mat = new Plane(GlobalTransform.Basis.Y.Normalized(), GlobalTransform.Origin);
 
             Vector3? hit = mat.IntersectsRay(from, along);
 
-            if (!hit.HasValue) return null;
+            return hit.HasValue ? ToLocal(hit.Value) : null;
+        }
 
-            Cell cell = Metrics.At(ToLocal(hit.Value));
+        // THE POINT UNDER A SCREEN POINT, IN SQUARES from the map's top-left corner (x across, y down), off the map
+        // or not: the map builder picks a square or the line between two from it (MapEditor.Aim, cc_task_f Part 2).
+        // The mat, never a mini: a builder has none
+        public Vector2? GridPointUnder(Vector2 at)
+        {
+            Camera3D camera = GetViewport()?.GetCamera3D();
 
-            return Map != null && Map.Contains(cell) ? cell : null;
+            if (camera == null || !Metrics.IsUsable) return null;
+
+            if (MatUnder(camera.ProjectRayOrigin(at), camera.ProjectRayNormal(at)) is not Vector3 hit) return null;
+
+            return new Vector2((hit.X + Metrics.HalfWidth) / Metrics.CellSize, (hit.Z + Metrics.HalfDepth) / Metrics.CellSize);
         }
 
         // A CLICK ON A STANDING MINI IS A CLICK ON ITS SQUARE. The ray meets the figure long before the

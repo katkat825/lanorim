@@ -50,6 +50,12 @@ namespace Game.Board
 
         [Export] public float WallLow { get; set; } = 0.03f;
 
+        // HOW FAR A POST STANDS PROUD OF THE WALLS IT JOINS, in metres, tall or cut away (cc_task_f 1.7). A post's cap
+        // and a wall's top at the same height overlap inside the post, and the depth buffer can't choose between
+        // them: as the camera drifts the cap broke up into patches of wall-top every frame. A few millimetres puts the
+        // cap above them, and reads as a cap. Zero brings the flicker back
+        [Export] public float PostLip { get; set; } = 0.005f;
+
         // the painted-miniature shader, which goes on everything (ART_DIRECTION section 8)
         [Export] public Material Paint { get; set; }
 

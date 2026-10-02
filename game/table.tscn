@@ -141,9 +141,17 @@ script = ExtResource("6_lift")
 ;
 ; The transform below is only what the editor shows. TableCamera.Place() sets position and
 ; orientation every frame from Pitch, Zoom and the subject, so it owns this at runtime.
+;
+; NEAR 0.2 AND FAR 12, NOT GODOT'S 0.05 AND 4000 (cc_task_f 1.7). Depth precision goes with near: at 0.05
+; the dungeon posts' caps and the walls' tops, a hair apart, flickered as the camera drifted. The camera
+; never comes nearer the board than Nearest (0.9), and the nearest thing to it is the lifted dice tray,
+; whose felt sits 0.53 m away and whose near rim about 0.35 m (TrayLift.Up, measured 2026-10-06), so 0.2
+; clips nothing. Far: the table plane is 4 m across and the camera at most 2.6 m out from its middle.
 [node name="TableCamera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, -0.15, 1.781, 1.028)
 fov = 40.0
+near = 0.2
+far = 12.0
 script = ExtResource("2_camera")
 SubjectPath = NodePath("../Framing")
 Pitch = 45.0

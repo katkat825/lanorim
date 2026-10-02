@@ -53,6 +53,16 @@ namespace Game.Table
         // and a goblin across the room. Built in code here only because there is no campaign to
         // load one from yet - content/Maps/MapDraft.cs is the thing that makes them, and this is
         // the same MapLayout it produces.
+        // `--corners`: a cross of walls as well, so every kind of post is on the table at once - an L at the room's
+        // corners, a T where the wall meets the outer one, an end, a wall meeting a door, and this (cc_task_f 1.7)
+        static void Cross(Content.Maps.MapDraft draft)
+        {
+            draft.Wall(new Border(new Cell(3, 2), true), Edge.Wall);
+            draft.Wall(new Border(new Cell(3, 3), true), Edge.Wall);
+            draft.Wall(new Border(new Cell(2, 3), false), Edge.Wall);
+            draft.Wall(new Border(new Cell(3, 3), false), Edge.Wall);
+        }
+
         void LayAMap(Hero hero)
         {
             if (Board == null)
@@ -73,6 +83,8 @@ namespace Game.Table
             for (int y = 0; y < 6; y++) draft.Wall(new Border(new Cell(7, y), true), Edge.Wall);
 
             draft.Wall(new Border(new Cell(7, 4), true), Edge.Door);
+
+            if (System.Array.IndexOf(OS.GetCmdlineUserArgs(), "--corners") >= 0) Cross(draft);
 
             draft.PlaceStart(new Cell(1, 5));
             draft.PlaceSpawn(1, new Cell(10, 1));

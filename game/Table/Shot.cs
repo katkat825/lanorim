@@ -47,6 +47,12 @@ namespace Game.Table
         // read, and photograph that - the moment the player reads the roll
         public bool WhenTrayUp { get; set; }
 
+        // `--frames 90`: that many pictures, one a frame, numbered beside Path (table_000.png...), for measuring what
+        // changes frame to frame with nothing moving but the handheld drift (tools/flicker.ps1, cc_task_f 1.7)
+        public int Frames { get; set; } = 1;
+
+        int _saved;
+
         TableCamera _camera;
 
         public override void _Ready()
@@ -100,8 +106,12 @@ namespace Game.Table
                     Quarter = int.TryParse(Arg(args, "--quarter"), out int quarter) ? quarter : 0,
                     Focus = Arg(args, "--focus"),
                     WhenTrayUp = Array.IndexOf(args ?? Array.Empty<string>(), "--tray-up") >= 0,
+                    Frames = int.TryParse(Arg(args, "--frames"), out int frames) ? Math.Max(1, frames) : 1,
                 }
                 : null;
+
+        static string Numbered(string path, int index) =>
+            System.IO.Path.ChangeExtension(path, null) + $"_{index:000}" + System.IO.Path.GetExtension(path);
 
         internal static string Arg(string[] args, string flag)
         {
@@ -150,8 +160,6 @@ namespace Game.Table
 
             if (WhenTrayUp && !TrayUpAndRead()) return;
 
-            SetProcess(false);
-
             Viewport viewport = GetViewport();
 
             if (viewport == null)
@@ -177,16 +185,21 @@ namespace Game.Table
             GD.Print($"shot    window {window.Size.X}x{window.Size.Y} at {window.Position.X},{window.Position.Y} " +
                      $"({window.Mode}); the screen's usable area {usable.Size.X}x{usable.Size.Y} at {usable.Position.X},{usable.Position.Y}");
 
-            Error wrote = picture.SavePng(Path);
+            string path = Frames > 1 ? Numbered(Path, _saved) : Path;
+            Error wrote = picture.SavePng(path);
 
             if (wrote != Error.Ok)
             {
-                GD.PrintErr($"shot: could not write {Path} - {wrote}");
+                GD.PrintErr($"shot: could not write {path} - {wrote}");
                 GetTree().Quit(1);
                 return;
             }
 
-            GD.Print($"shot    {picture.GetWidth()} x {picture.GetHeight()} saved to {Path}");
+            if (++_saved < Frames) return;
+
+            SetProcess(false);
+            GD.Print($"shot    {picture.GetWidth()} x {picture.GetHeight()} saved to {path}" +
+                     (Frames > 1 ? $" ({Frames} frames)" : ""));
 
             // a shot of a --begin run leaves no probe saves behind
             Game.Play.GameState.ForgetProbeSaves();

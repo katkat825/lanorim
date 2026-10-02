@@ -14,7 +14,8 @@ namespace Game.Board
     // that run toward the camera hide nothing beside them and always stand Tall. Asked again whenever the
     // camera comes round to another side of the board (Board.Cut), so every quarter turn has its own near side.
     //
-    // A pillar where walls meet stands as tall as the tallest of them: Low only when every wall it joins is Low. Low
+    // A pillar where walls meet stands as tall as the tallest of them, and a lip above (Lip): Low only when every wall it
+    // joins is Low. Low
     // when any was, it dropped under a corner's Tall side wall and left that wall's cut brick end standing on it, half
     // over the corner (cc_task_e-shop-species-and-ui-notes.md 2.8, "dungeon wall corners are glitchy"). A DOORWAY NEVER COMES
     // DOWN: cut to a lip its arch and door are a sliver nobody could find or click (the 2026-10-03 shots), and a
@@ -28,6 +29,10 @@ namespace Game.Board
         public float Tall { get; set; } = 0.16f;
 
         public float Low { get; set; } = 0.03f;
+
+        // a pillar stands this much above the walls it joins, either way (Board.PostLip, cc_task_f 1.7): level with
+        // them, its cap and their tops met inside it on one plane and z-fought
+        public float Lip { get; set; } = 0.005f;
 
         // what a piece is: a line, a square, or a pillar on a corner of the grid
         sealed class Piece
@@ -89,7 +94,8 @@ namespace Game.Board
 
             foreach (Piece line in _pieces.Values.Where(p => p.Line != null)) Stand(line, Hides(line, toward) || FacesLowRock(line, toward));
 
-            foreach (Piece pillar in _pieces.Values.Where(p => p.Corner != null)) Stand(pillar, Joins(pillar).All(p => p.IsLow));
+            foreach (Piece pillar in _pieces.Values.Where(p => p.Corner != null))
+                Stand(pillar, Joins(pillar).All(p => p.IsLow), Lip);
         }
 
         // how many squares a Tall piece hides most of: at 45 degrees a thing h tall hides h of board behind it, so a
@@ -138,31 +144,32 @@ namespace Game.Board
         bool Hides(Piece piece, Vector2I toward) =>
             !piece.Stays && _map != null && Behind(piece, toward).Any(c => _map.Contains(c) && _map.At(c).IsPassable());
 
-        // the lines that meet at a grid corner (x, y is the corner at the top-left of square x, y)
+        // the lines that meet at a grid corner (x, y is the corner at the top-left of square x, y), and the rock squares
+        // it is a corner of: a post stands above every one of them (cc_task_f 1.7)
         IEnumerable<Piece> Joins(Piece pillar)
         {
             Vector2I c = pillar.Corner.Value;
 
             foreach (Piece piece in _pieces.Values)
             {
-                if (piece.Line is not Border line) continue;
-
-                Cell s = line.Cell;
-                bool touches = line.Vertical
-                    ? s.X == c.X && (s.Y == c.Y || s.Y + 1 == c.Y)
-                    : s.Y == c.Y && (s.X == c.X || s.X + 1 == c.X);
+                bool touches = piece.Line is Border line
+                    ? line.Vertical
+                        ? line.Cell.X == c.X && (line.Cell.Y == c.Y || line.Cell.Y + 1 == c.Y)
+                        : line.Cell.Y == c.Y && (line.Cell.X == c.X || line.Cell.X + 1 == c.X)
+                    : piece.Square is Cell s && (s.X == c.X || s.X + 1 == c.X) && (s.Y == c.Y || s.Y + 1 == c.Y);
 
                 if (touches) yield return piece;
             }
         }
 
-        void Stand(Piece piece, bool low)
+        // `over`: how much above the walls' height it stands (a pillar's lip)
+        void Stand(Piece piece, bool low, float over = 0f)
         {
             if (!GodotObject.IsInstanceValid(piece.Node) || piece.ModelTall <= 0f) return;
 
             piece.IsLow = low;
 
-            float y = (low ? Low : Tall) / piece.ModelTall;
+            float y = ((low ? Low : Tall) + over) / piece.ModelTall;
             Vector3 scale = piece.Node.Scale;
 
             piece.Node.Scale = new Vector3(scale.X, y, scale.Z);

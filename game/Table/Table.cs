@@ -134,10 +134,13 @@ namespace Game.Table
             GD.Print("table   Q and E turn the table a quarter, - and = zoom, space throws");
 
             // A CAMPAIGN TO PLAY: the launch screen made or loaded a character, so the table is the
-            // game's and not the demonstration's. Opened on its own (the editor, check-table), the
+            // game's and not the demonstration's. A MAP TO BUILD: the book's Map builder opened one, and the
+            // table is the builder's (cc_task_f Part 2). Opened on its own (the editor, check-table), the
             // demonstration still shows the whole stack working
             if (Game.Play.GameState.Run != null)
                 AddChild(new Game.Play.PlayDirector { Name = "Play", Table = this });
+            else if (Game.Play.GameState.Building != null)
+                AddChild(new Game.Builder.MapBuilder { Name = "Builder", Table = this, View = Game.Play.GameState.Building });
             else
                 Demonstrate();
 
