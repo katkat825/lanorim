@@ -17,6 +17,10 @@ namespace Game.Screens
         public static string Say(string key, params object[] args) =>
             key == null ? "" : args == null || args.Length == 0 ? Text.Get(key) : Text.Format(key, args);
 
+        // an amount of money, in copper, said as coins: "1 gp 5 sp" (PackView.Money, cc_task_f 1.5)
+        public static string Money(int copper) =>
+            string.Join(" ", Content.Screens.PackView.Money(copper).Select(c => Say(c.Key, c.Count)));
+
         public static Label Label(string key, params object[] args) =>
             new Label { Text = Say(key, args), AutowrapMode = TextServer.AutowrapMode.WordSmart };
 

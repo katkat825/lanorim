@@ -227,6 +227,7 @@ Downloaded 2026-08-04. All three sources publish under CC0 1.0: commercial use f
 | `Wood067`, 1K | **The table top**, in the project at `game/textures/table_wood067/` (color, normalgl, roughness — displacement dropped, the table uses no parallax). A dark walnut: raw albedo averages rgb(56, 31, 14), which is why it is the table and Wood047 is the tray. It was the old build's tray frame, hence the name in the zip. |
 | `Fabric034`, 1K felt | Tray floor. `game/textures/tray_felt/`, tinted green and teal |
 | `Onyx011`, 1K | Dice. `game/textures/die_onyx/`, triplanar |
+| `Wood047`, 1K | **The dice tray's wood**, `game/textures/tray_wood047/` (color, normalgl, roughness, displacement). *Row added 2026-10-06 from the folder's ambientCG name and the Wood067 note above ("Wood047 is the tray"); no download record was found, so confirm it's ambientCG's.* |
 | `Plastic018B`, 2K | Map surface — the wet-erase battle map. Recoloured grey → mottled sepia/parchment into `game/textures/map_parchment/` (color, normalgl, roughness at 1K), roughness biased matte. See the note below. **In lanorim these three maps were copied over from `../solo_ttrpg_game` rather than re-derived** — the sepia ramp was chosen by rendering variants and looking at them, so the looked-at output is the asset. |
 
 ### Poly Haven — https://polyhaven.com
@@ -321,6 +322,8 @@ the game ever sells, the provenance has to be airtight, and "it came off NuGet" 
 | Package | Version | Licence | Why |
 |---|---|---|---|
 | `YarnSpinner.Compiler` (and `YarnSpinner`, which it brings) | 3.2.2, [github.com/YarnSpinnerTool/YarnSpinner](https://github.com/YarnSpinnerTool/YarnSpinner) | MIT, verified on the repository 2026-09-15 | The branching-dialogue runtime, Phase W. `ARCHITECTURE.md` section 6 is a standing decision not to write one, and this is it. |
+| Godot Engine | 4.7.1 (.NET), [godotengine.org/license](https://godotengine.org/license) | MIT (and its bundled third-party code's own licences, listed there) | The engine. *Added 2026-10-06 with the credits:* its licence asks that its copyright notice ship with the game, so it's on the credits page. Whether the full notice text ships too is the legal review's. |
+| .NET runtime | the version the Godot .NET export carries, [github.com/dotnet/runtime](https://github.com/dotnet/runtime) | MIT | The C# runtime an exported build carries. *Added 2026-10-06.* |
 
 **Why the compiler and not just the runtime.** Ink would have meant shipping `inklecate` and asking
 every campaign author to run it; Yarn's compiler is a library, so `Content.Dialogue.DialogueBook`
@@ -445,13 +448,19 @@ Several variants were rendered and looked at, from a deep aged-scroll tan down t
 
 The board wears it in `game/Board/board.tscn` as the `Mat` material, with the grid lines changed from the felt era's near-black to a soft sepia ink. B2 replaces the whole placeholder mat with tiles from a data file; until then this is the map.
 
->**FLAG (2026-09-10) — the "all CC0" line below is no longer strictly true, and is left as-is on purpose until it matters.** Two Freesound clips added 2026-09-10, `432917` (paper) and `258249` (wood bowl), are **CC-BY (Attribution)**, not CC0 — and neither is used in the game yet. If either ever ships, its author must be credited by name and the blanket line loosened. The standing intent (Kathleen, 2026-09-10) is to **credit every asset author regardless of licence anyway** — goodwill, and it future-proofs against any pack quietly moving from CC0 to CC-BY — so this section becomes a per-author list rather than one line. Not done yet because nothing here needs it; revisit when the first credits screen is built.
+>**FLAG (2026-09-10) — the "all CC0" line below is no longer strictly true, and is left as-is on purpose until it matters.** Two Freesound clips added 2026-09-10, `432917` (paper) and `258249` (wood bowl), are **CC-BY (Attribution)**, not CC0 — and neither is used in the game yet. If either ever ships, its author must be credited by name and the blanket line loosened. The standing intent (Kathleen, 2026-09-10) is to **credit every asset author regardless of licence anyway** — goodwill, and it future-proofs against any pack quietly moving from CC0 to CC-BY — so this section becomes a per-author list rather than one line. Not done yet because nothing here needs it; revisit when the first credits screen is built. *(2026-10-06: done — the per-author list is `content/srd/credits/credits.json`; see Credits below.)*
 
 ## Credits
 
-CC0 requires nothing, but three lines on a credits screen are cheap:
+**Built 2026-10-06 (cc_task_f Part 3).** The credits screen (the book's "Credits") reads one file,
+`content/srd/credits/credits.json`, built from this one: the SRD's attribution first, verbatim, then that Lanorim
+isn't affiliated with Wizards of the Coast, who made it, and **one entry per source and per author, every author
+credited whatever the licence** (house policy) — each Freesound clip's author by name, each font's authors. Only
+what ships is shown; a source that's downloaded but not in `game/` yet (Poly Haven, ShareTextures, the other Kenney
+packs, game-icons.net, the dragon kit, Books & Papers, the five unused Freesound clips) is in the file marked
+`"ships": false`, so it's credited the day it ships. `CreditsTests` fails if a third-party file in `game/` (models,
+textures, sounds, fonts, the UI kit) has no shipping credit, or a credit's `ships` disagrees with what's in `game/`.
 
-> Textures from ambientCG.com, PolyHaven.com and ShareTextures.com.
-> Sound from Freesound.org.
-> 3D models from Quaternius and KayKit (Kay Lousberg).
-> (Not all under CC0 — 3D is Quaternius Asset License, the SRD is CC-BY-4.0; see the sections above. This blanket line gets rebuilt into a proper per-source credit when the credits screen is built.)
+**When an asset is added:** its row here, as always, *and* its entry in `credits.json` (with the `game/` paths it
+covers). The final wording and where else it appears (the store page) are the legal review's
+(`_design_docs/srd_legal_decisions.md`).

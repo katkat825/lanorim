@@ -60,6 +60,8 @@ namespace Game.Screens
                 return;
             }
 
+            if (BuildFrom(args)) return;
+
             int at = Array.IndexOf(args, "--begin");
 
             if (at >= 0 && at + 1 < args.Length)
@@ -84,6 +86,8 @@ namespace Game.Screens
                 case "book": ShowBook(Arg(args, "--open")); break;
                 case "tutorials": ShowTutorials(); break;
                 case "settings": ShowSettings(); break;
+                case "builder": ShowMapBuilder(Arg(args, "--open")); break;
+                case "credits": ShowCredits(); break;
                 case "controls": ShowSettings(); ScrollToControls(); break;
                 case "create": ShowCreation(GameState.Manifests.FirstOrDefault()?.Id ?? "", Arg(args, "--page"), Arg(args, "--class")); break;
                 default: ShowTitle(); break;
@@ -107,6 +111,8 @@ namespace Game.Screens
                 probe.Screens.Add(("book", ShowBook));
                 probe.Screens.Add(("tutorials", ShowTutorials));
                 probe.Screens.Add(("settings", ShowSettings));
+                probe.Screens.Add(("builder", ShowMapBuilder));
+                probe.Screens.Add(("credits", ShowCredits));
                 probe.Screens.Add(("create", () => ShowCreation(campaign, "class", null)));
                 probe.Screens.Add(("spells", () => ShowCreation(campaign, "spells", "mage")));
                 probe.Screens.Add(("abilities", () => ShowCreation(campaign, "abilities", "mage")));

@@ -19,10 +19,12 @@ namespace Content.Tests
             @"Wizards\s+of\s+the\s+Coast|\bWotC\b|D&D\s*Beyond|dndbeyond|Forgotten\s+Realms",
             RegexOptions.IgnoreCase);
 
-        // the exact CC-BY notice, copied verbatim from the SRD 5.2.1 legal page, when it lands
+        // the credits' line under the SRD's notice, which has to name Wizards of the Coast to say Lanorim isn't
+        // affiliated with it (cc_task_f Part 3). the CC-BY notice itself is verbatim in content/srd/credits/credits.json,
+        // not a locale line, and is never translated
         static readonly HashSet<string> Attribution = new HashSet<string>(StringComparer.Ordinal)
         {
-            "ui.credits.srd_attribution",
+            "ui.credits.not_affiliated",
         };
 
         static IEnumerable<string> LocaleFiles() =>

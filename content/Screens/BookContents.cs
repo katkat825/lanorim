@@ -9,7 +9,9 @@ namespace Content.Screens
         Continue,
         Campaign,
         Tutorials,
+        MapBuilder,
         Settings,
+        Credits,
         Quit,
     }
 
@@ -28,7 +30,8 @@ namespace Content.Screens
 
     // THE MENU AS THE OPEN BOOK'S TABLE OF CONTENTS (cc_task_ui-issues-10-01.md 3.4). Kathleen: "put the
     // buttons on halves of the book as if they were a table of contents". Continue first when there is
-    // something to continue, then each campaign's page, then Tutorials, Settings and Quit; the left page
+    // something to continue, then each campaign's page, then Tutorials, the Map builder, Settings, Credits and Quit
+    // (cc_task_f Parts 2 and 3); the left page
     // holds the first half (the larger half, when they don't split evenly) and the right page the rest
     public sealed class BookContents
     {
@@ -49,7 +52,9 @@ namespace Content.Screens
             }));
 
             entries.Add(new ContentsEntry { Kind = ContentsKind.Tutorials, NameKey = CampaignBook.TutorialsKey });
+            entries.Add(new ContentsEntry { Kind = ContentsKind.MapBuilder, NameKey = CampaignBook.MapBuilderKey });
             entries.Add(new ContentsEntry { Kind = ContentsKind.Settings, NameKey = CampaignBook.SettingsKey });
+            entries.Add(new ContentsEntry { Kind = ContentsKind.Credits, NameKey = CampaignBook.CreditsKey });
             entries.Add(new ContentsEntry { Kind = ContentsKind.Quit, NameKey = CampaignBook.QuitKey });
 
             Entries = entries;

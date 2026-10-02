@@ -1000,12 +1000,14 @@ ui.area.line.name,{0}-foot line
 ui.area.radius.name,{0}-foot radius
 ui.book.contents,Contents
 ui.book.continue,Continue
+ui.book.credits,Credits
 ui.book.delete,Delete
 ui.book.delete_question_many,Delete {0}? This can't be undone. All {1} of their saves go with them.
 ui.book.delete_question_one,Delete {0}? This can't be undone. Their one save goes with them.
 ui.book.empty,No campaigns are installed.
 ui.book.keep,Keep
 ui.book.load,Load
+ui.book.map_builder,Map builder
 ui.book.new_character,New character
 ui.book.quit,Quit
 ui.book.settings,Settings
@@ -1133,7 +1135,9 @@ ui.create.kit_from_background,From your background
 ui.create.kit_from_class,From your class
 ui.create.kit_gear,"The gear, and {0}"
 ui.create.kit_gold,{0} instead
-ui.create.kit_shop_first,"With the gold, you visit a shop before the story begins."
+ui.create.kit_list,In your pack:
+ui.create.kit_no_gear,No gear: only gold.
+ui.create.kit_shop_first,"Before the story begins, you can spend it at a shop."
 ui.create.kit_starts_with,You start with {0}.
 ui.create.name_hint,What are you called?
 ui.create.picks_left,{0} left to choose
@@ -1157,6 +1161,34 @@ ui.create.title,A new character
 ui.create.trait_size,Your size
 ui.create.trait_skill,A skill your species gives you
 ui.create.trait_spell_ability,Your species' spells are cast with
+ui.credits.by,by {0}
+ui.credits.licence_bsd,BSD License
+ui.credits.licence_cc0,CC0
+ui.credits.licence_cc_by_3,CC BY 3.0
+ui.credits.licence_cc_by_4,CC BY 4.0
+ui.credits.licence_custom,Used under its own licence
+ui.credits.licence_free,Free to use
+ui.credits.licence_mit,MIT License
+ui.credits.licence_ofl,SIL Open Font License
+ui.credits.licence_proprietary,All rights reserved
+ui.credits.licence_qal,Quaternius Asset License
+ui.credits.not_affiliated,"Lanorim is not affiliated with, endorsed by or sponsored by Wizards of the Coast."
+ui.credits.role_art,Art
+ui.credits.role_code,Code
+ui.credits.role_fonts,Fonts
+ui.credits.role_game,The game
+ui.credits.role_models,3D models
+ui.credits.role_rules,Rules
+ui.credits.role_sounds,Sounds
+ui.credits.role_textures,Textures
+ui.credits.role_ui,Interface
+ui.credits.section_asset,Art and sound
+ui.credits.section_code,Code
+ui.credits.section_contributor,Campaign authors
+ui.credits.section_font,Type
+ui.credits.section_made_by,Made by
+ui.credits.section_ruleset,The rules
+ui.credits.title,Credits
 ui.death.load,Load a save
 ui.death.no_save,There is no save to go back to.
 ui.death.reload,Try again
@@ -1245,23 +1277,62 @@ ui.log.save_failed.name,Failed: {0} fails the saving throw ({1} against DC {2}).
 ui.log.save_made.name,Saved: {0} makes the saving throw ({1} against DC {2}).
 ui.log.turn.name,{0}'s turn.
 ui.log.won.name,The fight is won.
+ui.map.all_props,All
+ui.map.campaign,Campaign
 ui.map.category_containers,Containers
 ui.map.category_dungeon,Dungeon
 ui.map.category_furniture,Furniture
 ui.map.category_light,Light
 ui.map.category_nature,Nature
 ui.map.category_village,Village
+ui.map.columns,Columns
+ui.map.could_not_save,Couldn't save: {0}
+ui.map.ground_floor,Floor
+ui.map.ground_rough,Difficult ground
+ui.map.ground_void,Rock
+ui.map.id,Map name (its file)
+ui.map.id_rule,"A map's name is its file's: lowercase letters, numbers and underscores."
+ui.map.leave,Leave
+ui.map.leave_anyway,Leave without saving
+ui.map.line_door,Door
+ui.map.line_wall,Wall
+ui.map.new,A new map
+ui.map.no_campaigns,There are no campaign folders to keep a map in.
+ui.map.no_maps,This campaign has no maps yet.
+ui.map.no_problems,No problems: this map plays.
+ui.map.open,Open a map
+ui.map.problem_nothing_painted,Nothing has been painted yet.
+ui.map.problem_prop_in_wall,A {0} is inside a wall.
+ui.map.problem_spawn_in_prop,Spawn {0} is inside a prop that blocks.
+ui.map.problem_spawn_on_rock,Spawn {0} is on solid rock.
+ui.map.problem_spawn_unreachable,"Spawn {0} can't be walked to from the start: a wall, rock or a prop that blocks is in the way."
+ui.map.problem_start_in_prop,The hero starts inside a prop that blocks. Move the start or the prop.
+ui.map.problem_start_on_rock,The hero starts on solid rock. Put the start somewhere you can stand.
+ui.map.problems,Problems
+ui.map.redo,Redo
+ui.map.rotate,Turn
+ui.map.rows,Rows
+ui.map.save,Save
+ui.map.saved,Saved.
+ui.map.saved_with_problems,"Saved. It has problems, so its campaign won't load it until they're fixed."
+ui.map.spawn,Spawn {0}
+ui.map.stay,Stay
+ui.map.title,Map builder
 ui.map.tool_erase,Erase
 ui.map.tool_paint,Paint
 ui.map.tool_prop,Props
 ui.map.tool_spawn,Monster spawn
 ui.map.tool_start,Hero start
 ui.map.tool_wall,Walls and doors
+ui.map.top_down,From above
+ui.map.undo,Undo
+ui.map.unsaved,This map has changes that aren't saved.
 ui.not_castable.not_known.name,Not on your sheet
 ui.not_castable.reaction.name,"Cast as a reaction, when its moment comes"
 ui.not_castable.shifted.name,You can't cast in a borrowed shape
 ui.not_castable.spent.name,Nothing left to cast it with
 ui.pack.buy,Buy
+ui.pack.copper,{0} cp
 ui.pack.discard,Discard
 ui.pack.discard_warning,Discarded items are gone for good.
 ui.pack.dont_warn_again,Don't warn me again for this character
@@ -1274,10 +1345,10 @@ ui.pack.off_hand,Off hand
 ui.pack.quest_items,Quest items
 ui.pack.sell,Sell
 ui.pack.sell_equipped,You are using this. Sell it anyway?
+ui.pack.silver,{0} sp
 ui.pack.slot_body,Body
 ui.pack.slot_main_hand,Main hand
 ui.pack.slot_off_hand,Off hand
-ui.pack.slot_shield,Shield
 ui.pack.slot_trinket,Trinket
 ui.pack.slot_two_hand,Both hands
 ui.pack.slots,{0} of {1} slots

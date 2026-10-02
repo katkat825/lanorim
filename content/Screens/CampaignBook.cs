@@ -29,6 +29,8 @@ namespace Content.Screens
                 .Concat(HelpCard.Keys())
                 .Concat(AccessWords.Keys())
                 .Concat(Maps.MapEditor.Keys())
+                .Concat(MapBuilderView.Keys())
+                .Concat(CreditsView.Keys())
                 .Concat(Maps.PropCatalogue.Srd().Keys())
                 .Distinct();
     }
@@ -163,6 +165,8 @@ namespace Content.Screens
         public static readonly string LoadKey = ScreenKeys.Key("book", "load");
         public static readonly string TutorialsKey = ScreenKeys.Key("book", "tutorials");
         public static readonly string SettingsKey = ScreenKeys.Key("book", "settings");
+        public static readonly string MapBuilderKey = ScreenKeys.Key("book", "map_builder");
+        public static readonly string CreditsKey = ScreenKeys.Key("book", "credits");
         public static readonly string QuitKey = ScreenKeys.Key("book", "quit");
         public static readonly string SlotsFullKey = ScreenKeys.Key("book", "slots_full");
         public static readonly string EmptyKey = ScreenKeys.Key("book", "empty");
@@ -177,7 +181,7 @@ namespace Content.Screens
         public static IEnumerable<string> Keys() =>
             new[]
             {
-                TestLabel, ContinueKey, NewCharacterKey, LoadKey, TutorialsKey, SettingsKey, QuitKey,
+                TestLabel, ContinueKey, NewCharacterKey, LoadKey, TutorialsKey, MapBuilderKey, SettingsKey, CreditsKey, QuitKey,
                 SlotsFullKey, EmptyKey, DeleteKey, DeleteOneKey, DeleteManyKey, KeepKey, ContentsKey,
             };
 

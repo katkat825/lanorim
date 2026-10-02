@@ -1,0 +1,433 @@
+{
+  "_": "THE CREDITS SCREEN'S ONE SOURCE (cc_task_f Part 3), built from THIRD_PARTY.md: the ruleset, every asset source and author (every author is credited, whatever the licence: house policy), the fonts, the code, and who made it. kind: ruleset, made_by, asset, font, code or contributor (a campaign's authors; none yet, and the campaign format can add them). name, by and packs are names, never translated; role and licence are words the screen says through the locale. ships false: credited here, but nothing of it is in game/ yet, so the screen leaves it out until it ships. files: what of game/ it covers, as paths from res:// (a folder ending in /, a file, or the start of a file name); CreditsTests holds every third-party file in game/ to them. text: the SRD's attribution, copied verbatim from the SRD's legal page with the PDF's wrapped 'legalcode' joined; its wording and placement are the legal review's (_design_docs/srd_legal_decisions.md).",
+  "credits": [
+    {
+      "id": "srd",
+      "kind": "ruleset",
+      "name": "System Reference Document 5.2.1",
+      "by": "Wizards of the Coast LLC",
+      "licence": "cc_by_4",
+      "role": "rules",
+      "url": "https://www.dndbeyond.com/srd",
+      "text": "This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode."
+    },
+    {
+      "id": "kathleen",
+      "kind": "made_by",
+      "name": "Kathleen Malone",
+      "role": "game",
+      "licence": "proprietary",
+      "files": [
+        "models/tray/",
+        "models/gm_screen/",
+        "models/minis/rogue_v3.glb"
+      ],
+      "note": "the game, its campaigns, the hero mini (rogue_v3), the dice trays and the GM screens (LICENSE)"
+    },
+    {
+      "id": "quaternius",
+      "kind": "asset",
+      "name": "Quaternius",
+      "role": "models",
+      "licence": "qal",
+      "url": "https://quaternius.com",
+      "packs": [
+        "Ultimate Animated Character Pack",
+        "Ultimate Animated Animals",
+        "Easy Animated Enemy Pack",
+        "Fantasy Props MegaKit"
+      ],
+      "files": [
+        "models/companions/",
+        "models/minis/goblin_male.gltf",
+        "models/minis/knight_male.gltf",
+        "models/minis/ninja_male.gltf",
+        "models/minis/pirate_male.gltf",
+        "models/minis/zombie_male.gltf",
+        "models/minis/wolf.gltf",
+        "models/minis/rat.",
+        "models/minis/spider.",
+        "models/minis/rogue_v3.glb",
+        "models/props/fantasy_props_megakit_standard/"
+      ],
+      "note": "QAL: no attribution required; credited on goodwill. rogue_v3's body rides the Ultimate Animated Character Pack's armature"
+    },
+    {
+      "id": "quaternius_dungeon",
+      "kind": "asset",
+      "name": "Quaternius",
+      "role": "models",
+      "licence": "cc0",
+      "url": "https://quaternius.com",
+      "packs": [
+        "Updated Modular Dungeon"
+      ],
+      "files": [
+        "models/dungeon/"
+      ],
+      "note": "this pack's own License.txt is CC0, not the QAL"
+    },
+    {
+      "id": "kaykit",
+      "kind": "asset",
+      "name": "KayKit (Kay Lousberg)",
+      "role": "models",
+      "licence": "cc0",
+      "url": "https://kaylousberg.itch.io",
+      "packs": [
+        "KayKit Dungeon Pack 1.1",
+        "KayKit Furniture Bits 1.0",
+        "KayKit Forest Nature Pack 1.0",
+        "KayKit Adventurers 2.0",
+        "KayKit Skeletons 1.1"
+      ],
+      "files": [
+        "models/props/kaykit_",
+        "models/minis/rogue_v3.glb"
+      ],
+      "note": "the hero's cape is KayKit Skeletons 1.1's Skeleton_Rogue, inside rogue_v3.glb"
+    },
+    {
+      "id": "ambientcg",
+      "kind": "asset",
+      "name": "ambientCG",
+      "role": "textures",
+      "licence": "cc0",
+      "url": "https://ambientcg.com",
+      "packs": [
+        "Wood067",
+        "Wood047",
+        "Fabric034",
+        "Onyx011",
+        "Plastic018B"
+      ],
+      "files": [
+        "textures/table_wood067/",
+        "textures/tray_wood047/",
+        "textures/tray_felt/",
+        "textures/die_onyx/",
+        "textures/map_parchment/"
+      ]
+    },
+    {
+      "id": "poly_haven",
+      "kind": "asset",
+      "name": "Poly Haven",
+      "role": "textures",
+      "licence": "cc0",
+      "url": "https://polyhaven.com",
+      "ships": false,
+      "note": "downloaded as source material (THIRD_PARTY.md); nothing from it is in game/ yet"
+    },
+    {
+      "id": "sharetextures",
+      "kind": "asset",
+      "name": "ShareTextures",
+      "role": "textures",
+      "licence": "cc0",
+      "url": "https://sharetextures.com",
+      "ships": false,
+      "note": "the amethyst is parked; nothing from it is in game/"
+    },
+    {
+      "id": "admurin",
+      "kind": "asset",
+      "name": "Admurin",
+      "role": "art",
+      "licence": "custom",
+      "url": "https://admurin.itch.io",
+      "packs": [
+        "Parallax Backgrounds: Cave",
+        "Parallax Backgrounds: Dead Forest",
+        "Parallax Backgrounds: Plains",
+        "Parallax Backgrounds: Snowy Mountains"
+      ],
+      "files": [
+        "models/gm_screen/gm_screen_cave",
+        "models/gm_screen/gm_screen_dead-forest",
+        "models/gm_screen/gm_screen_plains",
+        "models/gm_screen/gm_screen_snowy-mountains"
+      ],
+      "note": "the GM screens' art, on Kathleen's GM-screen models. credit optional; credited"
+    },
+    {
+      "id": "kenney",
+      "kind": "asset",
+      "name": "Kenney",
+      "role": "ui",
+      "licence": "cc0",
+      "url": "https://kenney.nl",
+      "packs": [
+        "UI Pack: Adventure"
+      ],
+      "files": [
+        "ui/kenney/"
+      ]
+    },
+    {
+      "id": "kenney_unused",
+      "kind": "asset",
+      "name": "Kenney",
+      "role": "ui",
+      "licence": "cc0",
+      "url": "https://kenney.nl",
+      "packs": [
+        "Fantasy UI Borders",
+        "UI Pack: RPG Expansion",
+        "Interface Sounds"
+      ],
+      "ships": false
+    },
+    {
+      "id": "game_icons",
+      "kind": "asset",
+      "name": "game-icons.net",
+      "role": "art",
+      "licence": "cc_by_3",
+      "url": "https://game-icons.net",
+      "ships": false,
+      "note": "CC BY 3.0: the icon authors must be credited by name, from the bundle's list, the day an icon ships"
+    },
+    {
+      "id": "nimbuspawtales",
+      "kind": "asset",
+      "name": "nimbuspawtales",
+      "role": "models",
+      "licence": "free",
+      "url": "https://nimbuspawtales.itch.io",
+      "packs": [
+        "Dragon Bodyparts Bundle"
+      ],
+      "ships": false
+    },
+    {
+      "id": "kittycatgames",
+      "kind": "asset",
+      "name": "KittyCatGames",
+      "role": "models",
+      "licence": "free",
+      "url": "https://kittycatgames.itch.io",
+      "packs": [
+        "Books & Papers"
+      ],
+      "ships": false
+    },
+    {
+      "id": "freesound_558204",
+      "kind": "asset",
+      "name": "Freesound",
+      "by": "jakubp.jp",
+      "role": "sounds",
+      "licence": "cc0",
+      "url": "https://freesound.org/s/558204/",
+      "packs": [
+        "gamemisc_dice-roll-on-wood_jaku5"
+      ],
+      "files": [
+        "audio/samples/impacts/wood/558204_"
+      ]
+    },
+    {
+      "id": "freesound_485946",
+      "kind": "asset",
+      "name": "Freesound",
+      "by": "aunrea",
+      "role": "sounds",
+      "licence": "cc0",
+      "url": "https://freesound.org/s/485946/",
+      "packs": [
+        "10-sided die rolled on wood table"
+      ],
+      "files": [
+        "audio/samples/impacts/wood/485946_"
+      ]
+    },
+    {
+      "id": "freesound_545489",
+      "kind": "asset",
+      "name": "Freesound",
+      "by": "wardoctor17",
+      "role": "sounds",
+      "licence": "cc0",
+      "url": "https://freesound.org/s/545489/",
+      "packs": [
+        "d20 rolls"
+      ],
+      "files": [
+        "audio/samples/impacts/wood/545489_"
+      ]
+    },
+    {
+      "id": "freesound_441841",
+      "kind": "asset",
+      "name": "Freesound",
+      "by": "SeanMPorio",
+      "role": "sounds",
+      "licence": "cc0",
+      "url": "https://freesound.org/s/441841/",
+      "packs": [
+        "d20 rolling"
+      ],
+      "files": [
+        "audio/samples/impacts/wood/441841_"
+      ]
+    },
+    {
+      "id": "freesound_432917",
+      "kind": "asset",
+      "name": "Freesound",
+      "by": "djlprojects",
+      "role": "sounds",
+      "licence": "cc_by_4",
+      "url": "https://freesound.org/s/432917/",
+      "packs": [
+        "paper rustle and plop on wooden table"
+      ],
+      "ships": false
+    },
+    {
+      "id": "freesound_477435",
+      "kind": "asset",
+      "name": "Freesound",
+      "by": "Rvgerxini",
+      "role": "sounds",
+      "licence": "cc0",
+      "url": "https://freesound.org/s/477435/",
+      "packs": [
+        "copper and metal pieces dropping on hardwood surface"
+      ],
+      "ships": false
+    },
+    {
+      "id": "freesound_649210",
+      "kind": "asset",
+      "name": "Freesound",
+      "by": "Johanvanvuren",
+      "role": "sounds",
+      "licence": "cc0",
+      "url": "https://freesound.org/s/649210/",
+      "packs": [
+        "salt or pepper on counter or table impact"
+      ],
+      "ships": false
+    },
+    {
+      "id": "freesound_505963",
+      "kind": "asset",
+      "name": "Freesound",
+      "by": "jedg",
+      "role": "sounds",
+      "licence": "cc0",
+      "url": "https://freesound.org/s/505963/",
+      "packs": [
+        "small single plastic impacts"
+      ],
+      "ships": false
+    },
+    {
+      "id": "freesound_258249",
+      "kind": "asset",
+      "name": "Freesound",
+      "by": "youandbiscuitme",
+      "role": "sounds",
+      "licence": "cc_by_3",
+      "url": "https://freesound.org/s/258249/",
+      "packs": [
+        "wooden object set on table 6"
+      ],
+      "ships": false
+    },
+    {
+      "id": "alegreya_sc",
+      "kind": "font",
+      "name": "Alegreya SC",
+      "by": "The Alegreya Project Authors",
+      "role": "fonts",
+      "licence": "ofl",
+      "url": "https://github.com/huertatipografica/Alegreya",
+      "files": [
+        "fonts/AlegreyaSC",
+        "fonts/OFL-AlegreyaSC.txt"
+      ]
+    },
+    {
+      "id": "eb_garamond",
+      "kind": "font",
+      "name": "EB Garamond",
+      "by": "The EB Garamond Project Authors",
+      "role": "fonts",
+      "licence": "ofl",
+      "url": "https://github.com/octaviopardo/EBGaramond12",
+      "files": [
+        "fonts/EBGaramond",
+        "fonts/OFL-EBGaramond.txt"
+      ]
+    },
+    {
+      "id": "cormorant_upright",
+      "kind": "font",
+      "name": "Cormorant Upright",
+      "by": "Christian Thalmann and the Cormorant Project Authors",
+      "role": "fonts",
+      "licence": "ofl",
+      "url": "https://github.com/CatharsisFonts/Cormorant",
+      "files": [
+        "fonts/CormorantUpright",
+        "fonts/OFL-CormorantUpright.txt"
+      ]
+    },
+    {
+      "id": "atkinson_mono",
+      "kind": "font",
+      "name": "Atkinson Hyperlegible Mono",
+      "by": "The Atkinson Hyperlegible Mono Project Authors",
+      "role": "fonts",
+      "licence": "ofl",
+      "url": "https://github.com/googlefonts/atkinson-hyperlegible-next-mono",
+      "files": [
+        "fonts/AtkinsonHyperlegibleMono",
+        "fonts/OFL-AtkinsonHyperlegibleMono.txt"
+      ]
+    },
+    {
+      "id": "yarn_spinner",
+      "kind": "code",
+      "name": "Yarn Spinner",
+      "by": "Yarn Spinner Pty. Ltd.",
+      "role": "code",
+      "licence": "mit",
+      "url": "https://github.com/YarnSpinnerTool/YarnSpinner",
+      "note": "YarnSpinner and YarnSpinner.Compiler 3.2.2 (THIRD_PARTY.md, Code)"
+    },
+    {
+      "id": "antlr",
+      "kind": "code",
+      "name": "ANTLR 4 runtime",
+      "by": "Terence Parr and the ANTLR Project",
+      "role": "code",
+      "licence": "bsd",
+      "url": "https://github.com/antlr/antlr4",
+      "note": "brought by Yarn Spinner (THIRD_PARTY.md, Code)"
+    },
+    {
+      "id": "godot",
+      "kind": "code",
+      "name": "Godot Engine",
+      "by": "Juan Linietsky, Ariel Manzur and contributors",
+      "role": "code",
+      "licence": "mit",
+      "url": "https://godotengine.org/license",
+      "note": "not in THIRD_PARTY.md's Code before; its MIT licence asks that its notice ship with the game"
+    },
+    {
+      "id": "dotnet",
+      "kind": "code",
+      "name": ".NET",
+      "by": ".NET Foundation and contributors",
+      "role": "code",
+      "licence": "mit",
+      "url": "https://github.com/dotnet/runtime",
+      "note": "the C# runtime a .NET Godot export carries; not in THIRD_PARTY.md's Code before"
+    }
+  ]
+}

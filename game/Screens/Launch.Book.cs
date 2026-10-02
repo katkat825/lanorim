@@ -87,6 +87,9 @@ namespace Game.Screens
         {
             var book = new CampaignBook(GameState.Manifests, GameState.Saves);
 
+            // what checks/check-export.ps1 looks for: an exported build that got this far is a build that works
+            GD.Print($"book    open, {book.Pages.Count} campaigns");
+
             if (_book == null || _overlayBook)
             {
                 ShowBookPanel(book, open);
@@ -138,7 +141,9 @@ namespace Game.Screens
                 case ContentsKind.Continue: Load(book.Continue); break;
                 case ContentsKind.Campaign: ShowCampaign(entry.Page); break;
                 case ContentsKind.Tutorials: ShowTutorials(); break;
+                case ContentsKind.MapBuilder: ShowMapBuilder(); break;
                 case ContentsKind.Settings: ShowSettings(); break;
+                case ContentsKind.Credits: ShowCredits(); break;
                 case ContentsKind.Quit: GetTree().Quit(); break;
             }
         }
@@ -241,7 +246,9 @@ namespace Game.Screens
                 top.AddChild(Ui.Button(CampaignBook.ContinueKey, () => Load(book.Continue)));
 
             top.AddChild(Ui.Button(CampaignBook.TutorialsKey, ShowTutorials));
+            top.AddChild(Ui.Button(CampaignBook.MapBuilderKey, ShowMapBuilder));
             top.AddChild(Ui.Button(CampaignBook.SettingsKey, ShowSettings));
+            top.AddChild(Ui.Button(CampaignBook.CreditsKey, ShowCredits));
             top.AddChild(Ui.Button(CampaignBook.QuitKey, () => GetTree().Quit()));
 
             var contents = Ui.Column(6);

@@ -12,8 +12,9 @@ text, the map model, saves, and the narrative layer (branching dialogue, hidden 
 loot tables) are in and unit-tested. Every screen is wired in Godot: the title and campaign book, character
 creation, the table with its map, minis, GM screen and dice tray, the dialogue card, the combat HUD, the
 sheet, pack and merchant, level-up, pause, death and the end. A sample test campaign plays from its first
-line to its last, headless, on the real table. What's left is mostly how it looks (layout, lighting,
-models), the map builder's screen, the Workshop, and the real campaigns. Start in `docs/`.
+line to its last, headless, on the real table. The map builder is at the table too (the book's
+"Map builder"), and the book has the credits. What's left is mostly how it looks (layout, lighting, models), the
+Workshop, Steam, and the real campaigns. Start in `docs/`.
 
 ## Where things are
 
@@ -110,7 +111,13 @@ These need Godot, and find it themselves under `C:\Godot` (or `$env:GODOT_ROOT`)
 .\checks\check-controls.ps1  # every act on the Controls page, and Change rebinds
 .\checks\check-creation.ps1  # creation: no hover text, a description under each list, cantrips and spells apart, the scroll kept
 .\checks\check-layout.ps1    # every screen at six window sizes: nothing off screen or squeezed, no HUD overlaps
+.\checks\check-mapbuilder.ps1 # the map builder, driven: paint, walls, a prop, start, spawn, undo, save; the file loads in its campaign
+.\checks\check-export.ps1    # export the Windows Release preset, run it headless to the book, print its size (-Dev: the dev preset)
 ```
+
+`check-export.ps1` needs Godot's 4.7.1 .NET export templates (Editor > Manage Export Templates in the Godot editor).
+The presets are `game/export_presets.cfg`; builds land in `build/` (ignored). An exported game finds campaigns in a
+`campaigns` folder beside its exe, so a release build has none until one is put there; `-Dev` copies the sample.
 
 `dotnet run --project sim -- classes [runs] [class]` plays every class at levels 1-5 against the sample
 campaign's fights; `sim trace <class> <level> <fight>` shows one of them line by line.
@@ -131,7 +138,7 @@ table, and `--gm-tallness 1` at its authored height; `--tray-footprint 0.65 --tr
 tray (`DiceTray.Sizing`); `--shot <file> --after <frames>` saves a picture and quits. For checks: `--prone-probe` (in a
 fight: Prone lies down in its square, Stand Up stands up), `--access-probe` (Tab, Shift+Tab, F1, F2, F3 at the table),
 `table.tscn -- --dice d20 --throws N --handful H --tray-skin gamblers` (the fairness sweep; add `--fixed-fps 60` before
-`--path` to run it as fast as it can), `table.tscn -- --open-door` (the demonstration's door, open).
+`--path` to run it as fast as it can), `table.tscn -- --open-door` (the demonstration's door, open). Since 2026-10-06: `--show builder|credits` (the map builder's page, the credits), `--build <campaign> [map]` (that map, or a new one, in the builder), `--map-probe` (the builder driven, for `check-mapbuilder.ps1`), `--shot <png> --frames N` (N frames in a row, for `tools/flicker.ps1`), and `table.tscn -- --corners` (every kind of wall post on the demonstration's map).
 
 The physics runs at **120 ticks a second** (`project.godot`): at Godot's default 60 a d4 or d6 lying on a face rocks
 on its corners for good (`game/Dice/DieBody.Wobble.cs`).
