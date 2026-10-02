@@ -414,7 +414,7 @@ namespace Content.Tests
             ["GameSettings.cs"] = "the player's settings, written by the game",
             ["MapDraft.cs"] = "the map editor's own file, written by MapDraft.Save",
             ["EffectWords.cs"] = "reads an effect SpellReader.ReadEffect has checked (Keyed.OnlyKnown with KeysFor)",
-            ["SrdSpellNames.cs"] = "one list of names, no keys beside it",
+            ["SrdSpellNames.cs"] = "the SRD's own names and class lists, written from the SRD text by tools/srd_spell_lists.py, not by an author",
         };
 
         [Fact]

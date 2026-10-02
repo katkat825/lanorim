@@ -65,6 +65,29 @@ namespace Content.Maps
             return true;
         }
 
+        // the editor's drag along a run of lines: every one at once, one undo step for the lot (cc_task_f Part 2)
+        public int Wall(IEnumerable<Border> borders, Edge edge)
+        {
+            var changed = new List<(Border Line, Edge Was)>();
+
+            foreach (Border border in borders)
+                if (Extent.Contains(border) && At(border) != edge && !changed.Exists(c => c.Line == border))
+                    changed.Add((border, At(border)));
+
+            if (changed.Count == 0) return 0;
+
+            Do(() =>
+               {
+                   foreach ((Border line, Edge _) in changed) SetEdge(line, edge);
+               },
+               () =>
+               {
+                   foreach ((Border line, Edge was) in changed) SetEdge(line, was);
+               });
+
+            return changed.Count;
+        }
+
         // the editor clicks between two squares rather than naming a border
         public bool Wall(Cell a, Cell b, Edge edge) =>
             Border.Between(a, b, out Border border) && Wall(border, edge);

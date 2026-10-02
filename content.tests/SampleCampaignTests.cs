@@ -172,7 +172,7 @@ namespace Content.Tests
                                 Assert.NotNull(again);
                                 Assert.Empty(problems.Where(p => p.IsAFault));
                                 Assert.Equal(run.Hero.Level, again.Hero.Level);
-                                Assert.Equal(run.Hero.Pack.Gold, again.Hero.Pack.Gold);
+                                Assert.Equal(run.Hero.Pack.Copper, again.Hero.Pack.Copper);
 
                                 run = again;
                                 run.Continue();
@@ -256,7 +256,7 @@ namespace Content.Tests
             // a long rest at the end: whole again
             Assert.Equal(run.Hero.Actor.Health.Maximum, run.Hero.Actor.Health.Current);
 
-            Assert.True(run.Hero.Pack.Gold > 0);
+            Assert.True(run.Hero.Pack.Copper > 0);
             Assert.True(run.Hero.Pack.CountOf("potion_of_healing") >= 1);
 
             // autosaves on the way: a chapter, fights, rests, levels
@@ -297,6 +297,7 @@ namespace Content.Tests
             var run = new CampaignRun(library, pack, Make(library, "fighter"), new StandardResolver(rng), rng);
 
             run.Start();
+            run.LeaveShop(); // every new hero opens on the starting shop (cc_task_f 1.3)
 
             while (run.Now != Scene.Fight)
             {

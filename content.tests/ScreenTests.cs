@@ -155,7 +155,7 @@ namespace Content.Tests
         public void ThePackBuysSellsAndDiscardsAndTheWarningStaysDismissedForTheCharacter()
         {
             Hero hero = Made("fighter");
-            hero.Pack.Earn(200);
+            hero.Pack.Earn(Content.Inventory.Coins.FromGold(200));
 
             var merchant = new Merchant("store", Srd.Items, new[] { "potion_of_healing", "torch" });
             var view = new PackView(hero, Srd.Items, merchant);
@@ -163,9 +163,9 @@ namespace Content.Tests
             Assert.True(view.AtTheCounter);
             Assert.Contains(view.Shelf, r => r.Item.Id == "potion_of_healing" && r.Affordable);
 
-            int gold = view.Gold;
+            int gold = view.Copper;
             Assert.True(view.Buy("potion_of_healing").Done);
-            Assert.True(view.Gold < gold);
+            Assert.True(view.Copper < gold);
             Assert.Contains(view.Rows, r => r.Item.Id == "potion_of_healing" && r.SellsFor > 0);
 
             // something the hero is wearing asks first, every time
@@ -193,6 +193,7 @@ namespace Content.Tests
             var run = new CampaignRun(Srd, pack, Made("fighter"), new StandardResolver(rng), rng);
 
             run.Start();
+            run.LeaveShop(); // every new hero opens on the starting shop (cc_task_f 1.3)
 
             var view = new DialogueView(run, "wolf");
 

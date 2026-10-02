@@ -157,7 +157,7 @@ namespace Content.Tests
                                             hero, pack);
 
             Assert.Equal(10, visit.Amount); // 5, plus level 5
-            Assert.Equal(10, pack.Gold);
+            Assert.Equal(Coins.FromGold(10), pack.Copper); // the pool says gold; the purse is copper
         }
 
         [Fact]

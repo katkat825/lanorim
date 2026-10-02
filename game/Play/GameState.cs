@@ -211,6 +211,25 @@ namespace Game.Play
             Resolver = null;
         }
 
+        // --- the map being built (cc_task_f Part 2) ---------------------------------------------------------------
+
+        // the map the book's "Map builder" opened; the table comes up as the builder while it is set
+        public static MapBuilderView Building { get; private set; }
+
+        public static void Build(MapBuilderView view)
+        {
+            Leave();
+            Building = view;
+        }
+
+        // back to the book. the campaigns are found again, so a map saved here is in its campaign the next time it
+        // is played (the library read them once, when the game came up)
+        public static void StopBuilding()
+        {
+            Building = null;
+            _campaigns = null;
+        }
+
         // the dice source, looked up when a throw happens rather than when the resolver is made - the
         // table sets it after the run exists
         sealed class Deferred : IDiceSource

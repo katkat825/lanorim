@@ -22,15 +22,15 @@ namespace Content.Tests
             Assert.Equal(new[]
             {
                 ContentsKind.Continue, ContentsKind.Campaign, ContentsKind.Campaign, ContentsKind.Campaign,
-                ContentsKind.Tutorials, ContentsKind.Settings, ContentsKind.Quit,
+                ContentsKind.Tutorials, ContentsKind.MapBuilder, ContentsKind.Settings, ContentsKind.Credits, ContentsKind.Quit,
             }, contents.Entries.Select(e => e.Kind));
 
             Assert.Equal(new[] { "the_goat", "long_road", "sample" },
                          contents.Entries.Where(e => e.Kind == ContentsKind.Campaign).Select(e => e.Page.Id));
 
-            // seven lines: four on the left, three on the right, in order
-            Assert.Equal(4, contents.Left.Count);
-            Assert.Equal(3, contents.Right.Count);
+            // nine lines: five on the left, four on the right, in order
+            Assert.Equal(5, contents.Left.Count);
+            Assert.Equal(4, contents.Right.Count);
             Assert.Equal(contents.Entries, contents.Left.Concat(contents.Right));
         }
 
@@ -42,8 +42,8 @@ namespace Content.Tests
             Assert.DoesNotContain(contents.Entries, e => e.Kind == ContentsKind.Continue);
             Assert.Equal(ContentsKind.Campaign, contents.Left[0].Kind);
             Assert.Equal(ContentsKind.Quit, contents.Right.Last().Kind);
-            Assert.Equal(2, contents.Left.Count);
-            Assert.Equal(2, contents.Right.Count);
+            Assert.Equal(3, contents.Left.Count);
+            Assert.Equal(3, contents.Right.Count);
         }
 
         [Fact]

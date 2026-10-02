@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Content.Dialogue;
+using Content.Inventory;
 using Content.Schema;
 using Content.Sheet;
 using Core.Characters;
@@ -195,7 +196,7 @@ The road goes on. #line:road
         {
             Conversation talk = Talk(out _);
             Hero hero = Fighter();
-            int gold = hero.Pack.Gold;
+            int gold = hero.Pack.Copper;
 
             var referee = new Referee(hero, new StandardResolver(new ScriptedRng(18)),
                                       new GmScreen(new ScriptedRng(1)), Srd);
@@ -215,7 +216,7 @@ The road goes on. #line:road
             }
 
             Assert.Equal(2, hero.Pack.CountOf("potion_of_healing"));
-            Assert.Equal(gold + 25, hero.Pack.Gold);
+            Assert.Equal(gold + Coins.FromGold(25), hero.Pack.Copper);
             Assert.Contains(talk.Heard, s => s.Key.EndsWith("road"));
         }
 

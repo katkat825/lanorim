@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="BuilderLayout" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Builder/BuilderLayout.cs" id="1_builder"]
+
+; THE MAP BUILDER'S DIALS (game/Builder/BuilderLayout.cs says what each one does). Open this in the
+; inspector. Colours, fonts and panel padding are ui/lanorim_theme.tres's.
+[resource]
+script = ExtResource("1_builder")
+ToolsWidth = 380
+ProblemsWidth = 420
+EdgeMargin = 16
+Gap = 8
+PaletteHeight = 360
+NoticeSeconds = 4.0
+HoverColour = Color(0.95, 0.85, 0.4, 0.6)
+LineColour = Color(0.95, 0.85, 0.4, 0.9)
+LineThickness = 0.12
+LineHeight = 0.05
+MarkFontSize = 64
+MarkPixel = 0.0012
+MarkLift = 0.03
+SpawnColour = Color(0.85, 0.2, 0.15, 1)
+StartColour = Color(0.2, 0.55, 0.9, 1)
+TopDownPitch = 89.0

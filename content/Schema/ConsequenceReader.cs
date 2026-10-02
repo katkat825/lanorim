@@ -133,8 +133,9 @@ namespace Content.Schema
                 case ConsequenceKind.Gold:
                     if (pack == null) break;
 
-                    if (consequence.Polarity == Polarity.Boon) pack.Earn(Math.Abs(amount));
-                    else pack.Spend(Math.Min(pack.Gold, Math.Abs(amount)));
+                    // the amount is gold; the purse is copper (Coins)
+                    if (consequence.Polarity == Polarity.Boon) pack.Earn(Inventory.Coins.FromGold(Math.Abs(amount)));
+                    else pack.Spend(Math.Min(pack.Copper, Inventory.Coins.FromGold(Math.Abs(amount))));
                     break;
 
                 case ConsequenceKind.AbilityShift:

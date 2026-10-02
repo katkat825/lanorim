@@ -105,49 +105,58 @@ namespace Content.Maps
             return true;
         }
 
-        // everything that would make the map unplayable, in the words the editor shows. checked on
-        // save, so an author finds out in the editor rather than the player finding out mid-fight.
-        public IReadOnlyList<string> Problems()
+        // everything that would make the map unplayable: what the map builder shows, live, each with its square where it
+        // has one (MapProblem, cc_task_f Part 2). checked on save, so an author finds out in the editor rather than the
+        // player finding out mid-fight; a campaign won't load a map that has any
+        public IReadOnlyList<MapProblem> Findings()
         {
-            var problems = new List<string>();
+            var problems = new List<MapProblem>();
 
             if (!At(Start).IsPassable())
-                problems.Add("the hero starts on solid rock - put the start somewhere you can stand");
+                problems.Add(new MapProblem("start_on_rock", Start,
+                    "the hero starts on solid rock - put the start somewhere you can stand"));
             else if (IsBlocked(Start))
-                problems.Add("the hero starts inside a prop that blocks - move the start or the prop");
+                problems.Add(new MapProblem("start_in_prop", Start,
+                    "the hero starts inside a prop that blocks - move the start or the prop"));
 
             MapLayout map = Layout();
 
-            foreach (KeyValuePair<int, Cell> spawn in _spawns)
+            foreach (KeyValuePair<int, Cell> spawn in _spawns.OrderBy(s => s.Key))
             {
                 if (!At(spawn.Value).IsPassable())
                 {
-                    problems.Add($"spawn {spawn.Key} is on solid rock");
+                    problems.Add(new MapProblem("spawn_on_rock", spawn.Value, $"spawn {spawn.Key} is on solid rock", spawn.Key));
                     continue;
                 }
 
                 if (IsBlocked(spawn.Value))
                 {
-                    problems.Add($"spawn {spawn.Key} is inside a prop that blocks");
+                    problems.Add(new MapProblem("spawn_in_prop", spawn.Value,
+                        $"spawn {spawn.Key} is inside a prop that blocks", spawn.Key));
                     continue;
                 }
 
                 if (!Route.Exists(map, Start, spawn.Value, _ => false))
-                    problems.Add($"spawn {spawn.Key} cannot be walked to from the start - " +
-                                 "a wall, a gap of rock or a prop that blocks is in the way");
+                    problems.Add(new MapProblem("spawn_unreachable", spawn.Value,
+                        $"spawn {spawn.Key} cannot be walked to from the start - " +
+                        "a wall, a gap of rock or a prop that blocks is in the way", spawn.Key));
             }
 
             foreach (Prop prop in _props)
                 if (!At(prop.Cell).IsPassable())
-                    problems.Add($"the {prop.Id} at {prop.Cell} is inside a wall");
+                    problems.Add(new MapProblem("prop_in_wall", prop.Cell, $"the {prop.Id} at {prop.Cell} is inside a wall",
+                        Palette.Find(prop.Id)?.NameKey ?? prop.Id));
 
-            int floor = Layout().Cells.Count(c => map.At(c).IsPassable());
+            int floor = map.Cells.Count(c => map.At(c).IsPassable());
 
-            if (floor == 0) problems.Add("nothing has been painted yet");
+            if (floor == 0) problems.Add(new MapProblem("nothing_painted", null, "nothing has been painted yet"));
 
             return problems;
         }
 
-        public bool Sound => Problems().Count == 0;
+        // the same, in English, for the campaign loader's log
+        public IReadOnlyList<string> Problems() => Findings().Select(p => p.Says).ToList();
+
+        public bool Sound => Findings().Count == 0;
     }
 }

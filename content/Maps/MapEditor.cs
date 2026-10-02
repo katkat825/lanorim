@@ -31,7 +31,7 @@ namespace Content.Maps
     // THE MAP BUILDER'S TOOL MODES (Tier 2.10), on MapDraft: pick a tool and what it lays, then click
     // a square or a line, or drag a rectangle. Every change goes through MapDraft, so undo and redo and
     // the problems check are the draft's. The Godot editor is a view over this.
-    public sealed class MapEditor
+    public sealed partial class MapEditor
     {
         public MapEditor(MapDraft draft, PropCatalogue palette = null)
         {

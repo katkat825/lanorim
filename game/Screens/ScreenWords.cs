@@ -43,6 +43,8 @@ namespace Game.Screens
         public static readonly string KitGold = K("create", "kit_gold");
         public static readonly string KitStartsWith = K("create", "kit_starts_with");
         public static readonly string KitShopFirst = K("create", "kit_shop_first");
+        public static readonly string KitList = K("create", "kit_list");
+        public static readonly string KitNoGear = K("create", "kit_no_gear");
 
         public static readonly string PauseTitle = K("pause", "title");
         public static readonly string Resume = K("pause", "resume");
@@ -104,7 +106,7 @@ namespace Game.Screens
                 BeforeFightTitle, BeforeFightLine, BeforeFightCast, ToTheFight,
                 SheetTitle, SheetLevel, SheetHp, SheetAc, SheetSpells, SheetFeatures, SheetSize, SheetSpeciesSpells,
                 TraitSkill, TraitSpellAbility, TraitSize,
-                KitFromClass, KitFromBackground, KitGear, KitGold, KitStartsWith, KitShopFirst,
+                KitFromClass, KitFromBackground, KitGear, KitGold, KitStartsWith, KitShopFirst, KitList, KitNoGear,
                 AskCard.TurnsTheHitKey,
             }
             .Concat(new[]

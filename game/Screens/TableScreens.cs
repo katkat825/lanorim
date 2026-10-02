@@ -165,7 +165,7 @@ namespace Game.Screens
         protected override void Draw()
         {
             Body.AddChild(Ui.Title(PackView.TitleKey));
-            Body.AddChild(Ui.Row(24, Ui.Label(PackView.GoldKey, _view.Gold),
+            Body.AddChild(Ui.Row(24, Ui.Plain(Ui.Money(_view.Copper)),
                                  Ui.Label(PackView.SlotsKey, _view.Used, _view.Capacity)));
 
             if (_view.AtTheCounter)
@@ -191,7 +191,7 @@ namespace Game.Screens
 
                 if (_view.AtTheCounter && r.SellsFor >= 0)
                 {
-                    line.AddChild(Ui.Button($"{Ui.Say(PackView.SellKey)} {Ui.Say(PackView.GoldKey, r.SellsFor)}", () =>
+                    line.AddChild(Ui.Button($"{Ui.Say(PackView.SellKey)} {Ui.Money(r.SellsFor)}", () =>
                     {
                         if (_view.NeedsSellConfirmation(r.Item.Id) && _confirming != "sell:" + r.Item.Id)
                         {
@@ -259,7 +259,7 @@ namespace Game.Screens
                 {
                     ShopRow r = row;
                     shelf.AddChild(Ui.Row(6,
-                        Ui.Plain($"{Ui.Say(r.NameKey)}  {Ui.Say(PackView.GoldKey, r.Price)}"),
+                        Ui.Plain($"{Ui.Say(r.NameKey)}  {Ui.Money(r.Price)}"),
                         Ui.Button(PackView.BuyKey, () => { _view.Buy(r.Item.Id); Redraw(); })
                           .Greyed(!r.Affordable, Merchant.LineFor(Rebuff.NoGold))));
                 }

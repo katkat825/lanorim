@@ -196,7 +196,9 @@ namespace Content.Saves
         // what is in the pack: item id and how many
         public IList<SavedStack> Pack { get; } = new List<SavedStack>();
 
-        public int Gold { get; set; }
+        // the purse, in copper (Coins). written "copper"; a save from before cc_task_f 1.5 wrote whole gold as "gold",
+        // and is read times a hundred
+        public int Copper { get; set; }
 
         public int? X { get; set; }
 

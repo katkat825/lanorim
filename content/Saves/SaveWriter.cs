@@ -190,7 +190,7 @@ namespace Content.Saves
                 json.WriteNumber("temp_hp", hero.TemporaryHitPoints);
 
             json.WriteNumber("hit_dice", hero.HitDice);
-            json.WriteNumber("gold", hero.Gold);
+            json.WriteNumber("copper", hero.Copper);
         }
 
         static void WriteMagic(Utf8JsonWriter json, SavedHero hero)
