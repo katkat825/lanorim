@@ -114,6 +114,17 @@ namespace Content.Sheet
             Features.FirstOrDefault(f => f.Trait == Trait.DeathIntercept && UsesLeft(f) > 0 &&
                                          f.WhileStances.All(s => Actor.Boons.Has(s)));
 
+        // DROPPED TO 0 JUST NOW: the class's own intercept, and then the keepsake (Hero.Keepsake.cs). The id of what
+        // held the hero up, or null when nothing did and they fall
+        public string HoldUp(IResolver resolver = null)
+        {
+            Feature intercept = DeathIntercept;
+
+            if (Intercept(resolver)) return intercept.Id;
+
+            return Keepsake() ? KeepsakeId : null;
+        }
+
         // SRD 5.2.1 Relentless Rage (p.30): while raging, a DC 10 Constitution save - 5 more each
         // time until a rest - and on a success the hit points are twice the Barbarian's level
         public bool Intercept(IResolver resolver = null)

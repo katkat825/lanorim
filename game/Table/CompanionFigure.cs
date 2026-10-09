@@ -7,7 +7,7 @@ using Godot;
 namespace Game.Table
 {
     // THE COMPANION ON THE TABLE (cc_task_ui-issues-9-30.md 6.4, cc_task_ui-issues-10-01.md 4): a Quaternius
-    // animal, mini-sized, NEVER ON THE MAP. It stands on the table above the map (the far side, toward the GM
+    // monster (an animal until task G), mini-sized, NEVER ON THE MAP. It stands on the table above the map (the far side, toward the GM
     // screen), a little to the right of the screen, with open table round it, and it is alive: it idles, walks
     // between spots near its home now and then (Roaming), and settles its head after a while still. What it
     // does is decided in content, where it is tested: which idle comes next is Idling's deal, where it walks
@@ -17,8 +17,9 @@ namespace Game.Table
     // It also clears the board: a fallen foe topples, and the companion lunges at it and it skitters off the
     // mat (Mini.Skitter). When the dialogue gives it a line (the story's "companion" speaker), it looks up.
     //
-    // Every clip name, size, distance and time is an export: Kathleen's to tune. A clip is a list, the first
-    // the model has wins, so the dogs' Idle_2_HeadLow and the deer's Idle_Headlow are both "head low".
+    // Every size, distance and time is an export: Kathleen's to tune. The clip names are the model's, in its look
+    // (CompanionModels, CompanionClips), and so are its hover and its colours: a flyer hangs a little off the
+    // table and bobs, and a recoloured one wears its own copy of the atlas (AtlasRecolour).
     public partial class CompanionFigure : Node3D
     {
         // how tall it stands, in metres. Twice the board's wolf mini (0.11) since 2026-10-03 (Kathleen: "make
@@ -50,24 +51,8 @@ namespace Game.Table
         // the model's own forward, in degrees about the table's up (Quaternius animals face +Z)
         [Export] public float ForwardDegrees { get; set; } = 0f;
 
-        [Export] public string[] IdleClips { get; set; } = { "Idle", "Idle_2", "Eating" };
-
-        [Export] public string[] WalkClip { get; set; } = { "Walk" };
-
-        [Export] public string[] SettleClip { get; set; } = { "Idle_2_HeadLow", "Idle_Headlow" };
-
-        [Export] public string[] WatchingClip { get; set; } = { "Idle_2" };
-
-        [Export] public string[] AlertClip { get; set; } = { "Idle_HitReact1" };
-
-        [Export] public string[] PleasedClip { get; set; } = { "Jump_ToIdle" };
-
-        // the hero is down, or a rest: it lies its head low beside the board
-        [Export] public string[] LieClip { get; set; } = { "Idle_2_HeadLow", "Idle_Headlow" };
-
-        [Export] public string[] SpeakClip { get; set; } = { "Idle_HitReact2" };
-
-        [Export] public string[] HuffClip { get; set; } = { "Attack", "Attack_Headbutt" };
+        // a hovering companion's bob, rises and falls a second
+        [Export] public float BobsPerSecond { get; set; } = 0.45f;
 
         // seconds it lies down for a rest
         [Export] public float RestSeconds { get; set; } = 4f;
@@ -75,6 +60,10 @@ namespace Game.Table
         public string Companion { get; private set; } = "";
 
         Node3D _model;
+        CompanionLook _look;
+        CompanionClips _clips = CompanionClips.Flying;
+        float _hover;
+        double _bobbing;
         AnimationPlayer _player;
         Idling _idling;
         Roaming _roaming;
@@ -92,19 +81,30 @@ namespace Game.Table
             _player = null;
             Companion = companion ?? "";
 
-            PackedScene scene = CompanionModels.For(companion);
+            _look = CompanionModels.For(companion);
+            PackedScene scene = CompanionModels.Model(_look);
             Visible = scene != null;
 
             if (scene == null) return;
 
+            _clips = _look.Clips ?? CompanionClips.Flying;
+
             _model = scene.Instantiate<Node3D>();
             AddChild(_model);
+
+            // its own colours before the paint, which reads them
+            AtlasRecolour.Apply(_model, _look.Recolour);
 
             if (paint != null) PaintedModel.Paint(_model, paint, "companion");
 
             Aabb box = PaintedModel.Bounds(_model);
             float scale = box.Size.Y > 0.0001f ? Height / box.Size.Y : 1f;
             _model.Scale = Vector3.One * scale;
+
+            // its lowest point on the table, or Hover above it: the Flying monsters are modelled a body's height
+            // off the ground, so they're brought down to it first
+            _hover = -box.Position.Y * scale + _look.Hover;
+            _model.Position = new Vector3(0f, _hover, 0f);
 
             // nose or tail, the furthest it reaches from where it stands, whichever way it turns
             Reach = Mathf.Max(Mathf.Max(Mathf.Abs(box.Position.X), Mathf.Abs(box.End.X)),
@@ -113,7 +113,7 @@ namespace Game.Table
             _model.RotationDegrees = new Vector3(0f, ForwardDegrees, 0f);
 
             _player = Nodes.Under<AnimationPlayer>(_model).FirstOrDefault();
-            _idling = new Idling(IdleClips.Length, new SeededRng(System.Environment.TickCount));
+            _idling = new Idling(_clips.Idles.Length, new SeededRng(System.Environment.TickCount));
             Play(Idle());
 
             GD.Print($"companion  {companion}: {scene.ResourcePath.GetFile()}, " +
@@ -129,6 +129,8 @@ namespace Game.Table
                                                                a.ToString().EndsWith("/" + c, System.StringComparison.OrdinalIgnoreCase)))
                       .FirstOrDefault(a => a != null);
 
+        // a clip that doesn't loop plays once and the idle follows it, so a flyer never hangs in the air on the
+        // last frame of a nod
         void Play(string[] clip, bool loop = true)
         {
             string full = Full(clip);
@@ -138,11 +140,16 @@ namespace Game.Table
             if (animation != null) animation.LoopMode = loop ? Animation.LoopModeEnum.Linear : Animation.LoopModeEnum.None;
 
             _player.Play(full, 0.25);
+
+            if (loop || Full(Idle()) is not { } idle || idle == full) return;
+
+            _player.GetAnimation(idle).LoopMode = Animation.LoopModeEnum.Linear;
+            _player.Queue(idle);
         }
 
-        string[] Idle() => IdleClips.Length == 0
+        string[] Idle() => _clips.Idles.Length == 0
             ? null
-            : new[] { IdleClips[System.Math.Clamp((_idling?.Idle ?? 1) - 1, 0, IdleClips.Length - 1)] };
+            : new[] { _clips.Idles[System.Math.Clamp((_idling?.Idle ?? 1) - 1, 0, _clips.Idles.Length - 1)] };
 
         // its home beside the GM screen (FromGmScreen from the screen's right-hand front corner), or beyond
         // the map's far right corner when there's no screen; never nearer the map than MapClearance
@@ -183,21 +190,21 @@ namespace Game.Table
 
             string[] clip = mood switch
             {
-                Mood.Watching => WatchingClip,
-                Mood.Alert => AlertClip,
-                Mood.Pleased => PleasedClip,
-                Mood.Quiet => LieClip,
+                Mood.Watching => _clips.Watching,
+                Mood.Alert => _clips.Alert,
+                Mood.Pleased => _clips.Pleased,
+                Mood.Quiet => _clips.Lie,
                 _ => Idle(),
             };
 
-            Play(clip, mood is Mood.Calm or Mood.Watching or Mood.Quiet);
+            Play(clip, mood is Mood.Calm or Mood.Watching || mood == Mood.Quiet && _clips.LieLoops);
         }
 
         // it has a line in the dialogue
         public void Speak()
         {
             Stop();
-            Play(SpeakClip, false);
+            Play(_clips.Speak, false);
             _gesture = 1.6;
         }
 
@@ -205,7 +212,7 @@ namespace Game.Table
         public void Rest()
         {
             Stop();
-            Play(LieClip, true);
+            Play(_clips.Lie, _clips.LieLoops);
             _resting = RestSeconds;
         }
 
@@ -216,7 +223,7 @@ namespace Game.Table
 
             Stop();
             Face(GetParent<Node3D>().ToLocal(fallen.GlobalPosition));
-            Play(HuffClip, false);
+            Play(_clips.Huff, false);
             _gesture = 1.2;
 
             Vector3 from = fallen.GetParent<Node3D>().ToLocal(GlobalPosition);
@@ -232,6 +239,8 @@ namespace Game.Table
 
         public override void _Process(double delta)
         {
+            Bobbing(delta);
+
             if (_player == null) return;
 
             if (_resting > 0 && (_resting -= delta) <= 0) Feel(Mood.Calm);
@@ -254,7 +263,7 @@ namespace Game.Table
             {
                 _settled = false;
                 Face(Target);
-                Play(WalkClip);
+                Play(_clips.Walk);
                 return;
             }
 
@@ -262,12 +271,21 @@ namespace Game.Table
             if (!_settled && _roaming.Still >= SettleAfter)
             {
                 _settled = true;
-                Play(SettleClip);
+                Play(_clips.Settle);
                 return;
             }
 
             // calm and awake: the idles are dealt, none twice running
             if (!_settled && _idling != null && _idling.Tick(delta)) Play(Idle());
+        }
+
+        // a hovering companion rises and falls a little; one standing on the table doesn't
+        void Bobbing(double delta)
+        {
+            if (_model == null || _look == null || _look.Bob <= 0f) return;
+
+            _bobbing += delta * BobsPerSecond * Mathf.Tau;
+            _model.Position = new Vector3(0f, _hover + _look.Bob * Mathf.Sin((float)_bobbing), 0f);
         }
 
         Vector3 Target => new Vector3((float)_roaming.At.X, Position.Y, (float)_roaming.At.Z);

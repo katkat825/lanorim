@@ -327,9 +327,15 @@ namespace Game.Screens
             {
                 more.AddChild(Ui.Label(ScreenWords.SheetSpells));
 
+                if (_sheet.SoloSlots > 0) more.AddChild(Ui.Plain(Ui.Say(ScreenWords.SheetSoloSlot)));
+
                 foreach (SpellCard card in _sheet.Spells)
                     Readable(Ui.Say(card.NameKey), SpellCardText.Of(card));
             }
+
+            // the keepsake: ready, or spent until a long rest (cc_task_h 3.2)
+            if (_sheet.Keepsake is bool ready)
+                more.AddChild(Ui.Plain(Ui.Say(ready ? ScreenWords.SheetKeepsakeReady : ScreenWords.SheetKeepsakeSpent)));
 
             if (_sheet.Special.Count > 0)
             {

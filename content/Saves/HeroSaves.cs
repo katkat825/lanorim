@@ -40,6 +40,7 @@ namespace Content.Saves
                 SpellAbility = hero.SpellAbility?.Id() ?? "",
                 Size = hero.Size?.Id() ?? "",
                 ShopsFirst = hero.ShopsFirst,
+                Figure = hero.Figure,
                 Level = hero.Level,
                 HitPoints = actor.Health.Current,
                 TemporaryHitPoints = actor.Health.Temporary,

@@ -108,6 +108,9 @@
     },
     {
       "id": "gemstone", "kind": "treasure", "cost": 50, "stackable": true, "sell_percent": 100
+    },
+    {
+      "id": "keepsake", "kind": "quest", "cost": 0
     }
   ]
 }

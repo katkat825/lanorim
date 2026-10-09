@@ -5,6 +5,8 @@
       "entries": [
         {
           "id": "cellar_rats",
+          "level": 1,
+          "difficulty": "low",
           "kind": "fight",
           "map": "mill_cellar",
           "loot": "rat_nest",
@@ -17,6 +19,8 @@
         },
         {
           "id": "goblin_camp",
+          "level": 3,
+          "difficulty": "moderate",
           "kind": "fight",
           "map": "mill_yard",
           "loot": "goblin_chest",
@@ -42,6 +46,8 @@
         },
         {
           "id": "wolves",
+          "level": 2,
+          "difficulty": "low",
           "kind": "fight",
           "weight": 3,
           "map": "road_clearing",
@@ -53,6 +59,8 @@
         },
         {
           "id": "bandits",
+          "level": 2,
+          "difficulty": "low",
           "kind": "fight",
           "weight": 2,
           "map": "road_clearing",

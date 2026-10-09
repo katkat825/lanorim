@@ -117,6 +117,7 @@ namespace Content.Saves
                 SpellAbility = entry.Text("spell_ability"),
                 Size = entry.Text("size"),
                 ShopsFirst = entry.Flag("shops_first"),
+                Figure = entry.Number("figure", 0),
                 Level = entry.Number("level", 1),
                 HitPoints = entry.Number("hp", -1),
                 TemporaryHitPoints = entry.Number("temp_hp", 0),

@@ -118,6 +118,9 @@ namespace Content.Sheet
                                      (Background == null ? 0
                                          : BackgroundKit == KitChoice.Gear ? Background.Gold : Background.GoldInstead)));
 
+            // and the keepsake, whatever the class, background or kit (cc_task_h 3.2)
+            GiveKeepsake(shelf);
+
             // every new hero goes to the starting shop, gear or gold, with whatever gold they have (Kathleen, 2026-10-05)
             ShopsFirst = true;
 

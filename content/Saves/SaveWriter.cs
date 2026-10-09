@@ -132,6 +132,7 @@ namespace Content.Saves
             if (!string.IsNullOrEmpty(hero.SpellAbility)) json.WriteString("spell_ability", hero.SpellAbility);
             if (!string.IsNullOrEmpty(hero.Size)) json.WriteString("size", hero.Size);
             if (hero.ShopsFirst) json.WriteBoolean("shops_first", true);
+            if (hero.Figure != 0) json.WriteNumber("figure", hero.Figure);
             json.WriteNumber("level", hero.Level);
         }
 

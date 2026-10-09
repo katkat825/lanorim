@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -96,14 +97,17 @@ namespace Content.Schema
 
         // "monsters": [ { "monster": "goblin", "count": "1d4" } ] - things, and how many of each.
         // `idOf` is what a bad id is said not to be, "a monster id"
-        public static List<(string Id, DiceRoll Count)> Counted(JsonElement entry, string list, string key,
-                                                                string idOf, string where, List<string> problems)
+        // flags: the true-or-false keys an entry may carry beside its id and count (an encounter's "leader"); the ones
+        // set true come back with it
+        public static List<(string Id, DiceRoll Count, IReadOnlyList<string> Flags)> Counted(
+            JsonElement entry, string list, string key, string idOf, string where, List<string> problems,
+            IReadOnlyList<string> flags = null)
         {
-            var counted = new List<(string, DiceRoll)>();
+            var counted = new List<(string, DiceRoll, IReadOnlyList<string>)>();
 
             foreach (JsonElement one in entry.Items(list))
             {
-                Keyed.OnlyKnown(one, new[] { key, "count" }, where, problems);
+                Keyed.OnlyKnown(one, new[] { key, "count" }.Concat(flags ?? Array.Empty<string>()).ToArray(), where, problems);
 
                 string id = one.Text(key);
 
@@ -127,7 +131,7 @@ namespace Content.Schema
                     continue;
                 }
 
-                counted.Add((id, count));
+                counted.Add((id, count, (flags ?? Array.Empty<string>()).Where(f => one.Flag(f)).ToList()));
             }
 
             return counted;

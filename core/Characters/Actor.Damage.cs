@@ -44,10 +44,13 @@ namespace Core.Characters
                 }, id, Nature));
         }
 
-        // the single path damage takes into an actor: the multiplier, then the hit points, then
-        // the unconscious condition. nothing else may call Health.Take on its own.
-        public int Suffer(int amount, DamageType type)
+        // the single path damage takes into an actor: the dealer's share, the multiplier, then the hit points, then
+        // the unconscious condition. nothing else may call Health.Take on its own. `by` is who dealt it, when
+        // anybody did: an enemy at a difficulty other than Standard lands only DamagePercent of it (cc_task_h 3.3)
+        public int Suffer(int amount, DamageType type, Actor by = null)
         {
+            if (by != null) amount = Core.Rules.Percent.Of(amount, by.DamagePercent);
+
             int after = DefenseAgainst(type).Apply(amount);
 
             // Death Ward: the first drop to 0 is a drop to 1, and the ward is spent
@@ -87,6 +90,10 @@ namespace Core.Characters
 
             if (_proneFromFalling) Remove(Condition.Prone);
         }
+
+        // how much of its damage lands, as a percentage: 100, except an enemy at a gentler difficulty (Battle sets it
+        // from the player's setting, cc_task_h 3.3). the hero's is always 100
+        public int DamagePercent { get; set; } = 100;
 
         // SRD 5.2.1 Stable: at 0 hit points but no longer rolling death saves. Spare the Dying.
         // taking damage ends it; healing above 0 makes it moot

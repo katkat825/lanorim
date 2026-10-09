@@ -110,6 +110,13 @@ namespace Game.Table
                 return;
             }
 
+            // AND THE FIGURES PROBE STANDS EVERY CLASS'S TWO MINIS UP AND LOOKS AT THEM (cc_task_h Part 2)
+            if (FiguresProbe.RequestedFrom(OS.GetCmdlineUserArgs()))
+            {
+                AddChild(new FiguresProbe { Name = "FiguresProbe", Board = Board });
+                return;
+            }
+
             // THE FAIRNESS SWEEP TAKES OVER THE TRAY. Handed the dice before anything below is
             // wired, because the probe drives the tray itself and a second listener would throw
             // on top of it.

@@ -94,7 +94,7 @@ namespace Game.Play
             if (figure == null) return Fail("the mini has no figure");
 
             Transform3D toMini = figure.Transform;
-            Aabb box = Game.Board.Mini.Footprint(figure, toMini);
+            Aabb box = Game.Board.Mini.Footprint(figure, toMini, mini.Look?.Crown == true);
 
             float half = mini.CellSize * 0.5f;
             bool inside = box.Position.X >= -half && box.End.X <= half && box.Position.Z >= -half && box.End.Z <= half;

@@ -31,6 +31,11 @@ namespace Game.Screens
         public static readonly string Suggested = K("create", "take_suggested");
         public static readonly string ChosenOf = K("create", "chosen_of");
 
+        // the class page's choice of two figures for the mini (cc_task_h Part 2): named by the figure, nothing else
+        public static readonly string Figure = K("create", "figure");
+
+        public static string FigureKey(int figure) => K("create", "figure_" + (figure + 1));
+
         // the Traits page's three sections (cc_task_e-shop-species-and-ui-notes.md 1.3)
         public static readonly string TraitSkill = K("create", "trait_skill");
         public static readonly string TraitSpellAbility = K("create", "trait_spell_ability");
@@ -94,17 +99,24 @@ namespace Game.Screens
         public static readonly string SheetSpells = K("sheet", "spells");
         public static readonly string SheetFeatures = K("sheet", "features");
 
+        // the solo deltas on the sheet (cc_task_h 3.1, 3.2)
+        public static readonly string SheetSoloSlot = K("sheet", "solo_slot");
+
+        public static readonly string SheetKeepsakeReady = K("sheet", "keepsake_ready");
+
+        public static readonly string SheetKeepsakeSpent = K("sheet", "keepsake_spent");
+
         public static IEnumerable<string> Keys() =>
             new[]
             {
                 GameTitle, PressToBegin, Back, Next, Begin, Saves, NoSaves, Character, Retire,
-                CreateTitle, PointsLeft, PicksLeft, NameHint, Suggested, ChosenOf,
+                CreateTitle, PointsLeft, PicksLeft, NameHint, Suggested, ChosenOf, Figure, FigureKey(0), FigureKey(1),
                 PauseTitle, Resume, Save, Saved, Load, Sheet, Pack, ToTheBook,
                 TheEnd, TheEndBlurb, DemoEnd,
                 ThrowPrompt, VerdictHit, VerdictCritical, VerdictMiss, VerdictSaved, VerdictFailed, TurnHint, AimHint, CameRound, YourTurn, FightWon, FightFled,
                 OnYourself, CaptionCast, CaptionCastOn, CaptionChanged,
                 BeforeFightTitle, BeforeFightLine, BeforeFightCast, ToTheFight,
-                SheetTitle, SheetLevel, SheetHp, SheetAc, SheetSpells, SheetFeatures, SheetSize, SheetSpeciesSpells,
+                SheetTitle, SheetLevel, SheetHp, SheetAc, SheetSpells, SheetFeatures, SheetSoloSlot, SheetKeepsakeReady, SheetKeepsakeSpent, SheetSize, SheetSpeciesSpells,
                 TraitSkill, TraitSpellAbility, TraitSize,
                 KitFromClass, KitFromBackground, KitGear, KitGold, KitStartsWith, KitShopFirst, KitList, KitNoGear,
                 AskCard.TurnsTheHitKey,

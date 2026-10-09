@@ -43,12 +43,12 @@ namespace Sim
 
             Console.WriteLine($"{runs} fights per row: one hero against {count} {monster.Id}, on the cellar.");
             Console.WriteLine();
-            Console.WriteLine("class      lvl   wins   rounds  hp left");
+            Console.WriteLine("class      lvl   wins   rounds  hp left  dropped");
 
             foreach (string cls in Classes.All)
                 for (int level = 1; level <= 5; level++)
                 {
-                    int wins = 0, rounds = 0, hp = 0;
+                    int wins = 0, rounds = 0, hp = 0, dropped = 0;
 
                     for (int run = 0; run < runs; run++)
                     {
@@ -58,17 +58,19 @@ namespace Sim
                                              .Select(i => new Battle.Foe(monster, map.SpawnAt(i) ?? map.SpawnAt(1) ?? map.Start))
                                              .ToList();
 
-                        Battle battle = Battle.Set(library, map, hero, foes, resolver);
+                        var watch = new DropWatch(hero.Actor);
+                        Battle battle = Battle.Set(library, map, hero, foes, resolver, null, watch);
                         var session = new CombatSession(battle, library.Items, library.Forms);
 
                         if (new AutoPlayer().Play(session) == Outcome.HeroesWon) wins++;
 
                         rounds += battle.Fight.Round;
                         hp += Math.Max(0, hero.Actor.Health.Current) * 100 / Math.Max(1, hero.Actor.Health.Maximum);
+                        if (watch.Dropped) dropped++;
                     }
 
                     Console.WriteLine($"{cls,-10} {level,3}  {100.0 * wins / runs,5:0.0}%  {(double)rounds / runs,6:0.0}  " +
-                                      $"{(double)hp / runs,6:0}%");
+                                      $"{(double)hp / runs,6:0}%  {100.0 * dropped / runs,6:0}%");
                 }
 
             return 0;

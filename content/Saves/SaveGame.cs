@@ -118,6 +118,9 @@ namespace Content.Saves
         // the hero hasn't been to the starting shop yet (cc_task_e-shop-species-and-ui-notes.md 1.4)
         public bool ShopsFirst { get; set; }
 
+        // which of its class's figures the hero's mini is (cc_task_h Part 2); 0 in a save from before it
+        public int Figure { get; set; }
+
         public int Level { get; set; } = 1;
 
         // BASE scores, before anything shifted them. A shift lasts until a rest, so it is a thing

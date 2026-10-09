@@ -3,7 +3,7 @@ classes 7
 class features 123
 species 15
 species features 36
-items 62
+items 63
 items with boons 2
 monsters 23
 monster actions 1

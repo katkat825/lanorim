@@ -16,9 +16,18 @@
 ; the SECOND answer to that question, not the first.
 ;
 ; THE FIGURES. The enemy is Quaternius' Goblin_Male, straight out of the Ultimate Animated
-; Character Pack and paired off docs/v1_minis_map.md. The hero is rogue_v3.glb - KATHLEEN'S OWN
+; Character Pack and paired off docs/v1_minis_map.md. HeroFigure is rogue_v3.glb - KATHLEEN'S OWN
 ; MODEL, built on the pack's rig and kept in assets/modified/. It is not the Ninja that doc names;
 ; it is a rogue with a cloak (v3 dropped v2's hood), and the doc's row wants updating to say so.
+;
+; SINCE 2026-10-08 THE HERO STANDS AS ITS CLASS'S BODY, NOT AS HeroFigure (tasks G and H, every
+; species): KayKit Adventurers 2.0's Knight (paladin), Mage, Ranger (druid) and Rogue, and Kathleen's
+; own barbarian, fighter and cleric (the Barbarian, Knight and Mage with their bear hat, helmets, hat and
+; capes off), in game/models/minis/kaykit/. Two figures a class, the second wearing another character's
+; head (FigureParts). Which class is which body, its pose and what it holds: game/Board/HeroMinis.cs. They carry no clips, so the KayKit Character Animations Rig_Medium files are
+; lent to them (MiniRigs) and each is held in one frame of its class's pose; they are measured crown to
+; sole (MiniLook.Crown), since a KayKit head stands far above its head bone. rogue_v3 is still here, and
+; HudLayout.HeroByClass off (ui/hud_layout.tres) puts it back for every class, to compare in the game.
 ;
 ; rogue_v3 (final export of 2026-09-30): one body (Body_001, with hair) on one armature, the pack's
 ; 18 clips, and dark Eyes - that surface is the pupils AND the brows, so white there read as no face at
@@ -44,9 +53,9 @@
 ; lives in one float per surface, so an export that drops baseColorFactor drops the entire look -
 ; rogue_v1 arrived that way and rendered as a white blob.
 ;
-; They are chosen by ALLEGIANCE, which means every enemy is a goblin. Board's HeroFigure/EnemyFigure
-; say why: the real pairing is class-to-mini and statblock-to-mini, and that is the Phase 7 mini
-; pack, not something an Actor can answer today.
+; HeroFigure and EnemyFigure are what a piece is when nothing knows better: a monster stands as its
+; statblock's mini (game/Board/MiniModels.cs) and the hero as its class's (HeroMinis), through
+; Board.FigureFor; a statblock whose mini has no model is the goblin.
 ;
 ; TO LAY OUT:
 ;   - the terrain materials. Wall, door and rough are told apart by SILHOUETTE first and colour

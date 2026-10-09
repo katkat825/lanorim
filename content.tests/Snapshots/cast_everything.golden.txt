@@ -5976,13 +5976,11 @@
     goblin: disarmed=False
   a point of damage each:
     ally: hp=39/40+0
-    goblin: can act=True conditions=prone disarmed=True hp=29/30+0 leans against far=(False, True)
+    goblin: can act=True conditions=prone hp=29/30+0 leans against far=(False, True)
     fiend: hp=59/60+0
     undead: hp=59/60+0
     weak: hp=3/4+0
     giant: hp=179/180+0
-  round 4:
-    goblin: disarmed=False
   zones left 0; over Open
   let go:
     wizard: concentrating=
@@ -6014,13 +6012,11 @@
     goblin: disarmed=False
   a point of damage each:
     ally: hp=39/40+0
-    goblin: can act=True conditions=prone disarmed=True hp=29/30+0 leans against far=(False, True)
+    goblin: can act=True conditions=prone hp=29/30+0 leans against far=(False, True)
     fiend: hp=59/60+0
     undead: hp=59/60+0
     weak: hp=3/4+0
     giant: hp=179/180+0
-  round 4:
-    goblin: disarmed=False
   zones left 0; over Open
   let go:
     wizard: concentrating=

@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using Content.Combat;
 using Content.Schema;
+using Content.SoloPlay;
 using Core.Words;
 
 namespace Content.Screens
@@ -27,6 +28,10 @@ namespace Content.Screens
     public sealed class GameSettings
     {
         public CombatSpeed EnemySpeed { get; set; } = CombatSpeed.Normal;
+
+        // how hard the fights are (cc_task_h 3.3): the enemies' hit points and damage, never the hero's rules.
+        // changeable at any time; Standard is the game as it always was. the game hands it to SoloRules
+        public PlayDifficulty Difficulty { get; set; } = PlayDifficulty.Standard;
 
         // the hero's rolls are thrown on the tray unless this is on; the numbers are the same dice
         public bool SkipPhysicalDice { get; set; }
@@ -64,6 +69,7 @@ namespace Content.Screens
             {
                 json.WriteStartObject();
                 json.WriteString("enemy_speed", EnumWords.Name(EnemySpeed));
+                json.WriteString("difficulty", EnumWords.Name(Difficulty));
                 json.WriteBoolean("skip_physical_dice", SkipPhysicalDice);
                 json.WriteBoolean("follow_enemies", FollowEnemies);
                 json.WriteBoolean("bring_tray", BringTrayToMe);
@@ -109,6 +115,14 @@ namespace Content.Screens
                         found.Add($"'{root.Text("enemy_speed")}' is not a combat speed");
                 }
 
+                if (root.Has("difficulty"))
+                {
+                    if (EnumWords.TryName(root.Text("difficulty"), out PlayDifficulty difficulty))
+                        settings.Difficulty = difficulty;
+                    else
+                        found.Add($"'{root.Text("difficulty")}' is not a difficulty");
+                }
+
                 settings.SkipPhysicalDice = Flag(root, "skip_physical_dice", false);
                 settings.FollowEnemies = Flag(root, "follow_enemies", true);
                 settings.BringTrayToMe = Flag(root, "bring_tray", true);
@@ -138,6 +152,15 @@ namespace Content.Screens
         public static string SpeedKey(CombatSpeed speed) =>
             ScreenKeys.Key("settings", "speed_" + EnumWords.Name(speed));
 
+        // each difficulty's name, and what it's for, in words that never judge the player
+        public static string DifficultyKey(PlayDifficulty difficulty) =>
+            ScreenKeys.Key("settings", "difficulty_" + EnumWords.Name(difficulty));
+
+        public static string DifficultyAboutKey(PlayDifficulty difficulty) =>
+            ScreenKeys.Key("settings", "difficulty_" + EnumWords.Name(difficulty) + "_about");
+
+        public static readonly string DifficultyTitleKey = ScreenKeys.Key("settings", "difficulty");
+
         public static readonly string TitleKey = ScreenKeys.Key("settings", "title");
         public static readonly string GameTabKey = ScreenKeys.Key("settings", "game");
         public static readonly string AccessTabKey = ScreenKeys.Key("settings", "access");
@@ -150,7 +173,9 @@ namespace Content.Screens
 
         public static IEnumerable<string> Keys() =>
             Enum.GetValues<CombatSpeed>().Select(SpeedKey)
-                .Concat(new[] { TitleKey, GameTabKey, AccessTabKey, EnemySpeedKey, SkipDiceKey, FollowKey, BringTrayKey, ReactionsKey,
+                .Concat(Enum.GetValues<PlayDifficulty>().Select(DifficultyKey))
+                .Concat(Enum.GetValues<PlayDifficulty>().Select(DifficultyAboutKey))
+                .Concat(new[] { DifficultyTitleKey, TitleKey, GameTabKey, AccessTabKey, EnemySpeedKey, SkipDiceKey, FollowKey, BringTrayKey, ReactionsKey,
                                 ReadAloudKey });
     }
 }

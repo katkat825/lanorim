@@ -141,7 +141,15 @@ namespace Content.Dialogue
         {
             Consequence drawn = _screen.Draw(_library.Consequences, attempt);
 
-            return drawn == null ? null : Consequences.Befall(drawn, _resolver, _hero.Actor, _hero.Pack);
+            if (drawn == null) return null;
+
+            Consequences.Visit visit = Consequences.Befall(drawn, _resolver, _hero.Actor, _hero.Pack);
+
+            // a bane that dropped the hero to 0: what keeps them up has its say here too, the keepsake included
+            // (cc_task_h 3.2: "out of a fight, the same trigger")
+            if (_hero.Actor.IsDown && !_hero.Actor.IsDead) _hero.HoldUp(_resolver);
+
+            return visit;
         }
 
         Settled Rolled(Request request)

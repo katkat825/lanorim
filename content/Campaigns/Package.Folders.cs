@@ -87,6 +87,10 @@ namespace Content.Campaigns
                             problems.Add(new ContentProblem(file, where,
                                 $"'{entry.Id}' leaves '{entry.Loot}' and there is no loot table " +
                                 $"by that name in this campaign's {LootFolder}/"));
+
+                        // the solo budget and the enemy cap: warnings, never refusals (cc_task_h 3.5)
+                        problems.AddRange(FightBudget.Check(entry,
+                            id => monsters.FirstOrDefault(m => m.Id == id) ?? srd.Find(id), file, where));
                     }
 
                 all.AddRange(read);

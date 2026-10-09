@@ -185,7 +185,9 @@ namespace Content.Tests
 
             Assert.True(sheet.Casts);
             Assert.Equal(SpellResourceMode.Slots, sheet.Resource);
-            Assert.Equal((1, 4, 4), sheet.Slots[0]);
+
+            // the SRD's four, and the solo bonus's one more when it's on (cc_task_h 3.1), which the sheet says
+            Assert.Equal((1, 4 + sheet.SoloSlots, 4 + sheet.SoloSlots), sheet.Slots[0]);
             Assert.Equal((2, 2, 2), sheet.Slots[1]);
             Assert.Null(sheet.ConcentratingKey);
 

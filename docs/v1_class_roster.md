@@ -88,15 +88,19 @@ the curated-forms cap is a declared product constraint. *Companion: borrowed-sha
 
 The companion is a **live thing on the table, outside the map/campaign** — its own token, distinct from
 the on-map minis. The 3D base is **Quaternius + KayKit** (`decisions_checklist.md` §4); the companions below
-are all Quaternius creatures:
+are all Quaternius creatures, from **Ultimate Monsters** (CC0) since 2026-10-08 (Kathleen: "acceptable given that the
+companions aren't on the board"). Where she gave two, both are in `game/Table/CompanionModels.cs` to pick from:
 
-| Companion | Quaternius mini | Status |
+| Companion | Quaternius model (Ultimate Monsters) | Status |
 |---|---|---|
-| Barbarian + Fighter — bonded wolf | Wolf (Animated Animal Pack) | free download |
-| Mage — bound imp | Imp (Bestiary – Dungeon Monsters) | **already owned** |
-| Druid — borrowed-shape spirit | Fox / wolf / beast (Animated Animal Pack) | free download |
-| Cleric + Paladin — saint's fragment | abstract — a relic/gem/wisp prop or small effect, no creature | flexible |
-| Rogue — gossiping raven | no Quaternius bird | **open** — source a matching CC0 bird, re-theme, or commission |
+| Barbarian + Fighter — bonded wolf | Dragon_Evolved, or Dragon | in the game; which one is Kathleen's pick |
+| Rogue — gossiping raven | Pigeon made black, or Goleling | in the game; which one, and the shade, are Kathleen's |
+| Mage — bound imp | Squidle made red | in the game; the shade is Kathleen's |
+| Cleric + Paladin — saint's fragment | Ghost made white | in the game; the shade is Kathleen's |
+| Druid — borrowed-shape spirit | Mushnub_Evolved, one body (no shape-switching) | in the game |
+
+The 2026-10-01 animals (Wolf, Fox, Shiba Inu, white horse, stag, Ultimate Animated Animals) are unused and leave
+the game once Kathleen has seen these.
 
 **Companion voices in v1: 5 across 7 classes** — Barbarian + Fighter share one; Cleric + Paladin share
 one; Rogue, Mage, and Druid each have their own.

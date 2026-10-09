@@ -175,6 +175,7 @@ namespace Content.Dialogue
 
                 case RequestKind.Fight:
                     store.SetValue(RequestVariables.Fight, answer.Outcome.Id());
+                    store.SetValue(RequestVariables.FightBroke, answer.Broke);
                     break;
 
                 case RequestKind.Loot:

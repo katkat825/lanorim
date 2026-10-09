@@ -126,11 +126,17 @@ namespace Content.Sheet
 
         public int PointsMost { get; private set; }
 
+        // how many of the 1st-level slots (or their points) are the solo bonus (cc_task_h 3.1): the sheet says so
+        public int SoloSlots { get; private set; }
+
         public IReadOnlyList<SpellCard> Spells { get; private set; }
 
         // --- special -------------------------------------------------------------------------
 
         public IReadOnlyList<SpecialRow> Special { get; private set; }
+
+        // the keepsake (cc_task_h 3.2): null without one, true while it's ready, false when it's spent until a long rest
+        public bool? Keepsake { get; private set; }
 
 
         public static SheetView Of(Hero hero, Encounter fight = null, Turn turn = null)
@@ -213,6 +219,7 @@ namespace Content.Sheet
                 : null;
 
             Resource = caster.Mode;
+            SoloSlots = hero.Class.SoloBonusSlots;
 
             switch (caster.Resource)
             {
@@ -238,6 +245,8 @@ namespace Content.Sheet
 
         void ReadSpecial(Hero hero)
         {
+            Keepsake = hero.HasKeepsake ? hero.KeepsakeReady : null;
+
             Special = hero.Activatable
                           .Select(f => new SpecialRow(f, hero.UsesLeft(f)))
                           .ToList();

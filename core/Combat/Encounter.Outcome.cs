@@ -13,6 +13,14 @@ namespace Core.Combat
         {
             if (Over) return Outcome;
 
+            // the enemies broke (Encounter.Morale.cs): with nowhere to run they give up, and it's won
+            if (Breaks() && Surrendered)
+            {
+                Outcome = Outcome.HeroesWon;
+                Observer.Ended(Outcome);
+                return Outcome;
+            }
+
             // a hero on the floor has not lost yet - the death save is still to come, and judging
             // the fight before that die lands would skip the whole mechanic
             bool heroesStanding = _order.Any(r => r.Actor.Side == Allegiance.Hero && !r.Actor.IsDead &&

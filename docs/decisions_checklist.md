@@ -41,6 +41,31 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
     **[OPEN 2026-10-03] Does damage taken while at 0 HP bring a save of its own?** Not built: the answer can be read
     two ways (`_design_docs/OPEN_QUESTIONS.md`, top). As built, it doesn't: the save comes at the start of the turn.
   - **[DEFERRED 2026-10-01] Massive damage** killing outright (SRD: damage at 0 HP equal to your HP maximum). (`09-25 Q3`; `deferred.md`)
+- **[DECIDED 2026-10-08] The solo deltas for the casters** (Kathleen: "the melee classes are already well speced for
+  solo play, so we should focus more on the casters"; `cc_task_h` Part 3, `_design_docs/SOLO_BALANCE_IDEAS.md`). Each is
+  behind its own switch in `content/SoloPlay/SoloRules.cs`, on in the game, so it can be turned off and the sims compare
+  (`sim classes 200 --solo none|slot|keepsake|both --difficulty story|standard|hard`). Results: `RUN_LOG_2026-10-08_h.md`.
+  - **One extra 1st-level spell slot for the Mage, Cleric and Druid** at every level, or a 1st-level spell's price
+    in points (2), so the two modes stay even. Not the Paladin. The sheet says it's the solo bonus. (3.1)
+  - **The keepsake:** every hero carries one (starting equipment whatever the class, background or kit, and added to
+    a save from before it). **The moment the hero drops to 0 HP, once per long rest, it stands them back up** on their
+    Hit Die's full value plus their level (a level 1 Mage 7, a level 1 Fighter 11). No roll, no action, whatever
+    condition. It happens instead of the fall: no Unconscious, no Prone, no death save, and they keep their weapon;
+    the next drop before a long rest is the single death save as ever. Out of a fight too (a consequence's damage).
+    The class's own intercepts (Relentless Rage, Relentless Endurance) go first. A quest item: no slot, no sale, no
+    discard; the sheet shows it ready or spent. Its story and look are Kathleen's ("Keepsake" is a working name). If
+    the sims say it's weak at high level, the fallback is "half the HP maximum, or Hit Die + level, whichever is
+    more" (not built). (3.2)
+  - **Difficulty: Story, Standard, Hard,** a player setting changeable at any time; Standard (the default) is the
+    game exactly as before. Only the enemies change: Story is 75% enemy hit points and 75% enemy damage, Hard is 125%
+    hit points and 100% damage, each rounded up and never under 1. (3.3)
+  - **Morale, per fight, by the campaign** (`"morale": "none" | "leader" | "half"` on a fight entry, `"leader": true`
+    on a monster): broken, the enemies run for the nearest way off the map, or surrender with none; the fight is won
+    and the story can read `$fight_broke`. None is the default. (3.4)
+- **[DECIDED 2026-10-08] The campaign authoring rules** (`docs/campaign_authoring_rules.md`): the **solo budget** (a
+  fight's `level` and `difficulty` held to the SRD's XP Budget per Character for ONE character) and the **enemy cap**
+  (2 at levels 1-2, 3 at 3-4, 4 at 5-10, 5 at 11+), and **two keys** (a check that gates the story has a second skill on
+  another ability or a no-check way through). The campaign check warns, never refuses. (3.5)
 - **[DECIDED 2026-10-01] Rage uses:** SRD — 2 to 6 by level, one back on a short rest (as built). (`09-25 Q2`)
 - **[DECIDED] Attack & damage, initiative** — d20 + mods vs. AC; damage = weapon die + mod;
   initiative d20 + Dex. Flag if you want a delta.
@@ -286,7 +311,22 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   (`10-01 Q4`)
 - **[DECIDED 2026-10-01] The combat menus' "why":** greyed options say why after the name, no hover. Keep. (`10-01 Q5`)
 - **[DECIDED 2026-10-01] The missing grid squares:** already back; nothing to do. (`09-28g Q2`)
-- **[DECIDED 2026-10-01] The companion picks** (Wolf, Fox, Shiba Inu, white horse, stag): keep. (10-01 task)
+- **[DECIDED 2026-10-08] The companion picks** are Quaternius's **Ultimate Monsters** (CC0), an exception to the
+  "cutesy packs rejected" line above that Kathleen made because the companions aren't on the board: Dragon_Evolved made
+  blue-green (Barbarian, Fighter; the exact blue-green still to pick from three, teal for now), the Pigeon in charcoal
+  (Rogue), the Squidle in a darker red (Mage), the Ghost in white (Cleric, Paladin), Mushnub_Evolved (Druid).
+  `game/Table/CompanionModels.cs` holds them, one line each (`cc_task_g`, `cc_task_h` Part 1). The 2026-10-01 animals
+  (Wolf, Fox, Shiba Inu, white horse, stag) are gone.
+- **[DECIDED 2026-10-08] The hero minis:** KayKit Adventurers by class, every species. Kathleen's own barbarian
+  (no bear hat), fighter and cleric bodies, the Knight (Paladin), the Mage, the Ranger (Druid) and the unhooded Rogue,
+  each in its class's suggested pose with its weapon in hand (`game/Board/HeroMinis.cs`). rogue_v3 stays as a switch
+  back for every class (`HudLayout.HeroByClass`).
+- **[DECIDED 2026-10-08] Two figures a class,** the player's pick at character creation ("Your mini"), saved with the
+  hero: the class's own head, and another character's head on the same body, put together in the game
+  (`FigureParts`). Told apart by the figure, never by a gender word. The second heads are first picks for Kathleen to
+  change from the heads sheet (`cc_task_h` Part 2).
+- **[DECIDED 2026-10-08] The enemy minis stay Quaternius for now;** the look test's screenshots decide whether the
+  humanoid enemies follow the hero to KayKit.
 - **[DECIDED 2026-10-01] The rogue's cape** is KayKit Skeletons' `Skeleton_Rogue` (CC0); the hood is removed. (`10-01 Q7`)
 
 ## 5. Product

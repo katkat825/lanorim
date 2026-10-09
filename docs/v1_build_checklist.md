@@ -132,7 +132,7 @@ done.**
 
 ## 8. Narrative & GM
 
-- `[~]` **Diegetic GM narrator** — the figure behind the screen delivers the story. *(The dialogue card is wired; the figure is not.)*
+- `[x]` **Diegetic GM narrator** — the GM behind the screen delivers the story. *(Done for its text side: the dialogue card is wired. **There is no GM figure** (Kathleen, 2026-10-01): the GM is never seen, only read and heard. What's left is the GM's sounds; if a visual is ever needed, the look is a dark, fuzzy head-and-shoulders silhouette behind the screen. 2026-10-08)*
 - `[x]` **Branching dialogue runtime** — YarnSpinner (already chosen); popup + Continue button. *(Runtime + the beats "shared spine" built + tested; the popup is wired on the table 2026-09-24.)*
 - `[x]` **Generic companion speaker (`companion` alias)** — a reserved speaker the presentation resolves to the player's actual companion, so a base-game campaign can write one in-narrative line "said by any companion"; a companion-specific line overrides it. Follows the existing `dm` reserved-speaker precedent. *(Base-game only; not needed in Workshop. Built + tested 2026-09-24.)*
 - `[x]` **Narrative flow** — branch-out/return for skill checks and combat. *(Closed set of Yarn commands, settled by `Referee`; 12 tests.)*

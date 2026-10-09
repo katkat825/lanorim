@@ -31,8 +31,9 @@ namespace Game.Board
         }
 
         // WHICH MODEL A PIECE IS, when something knows better than its allegiance: the fight asks the
-        // statblock's mini (MiniModels). Null, or an answer of null, and it is HeroFigure/EnemyFigure
-        public System.Func<Actor, (PackedScene Model, float Height)?> FigureFor { get; set; }
+        // statblock's mini (MiniModels) and the hero's class (HeroMinis). Null, or an answer of null, and
+        // it is HeroFigure/EnemyFigure
+        public System.Func<Actor, (PackedScene Model, MiniLook Look)?> FigureFor { get; set; }
 
         public Mini Of(Actor actor) =>
             actor != null && _minis.TryGetValue(actor, out Mini mini) ? mini : null;
@@ -65,7 +66,8 @@ namespace Game.Board
             if (FigureFor?.Invoke(actor) is { } figure)
             {
                 mini.FigureModel = figure.Model;
-                mini.FigureHeight = figure.Height;
+                mini.FigureHeight = figure.Look.Height;
+                mini.Look = figure.Look;
             }
 
             _miniRoot.AddChild(mini);

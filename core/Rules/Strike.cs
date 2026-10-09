@@ -257,7 +257,7 @@ namespace Core.Rules
 
             if (halved) rolled /= 2;
 
-            int suffered = target.Suffer(rolled, type);
+            int suffered = target.Suffer(rolled, type, attacker);
 
             var landed = new List<Rider>();
 
@@ -275,7 +275,7 @@ namespace Core.Rules
                     if (halved) extraRolled /= 2;
 
                     rolled += extraRolled;
-                    suffered += target.Suffer(extraRolled, rider.TypeOr(type));
+                    suffered += target.Suffer(extraRolled, rider.TypeOr(type), attacker);
                 }
 
                 if (rider.CanPut(target) &&
@@ -296,7 +296,7 @@ namespace Core.Rules
                 int extra = Math.Max(0, resolver.Roll(dice, attacker));
 
                 rolled += extra;
-                suffered += target.Suffer(extra, mark.Spec.Mark.Type);
+                suffered += target.Suffer(extra, mark.Spec.Mark.Type, attacker);
             }
 
             return new Blow(attacker, target, attack, attempt, rolled, suffered, landed);

@@ -144,6 +144,9 @@ namespace Game.Screens
             _scroll = Ui.Scroll(_body, 300);
             AddChild(_scroll);
 
+            // the class page's two figures, under the list where they're seen without scrolling
+            if (step == Step.Class) AddChild(Figures());
+
             // THE DESCRIPTION AREA: what the selected choice is, under the list rather than on hover
             _about = Ui.Plain("");
             _about.ThemeTypeVariation = "CardLabel";

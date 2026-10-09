@@ -452,6 +452,10 @@ namespace Content.Tests
             for (int seed = 1; seed < 200 && !downed; seed++)
             {
                 Hero hero = Made("fighter", 3);
+
+                // the keepsake spent already, so this drop is a fall (the next test is the one it catches)
+                hero.Actor.Suffer(hero.Actor.Health.Current, DamageType.Bludgeoning);
+                hero.HoldUp();
                 hero.Actor.Suffer(hero.Actor.Health.Current - 1, DamageType.Bludgeoning);
 
                 var referee = new Content.Dialogue.Referee(hero, new StandardResolver(new ScriptedRng(1)),
@@ -475,6 +479,36 @@ namespace Content.Tests
             }
 
             Assert.True(downed, "no seed drew a bane that hurts");
+        }
+
+        // ...unless the keepsake is ready: it holds the hero up out of a fight as in one (cc_task_h 3.2), so there's no
+        // fall and no rest
+        [Fact]
+        public void TheKeepsakeCatchesABaneOutsideAFight()
+        {
+            bool caught = false;
+
+            for (int seed = 1; seed < 200 && !caught; seed++)
+            {
+                Hero hero = Made("fighter", 3);
+                hero.Actor.Suffer(hero.Actor.Health.Current - 1, DamageType.Bludgeoning);
+
+                var referee = new Content.Dialogue.Referee(hero, new StandardResolver(new ScriptedRng(1)),
+                                                           new Core.Tables.GmScreen(new SeededRng(seed)), Srd);
+
+                Content.Dialogue.Settled settled =
+                    referee.Settle(Content.Dialogue.Request.Parse("check athletics 15", out _));
+
+                if (settled.Visit.Consequence.Kind != ConsequenceKind.Health) continue;
+
+                caught = true;
+
+                Assert.False(settled.Rested);
+                Assert.True(hero.KeepsakeSpent);
+                Assert.Equal(hero.KeepsakeHeals, hero.Actor.Health.Current);
+            }
+
+            Assert.True(caught, "no seed drew a bane that hurts");
         }
     }
 }

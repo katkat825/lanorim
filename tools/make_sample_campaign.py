@@ -104,12 +104,13 @@ MAPS = {
 ENCOUNTERS = {
     "tables": [
         {
-            # the story's set-piece fights: a table nobody rolls, so each entry is a fight by id
+            # the story's set-piece fights: a table nobody rolls, so each entry is a fight by id. each says the level
+            # it's met at and how hard, for the campaign check's solo budget (cc_task_h 3.5)
             "id": "set_pieces",
             "entries": [
-                {"id": "cellar_rats", "kind": "fight", "map": "mill_cellar", "loot": "rat_nest",
+                {"id": "cellar_rats", "level": 1, "difficulty": "low", "kind": "fight", "map": "mill_cellar", "loot": "rat_nest",
                  "monsters": [{"monster": "giant_rat", "count": "2"}]},
-                {"id": "goblin_camp", "kind": "fight", "map": "mill_yard", "loot": "goblin_chest",
+                {"id": "goblin_camp", "level": 3, "difficulty": "moderate", "kind": "fight", "map": "mill_yard", "loot": "goblin_chest",
                  "monsters": [{"monster": "goblin_boss"}]},
             ],
         },
@@ -121,9 +122,9 @@ ENCOUNTERS = {
                 {"id": "crows", "kind": "line", "weight": 1},
                 # one wolf: two knock a level-2 hero prone and bite with Pack Tactics, and the sim
                 # has them winning more often than not (BALANCE_2026-09-25.md)
-                {"id": "wolves", "kind": "fight", "weight": 3, "map": "road_clearing",
+                {"id": "wolves", "level": 2, "difficulty": "low", "kind": "fight", "weight": 3, "map": "road_clearing",
                  "monsters": [{"monster": "wolf"}]},
-                {"id": "bandits", "kind": "fight", "weight": 2, "map": "road_clearing",
+                {"id": "bandits", "level": 2, "difficulty": "low", "kind": "fight", "weight": 2, "map": "road_clearing",
                  "loot": "bandit_purse",
                  # two since 2026-09-25: a monster attacks once a turn now (its SRD statblock's
                  # turn, not the hero's two actions), and one bandit alone was a formality

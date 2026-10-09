@@ -70,6 +70,10 @@ namespace Content.Sheet
         // gold (cc_task_f 1.3). saved, so a save made in the shop goes back to it
         public bool ShopsFirst { get; set; }
 
+        // which of its class's two figures the hero's mini is (cc_task_h Part 2): 0 or 1, picked at creation. A look,
+        // not a rule: nothing in play reads it. saved; a save from before it is the first
+        public int Figure { get; set; }
+
         // the player types a name, so it is not a localization key - it is the one string in the
         // game that is neither authored nor translated
         public string Name { get; set; }

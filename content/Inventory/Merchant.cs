@@ -146,6 +146,9 @@ namespace Content.Inventory
             if (pack == null || item == null || count <= 0)
                 return new Deal(false, Rebuff.NothingToSell);
 
+            // a quest item isn't for sale: the keepsake, a key, a letter (cc_task_h 3.2)
+            if (item.Kind == ItemKind.Quest) return new Deal(false, Rebuff.NothingToSell, item, count);
+
             // selling what you are wearing warns every time, and the warning cannot be dismissed
             // for good (inventory_decisions.md)
             if (equip != null && equip.IsEquipped(item.Id) && !confirmed)

@@ -177,12 +177,13 @@ namespace Content.Monsters
 
         // a fresh one, ready to be put on the board. every call makes a new Actor, because two
         // goblins in the same fight are two goblins
-        public Actor Spawn(string id = null, Allegiance side = Allegiance.Enemy)
+        // hitPointsPercent: the difficulty's share of the statblock's hit points (cc_task_h 3.3), rounded up
+        public Actor Spawn(string id = null, Allegiance side = Allegiance.Enemy, int hitPointsPercent = 100)
         {
             var actor = new Actor(id ?? Id, Math.Max(1, (int)Math.Ceiling(Challenge)),
                                   Scores.Copy(), side);
 
-            actor.SetHealth(new Health(HitPoints, HitDie,
+            actor.SetHealth(new Health(Core.Rules.Percent.Of(HitPoints, hitPointsPercent), HitDie,
                                        Math.Max(1, (int)Math.Ceiling(Challenge))));
 
             // the statblock's AC is a number, not a suit of armor: giving it as heavy armor makes

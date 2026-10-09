@@ -62,7 +62,7 @@ namespace Game.Board
             var turn = new Basis(Vector3.Up, Mathf.DegToRad(ProneYawDegrees)) * new Basis(Vector3.Right, -Mathf.Pi * 0.5f);
             var laid = new Transform3D(turn, Vector3.Zero) * standing;
 
-            Aabb box = Footprint(figure, laid);
+            Aabb box = Footprint(figure, laid, Look?.Crown == true);
 
             float widest = Mathf.Max(box.Size.X, box.Size.Z);
             float shrink = widest <= 0f ? 1f : Mathf.Min(1f, ProneFit * CellSize / widest);
@@ -80,8 +80,8 @@ namespace Game.Board
 
         // the figure's extent under a pose, in the piece's space: a rigged figure by its posed bones (its mesh
         // box is stuck in the bind pose, PaintedModel.PosedHeight), padded for the flesh round them; anything
-        // else by its mesh box's corners
-        internal static Aabb Footprint(Node3D figure, Transform3D pose)
+        // else by its mesh box's corners. A look measured to its crown (MiniLook.Crown) adds its crown and soles
+        internal static Aabb Footprint(Node3D figure, Transform3D pose, bool crown = false)
         {
             var points = new List<Vector3>();
             float pad = 0f;
@@ -92,6 +92,12 @@ namespace Game.Board
 
                 for (int bone = 0; bone < skeleton.GetBoneCount(); bone++)
                     points.Add(pose * (at * skeleton.GetBoneGlobalPose(bone)).Origin);
+
+                if (crown && PaintedModel.CrownAndSoles(figure, skeleton, at) is { } skin)
+                {
+                    points.Add(pose * skin.Crown);
+                    points.Add(pose * skin.Soles);
+                }
 
                 // a head's half-width either side of the bones, as a share of the figure's length
                 pad = 0.09f;

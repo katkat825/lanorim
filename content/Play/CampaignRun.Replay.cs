@@ -41,7 +41,7 @@ namespace Content.Play
         {
             _steps.Add(string.Join(":", AnsweredStep, answer.Passed ? 1 : 0, answer.Total,
                                    answer.Natural, answer.DrawsConsequence ? 1 : 0, answer.Entry ?? "",
-                                   answer.StartsAFight ? 1 : 0, (int)answer.Outcome, answer.Gold));
+                                   answer.StartsAFight ? 1 : 0, (int)answer.Outcome, answer.Gold, answer.Broke ? 1 : 0));
             Talk.Answer(answer);
         }
 
@@ -56,7 +56,8 @@ namespace Content.Play
                 return true;
             }
 
-            if (parts[0] == AnsweredStep && parts.Length == 9 && Talk.IsWaiting)
+            // nine parts before $fight_broke (cc_task_h 3.4), ten since
+            if (parts[0] == AnsweredStep && parts.Length is 9 or 10 && Talk.IsWaiting)
             {
                 int Int(int i) => int.TryParse(parts[i], out int v) ? v : 0;
 
@@ -70,6 +71,7 @@ namespace Content.Play
                     StartsAFight = Int(6) == 1,
                     Outcome = (Outcome)Int(7),
                     Gold = Int(8),
+                    Broke = parts.Length > 9 && Int(9) == 1,
                 });
 
                 return true;

@@ -117,7 +117,7 @@ namespace Core.Magic
                 if (!placed.Burns.IsNothing && ReferenceEquals(placed.Target, whose))
                 {
                     int suffered = whose.Suffer(Math.Max(0, _resolver.Roll(placed.Burns, placed.Caster?.Actor)),
-                                                placed.DamageType);
+                                                placed.DamageType, placed.Caster?.Actor);
 
                     fight.Hurt(placed.Caster?.Actor, whose, suffered, placed.DamageType);
 
@@ -152,7 +152,8 @@ namespace Core.Magic
                     if (!placed.Later.IsNothing)
                     {
                         int suffered = placed.Target.Suffer(
-                            Math.Max(0, _resolver.Roll(placed.Later, placed.Caster?.Actor)), placed.DamageType);
+                            Math.Max(0, _resolver.Roll(placed.Later, placed.Caster?.Actor)), placed.DamageType,
+                            placed.Caster?.Actor);
 
                         fight.Hurt(placed.Caster?.Actor, placed.Target, suffered, placed.DamageType);
                     }

@@ -140,6 +140,7 @@ namespace Content.Dialogue
             Declare(RequestVariables.Encounter, Types.String, ""),
             Declare(RequestVariables.EncounterFight, Types.Boolean, false),
             Declare(RequestVariables.Fight, Types.String, ""),
+            Declare(RequestVariables.FightBroke, Types.Boolean, false),
             Declare(RequestVariables.LootGold, Types.Number, 0f),
         };
 
@@ -150,6 +151,10 @@ namespace Content.Dialogue
 
         void Compile(IReadOnlyList<CompilationJob.File> sources)
         {
+            // a check the story can't get past on a fail: warned, never refused (cc_task_h 3.5, two keys)
+            foreach (CompilationJob.File source in sources)
+                _problems.AddRange(TwoKeys.Warnings(source.FileName, source.Source));
+
             CompilationResult result;
 
             // the compiler is a third party at the edge of the loader, and Workshop content is the

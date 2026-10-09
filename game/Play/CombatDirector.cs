@@ -63,10 +63,13 @@ namespace Game.Play
             Battle = battle;
             _finished = false;
 
-            // a monster stands as its statblock's mini (v1_minis_map.md); the hero as the board's own
+            // a monster stands as its statblock's mini (v1_minis_map.md); the hero as its class's (HeroMinis,
+            // task G), or the board's own when that's switched off
             Board.FigureFor = actor => battle.StatblockOf(actor) is { } monster
                 ? Game.Board.MiniModels.For(monster.Mini)
-                : null;
+                : GameState.Run?.Hero is { } hero && ReferenceEquals(hero.Actor, actor)
+                    ? Game.Board.HeroMinis.For(hero.Class.Id, hero.Figure)
+                    : null;
 
             _hud.ClearLog();
 
@@ -104,7 +107,8 @@ namespace Game.Play
             if (Camera != null) Camera.Following = null;
         }
 
-        bool Presenting => !_steps.IsEmpty || _wait > 0;
+        // the board is still playing back what the rules already did: the turns, the blows, the falls
+        public bool Presenting => !_steps.IsEmpty || _wait > 0;
 
         // whose turn the table is playing back while it is behind the rules; null when it has caught up
         Actor _showing;
@@ -188,6 +192,18 @@ namespace Game.Play
 
                 case "aside":
                     Board.SetAside(step.Actor);
+                    break;
+
+                // the keepsake held the hero up (cc_task_h 3.2): shown here, after the blow that would have dropped
+                // them, so the companion startles at the right moment rather than ahead of the board
+                case "held":
+                    if (!_skipping) Board.Wobble(step.Actor);
+                    Companion?.Feel(Content.Companions.Mood.Alert);
+                    break;
+
+                // ran off the map (cc_task_h 3.4): gone from the board, and nothing to clear after it
+                case "left":
+                    if (Board.Of(step.Actor) is { } fled) fled.Visible = false;
                     break;
 
                 // a single square is a piece put straight down: back from Banishment or a Maze

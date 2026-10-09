@@ -248,6 +248,9 @@ namespace Content.Dialogue
 
         public Core.Combat.Outcome Outcome { get; init; }
 
+        // the fight was won because the enemies broke (cc_task_h 3.4)
+        public bool Broke { get; init; }
+
         public int Gold { get; init; }
 
         public static Answer Of(Attempt attempt) => attempt == null
@@ -273,6 +276,10 @@ namespace Content.Dialogue
         public const string Encounter = "$encounter";
         public const string EncounterFight = "$encounter_fight";
         public const string Fight = "$fight";
+
+        // true when the enemies' morale ended the fight - a rout, or a surrender - rather than the last of them falling
+        // (cc_task_h 3.4), so the story can tell a rout from a slaughter
+        public const string FightBroke = "$fight_broke";
 
         // how much gold a <<loot>> found, so the story can say "a fat purse" or "a few coppers"
         public const string LootGold = "$loot_gold";

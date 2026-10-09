@@ -71,6 +71,8 @@ namespace Content.Tests
             Add("monster.spellcasting", MonsterReader.SpellcastingKeys);
             Add("background", BackgroundReader.Keys);
             Add("consequence", ConsequenceReader.Keys);
+            Add("encounter", Content.Encounters.EncounterReader.EntryKeys);
+            Add("encounter.monster", Content.Encounters.EncounterReader.MonsterKeys);
 
             return keys;
         }
@@ -238,6 +240,8 @@ namespace Content.Tests
                 "background" => path.Count == 2 && inArray("backgrounds"),
                 "consequence" => path.Count == 2 && inArray("consequences"),
                 "monster.action" => inArray("actions"),
+                "encounter" => inArray("entries") && o.TryGetProperty("kind", out _),
+                "encounter.monster" => inArray("monsters") && o.TryGetProperty("monster", out _),
                 _ => under(where.Substring(where.LastIndexOf('.') + 1)) &&
                      (where.StartsWith("effect.") || where.StartsWith("linger.") || where.StartsWith("boon.") ||
                       where.StartsWith("item.") || where.StartsWith("monster.") || where.StartsWith("feature.") ||

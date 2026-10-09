@@ -134,18 +134,16 @@ namespace Sim
         }
 
         // hands back the part of an enemy's hit the lighter damage wouldn't have done, and notes a drop
-        sealed class Watch : CombatObserver
+        sealed class Watch : DropWatch
         {
             readonly Actor _mage;
             readonly double _damage;
 
-            public Watch(Actor mage, double damage)
+            public Watch(Actor mage, double damage) : base(mage)
             {
                 _mage = mage;
                 _damage = damage;
             }
-
-            public bool Dropped { get; private set; }
 
             public override void Dealt(Harm harm)
             {
@@ -156,11 +154,6 @@ namespace Sim
                 int left = Math.Max(0, before - lighter);
 
                 if (left > _mage.Health.Current) _mage.Mend(left - _mage.Health.Current);
-            }
-
-            public override void Downed(Actor actor)
-            {
-                if (ReferenceEquals(actor, _mage) && _mage.IsDown) Dropped = true;
             }
         }
     }

@@ -53,7 +53,10 @@ namespace Content.Tests
             Hero hero = Fighter(KitChoice.Gold, KitChoice.Gold);
 
             Assert.Equal(Coins.FromGold(155 + 50), hero.Pack.Copper);
-            Assert.Empty(hero.Pack.Everything);
+
+            // no gear: only the keepsake, which every hero carries and which takes no slot (cc_task_h 3.2)
+            Assert.Empty(hero.Pack.Stacks);
+            Assert.Equal(new[] { Hero.KeepsakeId }, hero.Pack.QuestItems.Select(s => s.Item.Id));
             Assert.Empty(hero.Equipment.Worn);
             Assert.True(hero.ShopsFirst);
 

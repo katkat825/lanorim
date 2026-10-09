@@ -188,6 +188,14 @@ namespace Content.Combat
 
         public override void Downed(Actor actor) => Add("down", actor);
 
+        // "Pell would fall, but the keepsake holds them up on 11 hit points."
+        public override void HeldUp(Actor actor, string by, int hitPoints) => Add("held_up", actor, hitPoints);
+
+        // "The rest break and run." / "The rest throw down their arms." (cc_task_h 3.4)
+        public override void Broke(bool surrendered) => Add(surrendered ? "surrendered" : "broke");
+
+        public override void Left(Actor actor) => Add("ran_off", actor);
+
         public override void DoorOpened(Actor actor, Core.Space.Border door) => Add("door_opened", actor);
 
         public override void DeathSaved(Actor actor, Attempt attempt) =>

@@ -88,6 +88,13 @@ namespace Game.Play
             if (away) Add(new Step { What = "aside", Actor = actor });
         }
 
+        // the keepsake held the hero up instead of the fall (cc_task_h 3.2): played in its place in the queue
+        public override void HeldUp(Actor actor, string by, int hitPoints) =>
+            Add(new Step { What = "held", Actor = actor, Hero = _isHero(actor) });
+
+        // a broken enemy ran off the edge of the map (cc_task_h 3.4): its piece leaves the board
+        public override void Left(Actor actor) => Add(new Step { What = "left", Actor = actor });
+
         public void Log(LogLine line) => Add(new Step { What = "log", Line = line });
 
         // hit, miss, a save made or failed: told at once rather than paced, because the hero's damage

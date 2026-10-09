@@ -15,36 +15,39 @@ namespace Game.Board
     {
         const string Folder = "res://models/minis/";
 
-        static readonly Dictionary<string, (string File, float Height)> Known =
-            new Dictionary<string, (string, float)>
-            {
-                ["goblin"] = ("goblin_male.gltf", 0.15f),
-                ["bandit"] = ("pirate_male.gltf", 0.1875f),
-                ["guard"] = ("knight_male.gltf", 0.1875f),
-                ["priest"] = ("knight_male.gltf", 0.1875f),
-                ["zombie"] = ("zombie_male.gltf", 0.1875f),
-                ["wolf"] = ("wolf.gltf", 0.11f),
-                ["rat"] = ("rat.tscn", 0.06f),
-                ["spider"] = ("spider.tscn", 0.08f),
-            };
+        static readonly Dictionary<string, MiniLook> Known = new Dictionary<string, MiniLook>
+        {
+            ["goblin"] = new("goblin_male.gltf", 0.15f),
+            ["bandit"] = new("pirate_male.gltf", 0.1875f),
+            ["guard"] = new("knight_male.gltf", 0.1875f),
+            ["priest"] = new("knight_male.gltf", 0.1875f),
+            ["zombie"] = new("zombie_male.gltf", 0.1875f),
+            ["wolf"] = new("wolf.gltf", 0.11f),
+            ["rat"] = new("rat.tscn", 0.06f),
+            ["spider"] = new("spider.tscn", 0.08f),
+        };
 
         static readonly Dictionary<string, PackedScene> Loaded = new Dictionary<string, PackedScene>();
 
         public static IEnumerable<string> Names => Known.Keys;
 
-        // the model and its height, or null when the mini has no model yet
-        public static (PackedScene Model, float Height)? For(string mini)
-        {
-            if (string.IsNullOrEmpty(mini) || !Known.TryGetValue(mini, out var known)) return null;
+        // the model and how it stands, or null when the mini has no model yet
+        public static (PackedScene Model, MiniLook Look)? For(string mini) =>
+            string.IsNullOrEmpty(mini) || !Known.TryGetValue(mini, out MiniLook look) ? null : Of(look);
 
-            if (!Loaded.TryGetValue(known.File, out PackedScene scene))
+        // any look's model, loaded once (HeroMinis' too); null when its file isn't there
+        public static (PackedScene Model, MiniLook Look)? Of(MiniLook look)
+        {
+            if (look == null) return null;
+
+            if (!Loaded.TryGetValue(look.File, out PackedScene scene))
             {
-                string path = Folder + known.File;
+                string path = Folder + look.File;
                 scene = ResourceLoader.Exists(path) ? GD.Load<PackedScene>(path) : null;
-                Loaded[known.File] = scene;
+                Loaded[look.File] = scene;
             }
 
-            return scene == null ? null : (scene, known.Height);
+            return scene == null ? null : (scene, look);
         }
     }
 }

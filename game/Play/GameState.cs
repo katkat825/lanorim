@@ -98,6 +98,9 @@ namespace Game.Play
 
                 _settings = GameSettings.Read(text, out IReadOnlyList<string> problems);
 
+                // the difficulty is the rules' to read (cc_task_h 3.3)
+                global::Content.SoloPlay.SoloRules.Difficulty = _settings.Difficulty;
+
                 foreach (string problem in problems) GD.PushWarning("settings: " + problem);
 
                 return _settings;
@@ -106,6 +109,9 @@ namespace Game.Play
 
         public static void SaveSettings()
         {
+            // a changed difficulty takes hold from the next fight that's laid
+            global::Content.SoloPlay.SoloRules.Difficulty = Settings.Difficulty;
+
             try
             {
                 File.WriteAllText(ProjectSettings.GlobalizePath(SettingsFile), Settings.Write());

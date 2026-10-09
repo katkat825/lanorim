@@ -30,8 +30,9 @@ namespace Game.Table
         // how tall it stands, in metres; its width follows the model's own proportions. Sized by
         // height alone: a cap on width as a share of the board shrank it on every small map, and
         // 0.2 then 0.3 m still read as "wayy too small" (Kathleen, 2026-09-28: twice as big, and it
-        // may run off the top of the screen)
-        [Export] public float Height { get; set; } = 0.6f;
+        // may run off the top of the screen). 0.9 since 2026-10-08 (cc_task_h 4.1; Kathleen: "make the gm screen 50%
+        // larger"), width and height alike
+        [Export] public float Height { get; set; } = 0.9f;
 
         // SHORTER, SAME WIDTH (Kathleen, 2026-10-01: "make the gm screen 20% shorter, but maintain the width"):
         // the model scaled to Height as above, then up and down alone by this. 1 is the model as authored. It

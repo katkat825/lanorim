@@ -20,9 +20,12 @@
       "files": [
         "models/tray/",
         "models/gm_screen/",
-        "models/minis/rogue_v3.glb"
+        "models/minis/rogue_v3.glb",
+        "models/minis/kaykit/fighter",
+        "models/minis/kaykit/cleric",
+        "models/minis/kaykit/barbarian_male"
       ],
-      "note": "the game, its campaigns, the hero mini (rogue_v3), the dice trays and the GM screens (LICENSE)"
+      "note": "the game, its campaigns, the hero minis (rogue_v3, and the barbarian, fighter and cleric: her modifications of KayKit's CC0 Barbarian, Knight and Mage), the dice trays and the GM screens (LICENSE)"
     },
     {
       "id": "quaternius",
@@ -38,7 +41,6 @@
         "Fantasy Props MegaKit"
       ],
       "files": [
-        "models/companions/",
         "models/minis/goblin_male.gltf",
         "models/minis/knight_male.gltf",
         "models/minis/ninja_male.gltf",
@@ -50,7 +52,26 @@
         "models/minis/rogue_v3.glb",
         "models/props/fantasy_props_megakit_standard/"
       ],
-      "note": "QAL: no attribution required; credited on goodwill. rogue_v3's body rides the Ultimate Animated Character Pack's armature"
+      "note": "QAL: no attribution required; credited on goodwill. rogue_v3's body rides the Ultimate Animated Character Pack's armature. Ultimate Animated Animals is the enemy wolf mini; its companions left the game on 2026-10-08"
+    },
+    {
+      "id": "quaternius_monsters",
+      "kind": "asset",
+      "name": "Quaternius",
+      "role": "models",
+      "licence": "cc0",
+      "url": "https://quaternius.com",
+      "packs": [
+        "Ultimate Monsters"
+      ],
+      "files": [
+        "models/companions/Dragon",
+        "models/companions/Pigeon",
+        "models/companions/Squidle",
+        "models/companions/Ghost",
+        "models/companions/Mushnub_Evolved"
+      ],
+      "note": "the companions since 2026-10-08. This pack's License.txt is CC0, though it is headed \"Ultimate Platformer Pack\""
     },
     {
       "id": "quaternius_dungeon",
@@ -79,13 +100,15 @@
         "KayKit Furniture Bits 1.0",
         "KayKit Forest Nature Pack 1.0",
         "KayKit Adventurers 2.0",
+        "KayKit Character Animations 1.1",
         "KayKit Skeletons 1.1"
       ],
       "files": [
         "models/props/kaykit_",
+        "models/minis/kaykit/",
         "models/minis/rogue_v3.glb"
       ],
-      "note": "the hero's cape is KayKit Skeletons 1.1's Skeleton_Rogue, inside rogue_v3.glb"
+      "note": "the hero minis by class are KayKit Adventurers 2.0's characters (two modified by Kathleen) with their weapons, posed with KayKit Character Animations 1.1's Rig_Medium clips; rogue_v3's cape is KayKit Skeletons 1.1's Skeleton_Rogue"
     },
     {
       "id": "ambientcg",

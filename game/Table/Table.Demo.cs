@@ -18,7 +18,7 @@ namespace Game.Table
 
             var making = new Content.Creation.Creation(srd, srd.Backgrounds);
 
-            making.Pick(srd.Class("rogue"));
+            making.Pick(srd.Class(DemoClass));
             making.Pick(srd.Kind("halfling"));
             making.Pick(srd.Background("criminal"));
             making.SuggestTraits();
@@ -28,6 +28,10 @@ namespace Game.Table
 
             foreach (Skill pick in making.Skills.Take(making.ExpertisePicksLeft).ToList())
                 making.Master(pick);
+
+            // a caster (`--class mage`) learns the first spells it is offered
+            foreach (var spell in making.SpellChoices.ToList())
+                if (making.CantripPicksLeft > 0 || making.SpellPicksLeft > 0) making.Learn(spell);
 
             making.Call("Pell");
 
@@ -103,14 +107,22 @@ namespace Game.Table
 
             _field = new Battlefield(map);
 
+            var minis = new System.Collections.Generic.Dictionary<Actor, string>();
+            FigureTheLineup(hero, minis);
+
             _field.Place(hero.Actor, map.Start);
             Board.Place(hero.Actor, map.Start);
 
-            Actor goblin = Library.Srd().Bestiary.Find("goblin").Spawn();
-            Cell there = map.SpawnAt(1) ?? new Cell(8, 1);
+            if (!StandTheLineup(map.Start, minis))
+            {
+                Actor goblin = Library.Srd().Bestiary.Find("goblin").Spawn();
+                Cell there = map.SpawnAt(1) ?? new Cell(8, 1);
 
-            _field.Place(goblin, there);
-            Board.Place(goblin, there);
+                _field.Place(goblin, there);
+                Board.Place(goblin, there);
+            }
+
+            ShowTheCompanion(hero);
 
             GD.Print($"table   {Board}, {map}");
 

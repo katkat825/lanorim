@@ -52,7 +52,7 @@ namespace Sim
             Console.WriteLine($"{runs} fights per row, the AutoPlayer against the sample campaign's fights.");
             Console.WriteLine("'<' marks a win rate under 75% at a level the fight is met at or after; '!' under 50%.");
             Console.WriteLine();
-            Console.WriteLine("class      lvl  fight          wins   rounds  hp left");
+            Console.WriteLine("class      lvl  fight          wins   rounds  hp left  dropped");
 
             var outliers = new List<string>();
 
@@ -63,7 +63,7 @@ namespace Sim
                         EncounterEntry fight = pack.Encounter(table).Entries.Single(e => e.Id == entry);
                         MapLayout map = pack.Maps[fight.Map];
 
-                        int wins = 0, rounds = 0, hp = 0;
+                        int wins = 0, rounds = 0, hp = 0, dropped = 0;
 
                         for (int run = 0; run < runs; run++)
                         {
@@ -71,7 +71,8 @@ namespace Sim
                             var rng = new SeededRng(run * 7919 + level * 131 + cls.Length * 17 + entry.Length);
                             var resolver = new StandardResolver(rng);
 
-                            Battle battle = Battle.From(library, map, hero, fight, resolver);
+                            var watch = new DropWatch(hero.Actor);
+                            Battle battle = Battle.From(library, map, hero, fight, resolver, null, null, watch);
                             var session = new CombatSession(battle, library.Items, library.Forms);
 
                             Outcome outcome = new AutoPlayer().Play(session);
@@ -80,12 +81,13 @@ namespace Sim
 
                             rounds += battle.Fight.Round;
                             hp += Math.Max(0, hero.Actor.Health.Current) * 100 / Math.Max(1, hero.Actor.Health.Maximum);
+                            if (watch.Dropped) dropped++;
                         }
 
                         double rate = 100.0 * wins / runs;
                         string mark = level >= metAt && rate < 50 ? "!" : level >= metAt && rate < 75 ? "<" : " ";
 
-                        string row = $"{cls,-10} {level,3}  {entry,-13} {rate,5:0.0}%  {(double)rounds / runs,6:0.0}  {(double)hp / runs,6:0}%  {mark}";
+                        string row = $"{cls,-10} {level,3}  {entry,-13} {rate,5:0.0}%  {(double)rounds / runs,6:0.0}  {(double)hp / runs,6:0}%  {100.0 * dropped / runs,6:0}%  {mark}";
                         Console.WriteLine(row);
 
                         if (mark != " ") outliers.Add(row);

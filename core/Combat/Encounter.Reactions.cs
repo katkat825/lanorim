@@ -259,10 +259,11 @@ namespace Core.Combat
 
             if (target.IsDown) HoldsOn(target, System.Math.Max(dealt, suffered), type, critical);
 
-            // SRD 5.2.1 Unconscious: it drops whatever it's holding
-            if (target.Has(Condition.Unconscious)) Drop(target);
-
             Damaged?.Invoke(attacker, target, suffered);
+
+            // SRD 5.2.1 Unconscious: it drops whatever it's holding. After Damaged, where Relentless Endurance and the
+            // keepsake (cc_task_h 3.2) have their say: one that stays up never fell, and keeps its weapon
+            if (target.Has(Condition.Unconscious)) Drop(target);
 
             // EVERY FALL IS TOLD, a spell's as much as a sword's: until 2026-10-03 only a swing told it, so a
             // monster a spell killed neither toppled on the board nor went down in the log. Told after whatever

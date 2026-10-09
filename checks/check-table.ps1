@@ -34,6 +34,19 @@ $locale -split "`n" | Where-Object { $_ -match '^locale ' } | ForEach-Object { W
 
 $wordsOk = $locale -match 'every key the game emits has words in it'
 
+# --- the hero's figures (cc_task_h Part 2) ------------------------------------------------------
+
+Write-Host ''
+Write-Host "every class's two figures, built and posed:" -ForegroundColor DarkGray
+
+Invoke-Godot $Godot @('--headless', '--path', 'game', 'res://table.tscn', '--', '--figures-probe') $log
+
+$figures = Get-Content $log -Raw
+
+$figures -split "`n" | Where-Object { $_ -match '^figures ' } | ForEach-Object { Write-Host "  $_" }
+
+$figuresOk = $figures -match 'figures check passed'
+
 # --- the table ---------------------------------------------------------------------------------
 
 Write-Host ''
@@ -57,12 +70,14 @@ $stale = $table -match 'LOCALE STALE' -or $table -match 'ability\.str\.name'
 
 Write-Host ''
 
-if ($wordsOk -and $threw -and -not $stale) { Pass 'the table comes up, the dice roll, and core reads the felt' }
+if ($wordsOk -and $figuresOk -and $threw -and -not $stale) { Pass 'the table comes up, the dice roll, and core reads the felt' }
 
 if (-not $wordsOk) {
     Write-Host 'keys with no words in them. If the csv has them, re-import:' -ForegroundColor Red
     Write-Host '  godot --headless --path game --import' -ForegroundColor DarkGray
 }
+
+if (-not $figuresOk) { Write-Host "a class's figure didn't build or pose (figures lines above)" -ForegroundColor Red }
 
 if (-not $threw) { Write-Host 'no d20 reached the felt' -ForegroundColor Red }
 

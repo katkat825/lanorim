@@ -80,6 +80,9 @@ namespace Game.Play
             _lift = Table.Lift;
             _dice.Ready = () => _lift.IsStill;
 
+            // a roll waits for the board to finish showing what led to it: the blow, the fall (cc_task_h 4.2)
+            _dice.Behind = () => _combat?.Presenting == true;
+
             _dice.Asked += _ =>
             {
                 if (GameState.Settings.BringTrayToMe) _lift.Rise();

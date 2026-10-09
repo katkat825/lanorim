@@ -180,7 +180,14 @@ namespace Core.Magic
             };
         }
 
-        public static SpellSlots For(CasterProgression progression, int casterLevel) =>
-            new SpellSlots(Table(progression, casterLevel));
+        // extraFirst: 1st-level slots on top of the table (the solo casters' bonus, Content.SoloPlay.SoloRules)
+        public static SpellSlots For(CasterProgression progression, int casterLevel, int extraFirst = 0)
+        {
+            int[] table = Table(progression, casterLevel).ToArray();
+
+            if (extraFirst > 0 && table.Length > 0) table[0] += extraFirst;
+
+            return new SpellSlots(table);
+        }
     }
 }

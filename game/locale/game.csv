@@ -480,6 +480,8 @@ item.holy_symbol.name,Holy Symbol
 item.horse_hooves.name,Hooves
 item.javelin.description,"1d6 piercing damage, thrown, range 6. 1 gold."
 item.javelin.name,Javelin
+item.keepsake.description,"Once a day, when you would fall, it holds you up."
+item.keepsake.name,Keepsake
 item.lance.description,"1d10 piercing damage, two-handed, heavy, reach. 10 gold."
 item.lance.name,Lance
 item.leather_armor.description,"Armor Class 11, plus Dexterity. 10 gold."
@@ -1131,6 +1133,9 @@ ui.controls.reserved,{0} is kept for the action bar. Pick another key.
 ui.controls.taken,{0} already does something else. Pick another key.
 ui.controls.title,Controls
 ui.create.chosen_of,{0} of {1} chosen
+ui.create.figure,Your mini
+ui.create.figure_1,First figure
+ui.create.figure_2,Second figure
 ui.create.kit_from_background,From your background
 ui.create.kit_from_class,From your class
 ui.create.kit_gear,"The gear, and {0}"
@@ -1241,6 +1246,7 @@ ui.level_up.one_to_two,+1 to two scores
 ui.level_up.suggested,Take the suggestion
 ui.level_up.title,Level {0}
 ui.level_up.two_to_one,+2 to one score
+ui.log.broke.name,"The rest break and run."
 ui.log.cast.name,{0} casts {1}.
 ui.log.cast_on.name,{0} casts {1} on {2}.
 ui.log.changed_armor_class.name,{0}'s Armor Class is now {2} (was {1}).
@@ -1259,12 +1265,14 @@ ui.log.diverted.name,{0}'s blow strikes one of {1}'s images instead.
 ui.log.door_opened.name,{0} opens the door.
 ui.log.down.name,{0} goes down.
 ui.log.fled.name,You get away.
+ui.log.held_up.name,"{0} would fall, but the keepsake holds them up on {1} hit points."
 ui.log.hit.name,Hit: {0} hits {1} ({2} against Armor Class {3}).
 ui.log.initiative.name,Initiative is rolled: {0}.
 ui.log.lost.name,The fight is lost.
 ui.log.miss.name,Miss: {0} misses {1} ({2} against Armor Class {3}).
 ui.log.moved.name,{0} moves {1} squares.
 ui.log.opportunity.name,{0} swings at {1} as it leaves.
+ui.log.ran_off.name,{0} runs off the map.
 ui.log.reacted.name,{0} reacts: {1}.
 ui.log.roll_attack.name,"{0} rolls to hit, {1}: {2}, for {3}."
 ui.log.roll_check.name,"{0} rolls a check, {1}: {2}, for {3}."
@@ -1275,6 +1283,7 @@ ui.log.roll_table.name,"{0} rolls {1}: {2}, for {3}."
 ui.log.round.name,Round {0}.
 ui.log.save_failed.name,Failed: {0} fails the saving throw ({1} against DC {2}).
 ui.log.save_made.name,Saved: {0} makes the saving throw ({1} against DC {2}).
+ui.log.surrendered.name,"With nowhere to run, the rest throw down their arms."
 ui.log.turn.name,{0}'s turn.
 ui.log.won.name,The fight is won.
 ui.map.all_props,All
@@ -1389,6 +1398,13 @@ ui.school.necromancy.name,Necromancy
 ui.school.transmutation.name,Transmutation
 ui.settings.access,Access
 ui.settings.bring_tray,Bring the dice tray to me
+ui.settings.difficulty,Difficulty
+ui.settings.difficulty_hard,Hard
+ui.settings.difficulty_hard_about,"Hard: foes take longer to bring down, for a closer fight."
+ui.settings.difficulty_standard,Standard
+ui.settings.difficulty_standard_about,"Standard: the fights as the campaign wrote them."
+ui.settings.difficulty_story,Story
+ui.settings.difficulty_story_about,"Story: fights are gentler, for when you're here for the tale."
 ui.settings.enemy_speed,Enemy turn speed
 ui.settings.follow_enemies,Camera follows enemies
 ui.settings.game,Game
@@ -1403,8 +1419,11 @@ ui.settings.title,Settings
 ui.sheet.armor_class,Armor Class {0}
 ui.sheet.features,Features
 ui.sheet.hit_points,{0} / {1} hit points
+ui.sheet.keepsake_ready,"Keepsake: ready"
+ui.sheet.keepsake_spent,"Keepsake: spent until a long rest"
 ui.sheet.level,Level {0}
 ui.sheet.size,{0}
+ui.sheet.solo_slot,"One extra 1st-level spell slot, a solo bonus"
 ui.sheet.species_spells,Species spells: {0}
 ui.sheet.spells,Spells
 ui.sheet.title,Character

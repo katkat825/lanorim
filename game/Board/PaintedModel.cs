@@ -40,9 +40,11 @@ namespace Game.Board
                 // an override would win over the per-surface materials set below
                 mesh.MaterialOverride = null;
 
+                // a surface already given a material of its own (AtlasRecolour's copy of the atlas) wears that
                 for (int surface = 0; surface < mesh.Mesh.GetSurfaceCount(); surface++)
                     mesh.SetSurfaceOverrideMaterial(surface,
-                        Tinted(shader, mesh.Mesh.SurfaceGetMaterial(surface), $"{what}: {ModelName(mesh)}"));
+                        Tinted(shader, mesh.GetSurfaceOverrideMaterial(surface) as BaseMaterial3D ??
+                                       mesh.Mesh.SurfaceGetMaterial(surface), $"{what}: {ModelName(mesh)}"));
             }
         }
 
@@ -168,7 +170,12 @@ namespace Game.Board
         // stands above it by. The body's top is its top bone plus the head above that bone, read off
         // the bind pose - so a hood is measured against the head it sits on, and a mini with no hood
         // measures exactly as it always did.
-        public static bool PosedHeight(Node node, out float height, out float bottom)
+        //
+        // CROWN TO SOLE (task G), when the look asks: a KayKit character's head is as tall again above its head
+        // bone as the neck is long, and measured to the top bone the hero stood half as tall again as a bandit. So
+        // the skin's own top and bottom are read off the bind pose, against the bones that were highest and lowest
+        // there, and carried to where the pose put those bones: the crown rides the head, the soles ride the toes
+        public static bool PosedHeight(Node node, out float height, out float bottom, bool crown = false)
         {
             height = 0f;
             bottom = 0f;
@@ -192,12 +199,52 @@ namespace Game.Board
                 if (y > high) { high = y; top = bone; }
             }
 
+            if (crown && node is Node3D whole && CrownAndSoles(whole, skeleton, at) is { } skin)
+            {
+                high = Mathf.Max(high, skin.Crown.Y);
+                low = Mathf.Min(low, skin.Soles.Y);
+            }
+
             height = high - low;
             bottom = low;
 
-            if (node is Node3D figure) height += Overhang(figure, skeleton, at, top, high);
+            if (!crown && node is Node3D figure) height += Overhang(figure, skeleton, at, top, high);
 
             return height > 0f;
+        }
+
+        // the top of its head and the bottom of its feet, in the figure's space: the skinned meshes' bind-pose top
+        // and bottom, carried by the bones that were highest and lowest at rest. Null with no skinned mesh. Lying
+        // down (Mini.Prone) reads them too, so a head that stands well above its bone stays inside its square
+        public static (Vector3 Crown, Vector3 Soles)? CrownAndSoles(Node3D figure, Skeleton3D skeleton, Transform3D at)
+        {
+            float skinTop = float.MinValue;
+            float skinBottom = float.MaxValue;
+
+            foreach (MeshInstance3D mesh in Meshes(figure))
+            {
+                if (mesh.Skin == null && !skeleton.IsAncestorOf(mesh)) continue;
+
+                Aabb box = Relative(figure, mesh) * mesh.GetAabb();
+                skinTop = Mathf.Max(skinTop, box.End.Y);
+                skinBottom = Mathf.Min(skinBottom, box.Position.Y);
+            }
+
+            if (skinTop == float.MinValue) return null;
+
+            int restTop = 0, restLow = 0;
+            float restHigh = float.MinValue, restDeep = float.MaxValue;
+
+            for (int bone = 0; bone < skeleton.GetBoneCount(); bone++)
+            {
+                float y = (at * skeleton.GetBoneGlobalRest(bone)).Origin.Y;
+
+                if (y > restHigh) { restHigh = y; restTop = bone; }
+                if (y < restDeep) { restDeep = y; restLow = bone; }
+            }
+
+            return ((at * skeleton.GetBoneGlobalPose(restTop)).Origin + Vector3.Up * (skinTop - restHigh),
+                    (at * skeleton.GetBoneGlobalPose(restLow)).Origin - Vector3.Up * (restDeep - skinBottom));
         }
 
         // how far a piece riding a bone stands above the posed body's own top, or 0

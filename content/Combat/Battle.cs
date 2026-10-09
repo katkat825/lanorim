@@ -4,6 +4,7 @@ using System.Linq;
 using Content.Monsters;
 using Content.Schema;
 using Content.Sheet;
+using Content.SoloPlay;
 using Core.Characters;
 using Core.Combat;
 using Core.Dice;
@@ -51,6 +52,15 @@ namespace Content.Combat
 
         Library _library;
 
+        Actor _leader;
+
+        // the fight's morale, from its encounter entry (cc_task_h 3.4): who leads, and when they break
+        public Battle Holding(Morale morale)
+        {
+            Fight.HoldMorale(morale, _leader);
+            return this;
+        }
+
         // SRD 5.2.1 Finger of Death: "A Humanoid killed by this spell rises at the start of your next
         // turn as a Zombie that follows your verbal orders." it takes the corpse's square, joins the
         // order after its master, and fights the master's enemies
@@ -86,14 +96,18 @@ namespace Content.Combat
                 : (m.Challenge, m.Tags.Contains("boss", StringComparer.OrdinalIgnoreCase));
         }
 
-        // one band of monsters to put down: which statblock, and where
+        // one band of monsters to put down: which statblock, and where; and whether it's the leader whose fall breaks
+        // a fight with morale (cc_task_h 3.4)
         public readonly struct Foe
         {
-            public Foe(Monster monster, Cell at)
+            public Foe(Monster monster, Cell at, bool leader = false)
             {
                 Monster = monster;
                 At = at;
+                Leader = leader;
             }
+
+            public bool Leader { get; }
 
             public Monster Monster { get; }
 
@@ -123,11 +137,14 @@ namespace Content.Combat
             fight.Enlist(hero.Actor, map.Start, hero.Budget);
             hero.ReadyFor(fight, magic);
 
-            // the Orc's Relentless Endurance, the Barbarian's Relentless Rage: dropped to 0, stay up
+            // the Orc's Relentless Endurance, the Barbarian's Relentless Rage, and then the keepsake: dropped to 0, stay
+            // up. the keepsake is told (the log, the companion, the board), in the fall's place
             fight.Damaged += (attacker, target, amount) =>
             {
-                if (ReferenceEquals(target, hero.Actor) && target.IsDown && !target.IsDead)
-                    hero.Intercept(fight.Resolver);
+                if (!ReferenceEquals(target, hero.Actor) || !target.IsDown || target.IsDead) return;
+
+                if (hero.HoldUp(fight.Resolver) == Hero.KeepsakeId)
+                    fight.Observer.HeldUp(target, Hero.KeepsakeId, target.Health.Current);
             };
 
             if (heroChooser != null) fight.ChooseReactionsWith(hero.Actor, heroChooser);
@@ -139,7 +156,10 @@ namespace Content.Combat
             {
                 if (foe.Monster == null) continue;
 
-                Actor actor = foe.Monster.Spawn($"{foe.Monster.Id}_{++n}");
+                // the player's difficulty, which only the enemies feel (cc_task_h 3.3): Standard is 100 and 100
+                Actor actor = foe.Monster.Spawn($"{foe.Monster.Id}_{++n}",
+                                                hitPointsPercent: SoloRules.EnemyHitPoints(SoloRules.Difficulty));
+                actor.DamagePercent = SoloRules.EnemyDamage(SoloRules.Difficulty);
                 Cell at = Free(fight.Field, foe.At, used);
 
                 Caster caster = foe.Monster.CasterFor(actor, library?.Spells);
@@ -150,6 +170,9 @@ namespace Content.Combat
                 used.Add(at);
 
                 battle._statblocks[actor] = foe.Monster;
+
+                // the leader a "leader" morale watches: the one marked, else the first (Holding)
+                if (foe.Leader || battle._leader == null) battle._leader = actor;
 
                 if (foe.Monster.Opportunity != null) fight.ArmOpportunity(actor, foe.Monster.Opportunity);
 
@@ -192,11 +215,12 @@ namespace Content.Combat
                 for (int i = 0; i < count; i++, slot++)
                 {
                     Cell at = map.SpawnAt(slot) ?? map.SpawnAt(1) ?? FarCorner(map);
-                    foes.Add(new Foe(monster, at));
+                    foes.Add(new Foe(monster, at, band.Leader && i == 0));
                 }
             }
 
-            return Set(library, map, hero, foes, resolver, heroChooser, observer, setting);
+            return Set(library, map, hero, foes, resolver, heroChooser, observer, setting)
+                .Holding(entry?.Morale ?? Morale.None);
         }
 
         static Cell FarCorner(MapLayout map) => new Cell(map.Columns - 2, 1);

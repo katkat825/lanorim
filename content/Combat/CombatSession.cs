@@ -1,3 +1,4 @@
+using Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -110,7 +111,9 @@ namespace Content.Combat
 
                 ITactics brain = Battle.BrainOf(next.Actor);
 
-                if (brain != null) brain.Take(Fight, next);
+                // a broken enemy runs instead of fighting (cc_task_h 3.4)
+                if (Fight.Broken && next.Actor.Side == Allegiance.Enemy) Fight.Rout(next);
+                else if (brain != null) brain.Take(Fight, next);
 
                 if (!next.Ended && !Fight.Over) Fight.EndTurn();
 

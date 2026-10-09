@@ -35,6 +35,13 @@ namespace Game.Play
         // (TrayLift). A throw asked for while it travels waits - Space, or AutoThrow's next try
         public Func<bool> Ready { get; set; } = () => true;
 
+        // WHETHER THE TABLE IS STILL SHOWING WHAT LED UP TO THIS ROLL (cc_task_h 4.2; Kathleen: "dice tray should wait
+        // to come up until after you see the enemies attack and see your mini go down"). The rules run a monster's whole
+        // turn at once and ask for the hero's death save at the start of the next, while the board is still playing the
+        // blow back. A roll asked while the table is behind waits, untold, until it has caught up (Tick) - the same rule
+        // as the turn strip's (CombatDirector.TurnShown): follow the table, not the rules
+        public Func<bool> Behind { get; set; } = () => false;
+
         // main thread: the dice the rules are waiting on, or null
         public IReadOnlyList<Die> Waiting => _pending?.Dice;
 
@@ -55,6 +62,9 @@ namespace Game.Play
             public Action<int[]> Done;
             public bool Thrown;
 
+            // the player has been asked (Asked): the tray rises and the prompt shows
+            public bool Told;
+
             // Space was pressed while the tray was on its way: it goes the moment the tray is ready
             public bool Wanted;
         }
@@ -74,15 +84,28 @@ namespace Game.Play
             int[] faces = MainQueue.Ask<int[]>(done =>
             {
                 _pending = new Pending { Dice = dice, Done = done };
-                Asked?.Invoke(dice);
 
-                if (AutoThrow) Go();
+                if (!Behind()) Tell(_pending);
 
                 return true;
             });
 
             // a throw the table could not make (no tray, torn down mid-fight) is the generator's
             return faces ?? Fallback(dice, "never came back from the tray");
+        }
+
+        // main thread, each frame: a roll held while the table caught up is asked for now
+        public void Tick()
+        {
+            if (_pending is { Told: false } pending && !Behind()) Tell(pending);
+        }
+
+        void Tell(Pending pending)
+        {
+            pending.Told = true;
+            Asked?.Invoke(pending.Dice);
+
+            if (AutoThrow) Go();
         }
 
         int[] Digital(IReadOnlyList<Die> dice) => dice.Select(d => d.Roll(_fallback)).ToArray();
@@ -102,6 +125,13 @@ namespace Game.Play
             Pending pending = _pending;
 
             if (pending == null || pending.Thrown) return false;
+
+            // not asked for yet: the table is still showing what came before it
+            if (!pending.Told)
+            {
+                pending.Wanted = true;
+                return false;
+            }
 
             if (_tray.IsThrowing || !Ready())
             {

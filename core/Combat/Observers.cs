@@ -51,6 +51,16 @@ namespace Core.Combat
 
         void Downed(Actor actor);
 
+        // dropped to 0 and stood up instead, on so many hit points: the hero's keepsake (cc_task_h 3.2). `by` is what
+        // held them, an item or feature id. told in the fall's place, so the table shows the blow, then this
+        void HeldUp(Actor actor, string by, int hitPoints) { }
+
+        // the enemies' morale broke (cc_task_h 3.4): they run for it, or with nowhere to run they surrender
+        void Broke(bool surrendered) { }
+
+        // stepped off the edge of the map and out of the fight: a broken enemy routing (Encounter.Morale.cs)
+        void Left(Actor actor) { }
+
         // taken off the board by a spell (Banishment, Maze), or put back on it. the table stands
         // the mini beside the map while it is away
         void Away(Actor actor, bool away) { }
@@ -108,6 +118,12 @@ namespace Core.Combat
 
         public virtual void Downed(Actor actor) { }
 
+        public virtual void HeldUp(Actor actor, string by, int hitPoints) { }
+
+        public virtual void Broke(bool surrendered) { }
+
+        public virtual void Left(Actor actor) { }
+
         public virtual void Away(Actor actor, bool away) { }
 
         public virtual void DeathSaved(Actor actor, Attempt attempt) { }
@@ -154,6 +170,12 @@ namespace Core.Combat
         public void DoorOpened(Actor actor, Core.Space.Border door) => Each(w => w.DoorOpened(actor, door));
 
         public void Downed(Actor actor) => Each(w => w.Downed(actor));
+
+        public void HeldUp(Actor actor, string by, int hitPoints) => Each(w => w.HeldUp(actor, by, hitPoints));
+
+        public void Broke(bool surrendered) => Each(w => w.Broke(surrendered));
+
+        public void Left(Actor actor) => Each(w => w.Left(actor));
 
         public void Away(Actor actor, bool away) => Each(w => w.Away(actor, away));
 

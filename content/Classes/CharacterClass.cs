@@ -121,14 +121,22 @@ namespace Content.Classes
         // THE RESOURCE THIS CLASS HANDS A CHARACTER OF THIS LEVEL, in the mode they chose at
         // creation. One progression feeds both: the slot table reads it directly, and the point
         // pool derives its size from it.
+        //
+        // A FULL CASTER HAS ONE MORE 1ST-LEVEL SLOT, or its price in points: the solo deltas' 3.1, behind its switch
+        // (SoloPlay.SoloRules.CasterSlot). Not the Paladin
         public ISpellResource ResourceAt(int level, SpellResourceMode mode)
         {
             if (!Casts) return null;
 
+            int extra = SoloBonusSlots;
+
             return mode == SpellResourceMode.Points
-                ? SpellPoints.For(Progression, level)
-                : SpellSlots.For(Progression, level);
+                ? SpellPoints.For(Progression, level, extra)
+                : SpellSlots.For(Progression, level, extra);
         }
+
+        // the 1st-level slots the solo bonus adds to this class, which the sheet notes: 1 for a full caster, else 0
+        public int SoloBonusSlots => SoloPlay.SoloRules.ExtraFirstLevelSlots(Progression == CasterProgression.Full);
 
         public string NameKey => KeyConventions.ClassName(Id);
 

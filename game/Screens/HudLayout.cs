@@ -70,5 +70,11 @@ namespace Game.Screens
 
         // how long "Hit! 17 against Armor Class 13" stays under the turn hint
         [Export] public float VerdictSeconds { get; set; } = 3.5f;
+
+        // --- the hero's mini -------------------------------------------------------------------------------
+
+        // the hero stands as its class's KayKit body (game/Board/HeroMinis.cs, task G's look test); off, as
+        // rogue_v3 (the board's HeroFigure) for every class, to compare in the game itself
+        [Export] public bool HeroByClass { get; set; } = true;
     }
 }

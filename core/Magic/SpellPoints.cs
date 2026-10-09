@@ -184,8 +184,10 @@ namespace Core.Magic
             return 0;
         }
 
-        public static SpellPoints For(CasterProgression progression, int casterLevel) =>
-            new SpellPoints(PoolFor(progression, casterLevel),
+        // extraFirst: 1st-level slots' worth on top of the pool, at a 1st-level spell's price each, so the two modes
+        // stay even (the solo casters' bonus, Content.SoloPlay.SoloRules)
+        public static SpellPoints For(CasterProgression progression, int casterLevel, int extraFirst = 0) =>
+            new SpellPoints(PoolFor(progression, casterLevel) + Math.Max(0, extraFirst) * CostOf(SpellLevels.Lowest),
                             HighestLevelFor(progression, casterLevel));
     }
 }

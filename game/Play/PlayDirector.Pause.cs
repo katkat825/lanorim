@@ -89,6 +89,9 @@ namespace Game.Play
             AgeVerdict();
             TickCompanion(delta);
 
+            // a roll the rules asked for while the board was still playing back is asked for once it has caught up
+            _dice.Tick();
+
             // thrown by itself (--auto, --autodice), or by a Space pressed while the tray was on its
             // way, as soon as the tray is ready for it
             if ((_auto || _dice.AutoThrow || _dice.Wanted) && _dice.Waiting != null && !_dice.Thrown) _dice.Go();

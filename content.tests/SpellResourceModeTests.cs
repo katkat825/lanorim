@@ -113,7 +113,9 @@ namespace Content.Tests
 
             // and each paid in its own currency
             Assert.Equal(1, ((SpellSlots)withSlots.Caster.Resource).Remaining(3));
-            Assert.Equal(SpellPoints.PoolFor(CasterProgression.Full, 5) - 5,
+            // the SRD's pool, and the solo bonus's 1st-level price on top when it's on (cc_task_h 3.1)
+            Assert.Equal(SpellPoints.PoolFor(CasterProgression.Full, 5) +
+                         withPoints.Class.SoloBonusSlots * SpellPoints.CostOf(1) - 5,
                          ((SpellPoints)withPoints.Caster.Resource).Remaining);
         }
 

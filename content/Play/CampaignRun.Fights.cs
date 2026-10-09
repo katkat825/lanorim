@@ -70,6 +70,9 @@ namespace Content.Play
         Monster Find(string id) =>
             Pack.Monsters.FirstOrDefault(m => m.Id == id) ?? Library.Bestiary.Find(id);
 
+        // the battle being fought, for what EndFight asks of it (did they break?)
+        Battle _battle;
+
         // the battle for the fight the story called: the group on the map's spawns
         public Battle BattleFor(IResolver resolver, IReactionChooser chooser = null,
                                 ICombatObserver observer = null)
@@ -85,15 +88,21 @@ namespace Content.Play
 
                 if (monster == null) continue;
 
+                // the group is mustered from the entry's bands in order, so the leader's band is found by its place
+                bool leads = Fight.Entry?.Monsters.ElementAtOrDefault(Fight.Group.ToList().IndexOf(band))?.Leader == true;
+
                 for (int i = 0; i < band.Count; i++, slot++)
                     foes.Add(new Battle.Foe(monster,
                                             Fight.Map.SpawnAt(slot) ?? Fight.Map.SpawnAt(1) ??
-                                            new Cell(Fight.Map.Columns - 2, 1)));
+                                            new Cell(Fight.Map.Columns - 2, 1), leads && i == 0));
             }
 
             var observers = new Observers(observer, Day);
 
-            Battle battle = Battle.Set(Library, Fight.Map, Hero, foes, resolver, chooser, observers);
+            Battle battle = Battle.Set(Library, Fight.Map, Hero, foes, resolver, chooser, observers)
+                                  .Holding(Fight.Entry?.Morale ?? Morale.None);
+
+            _battle = battle;
 
             Day.Knows(battle.What);
 
@@ -124,7 +133,9 @@ namespace Content.Play
             Fight = null;
             _settled.Clear();
 
-            Reply(new Answer { Outcome = outcome });
+            // won because they broke: the story reads $fight_broke (cc_task_h 3.4)
+            Reply(new Answer { Outcome = outcome, Broke = outcome == Outcome.HeroesWon && _battle?.Fight.Broken == true });
+            _battle = null;
 
             if (outcome == Outcome.HeroesWon) Autosave(SaveKind.FightWon);
 

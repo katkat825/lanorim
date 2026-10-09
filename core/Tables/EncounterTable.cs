@@ -58,11 +58,15 @@ namespace Core.Tables
     // one kind of monster in a fight entry, and how many of them - "1d4 goblins" is a count of 1d4
     public sealed class Band
     {
-        public Band(string monster, DiceRoll count)
+        public Band(string monster, DiceRoll count, bool leader = false)
         {
             Monster = monster ?? "";
             Count = count.IsNothing ? DiceRoll.Flat(1) : count;
+            Leader = leader;
         }
+
+        // the leader whose fall breaks a "morale": "leader" fight (cc_task_h 3.4): the first of this band
+        public bool Leader { get; }
 
         public string Monster { get; }
 
@@ -75,8 +79,12 @@ namespace Core.Tables
     {
         public EncounterEntry(string id, EntryKind kind, int weight = 1,
                               IReadOnlyList<Band> monsters = null, string map = null,
-                              string loot = null)
+                              string loot = null, Combat.Morale morale = Combat.Morale.None,
+                              int level = 0, EncounterDifficulty difficulty = EncounterDifficulty.Moderate)
         {
+            Morale = morale;
+            Level = level;
+            Difficulty = difficulty;
             Id = id ?? "";
             Kind = kind;
             Weight = weight < 1 ? 1 : weight;
@@ -100,6 +108,15 @@ namespace Core.Tables
         // the loot table the fight leaves behind, or empty. named, not rolled - the fight has to be
         // won first, and whether it was is the caller's to know
         public string Loot { get; }
+
+        // when its enemies break (cc_task_h 3.4): none, leader or half. the campaign's, per fight
+        public Combat.Morale Morale { get; }
+
+        // the level the author meant it for, 0 when unsaid, and how hard (cc_task_h 3.5): what the campaign check holds
+        // its monsters to (FightBudget). never read in play
+        public int Level { get; }
+
+        public EncounterDifficulty Difficulty { get; }
 
         public bool Speaks => Kind != EntryKind.Nothing;
 

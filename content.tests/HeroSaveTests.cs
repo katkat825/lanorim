@@ -185,8 +185,9 @@ namespace Content.Tests
 
             SameSheet(mage, back);
 
+            // the SRD's count less the one spent, and the solo bonus's slot when it's on (cc_task_h 3.1)
             var slots = Assert.IsType<SpellSlots>(back.Caster.Resource);
-            Assert.Equal(3, slots.Remaining(1));
+            Assert.Equal(3 + back.Class.SoloBonusSlots, slots.Remaining(1));
             Assert.Equal(0, slots.Remaining(3));
             Assert.True(back.Actor.Has(Condition.Poisoned));
             Assert.Equal(mage.Caster.Known.Select(s => s.Id), back.Caster.Known.Select(s => s.Id));
@@ -213,7 +214,7 @@ namespace Content.Tests
             SameSheet(mage, back);
 
             var points = Assert.IsType<SpellPoints>(back.Caster.Resource);
-            Assert.Equal(SpellPoints.PoolFor(CasterProgression.Full, 11) -
+            Assert.Equal(SpellPoints.PoolFor(CasterProgression.Full, 11) + back.Class.SoloBonusSlots * SpellPoints.CostOf(1) -
                          SpellPoints.CostOf(6) - SpellPoints.CostOf(2), points.Remaining);
             Assert.True(points.HasSpent(6));
             Assert.False(points.CanPay(6));

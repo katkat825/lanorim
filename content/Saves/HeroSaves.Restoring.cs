@@ -112,8 +112,12 @@ namespace Content.Saves
 
             hero.DiscardWarningDismissed = saved.DiscardWarningDismissed;
             hero.ShopsFirst = saved.ShopsFirst;
+            hero.Figure = saved.Figure;
 
             RestoreKit(saved, library, hero, file, found);
+
+            // a hero from before the keepsake gets one as the save loads (cc_task_h 3.2)
+            hero.GiveKeepsake(library.Items);
             RestoreDay(saved, library, hero, file, found);
 
             return hero;
@@ -295,6 +299,13 @@ namespace Content.Saves
                                                           .OrderBy(s => s.Key,
                                                                    StringComparer.Ordinal))
             {
+                // the keepsake keeps its once-a-rest in the same ledger (Hero.Keepsake.cs)
+                if (spent.Key == Hero.KeepsakeId)
+                {
+                    if (spent.Value > 0) hero.RespendKeepsake();
+                    continue;
+                }
+
                 Feature feature = hero.Features.FirstOrDefault(f => f.Id == spent.Key &&
                                                                     f.Uses > 0);
 

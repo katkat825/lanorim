@@ -29,12 +29,19 @@
 
 .PARAMETER Atlas
     The shared texture to bring with them. Defaults to every .png sitting in the same folder as
-    the models that were pulled, which is how both KayKit packs are laid out.
+    the models that were pulled, which is how both KayKit packs are laid out. A name that isn't
+    there (-Atlas none) brings none, for models that carry their texture inside them (a KayKit
+    character .glb, a Quaternius monster .gltf).
+
+.PARAMETER From
+    Only models in a folder whose path contains this: Flying, Rig_Medium, Characters. For a pack
+    that has two models of one name (Ultimate Monsters has a Pigeon in Blob and another in Flying).
 
 .EXAMPLE
     .\tools\pull-models.ps1 -Pack KayKit_Dungeon_Pack_1.1_FREE -Into dungeon -Models wall,wall_doorway,rubble_large
     .\tools\pull-models.ps1 -Pack KayKit_Adventurers_2.0_FREE -Into heroes -Models Barbarian
     .\tools\pull-models.ps1 -Pack "Updated Modular Dungeon - May 2019-20260921T174604Z-1-001" -Into dungeon -Models Wall_Modular,Arch,Arch_Door
+    .\tools\pull-models.ps1 -Pack "Ultimate Monsters-20261008T132501Z-1-001" -Into companions -Models Pigeon -From Flying -Atlas none
 #>
 [CmdletBinding()]
 param(
@@ -47,7 +54,9 @@ param(
     [Parameter(Mandatory = $true)]
     [string[]] $Models,
 
-    [string[]] $Atlas
+    [string[]] $Atlas,
+
+    [string] $From
 )
 
 $ErrorActionPreference = 'Stop'
@@ -82,6 +91,7 @@ try {
     foreach ($model in $Models) {
         $found = $zip.Entries | Where-Object {
             $_.FullName -match "/(gltf|glb)/" -and
+            (-not $From -or $_.FullName -like "*$From*") -and
             [System.IO.Path]::GetFileNameWithoutExtension($_.FullName) -eq $model -and
             $_.FullName -match '\.(gltf|glb|bin)$'
         }
@@ -92,6 +102,7 @@ try {
         if (-not $found) {
             $found = $zip.Entries | Where-Object {
                 $_.FullName -match "/obj/" -and
+                (-not $From -or $_.FullName -like "*$From*") -and
                 [System.IO.Path]::GetFileNameWithoutExtension($_.FullName) -eq $model -and
                 $_.FullName -match '\.(obj|mtl)$'
             }

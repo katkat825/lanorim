@@ -83,7 +83,7 @@ namespace Core.Magic
 
             int rolled = Lessened(c, Rolled(c), potent);
 
-            int suffered = target.Suffer(rolled, type);
+            int suffered = target.Suffer(rolled, type, c.Caster.Actor);
 
             c.Fight?.Observer.Dealt(new Harm(c.Caster.Actor, target, c.Spell.NameKey,
                                              Critical(c) ? c.Amount.Doubled() : c.Amount, rolled, suffered, type));
@@ -214,7 +214,7 @@ namespace Core.Magic
                 DiceRoll dice = c.Attempt.IsCritical ? mark.Spec.Mark.Dice.Doubled() : mark.Spec.Mark.Dice;
                 int more = Math.Max(0, c.Resolver.Roll(dice, c.Caster.Actor));
 
-                suffered += c.Target.Suffer(more, mark.Spec.Mark.Type);
+                suffered += c.Target.Suffer(more, mark.Spec.Mark.Type, c.Caster.Actor);
             }
 
             return suffered;

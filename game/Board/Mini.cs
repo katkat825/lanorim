@@ -22,6 +22,10 @@ namespace Game.Board
 
         [Export] public Material Paint { get; set; }
 
+        // how the model stands, when its data says (MiniLook: the pose, the rig's clips, what it holds, how it is
+        // measured). null: the model's own idle, measured to its top bone, as every mini before task G
+        public MiniLook Look { get; set; }
+
         // WHAT A PIECE SOUNDS LIKE AND WHAT ITS MODEL CAN DO are not ported yet: the old build's
         // MiniVoice, PackVoice and MiniClips all read a campaign's mini pack, and lanorim has no
         // pack format yet (Phase 7). Every motion below already falls back to the procedural one
@@ -76,7 +80,7 @@ namespace Game.Board
 
             // a rigged figure is measured off its posed skeleton, because its AABB is stuck in the
             // bind pose; anything else is measured off its geometry, which is telling the truth
-            bool rigged = PaintedModel.PosedHeight(figure, out float tall, out float feet);
+            bool rigged = PaintedModel.PosedHeight(figure, out float tall, out float feet, Look?.Crown == true);
 
             Aabb bounds = PaintedModel.Bounds(figure);
 
@@ -100,6 +104,9 @@ namespace Game.Board
 
             GD.Print($"mini    {figure.Name} {tall:0.00} units {(rigged ? "posed" : "measured")} " +
                      $"-> {FigureHeight * 1000f:0} mm tall");
+
+            // in its hands after it is measured, and painted like the rest of it
+            foreach (Node3D held in HeldItems.Put(figure, Look?.Holds)) PaintedModel.Paint(held, Paint, "mini");
         }
 
         // SWAP THE STAND-IN FOR A REAL MODEL, AND STOP IT MOVING.
@@ -135,26 +142,40 @@ namespace Game.Board
 
             figure.AddChild(model);
 
-            Pose(model);
+            // a borrowed head and the parts left off, before the pose and the measuring (task H)
+            FigureParts.Assemble(model, Look?.Head, Look?.Leave);
+
+            Pose(model, Look);
 
             // a hood or a cloak that isn't skinned goes on its bone, so it follows the pose
             RigidParts.Attach(model);
         }
 
-        // the pack's idle, held on one frame. Named clips vary between packs, so it takes the one
-        // called Idle if there is one and the first clip if there is not, rather than assuming
-        static void Pose(Node model)
+        // the pose its look names, held on one frame; with none, the pack's idle. Named clips vary
+        // between packs, so it takes the one called Idle if there is one and the first clip if there
+        // is not, rather than assuming. A look with a Rig gives the model that rig's clips first
+        // (MiniRigs: the KayKit characters carry none)
+        static void Pose(Node model, MiniLook look)
         {
-            AnimationPlayer player = null;
+            AnimationPlayer player = look?.Rig != null
+                ? MiniRigs.Give(model, look.Rig)
+                : null;
 
             foreach (Node child in model.GetChildren())
-                if (child is AnimationPlayer found) { player = found; break; }
+                if (player == null && child is AnimationPlayer found) player = found;
 
             if (player == null) return;
 
-            string clip = null;
+            string[] clips = player.GetAnimationList();
 
-            foreach (string name in player.GetAnimationList())
+            string clip = look?.Pose != null ? ClipMatch.In(clips, look.Pose) : "";
+
+            if (look?.Pose != null && clip == "")
+                GD.PushWarning($"mini: no clip '{look.Pose}' on {model.Name} - it stands in its idle");
+
+            if (clip == "") clip = null;
+
+            foreach (string name in clip == null ? clips : Array.Empty<string>())
             {
                 if (name.Contains("Idle", StringComparison.OrdinalIgnoreCase)) { clip = name; break; }
 
@@ -166,14 +187,14 @@ namespace Game.Board
             // seek with update:true writes the pose onto the skeleton, then the player is switched
             // off entirely - advance(0) on a stopped player would put the rest pose back
             player.Play(clip);
-            player.Seek(RestingFrame, true);
+            player.Seek(Mathf.Min(look?.At ?? RestingFrame, (float)player.GetAnimation(clip).Length), true);
             player.Pause();
             player.ProcessMode = ProcessModeEnum.Disabled;
         }
 
         // seconds into the idle. not 0: the first frame of a loop is often the neutral pose the
         // clip was built from, and a little way in reads more like a figure caught standing
-        const float RestingFrame = 0.35f;
+        public const float RestingFrame = 0.35f;
 
         public void PlaceAt(Vector3 boardLocal)
         {

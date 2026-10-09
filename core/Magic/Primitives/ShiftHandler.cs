@@ -91,7 +91,7 @@ namespace Core.Magic
                 foreach (Actor traveller in new[] { target, rider }.Where(a => a != null))
                 {
                     int took = traveller.Suffer(Math.Max(0, c.Resolver.Roll(DiceRoll.Parse("4d6"), c.Caster.Actor)),
-                                                DamageType.Force);
+                                                DamageType.Force, c.Caster.Actor);
                     fight.Hurt(c.Caster.Actor, traveller, took);
                     hurt += took;
                 }

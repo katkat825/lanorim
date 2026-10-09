@@ -1,3 +1,4 @@
+using Core.Words;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -77,19 +78,54 @@ namespace Content.Encounters
             return read;
         }
 
-        static readonly string[] EntryKeys = { "id", "kind", "weight", "monsters", "map", "loot" };
+        public static readonly IReadOnlyList<string> EntryKeys =
+            new[] { "id", "kind", "weight", "monsters", "map", "loot", "morale", "level", "difficulty" };
+
+        // a monster entry's flag: the leader whose fall breaks a "morale": "leader" fight (cc_task_h 3.4)
+        const string LeaderFlag = "leader";
+
+        // what a fight's monster entry takes: which, how many, and whether it leads (the vocabulary's registry)
+        public static readonly IReadOnlyList<string> MonsterKeys = new[] { "monster", "count", LeaderFlag };
 
         static EncounterEntry ReadEntry(JsonElement entry, string table, List<string> problems)
         {
-            string where = TableReader.Entry(entry, table, EntryKeys, problems, out EntryKind kind);
+            string where = TableReader.Entry(entry, table, EntryKeys.ToArray(), problems, out EntryKind kind);
 
             if (where == null) return null;
 
             string id = entry.Text("id");
             int weight = entry.Weight(where, problems);
 
-            List<Band> monsters = TableReader.Counted(entry, "monsters", "monster", "a monster id", where, problems)
-                                             .Select(m => new Band(m.Id, m.Count)).ToList();
+            List<Band> monsters = TableReader.Counted(entry, "monsters", "monster", "a monster id", where, problems,
+                                                      new[] { LeaderFlag })
+                                             .Select(m => new Band(m.Id, m.Count, m.Flags.Contains(LeaderFlag)))
+                                             .ToList();
+
+            // when its enemies break: none (the default), leader or half (cc_task_h 3.4)
+            Core.Combat.Morale morale = Core.Combat.Morale.None;
+
+            if (entry.Has("morale") && !EnumWords.TryName(entry.Text("morale"), out morale))
+                problems.Add($"{where}: '{entry.Text("morale")}' is not a morale - none, leader or half");
+
+            if (morale != Core.Combat.Morale.None && kind != EntryKind.Fight)
+                problems.Add($"{where}: only a fight has a morale");
+
+            // the level it's meant for and how hard, for the campaign check's solo budget (cc_task_h 3.5)
+            int level = entry.Number("level", 0);
+
+            if (entry.Has("level") && (level < 1 || level > 20))
+                problems.Add($"{where}: 'level' is a hero's level, 1 to 20 - not {entry.Text("level")}");
+
+            EncounterDifficulty difficulty = EncounterDifficulty.Moderate;
+
+            if (entry.Has("difficulty") && !EnumWords.TryName(entry.Text("difficulty"), out difficulty))
+                problems.Add($"{where}: '{entry.Text("difficulty")}' is not a difficulty - low, moderate or high");
+
+            if ((entry.Has("level") || entry.Has("difficulty")) && kind != EntryKind.Fight)
+                problems.Add($"{where}: only a fight has a level and a difficulty");
+
+            if (monsters.Count(m => m.Leader) > 1)
+                problems.Add($"{where}: one leader to a fight - {monsters.Count(m => m.Leader)} are marked");
 
             string map = entry.Text("map");
 
@@ -115,7 +151,7 @@ namespace Content.Encounters
                     break;
             }
 
-            return new EncounterEntry(id, kind, weight, monsters, map, loot);
+            return new EncounterEntry(id, kind, weight, monsters, map, loot, morale, System.Math.Max(0, level), difficulty);
         }
     }
 }

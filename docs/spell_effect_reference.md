@@ -539,6 +539,28 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `scales_with_level` | flag | the amount is multiplied by the level | | consequence | existing |
 | `weight` | number | how often it is drawn beside the others | | consequence | existing |
 
+### `encounter`: one entry in a campaign's encounter table (`EncounterReader`)
+
+| key | type / values | meaning in plain words | replaces (old keys) | used by | why not an existing key |
+|---|---|---|---|---|---|
+| `id` | id | the entry's id, which the story's `<<fight>>` names | | encounter | existing |
+| `kind` | `fight` \| `line` \| `nothing` | what the pick is | | encounter | existing |
+| `weight` | number | how often it is picked beside the others | | encounter | existing |
+| `monsters` | list of `encounter.monster` | who turns up | | encounter | existing |
+| `map` | id | the map the fight is played on | | encounter | existing |
+| `loot` | id | the loot table a won fight opens | | encounter | existing |
+| `level` | number, 1 to 20 | the hero's level the fight is meant for: the campaign check holds its monsters to the SRD's XP Budget per Character for one character, and to the solo enemy cap. never read in play (cc_task_h 3.5) | | encounter | a statblock's challenge is the monster's; this is the fight's, at a level |
+| `difficulty` | `low` \| `moderate` \| `high` | how hard the fight is meant to be at that level, the SRD's Combat Encounter Difficulty; moderate when unsaid (cc_task_h 3.5) | | encounter | the DC ladder's words (`Difficulty`) are a check's, and the player's Story/Standard/Hard is a setting, not data |
+| `morale` | `none` \| `leader` \| `half` | when the enemies break and run (or surrender with nowhere to run): when the leader falls, or half of them are down. none is to the end (cc_task_h 3.4) | | reserved: no shipped fight has one yet; a campaign's author decides it per fight | nothing said when a fight ends but its outcome; morale is a fight's, not a monster's |
+
+### `encounter.monster`: one band in a fight's `monsters`
+
+| key | type / values | meaning in plain words | replaces (old keys) | used by | why not an existing key |
+|---|---|---|---|---|---|
+| `monster` | id | the statblock | | encounter | existing |
+| `count` | dice | how many | | encounter | existing |
+| `leader` | flag | the first of this band leads: its fall breaks a `"morale": "leader"` fight. none marked, the fight's first monster leads (cc_task_h 3.4) | | reserved: no shipped fight has a morale yet | a statblock's `tags` are the creature's in every fight; leading is this fight's |
+
 ### `attack`: an attack, wherever it is written - an item's `weapon`, a statblock's `attacks`, a Wild Shape form's `attacks` (`AttackReader`)
 
 | key | type / values | meaning in plain words | replaces (old keys) | used by | why not an existing key |
