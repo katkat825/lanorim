@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Core.Characters;
 using Core.Space;
@@ -16,46 +15,26 @@ namespace Core.Combat
         // there and then (Surrendered). Either way the fight is WON, its loot is the loot, and the story can tell a
         // rout from a slaughter ($fight_broke)
 
-        public Morale Morale { get; private set; }
+        // the books are MoraleWatch's (cc_task_j Part 1)
+        public Morale Morale => _morale.Morale;
 
         // the leader whose fall breaks a Morale.Leader fight
-        public Actor Leader { get; private set; }
+        public Actor Leader => _morale.Leader;
 
-        public bool Broken { get; private set; }
+        public bool Broken => _morale.Broken;
 
-        public bool Surrendered { get; private set; }
+        public bool Surrendered => _morale.Surrendered;
 
-        int _enemies;
-
-        public void HoldMorale(Morale morale, Actor leader)
-        {
-            Morale = morale;
-            Leader = leader;
-            _enemies = _order.Count(r => r.Actor.Side == Allegiance.Enemy);
-        }
+        public void HoldMorale(Morale morale, Actor leader) =>
+            _morale.Hold(morale, leader, Actors.Count(a => a.Side == Allegiance.Enemy));
 
         // has it broken, just now? told once, the moment it does
         bool Breaks()
         {
-            if (Broken || Morale == Morale.None || _enemies == 0) return false;
+            if (!_morale.Breaks(() => Actors.Where(a => a.Side == Allegiance.Enemy).ToList(), _off.IsGone,
+                                () => !Field.Exits.Any()))
+                return false;
 
-            List<Actor> enemies = _order.Select(r => r.Actor).Where(a => a.Side == Allegiance.Enemy).ToList();
-
-            // the last of them falling is a win like any other, not a rout
-            if (enemies.All(a => a.IsDown || _gone.Contains(a))) return false;
-
-            int down = enemies.Count(a => a.IsDown);
-
-            Broken = Morale switch
-            {
-                Morale.Leader => Leader != null && (Leader.IsDown || _gone.Contains(Leader)),
-                Morale.Half => down >= (_enemies + 1) / 2,
-                _ => false,
-            };
-
-            if (!Broken) return false;
-
-            Surrendered = !Field.Exits.Any();
             Observer.Broke(Surrendered);
 
             return true;
@@ -100,7 +79,7 @@ namespace Core.Combat
         void Leave(Actor actor)
         {
             Field.Remove(actor);
-            _gone.Add(actor);
+            _off.Gone(actor);
             Observer.Left(actor);
             Judge();
         }

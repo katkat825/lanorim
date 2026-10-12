@@ -119,6 +119,27 @@ namespace Content.Tests
             Assert.True(SheetView.Of(hero).Keepsake);
         });
 
+        // ONCE PER LONG REST, a short rest doesn't give it back (Kathleen, 2026-10-12). While it was kept in the per-rest
+        // ledger a short rest did, because the ledger gave back whatever wasn't a feature
+        [Fact]
+        public void AShortRestDoesntGiveItBack() => With(() =>
+        {
+            Hero hero = Made("mage");
+
+            Drop(hero);
+            Assert.Equal(Hero.KeepsakeId, hero.HoldUp());
+            Assert.Equal(1, HeroSaves.Capture(hero).Spent[Hero.KeepsakeId]);
+
+            hero.ShortRest(new StandardResolver(new SeededRng(1)));
+
+            Assert.False(hero.KeepsakeReady);
+            Assert.Equal(1, HeroSaves.Capture(hero).Spent[Hero.KeepsakeId]);
+
+            hero.LongRest();
+
+            Assert.True(hero.KeepsakeReady);
+        });
+
         [Fact]
         public void InAFightTheLogHearsItTheHeroKeepsTheirWeaponAndDoesntFall() => With(() =>
         {

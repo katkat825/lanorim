@@ -29,7 +29,7 @@ namespace Game.Table
             else if (Pressed(@event, Act.TurnRight)) Camera?.Turn(1);
             else if (Pressed(@event, Act.ZoomIn)) Camera?.Step(1);
             else if (Pressed(@event, Act.ZoomOut)) Camera?.Step(-1);
-            else if (Pressed(@event, Act.ThrowDice)) Throw();
+            else if (Pressed(@event, Act.ThrowDice)) ThrowPressed?.Invoke();
             else return;
 
             GetViewport().SetInputAsHandled();

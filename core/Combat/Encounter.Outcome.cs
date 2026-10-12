@@ -23,11 +23,9 @@ namespace Core.Combat
 
             // a hero on the floor has not lost yet - the death save is still to come, and judging
             // the fight before that die lands would skip the whole mechanic
-            bool heroesStanding = _order.Any(r => r.Actor.Side == Allegiance.Hero && !r.Actor.IsDead &&
-                                                  !(r.Actor.IsDown && r.Actor.Stable) &&
-                                                  !_gone.Contains(r.Actor));
-            bool enemiesStanding = _order.Any(r => r.Actor.Side == Allegiance.Enemy && !r.Actor.IsDown &&
-                                                   !_gone.Contains(r.Actor));
+            bool heroesStanding = Actors.Any(a => a.Side == Allegiance.Hero && !a.IsDead && !(a.IsDown && a.Stable) &&
+                                                  !_off.IsGone(a));
+            bool enemiesStanding = Actors.Any(a => a.Side == Allegiance.Enemy && !a.IsDown && !_off.IsGone(a));
 
             if (!heroesStanding) Outcome = Outcome.HeroesLost;
             else if (!enemiesStanding) Outcome = Outcome.HeroesWon;
@@ -38,7 +36,7 @@ namespace Core.Combat
         }
 
         public override string ToString() =>
-            $"round {Round}, {_order.Count(r => !r.Actor.IsDown)} of {_order.Count} still up, " +
+            $"round {Round}, {Actors.Count(a => !a.IsDown)} of {Order.Count} still up, " +
             Outcome;
     }
 }

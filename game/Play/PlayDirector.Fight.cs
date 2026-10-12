@@ -11,6 +11,8 @@ namespace Game.Play
     {
         // --- a fight ---------------------------------------------------------------------------------
 
+        FightLog _log;
+
         void StartFight()
         {
             _fighting = true;
@@ -26,8 +28,8 @@ namespace Game.Play
 
                 BoardShow show = _combat.Show(a => ReferenceEquals(a, Run.Hero.Actor));
                 log.Wrote += show.Log;
-                show.Judging += (by, target, attempt) => MainQueue.Post(() => Verdict(by, target, attempt));
-                show.Casting += (caster, spell, at, changes) => MainQueue.Post(() => CastCaption(caster, spell, at, changes));
+                show.Judging += (by, target, attempt) => MainQueue.Post(() => _caption.Verdict(by, target, attempt));
+                show.Casting += (caster, spell, at, changes) => MainQueue.Post(() => _caption.CastCaption(caster, spell, at, changes));
 
                 Battle battle = Run.BattleFor(GameState.Resolver, chooser, new Observers(log, show, _mind));
 
@@ -90,8 +92,8 @@ namespace Game.Play
 
                 _rules.Post(() => BeforeTheFight.Cast(Run.Hero, spell, GameState.Resolver, out changed), () =>
                 {
-                    CastCaption(Run.Hero.Actor, spell.NameKey, new[] { Run.Hero.Actor }, changed ?? new List<Change>());
-                    card.Said = _verdict;
+                    _caption.CastCaption(Run.Hero.Actor, spell.NameKey, new[] { Run.Hero.Actor }, changed ?? new List<Change>());
+                    card.Said = _caption.Said;
                     card.Again();
                 });
             });

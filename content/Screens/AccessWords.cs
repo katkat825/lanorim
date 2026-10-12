@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Content.Screens
@@ -6,7 +7,7 @@ namespace Content.Screens
     // what Tab reaches on the table - a piece, a button on the bar, the dice tray. Whole sentences, each its own key
     public static class AccessWords
     {
-        static string K(string what) => ScreenKeys.Key("access", what);
+        static readonly Func<string, string> K = ScreenKeys.For("access");
 
         public static readonly string ReadingOnKey = K("reading_on");
         public static readonly string ReadingOffKey = K("reading_off");

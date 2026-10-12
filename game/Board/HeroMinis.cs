@@ -79,23 +79,19 @@ namespace Game.Board
         // on the body with its headgear off (the heads sheet)
         public static (PackedScene Model, MiniLook Look)? For(string classId, int figure = 0)
         {
-            string[] args = OS.GetCmdlineUserArgs();
+            if (!Game.Screens.HudLayout.Current.HeroByClass || DevArgs.OldHero) return null;
 
-            if (!Game.Screens.HudLayout.Current.HeroByClass || Has(args, "--old-hero")) return null;
-
-            if (int.TryParse(Game.Table.Shot.Arg(args, "--figure"), out int asked)) figure = asked;
+            if (DevArgs.Figure is int asked) figure = asked;
 
             MiniLook look = LookOf(classId, figure);
 
             if (look == null) return null;
 
-            if (Has(args, "--plain-pose")) look = look with { Pose = PlainPose };
-            if (Has(args, "--empty-handed")) look = look with { Holds = null };
-            if (Game.Table.Shot.Arg(args, "--head") is { } head) look = look.Wearing(head);
+            if (DevArgs.PlainPose) look = look with { Pose = PlainPose };
+            if (DevArgs.EmptyHanded) look = look with { Holds = null };
+            if (DevArgs.Head is { } head) look = look.Wearing(head);
 
             return MiniModels.Of(look);
         }
-
-        static bool Has(string[] args, string flag) => System.Array.IndexOf(args, flag) >= 0;
     }
 }

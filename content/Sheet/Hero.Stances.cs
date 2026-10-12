@@ -12,8 +12,6 @@ namespace Content.Sheet
     {
         // --- stances and recovery -------------------------------------------------------------
 
-        readonly Dictionary<string, int> _spent = new Dictionary<string, int>();
-
         public int UsesLeft(Feature feature)
         {
             if (feature == null) return int.MaxValue;
@@ -23,7 +21,7 @@ namespace Content.Sheet
 
             return uses <= 0
                 ? int.MaxValue
-                : uses - (_spent.TryGetValue(pool.Id, out int used) ? used : 0);
+                : uses - _uses.Used(pool.Id);
         }
 
         // Sacred Weapon and Preserve Life spend Channel Divinity's uses, not their own
@@ -36,13 +34,16 @@ namespace Content.Sheet
         {
             Feature pool = PoolOf(feature);
 
-            if (pool.UsesAt(Level) > 0)
-                _spent[pool.Id] = (_spent.TryGetValue(pool.Id, out int used) ? used : 0) + 1;
+            if (pool.UsesAt(Level) > 0) _uses.Spend(pool.Id);
         }
 
-        // uses spent since the last rest, by feature id. internal because only a save reads the
-        // ledger whole - everybody else asks UsesLeft about one feature
-        internal IReadOnlyDictionary<string, int> Spent => _spent;
+        // uses spent since the last rest, by feature id, and the keepsake under its id when it's spent (a save's
+        // ledger has always kept it there). internal because only a save reads the ledger whole - everybody else
+        // asks UsesLeft about one feature
+        internal IReadOnlyDictionary<string, int> Spent =>
+            !_keepsake.Spent
+                ? _uses.All
+                : new Dictionary<string, int>(_uses.All) { [KeepsakeId] = 1 };
 
         // a save putting the ledger back. never more than the feature has, because the uses are
         // the class's and a retuned class may give fewer
@@ -52,8 +53,7 @@ namespace Content.Sheet
 
             int clamped = Math.Clamp(used, 0, feature.UsesAt(Level));
 
-            if (clamped == 0) _spent.Remove(feature.Id);
-            else _spent[feature.Id] = clamped;
+            _uses.Set(feature.Id, clamped);
         }
 
         public bool Invoke(Feature feature, IResolver resolver = null)
@@ -122,7 +122,7 @@ namespace Content.Sheet
 
             if (Intercept(resolver)) return intercept.Id;
 
-            return Keepsake() ? KeepsakeId : null;
+            return _keepsake.Catch(Actor, HasKeepsake, KeepsakeHeals) ? KeepsakeId : null;
         }
 
         // SRD 5.2.1 Relentless Rage (p.30): while raging, a DC 10 Constitution save - 5 more each
@@ -133,7 +133,7 @@ namespace Content.Sheet
 
             if (intercept == null || !Actor.IsDown || Actor.IsDead) return false;
 
-            int used = _spent.TryGetValue(intercept.Id, out int u) ? u : 0;
+            int used = _uses.Used(intercept.Id);
 
             if (intercept.Dc > 0)
             {
@@ -141,14 +141,14 @@ namespace Content.Sheet
 
                 int dc = intercept.Dc + intercept.DcStep * used;
 
-                _spent[intercept.Id] = used + 1;
+                _uses.Spend(intercept.Id);
 
                 if (Checks.Save(resolver, Actor, intercept.Ability ?? Ability.Constitution, dc).Failed)
                     return false;
             }
             else
             {
-                _spent[intercept.Id] = used + 1;
+                _uses.Spend(intercept.Id);
             }
 
             int back = intercept.StaysUpAt?.At(Level) ?? 1;

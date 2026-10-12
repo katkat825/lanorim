@@ -52,9 +52,7 @@ namespace Game.Table
         public override void _Ready()
         {
             // `--gm-tallness 1`: the screen as authored, for a picture beside the shorter one
-            if (float.TryParse(Shot.Arg(OS.GetCmdlineUserArgs(), "--gm-tallness"), System.Globalization.NumberStyles.Float,
-                               System.Globalization.CultureInfo.InvariantCulture, out float tallness))
-                Tallness = Mathf.Clamp(tallness, 0.3f, 1f);
+            if (DevArgs.GmTallness is float tallness) Tallness = Mathf.Clamp(tallness, 0.3f, 1f);
 
             Wear(Skin);
 

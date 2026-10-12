@@ -109,29 +109,8 @@ namespace Sim
             return (wins, rounds, dropped);
         }
 
-        // the mage creation makes, with Mage Armor among the spells
-        static Hero Mage(Library library, int level)
-        {
-            var making = new Content.Creation.Creation(library, library.Backgrounds);
-
-            making.StartAt(level);
-            making.Pick(library.Class("mage"));
-            making.Pick(library.Kind("human"));
-            making.Pick(library.Background("soldier"));
-            making.SuggestTraits();
-
-            foreach (Skill skill in making.SkillChoices.Take(making.SkillPicksLeft).ToList()) making.Train(skill);
-            foreach (Skill skill in making.Skills.Take(making.ExpertisePicksLeft).ToList()) making.Master(skill);
-
-            making.Learn(library.Spells.Find("mage_armor"));
-
-            foreach (Core.Magic.Spell spell in making.SpellChoices.ToList())
-                if (making.CantripPicksLeft > 0 || making.SpellPicksLeft > 0) making.Learn(spell);
-
-            making.Call("Sim");
-
-            return making.Finish() ?? throw new InvalidOperationException(string.Join("; ", making.Problems));
-        }
+        // the mage creation makes, with Mage Armor among the spells (Classes.Make, which every class's hero is)
+        static Hero Mage(Library library, int level) => Classes.Make(library, "mage", level, "mage_armor", improve: false);
 
         // hands back the part of an enemy's hit the lighter damage wouldn't have done, and notes a drop
         sealed class Watch : DropWatch

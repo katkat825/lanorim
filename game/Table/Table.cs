@@ -1,9 +1,4 @@
-using Core.Characters;
-using Core.Dice;
-using Core.Localization;
 using Game.Access;
-using Game.Dice;
-using Game.Localization;
 using Game.Tray;
 using Godot;
 
@@ -45,8 +40,6 @@ namespace Game.Table
 
         // the companion, beside the board and never on it (CompanionFigure); placed whenever a map is laid
         public CompanionFigure Companion { get; private set; }
-
-        readonly ILocalizer _text = new GodotLocalizer();
 
         // what the table is waiting on: the question asked of the dice, and who to tell
         Ask _asking;
@@ -102,39 +95,10 @@ namespace Game.Table
             // them; one walk of the tree at boot
             Captions?.Tells(this);
 
-            // THE LOCALE PROBE ASKS ONE QUESTION AND LEAVES. Nothing else is wired for it,
-            // because it is about the words and not about the table.
-            if (LocaleProbe.RequestedFrom(OS.GetCmdlineUserArgs()))
-            {
-                AddChild(new LocaleProbe { Name = "LocaleProbe" });
-                return;
-            }
-
-            // AND THE FIGURES PROBE STANDS EVERY CLASS'S TWO MINIS UP AND LOOKS AT THEM (cc_task_h Part 2)
-            if (FiguresProbe.RequestedFrom(OS.GetCmdlineUserArgs()))
-            {
-                AddChild(new FiguresProbe { Name = "FiguresProbe", Board = Board });
-                return;
-            }
-
-            // THE FAIRNESS SWEEP TAKES OVER THE TRAY. Handed the dice before anything below is
-            // wired, because the probe drives the tray itself and a second listener would throw
-            // on top of it.
-            if (DiceProbe.RequestedFrom(OS.GetCmdlineUserArgs(),
-                                        out Die shape, out int throws, out int handful))
-            {
-                AddChild(new DiceProbe
-                {
-                    Name = "DiceProbe",
-                    Tray = Tray,
-                    Shape = shape,
-                    Throws = throws,
-                    Handful = handful,
-                    Skin = Shot.Arg(OS.GetCmdlineUserArgs(), "--tray-skin"),
-                });
-
-                return;
-            }
+            // A PROBE THAT TAKES THE TABLE OVER (the locale, the figures, the fairness sweep: the dev registry,
+            // Dev/DevHooks.cs) is handed it before anything below is wired, because a sweep drives the tray itself
+            // and a second listener would throw on top of it
+            if (Game.Dev.DevHooks.AtTable(this)) return;
 
             Tray.Rolled += Read;
 
@@ -142,23 +106,19 @@ namespace Game.Table
 
             // A CAMPAIGN TO PLAY: the launch screen made or loaded a character, so the table is the
             // game's and not the demonstration's. A MAP TO BUILD: the book's Map builder opened one, and the
-            // table is the builder's (cc_task_f Part 2). Opened on its own (the editor, check-table), the
-            // demonstration still shows the whole stack working
+            // table is the builder's (cc_task_f Part 2)
             if (Game.Play.GameState.Run != null)
                 AddChild(new Game.Play.PlayDirector { Name = "Play", Table = this });
             else if (Game.Play.GameState.Building != null)
                 AddChild(new Game.Builder.MapBuilder { Name = "Builder", Table = this, View = Game.Play.GameState.Building });
-            else
-                Demonstrate();
 
-            // and a picture of it, if one was asked for. Added last so it photographs the table
-            // with everything already on it
-            if (Shot.From(OS.GetCmdlineUserArgs()) is { } shot) AddChild(shot);
+            // opened on its own (the editor, check-table), the demonstration (Dev/DemoTable.cs) still shows the whole
+            // stack working; and a picture, if one was asked for, added last so it photographs everything on the table
+            // (the dev registry: neither is in a release build)
+            Game.Dev.DevHooks.TableLaid(this);
         }
 
-        // ONE REAL CHECK, THROWN ON THE REAL TRAY, so opening the scene shows the whole stack
-        // working: a hero built from the SRD data, a d20 that tumbles in a wooden box, and core
-        // reading the face off the felt. Delete it the moment there is a campaign to play instead.
-        Actor _someone;
+        // what Space does on a table nobody is playing at: the demonstration's throw (DemoTable sets it)
+        public System.Action ThrowPressed { get; set; }
     }
 }

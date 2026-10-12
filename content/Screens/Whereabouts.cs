@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Content.Combat;
@@ -15,7 +16,7 @@ namespace Content.Screens
 
     public static class Whereabouts
     {
-        static string K(string what) => ScreenKeys.Key("where", what);
+        static readonly Func<string, string> K = ScreenKeys.For("where");
 
         public static readonly string CampaignKey = K("campaign");
         public static readonly string RoundKey = K("round");
@@ -73,7 +74,7 @@ namespace Content.Screens
     // keys follow them on the card, each as the Controls page says it
     public static class HelpCard
     {
-        static string K(string what) => ScreenKeys.Key("help", what);
+        static readonly Func<string, string> K = ScreenKeys.For("help");
 
         public static readonly string TitleKey = K("title");
 

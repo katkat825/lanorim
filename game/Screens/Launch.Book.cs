@@ -17,12 +17,12 @@ namespace Game.Screens
     public partial class Launch
     {
         // the overlay instead of the pages: asked for (`--book-overlay`), or the pages came out too small
-        bool _overlayBook;
+        internal bool OverlayBook { get; set; }
 
         // what stands over the whole screen (the cover's Begin, the pages' words), cleared with the screen
         Control _layer;
 
-        void Show(Control screen, float width = 720)
+        internal void Show(Control screen, float width = 720)
         {
             Clear();
             _book?.Open();
@@ -46,7 +46,7 @@ namespace Game.Screens
 
         // --- the title: the closed book ---------------------------------------------------------------
 
-        void ShowTitle()
+        internal void ShowTitle()
         {
             Clear();
 
@@ -80,17 +80,17 @@ namespace Game.Screens
 
         // --- the open book: the contents ----------------------------------------------------------------
 
-        void ShowBook() => ShowBook(null);
+        internal void ShowBook() => ShowBook(null);
 
         // the contents, or (open) that campaign's two pages
-        void ShowBook(string open)
+        internal void ShowBook(string open)
         {
             var book = new CampaignBook(GameState.Manifests, GameState.Saves);
 
             // what checks/check-export.ps1 looks for: an exported build that got this far is a build that works
             GD.Print($"book    open, {book.Pages.Count} campaigns");
 
-            if (_book == null || _overlayBook)
+            if (_book == null || OverlayBook)
             {
                 ShowBookPanel(book, open);
                 return;
@@ -102,7 +102,7 @@ namespace Game.Screens
                 return;
             }
 
-            var contents = new BookContents(book);
+            var contents = new BookContents(book, BookMenu.Entries(_pages));
 
             Spread((left, right) =>
             {
@@ -140,10 +140,7 @@ namespace Game.Screens
             {
                 case ContentsKind.Continue: Load(book.Continue); break;
                 case ContentsKind.Campaign: ShowCampaign(entry.Page); break;
-                case ContentsKind.Tutorials: ShowTutorials(); break;
-                case ContentsKind.MapBuilder: ShowMapBuilder(); break;
-                case ContentsKind.Settings: ShowSettings(); break;
-                case ContentsKind.Credits: ShowCredits(); break;
+                case ContentsKind.Page: PageCalled(entry.PageId)?.Open(this); break;
                 case ContentsKind.Quit: GetTree().Quit(); break;
             }
         }
@@ -173,7 +170,7 @@ namespace Game.Screens
             {
                 GD.Print($"book    the pages' letters would be {size} px, under ContentsFontMin " +
                          $"({_book.ContentsFontMin}): the menu goes back to panels over the book");
-                _overlayBook = true;
+                OverlayBook = true;
                 fallback();
             };
 
@@ -245,10 +242,12 @@ namespace Game.Screens
             if (book.CanContinue)
                 top.AddChild(Ui.Button(CampaignBook.ContinueKey, () => Load(book.Continue)));
 
-            top.AddChild(Ui.Button(CampaignBook.TutorialsKey, ShowTutorials));
-            top.AddChild(Ui.Button(CampaignBook.MapBuilderKey, ShowMapBuilder));
-            top.AddChild(Ui.Button(CampaignBook.SettingsKey, ShowSettings));
-            top.AddChild(Ui.Button(CampaignBook.CreditsKey, ShowCredits));
+            foreach (IBookPage one in _pages)
+            {
+                IBookPage turned = one;
+                top.AddChild(Ui.Button(turned.NameKey, () => turned.Open(this)));
+            }
+
             top.AddChild(Ui.Button(CampaignBook.QuitKey, () => GetTree().Quit()));
 
             var contents = Ui.Column(6);

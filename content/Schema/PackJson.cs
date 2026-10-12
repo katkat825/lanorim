@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json;
 using Core.Words;
 
@@ -35,6 +36,20 @@ namespace Content.Schema
             document.Dispose();
             problem = new ContentProblem(file, "", $"{what} is a JSON object and this is a {EnumWords.Name(kind)}");
             return null;
+        }
+
+        // A LIST THE FILE MAY LEAVE OUT (a manifest's tags, its dependencies): true and the list when there is one to
+        // walk; absent or null is no list, and anything but a list is a problem that says what one looks like (`shape`).
+        // The two lists' readers each began this way (cc_task_j Part 4)
+        public static bool OptionalList(JsonElement root, string name, string file, string shape,
+                                        List<ContentProblem> problems, out JsonElement list)
+        {
+            if (!root.TryGetProperty(name, out list) || list.ValueKind == JsonValueKind.Null) return false;
+
+            if (list.ValueKind == JsonValueKind.Array) return true;
+
+            problems.Add(new ContentProblem(file, name, shape));
+            return false;
         }
 
         // a value as the file wrote it, for a problem to quote back: the string itself, not "\"x\""

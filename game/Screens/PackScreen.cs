@@ -39,93 +39,103 @@ namespace Game.Screens
 
             foreach (PackRow row in _view.Rows)
             {
-                PackRow r = row;
-                var line = Ui.Row(6, Ui.Plain($"{Ui.Say(r.NameKey)}  ×{r.Count}{(r.Equipped ? "  ●" : "")}"));
-                line.GetChild<Label>(0).SizeFlagsHorizontal = SizeFlags.ExpandFill;
-
-                if (!r.Quest && !r.Item.Heals.IsNothing)
-                    line.AddChild(Ui.Button(PackView.UseKey, () => { _view.Use(r.Item.Id, _dice); Redraw(); }));
-
-                // put it on, or hold a Light weapon in the off hand (cc_task_open-questions-answers.md 3.1)
-                if (_view.CanEquip(r.Item.Id))
-                    line.AddChild(Ui.Button(PackView.EquipKey, () => { _view.Equip(r.Item.Id); Redraw(); }));
-
-                if (_view.CanHoldInOffHand(r.Item.Id))
-                    line.AddChild(Ui.Button(PackView.OffHandKey, () => { _view.HoldInOffHand(r.Item.Id); Redraw(); }));
-
-                if (_view.AtTheCounter && r.SellsFor >= 0)
-                {
-                    line.AddChild(Ui.Button($"{Ui.Say(PackView.SellKey)} {Ui.Money(r.SellsFor)}", () =>
-                    {
-                        if (_view.NeedsSellConfirmation(r.Item.Id) && _confirming != "sell:" + r.Item.Id)
-                        {
-                            _confirming = "sell:" + r.Item.Id;
-                            Redraw();
-                            return;
-                        }
-
-                        _confirming = null;
-                        _view.Sell(r.Item.Id, 1, confirmed: true);
-                        Redraw();
-                    }, true));
-                }
-
-                if (!r.Quest)
-                    line.AddChild(Ui.Button(PackView.DiscardKey, () =>
-                    {
-                        if (_view.NeedsDiscardWarning && _confirming != "discard:" + r.Item.Id)
-                        {
-                            _confirming = "discard:" + r.Item.Id;
-                            Redraw();
-                            return;
-                        }
-
-                        _confirming = null;
-                        _view.Discard(r.Item.Id);
-                        Redraw();
-                    }));
-
-                mine.AddChild(line);
-
-                if (_confirming == "sell:" + r.Item.Id) mine.AddChild(Ui.Label(PackView.SellEquippedKey));
-
-                if (_confirming == "discard:" + r.Item.Id)
-                {
-                    mine.AddChild(Ui.Label(PackView.DiscardWarningKey));
-
-                    var never = new CheckBox { Text = Ui.Say(PackView.DontWarnAgainKey), FocusMode = FocusModeEnum.All };
-                    never.Toggled += on => { if (on) _view.DismissDiscardWarning(); };
-                    mine.AddChild(never);
-                }
+                mine.AddChild(Line(row));
+                Confirming(mine, row);
             }
 
             Worn(mine);
 
             if (_view.Armory)
-            {
                 Body.AddChild(Ui.Row(16, Ui.Scroll(mine, 360), Ui.Scroll(Racks(), 360)));
-            }
             else if (!_view.AtTheCounter)
-            {
                 Body.AddChild(Ui.Scroll(mine, 360));
-            }
             else
-            {
-                var shelf = Ui.Column(4);
-
-                foreach (ShopRow row in _view.Shelf)
-                {
-                    ShopRow r = row;
-                    shelf.AddChild(Ui.Row(6,
-                        Ui.Plain($"{Ui.Say(r.NameKey)}  {Ui.Money(r.Price)}"),
-                        Ui.Button(PackView.BuyKey, () => { _view.Buy(r.Item.Id); Redraw(); })
-                          .Greyed(!r.Affordable, Merchant.LineFor(Rebuff.NoGold))));
-                }
-
-                Body.AddChild(Ui.Row(16, Ui.Scroll(mine, 360), Ui.Scroll(shelf, 360)));
-            }
+                Body.AddChild(Ui.Row(16, Ui.Scroll(mine, 360), Ui.Scroll(Shelf(), 360)));
 
             Body.AddChild(Ui.Button(PackView.LeaveKey, Close));
+        }
+
+        // ONE THING IN THE PACK, with what can be done with it here: use, equip, hold in the off hand, sell at a counter,
+        // discard. cc_task_j Part 3 took the steps of Draw out into Line, Confirming and Shelf
+        HBoxContainer Line(PackRow r)
+        {
+            var line = Ui.Row(6, Ui.Plain($"{Ui.Say(r.NameKey)}  ×{r.Count}{(r.Equipped ? "  ●" : "")}"));
+            line.GetChild<Label>(0).SizeFlagsHorizontal = SizeFlags.ExpandFill;
+
+            if (!r.Quest && !r.Item.Heals.IsNothing)
+                line.AddChild(Ui.Button(PackView.UseKey, () => { _view.Use(r.Item.Id, _dice); Redraw(); }));
+
+            // put it on, or hold a Light weapon in the off hand (cc_task_open-questions-answers.md 3.1)
+            if (_view.CanEquip(r.Item.Id))
+                line.AddChild(Ui.Button(PackView.EquipKey, () => { _view.Equip(r.Item.Id); Redraw(); }));
+
+            if (_view.CanHoldInOffHand(r.Item.Id))
+                line.AddChild(Ui.Button(PackView.OffHandKey, () => { _view.HoldInOffHand(r.Item.Id); Redraw(); }));
+
+            if (_view.AtTheCounter && r.SellsFor >= 0)
+            {
+                line.AddChild(Ui.Button($"{Ui.Say(PackView.SellKey)} {Ui.Money(r.SellsFor)}", () =>
+                {
+                    if (_view.NeedsSellConfirmation(r.Item.Id) && _confirming != "sell:" + r.Item.Id)
+                    {
+                        _confirming = "sell:" + r.Item.Id;
+                        Redraw();
+                        return;
+                    }
+
+                    _confirming = null;
+                    _view.Sell(r.Item.Id, 1, confirmed: true);
+                    Redraw();
+                }, true));
+            }
+
+            if (!r.Quest)
+                line.AddChild(Ui.Button(PackView.DiscardKey, () =>
+                {
+                    if (_view.NeedsDiscardWarning && _confirming != "discard:" + r.Item.Id)
+                    {
+                        _confirming = "discard:" + r.Item.Id;
+                        Redraw();
+                        return;
+                    }
+
+                    _confirming = null;
+                    _view.Discard(r.Item.Id);
+                    Redraw();
+                }));
+
+            return line;
+        }
+
+        // under the line, the question a sell or a discard asks first
+        void Confirming(VBoxContainer mine, PackRow r)
+        {
+            if (_confirming == "sell:" + r.Item.Id) mine.AddChild(Ui.Label(PackView.SellEquippedKey));
+
+            if (_confirming != "discard:" + r.Item.Id) return;
+
+            mine.AddChild(Ui.Label(PackView.DiscardWarningKey));
+
+            var never = new CheckBox { Text = Ui.Say(PackView.DontWarnAgainKey), FocusMode = FocusModeEnum.All };
+            never.Toggled += on => { if (on) _view.DismissDiscardWarning(); };
+            mine.AddChild(never);
+        }
+
+        // the merchant's shelf, each with Buy (greyed when the gold isn't there)
+        VBoxContainer Shelf()
+        {
+            var shelf = Ui.Column(4);
+
+            foreach (ShopRow row in _view.Shelf)
+            {
+                ShopRow r = row;
+                shelf.AddChild(Ui.Row(6,
+                    Ui.Plain($"{Ui.Say(r.NameKey)}  {Ui.Money(r.Price)}"),
+                    Ui.Button(PackView.BuyKey, () => { _view.Buy(r.Item.Id); Redraw(); })
+                      .Greyed(!r.Affordable, Merchant.LineFor(Rebuff.NoGold))));
+            }
+
+            return shelf;
         }
 
         // WHAT IS WORN AND HELD, each with Unequip: it goes back in the pack, or to the armory if it was lent

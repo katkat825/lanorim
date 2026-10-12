@@ -4,6 +4,10 @@ namespace Game.Dice
 {
     public partial class DieBody
     {
+        // A PHYSICS TICK OF A THROWN DIE, in its named steps: knocked loose, in flight, off the tray (Stray), still moving
+        // past its time (Restless), coming to rest (CameToRest), and read - or a cocked die put right (ReadSettled,
+        // PutRight). Cocked is a signal's name, so the step isn't.
+        // cc_task_j Part 3 split it along these steps; nothing in it moved or changed order
         public override void _PhysicsProcess(double delta)
         {
             // before the in-flight check: a settled die knocked loose is moving too, and the tray waits on IsAtRest
@@ -16,106 +20,103 @@ namespace Game.Dice
             // an escaped die never comes to rest, so without this the tray waits forever for a Settled that never arrives
             if (HasLeftTray())
             {
-                _inFlight = false;
-                _lostRethrows++;
-
-                DieRecoveryStep step = Recovery.Escaped(new StrayDie(_lostRethrows, _flightTime));
-
-                if (step.Action == DieRecoveryAction.Rethrow)
-                {
-                    GD.Print($"{Name}: left the tray after {_flightTime:0.00}s - rethrow {_lostRethrows} at {step.Energy:0.00} energy");
-                    EmitSignal(SignalName.LeftTray, _lostRethrows);
-                    Launch(_lastThrowFrom, step.Energy);
-                    return;
-                }
-
-                // a nudge cannot help a die off the table, so anything but a re-throw ends it here
-                GD.Print($"{Name}: STILL outside the tray after {_lostRethrows} attempts - forcing a settle");
-                GiveUp();
+                Stray();
                 return;
             }
 
             // the ceiling, or a die seen wobbling (DieBody.Wobble.cs) before it: no use waiting out the rest
             if (_flightTime > (_restless > 0 ? AfterNudgeSeconds : MaxFlightSeconds) || _restless == 0 && Wobbling)
             {
-                _inFlight = false;
-
-                // knocked loose, it was never thrown this time: there is no throw to repeat, only a place to leave it
-                if (_knocked)
-                {
-                    GD.Print($"{Name}: knocked loose and still moving after {_flightTime:0.00}s - forcing a settle");
-                    GiveUp();
-                    return;
-                }
-
-                _restless++;
-
-                DieRecoveryStep step = Recovery.Restless(new StrayDie(_restless, _flightTime));
-
-                if (step.Action == DieRecoveryAction.Nudge)
-                {
-                    GD.Print($"{Name}: still moving after {_flightTime:0.00}s - nudge {_restless}");
-                    Nudge();
-                    return;
-                }
-
-                if (step.Action == DieRecoveryAction.Rethrow)
-                {
-                    GD.Print($"{Name}: still moving after {_flightTime:0.00}s - rethrow {_restless} at {step.Energy:0.00} energy");
-                    Launch(_lastThrowFrom, step.Energy);
-                    return;
-                }
-
-                GD.Print($"{Name}: STILL moving after {_restless - 1} nudges - reading it as it lies");
-                GiveUp();
+                Restless();
                 return;
             }
 
             // ignore the first moments: the kick may land a frame after this runs
             if (_flightTime < 0.1) return;
 
+            if (!CameToRest(delta)) return;
+
+            _inFlight = false;
+
+            ReadSettled();
+        }
+
+        // off the tray: thrown again, softer, or given up on where it lies
+        void Stray()
+        {
+            _inFlight = false;
+            _lostRethrows++;
+
+            DieRecoveryStep step = Recovery.Escaped(new StrayDie(_lostRethrows, _flightTime));
+
+            if (step.Action == DieRecoveryAction.Rethrow)
+            {
+                GD.Print($"{Name}: left the tray after {_flightTime:0.00}s - rethrow {_lostRethrows} at {step.Energy:0.00} energy");
+                EmitSignal(SignalName.LeftTray, _lostRethrows);
+                Launch(_lastThrowFrom, step.Energy);
+                return;
+            }
+
+            // a nudge cannot help a die off the table, so anything but a re-throw ends it here
+            GD.Print($"{Name}: STILL outside the tray after {_lostRethrows} attempts - forcing a settle");
+            GiveUp();
+        }
+
+        // still moving past its time: nudged, thrown again, or read as it lies
+        void Restless()
+        {
+            _inFlight = false;
+
+            // knocked loose, it was never thrown this time: there is no throw to repeat, only a place to leave it
+            if (_knocked)
+            {
+                GD.Print($"{Name}: knocked loose and still moving after {_flightTime:0.00}s - forcing a settle");
+                GiveUp();
+                return;
+            }
+
+            _restless++;
+
+            DieRecoveryStep step = Recovery.Restless(new StrayDie(_restless, _flightTime));
+
+            if (step.Action == DieRecoveryAction.Nudge)
+            {
+                GD.Print($"{Name}: still moving after {_flightTime:0.00}s - nudge {_restless}");
+                Nudge();
+                return;
+            }
+
+            if (step.Action == DieRecoveryAction.Rethrow)
+            {
+                GD.Print($"{Name}: still moving after {_flightTime:0.00}s - rethrow {_restless} at {step.Energy:0.00} energy");
+                Launch(_lastThrowFrom, step.Energy);
+                return;
+            }
+
+            GD.Print($"{Name}: STILL moving after {_restless - 1} nudges - reading it as it lies");
+            GiveUp();
+        }
+
+        // still for long enough, or asleep: true when it is ready to read
+        bool CameToRest(double delta)
+        {
             bool still = LinearVelocity.Length() < RestLinearSpeed
                       && AngularVelocity.Length() < RestAngularSpeed;
             _stillTime = still ? _stillTime + delta : 0;
             WatchWobble(delta, still);
 
-            if (!Sleeping && _stillTime < RestHoldSeconds) return;
+            return Sleeping || _stillTime >= RestHoldSeconds;
+        }
 
-            _inFlight = false;
-
+        // the face it came to rest on, or, cocked, put right first
+        void ReadSettled()
+        {
             (int value, float alignment) = ReadFace();
             float required = RequiredAlignment;
 
             // every GD.Print below is developer diagnostic, never player-facing - not localized
 
-            if (alignment < required)
-            {
-                DieRecoveryStep step = Recovery.Cocked(
-                    new CockedDie(value, alignment, required, _nudges, _cockedRethrows));
-
-                if (step.Action == DieRecoveryAction.Nudge)
-                {
-                    _nudges++;
-                    if (LogSettles)
-                        GD.Print($"{Name}: cocked at {alignment:0.000} (needs {required:0.000}) - nudge {_nudges}");
-                    EmitSignal(SignalName.Nudged, alignment, _nudges);
-                    Nudge();
-                    return;
-                }
-
-                if (step.Action == DieRecoveryAction.Rethrow)
-                {
-                    _cockedRethrows++;
-                    if (LogSettles)
-                        GD.Print($"{Name}: still cocked at {alignment:0.000} after {_nudges} nudges - rethrow {_cockedRethrows}");
-                    EmitSignal(SignalName.Cocked, alignment, _cockedRethrows);
-                    Launch(_lastThrowFrom, step.Energy);
-                    return;
-                }
-
-                // the nearest face is a guess, not a reading, but looping silently is worse, so say it loudly
-                GD.Print($"{Name}: STILL cocked at {alignment:0.000} (needs {required:0.000}) - taking {value} anyway");
-            }
+            if (alignment < required && PutRight(value, alignment, required)) return;
 
             SettledValue = value;
 
@@ -124,6 +125,38 @@ namespace Game.Dice
                          $"centre {(TraySpace?.ToLocal(GlobalPosition) ?? GlobalPosition).Y * 1000f:0} mm up{(Sleeping ? " (asleep)" : "")}");
 
             EmitSignal(SignalName.Settled, value);
+        }
+
+        // resting on an edge or a corner: nudged, or thrown again (true: it's in the air again), or, past both, read as
+        // the nearest face anyway (false)
+        bool PutRight(int value, float alignment, float required)
+        {
+            DieRecoveryStep step = Recovery.Cocked(
+                new CockedDie(value, alignment, required, _nudges, _cockedRethrows));
+
+            if (step.Action == DieRecoveryAction.Nudge)
+            {
+                _nudges++;
+                if (LogSettles)
+                    GD.Print($"{Name}: cocked at {alignment:0.000} (needs {required:0.000}) - nudge {_nudges}");
+                EmitSignal(SignalName.Nudged, alignment, _nudges);
+                Nudge();
+                return true;
+            }
+
+            if (step.Action == DieRecoveryAction.Rethrow)
+            {
+                _cockedRethrows++;
+                if (LogSettles)
+                    GD.Print($"{Name}: still cocked at {alignment:0.000} after {_nudges} nudges - rethrow {_cockedRethrows}");
+                EmitSignal(SignalName.Cocked, alignment, _cockedRethrows);
+                Launch(_lastThrowFrom, step.Energy);
+                return true;
+            }
+
+            // the nearest face is a guess, not a reading, but looping silently is worse, so say it loudly
+            GD.Print($"{Name}: STILL cocked at {alignment:0.000} (needs {required:0.000}) - taking {value} anyway");
+            return false;
         }
 
         // a settled die bumped by another's landing moves without a throw to watch it, so no Settled was coming for

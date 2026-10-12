@@ -26,9 +26,16 @@ namespace Game.Play
         CanvasLayer _layer;
         Control _ui;
         DialoguePopup _dialogue;
-        Label _prompt;
         Label _notice;
         Overlay _overlay;
+
+        // what the hero's roll came to, under the tray's prompt (VerdictCaption), and the GM's secrets heard behind the
+        // screen (BehindTheScreen): each with its own state, wired here (cc_task_j Part 1)
+        VerdictCaption _caption;
+        BehindTheScreen _behind;
+
+        // seconds of play at this table: the rattle's cooldown and the --say-bark line run on it
+        double _played;
 
         bool _auto;
         bool _autoStory;
@@ -44,85 +51,50 @@ namespace Game.Play
 
         CampaignRun Run => GameState.Run;
 
+        // for a probe at the table (the dev registry): the fight's director, and the card over the table, if any
+        internal CombatDirector Combat => _combat;
+
+        internal Overlay Showing => _overlay;
+
         public override void _Ready()
         {
-            string[] args = OS.GetCmdlineUserArgs();
-            _auto = args.Contains("--auto");
+            _auto = DevArgs.Auto;
 
             // the dice thrown as soon as asked, without the rest of --auto: for screenshots of a
             // real turn, and for a player who wants the tray to do it
-            bool autoDice = _auto || args.Contains("--autodice");
+            bool autoDice = _auto || DevArgs.AutoDice;
 
             // the story's lines and choices taken as they come, the fights left to the player
-            _autoStory = _auto || args.Contains("--autostory");
+            _autoStory = _auto || DevArgs.AutoStory;
 
             // start the story at a node other than the chapter's first (a probe, a screenshot)
-            int at = Array.IndexOf(args, "--start");
-            _startAt = at >= 0 && at + 1 < args.Length ? args[at + 1] : null;
+            _startAt = DevArgs.Start;
 
             // the pause menu opened on the hero's first turn in a fight: for a screenshot of it
-            _pauseOnTurn = args.Contains("--pause");
+            _pauseOnTurn = DevArgs.Pause;
 
             // `--gm-screen plains`: another of the GM screens, for a picture of each under the lamp
-            int skin = Array.IndexOf(args, "--gm-screen");
-            _gmScreen = skin >= 0 && skin + 1 < args.Length ? args[skin + 1] : null;
+            _gmScreen = DevArgs.GmScreen;
 
             AddChild(new MainQueue { Name = "MainQueue" });
 
             _rules = new RulesThread();
 
-            _dice = new TrayDice(Table.Tray, GameState.Gm)
-            {
-                AutoThrow = autoDice,
-                Skip = () => GameState.Settings.SkipPhysicalDice,
-            };
-            // the tray comes to the player for their own dice, and goes back once they're read
-            _lift = Table.Lift;
-            _dice.Ready = () => _lift.IsStill;
-
-            // a roll waits for the board to finish showing what led to it: the blow, the fall (cc_task_h 4.2)
-            _dice.Behind = () => _combat?.Presenting == true;
-
-            _dice.Asked += _ =>
-            {
-                if (GameState.Settings.BringTrayToMe) _lift.Rise();
-                _mind?.Watches();
-                Prompt(true);
-            };
-            _dice.Landed += _ =>
-            {
-                _lift.Settle();
-                Prompt(false);
-            };
-            GameState.HeroDice = _dice;
+            HandTheDice(autoDice);
 
             BuildUi();
 
-            _combat = new CombatDirector
-            {
-                Name = "Combat",
-                Board = Table.Board,
-                Camera = Table.Camera,
-                Screen = Table.GmScreen,
-                Companion = Table.Companion,
-                Rules = _rules,
-                Dice = _dice,
-                Auto = _auto,
-                HeroName = Run.Hero.Name,
-            };
-            AddChild(_combat);
-            _combat.Mount(_ui);
-            _combat.Finished += FightOver;
+            SeatTheFight();
 
             // the keyboard's own keys (Game.Access.AccessDesk): Tab reaches the fight's pieces and bar and the tray,
             // F2 says where in the campaign we are
             Game.Access.AccessDesk.Reaching = Reachables;
             Game.Access.AccessDesk.Where = () => Content.Screens.Whereabouts.Of(Run, _combat.Session, _combat.TurnShown);
 
-            if (args.Contains(ProneProbe.Flag)) AddChild(new ProneProbe { Name = "ProneProbe", Combat = _combat });
-
             // a secret behind the screen: heard, captioned, never shown, and rarely (cc_task_i Part 1)
-            Run.Heard += HeardBehind;
+            _behind = new BehindTheScreen(Table, () => _played);
+            _behind.Rattled += () => _mind?.HearsASecretRoll();
+            Run.Heard += _behind.Heard;
 
             _level = Run.Hero.Level;
             _maxHp = Run.Hero.Actor.Health.Maximum;
@@ -141,7 +113,57 @@ namespace Game.Play
 
             GD.Print($"play    {Run.Pack.Id}: {Run.Hero}");
 
-            CheckLayoutWhenAsked();
+            // a probe at the table (--prone-probe, --layout: the dev registry)
+            Game.Dev.DevHooks.AtPlay(this);
+        }
+
+        // the hero's dice on the table's tray (cc_task_j Part 3 took this and SeatTheFight out of _Ready)
+        void HandTheDice(bool autoDice)
+        {
+            _dice = new TrayDice(Table.Tray, GameState.Gm)
+            {
+                AutoThrow = autoDice,
+                Skip = () => GameState.Settings.SkipPhysicalDice,
+            };
+            // the tray comes to the player for their own dice, and goes back once they're read
+            _lift = Table.Lift;
+            _dice.Ready = () => _lift.IsStill;
+
+            // a roll waits for the board to finish showing what led to it: the blow, the fall (cc_task_h 4.2)
+            _dice.Behind = () => _combat?.Presenting == true;
+
+            _dice.Asked += _ =>
+            {
+                if (GameState.Settings.BringTrayToMe) _lift.Rise();
+                _mind?.Watches();
+                _caption.Prompt(true);
+            };
+            _dice.Landed += _ =>
+            {
+                _lift.Settle();
+                _caption.Prompt(false);
+            };
+            GameState.HeroDice = _dice;
+        }
+
+        // the fight's own director, on the board, over the UI
+        void SeatTheFight()
+        {
+            _combat = new CombatDirector
+            {
+                Name = "Combat",
+                Board = Table.Board,
+                Camera = Table.Camera,
+                Screen = Table.GmScreen,
+                Companion = Table.Companion,
+                Rules = _rules,
+                Dice = _dice,
+                Auto = _auto,
+                HeroName = Run.Hero.Name,
+            };
+            AddChild(_combat);
+            _combat.Mount(_ui);
+            _combat.Finished += FightOver;
         }
 
         public override void _ExitTree()
@@ -149,7 +171,7 @@ namespace Game.Play
             _dice?.Abandon();
             _rules?.Dispose();
 
-            if (Run != null) Run.Heard -= HeardBehind;
+            if (Run != null && _behind != null) Run.Heard -= _behind.Heard;
             SleepCompanion();
 
             Game.Access.AccessDesk.Reaching = null;
@@ -223,8 +245,9 @@ namespace Game.Play
                                                              Game.Access.Keyboard.Named("turn_right"), Game.Access.Keyboard.Named("zoom_out"),
                                                              Game.Access.Keyboard.Named("zoom_in")), true, 0.7f));
 
-            _prompt = CornerLabel("Prompt", Ui.Say(ScreenWords.ThrowPrompt), false);
-            corner.AddChild(_prompt);
+            Label prompt = CornerLabel("Prompt", Ui.Say(ScreenWords.ThrowPrompt), false);
+            corner.AddChild(prompt);
+            _caption = new VerdictCaption(prompt, _auto, () => Run, () => _combat?.Battle);
 
             _notice = CornerLabel("Notice", "", false);
             corner.AddChild(_notice);

@@ -6,9 +6,19 @@ using Content.Screens;
 namespace Content.Tests
 {
     // THE MENU AS THE OPEN BOOK'S CONTENTS (cc_task_ui-issues-10-01.md 3.4): Continue (when there is one),
-    // the campaigns, Tutorials, Settings, Quit - the first half on the left page, the rest on the right
+    // the campaigns, the book's other pages (the game's list: game/Screens/BookPages.cs), Quit - the first half on the
+    // left page, the rest on the right
     public partial class ScreenTests
     {
+        // the game's four, as game/Screens/BookPages.cs lists them
+        static readonly ContentsEntry[] OtherPages =
+        {
+            ContentsEntry.ForPage("tutorials", CampaignBook.TutorialsKey),
+            ContentsEntry.ForPage("builder", CampaignBook.MapBuilderKey),
+            ContentsEntry.ForPage("settings", CampaignBook.SettingsKey),
+            ContentsEntry.ForPage("credits", CampaignBook.CreditsKey),
+        };
+
         [Fact]
         public void TheContentsAreTheMenuSplitAcrossTheTwoPages()
         {
@@ -17,13 +27,18 @@ namespace Content.Tests
                        SaveKind.ChapterStart);
 
             Manifest[] all = { Manifest("the_goat"), Manifest("long_road"), Manifest("sample", "test") };
-            var contents = new BookContents(new CampaignBook(all, saves));
+            var contents = new BookContents(new CampaignBook(all, saves), OtherPages);
 
             Assert.Equal(new[]
             {
                 ContentsKind.Continue, ContentsKind.Campaign, ContentsKind.Campaign, ContentsKind.Campaign,
-                ContentsKind.Tutorials, ContentsKind.MapBuilder, ContentsKind.Settings, ContentsKind.Credits, ContentsKind.Quit,
+                ContentsKind.Page, ContentsKind.Page, ContentsKind.Page, ContentsKind.Page, ContentsKind.Quit,
             }, contents.Entries.Select(e => e.Kind));
+
+            Assert.Equal(new[] { "tutorials", "builder", "settings", "credits" },
+                         contents.Entries.Where(e => e.Kind == ContentsKind.Page).Select(e => e.PageId));
+            Assert.Equal(new[] { CampaignBook.TutorialsKey, CampaignBook.MapBuilderKey, CampaignBook.SettingsKey, CampaignBook.CreditsKey },
+                         contents.Entries.Where(e => e.Kind == ContentsKind.Page).Select(e => e.NameKey));
 
             Assert.Equal(new[] { "the_goat", "long_road", "sample" },
                          contents.Entries.Where(e => e.Kind == ContentsKind.Campaign).Select(e => e.Page.Id));
@@ -37,7 +52,7 @@ namespace Content.Tests
         [Fact]
         public void NothingToContinueLeavesContinueOut()
         {
-            var contents = new BookContents(new CampaignBook(new[] { Manifest("the_goat") }, new SaveLibrary(_root)));
+            var contents = new BookContents(new CampaignBook(new[] { Manifest("the_goat") }, new SaveLibrary(_root)), OtherPages);
 
             Assert.DoesNotContain(contents.Entries, e => e.Kind == ContentsKind.Continue);
             Assert.Equal(ContentsKind.Campaign, contents.Left[0].Kind);
@@ -49,7 +64,7 @@ namespace Content.Tests
         [Fact]
         public void EveryContentsLineHasWords()
         {
-            var contents = new BookContents(new CampaignBook(new[] { Manifest("the_goat") }));
+            var contents = new BookContents(new CampaignBook(new[] { Manifest("the_goat") }), OtherPages);
 
             Assert.All(contents.Entries, e => Assert.False(string.IsNullOrEmpty(e.NameKey)));
             Assert.Contains(CampaignBook.ContentsKey, CampaignBook.Keys());

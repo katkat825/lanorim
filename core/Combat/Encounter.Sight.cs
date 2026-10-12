@@ -36,7 +36,7 @@ namespace Core.Combat
         // a heavily obscured square anywhere on the line, the two ends included
         public bool Obscured(Cell from, Cell to, Actor looker = null)
         {
-            List<IZone> blinding = _zones.Select(p => p.Zone)
+            List<IZone> blinding = _zones.Each
                                          .Where(z => z.Obscures.BlocksSight())
                                          .Where(z => !(z.Obscures == Obscurement.MagicalDarkness && looker != null &&
                                                        looker.Boons.Truesight))
@@ -58,7 +58,7 @@ namespace Core.Combat
             if (!(Field.Where(attacker) is Cell from) || !(Field.Where(target) is Cell to))
                 return 0;
 
-            List<IZone> covering = _zones.Select(p => p.Zone).Where(z => z.Cover > 0).ToList();
+            List<IZone> covering = _zones.Each.Where(z => z.Cover > 0).ToList();
 
             if (covering.Count == 0) return 0;
 

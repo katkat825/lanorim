@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace Content.Screens
 {
+    // a Page is one of the book's other pages, the game's list of them (the tutorials, the map builder, the settings,
+    // the credits: game/Screens/BookPages.cs); it was a kind per page until cc_task_j Part 1, so that a new page is
+    // one line in that list and no new kind here
     public enum ContentsKind
     {
         Continue,
         Campaign,
-        Tutorials,
-        MapBuilder,
-        Settings,
-        Credits,
+        Page,
         Quit,
     }
 
@@ -25,17 +25,27 @@ namespace Content.Screens
         // the campaign it opens, for a Campaign line
         public BookPage Page { get; init; }
 
-        public override string ToString() => Kind == ContentsKind.Campaign ? $"{Kind} {Page?.Id}" : Kind.ToString();
+        // which of the other pages it opens, for a Page line (the page's id: "tutorials", "credits")
+        public string PageId { get; init; }
+
+        // a page line for one of the book's other pages
+        public static ContentsEntry ForPage(string id, string nameKey) =>
+            new ContentsEntry { Kind = ContentsKind.Page, PageId = id, NameKey = nameKey };
+
+        public override string ToString() =>
+            Kind == ContentsKind.Campaign ? $"{Kind} {Page?.Id}"
+            : Kind == ContentsKind.Page ? $"{Kind} {PageId}"
+            : Kind.ToString();
     }
 
     // THE MENU AS THE OPEN BOOK'S TABLE OF CONTENTS (cc_task_ui-issues-10-01.md 3.4). Kathleen: "put the
     // buttons on halves of the book as if they were a table of contents". Continue first when there is
-    // something to continue, then each campaign's page, then Tutorials, the Map builder, Settings, Credits and Quit
-    // (cc_task_f Parts 2 and 3); the left page
+    // something to continue, then each campaign's page, then the book's other pages in the order given (the game's:
+    // Tutorials, the Map builder, Settings, Credits, cc_task_f Parts 2 and 3), then Quit; the left page
     // holds the first half (the larger half, when they don't split evenly) and the right page the rest
     public sealed class BookContents
     {
-        public BookContents(CampaignBook book)
+        public BookContents(CampaignBook book, IEnumerable<ContentsEntry> pages = null)
         {
             if (book == null) throw new ArgumentNullException(nameof(book));
 
@@ -51,10 +61,7 @@ namespace Content.Screens
                 Page = p,
             }));
 
-            entries.Add(new ContentsEntry { Kind = ContentsKind.Tutorials, NameKey = CampaignBook.TutorialsKey });
-            entries.Add(new ContentsEntry { Kind = ContentsKind.MapBuilder, NameKey = CampaignBook.MapBuilderKey });
-            entries.Add(new ContentsEntry { Kind = ContentsKind.Settings, NameKey = CampaignBook.SettingsKey });
-            entries.Add(new ContentsEntry { Kind = ContentsKind.Credits, NameKey = CampaignBook.CreditsKey });
+            entries.AddRange(pages ?? Enumerable.Empty<ContentsEntry>());
             entries.Add(new ContentsEntry { Kind = ContentsKind.Quit, NameKey = CampaignBook.QuitKey });
 
             Entries = entries;

@@ -70,7 +70,7 @@ namespace Content.Sheet
             // not stack with a bigger pool and are not taken back when the shape comes off
             Actor.Health.GrantTemporary(Level);
 
-            _spent[shape.Id] = (_spent.TryGetValue(shape.Id, out int used) ? used : 0) + 1;
+            _uses.Spend(shape.Id);
 
             return true;
         }
@@ -109,24 +109,8 @@ namespace Content.Sheet
         }
 
         // everything per-rest comes back on a short rest except Wild Shape, which SRD 5.2.1
-        // returns one use at a time - the rest wait for a long rest
-        // SRD 5.2.1: what a short rest gives back - every use, one use (Rage, Second Wind,
-        // Channel Divinity, Wild Shape), or nothing (Lay on Hands, Indomitable)
-        void RestoreAfterShortRest()
-        {
-            foreach (string id in _spent.Keys.ToList())
-            {
-                Feature feature = FeatureCalled(id);
-
-                Recharge recharge = feature?.Recharge ?? Recharge.Short;
-
-                if (recharge == Recharge.Short) _spent.Remove(id);
-                else if (recharge == Recharge.ShortOne)
-                {
-                    if (_spent[id] > 1) _spent[id]--;
-                    else _spent.Remove(id);
-                }
-            }
-        }
+        // returns one use at a time - the rest wait for a long rest (DailyUses.ShortRest). The keepsake isn't in the
+        // ledger and waits for a long rest (Kathleen, 2026-10-12: it used to come back on a short rest too)
+        void RestoreAfterShortRest() => _uses.ShortRest(id => FeatureCalled(id)?.Recharge ?? Recharge.Short);
     }
 }

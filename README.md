@@ -58,6 +58,7 @@ game/         the Godot 4 / .NET project. the only thing that touches Godot. see
   Tray/       the vessel they land in, and the seam to the rules
   Board/      the map, its tiles, and the minis standing on it
   Table/      the table, the camera, and the ten lines that join dice to rules
+  Dev/        the probes, the demonstration table, the picture and the flag registry - not in a release build
   Campaigns/  finding campaign folders on disk and loading their locale
   audio/ Access/ Localization/ shaders/
 tools/        the palette bake, the model puller, the impact slicer, the duplicate finder, the bark importer
@@ -98,6 +99,7 @@ The check scripts each **build first**, then print a one-line verdict:
 .\checks\check-fairness.ps1   # are the dice uniform
 .\checks\check-slice.ps1      # character -> your map -> goblin -> level up, plus the balance tables
 .\checks\check-duplicates.ps1 # is any method written twice (Python; reads the source, builds nothing)
+.\checks\check-flags.ps1      # does the README list every flag, and the registry every flag the game reads (Python)
 ```
 
 `game/locale/game.csv` is written by hand. `sim locale` only reads it and says which keys have no English.
@@ -146,16 +148,102 @@ the title, the campaign book, character creation - which goes to **`table.tscn`*
 and the dice tray on it, where the campaign is played. `table.tscn` opened on its own still runs its
 demonstration throw. `boot.tscn` is the smaller smoke test that only prints what loaded.
 
-Flags after `--` (for looking and checking): `--begin <campaign> [class]` makes a character with the defaults
-and goes to the table; `--auto` plays it to the end; `--autodice` / `--autostory` throw and read on by
-themselves but leave the fights to you; `--start <node>` starts the story elsewhere; `--show
-book|tutorials|create|settings` opens a launch screen (`--show book --open <campaign>` that campaign's two pages,
-`--book-overlay` the menu on panels instead of the pages); `--gm-screen <skin>` stands another GM screen on the
-table, and `--gm-tallness 1` at its authored height; `--tray-footprint 0.65 --tray-walls 1` tries a smaller dice
-tray (`DiceTray.Sizing`); `--shot <file> --after <frames>` saves a picture and quits. For checks: `--prone-probe` (in a
-fight: Prone lies down in its square, Stand Up stands up), `--access-probe` (Tab, Shift+Tab, F1, F2, F3 at the table),
-`table.tscn -- --dice d20 --throws N --handful H --tray-skin gamblers` (the fairness sweep; add `--fixed-fps 60` before
-`--path` to run it as fast as it can), `table.tscn -- --open-door` (the demonstration's door, open). Since 2026-10-06: `--show builder|credits` (the map builder's page, the credits), `--build <campaign> [map]` (that map, or a new one, in the builder), `--map-probe` (the builder driven, for `check-mapbuilder.ps1`), `--shot <png> --frames N` (N frames in a row, for `tools/flicker.ps1`), and `table.tscn -- --corners` (every kind of wall post on the demonstration's map). Since 2026-10-12: `--say-bark <pool>` (a line from that bark pool every few seconds, past the chatter, and past the starting shop: for a picture of the companion's bubble).
+Flags after `--` (for looking and checking): `-- --begin sample_millbrook fighter --auto` plays the sample campaign to
+its end, `res://table.tscn -- --dice d20 --throws N` is the fairness sweep (put `--fixed-fps 60` before `--path` to run
+it as fast as it can), `--shot <file>` saves a picture and quits. One class reads the command line, `game/DevArgs.cs`;
+what each flag adds to a scene is the dev registry's, `game/Dev/DevHooks.cs`, which is also where every flag is written
+down. The list below is made from it (`python tools/dev_flags.py`; `checks/check-flags.ps1` fails when they differ).
+
+**Not in a release build.** `game/Dev/` (the probes, the demonstration table, the line-up, the picture and the
+registry) isn't compiled for an `--export-release` (`game/Lanorim.csproj`); `game/DevHooks.Release.cs` answers the
+scenes with nothing instead. A release still reads the flags marked "yes": the first screen (`--show`, `--open`), which
+is how `check-export.ps1` runs it, and the ones the game's own classes read.
+
+<!-- dev flags: written by `python tools/dev_flags.py` from game/Dev/DevHooks.cs - edit the registry, not this -->
+
+*The launch screen: what comes up first*
+
+| flag | where | in a release | what it does |
+|---|---|---|---|
+| `--show <screen>` | launch.tscn | yes | opens a launch screen: book, tutorials, builder, settings, credits (title otherwise); controls and create not in a release |
+| `--open <campaign>` | launch.tscn | yes | with --show book, that campaign's two pages; with --show builder, that campaign's maps |
+| `--book-overlay` | launch.tscn |  | the menu on panels over the book, as when the pages are too small |
+| `--ask-delete` | launch.tscn |  | with --show book, the first character's Delete pressed, for a picture of the question |
+| `--page <step>` | launch.tscn |  | with --show create, that creation page, part filled in |
+| `--class <class>` | wherever it applies |  | with --show create, that class (mage otherwise); on the demonstration table, the hero's class (rogue otherwise) |
+| `--begin <campaign> [class]` | launch.tscn |  | a character with every default (fighter otherwise), straight to the table; probe saves are kept apart |
+| `--learn <spell,spell>` | launch.tscn |  | with --begin, those spells learned first |
+| `--gold` | launch.tscn |  | with --begin, the gold instead of the gear, so the run opens in the starting shop |
+| `--build <campaign> [map]` | launch.tscn |  | that map, or a new one called probe_map, in the map builder |
+
+*Play*
+
+| flag | where | in a release | what it does |
+|---|---|---|---|
+| `--auto` | at the table, in a campaign | yes | plays itself to the end: first choices, the AutoPlayer in fights, dice thrown when asked (check-play) |
+| `--autodice` | at the table, in a campaign | yes | the dice thrown as soon as they're asked for, the fights left to you |
+| `--autostory` | at the table, in a campaign | yes | the story's lines and first choices taken as they come, past the starting shop |
+| `--start <node>` | at the table, in a campaign | yes | the story starts at that node (cellar, road, camp in the sample) |
+| `--pause` | at the table, in a campaign | yes | the pause menu opened on the hero's first turn in a fight |
+| `--say-bark <pool>` | at the table, in a campaign | yes | a line from that bark pool every few seconds, past the chatter and the starting shop |
+| `--gm-screen <skin>` | at the table, in a campaign | yes | another of the GM screens at the table |
+
+*How things look, wherever they are*
+
+| flag | where | in a release | what it does |
+|---|---|---|---|
+| `--gm-tallness <0..1>` | wherever it applies | yes | the GM screen at that height (1 is as authored) |
+| `--tray-footprint <0.4..3>` | wherever it applies | yes | the dice tray's footprint, scaled (DiceTray.Sizing) |
+| `--tray-walls <0.4..3>` | wherever it applies | yes | the dice tray's walls, scaled |
+| `--old-hero` | wherever it applies | yes | the board's own hero figure, not the class's mini |
+| `--plain-pose` | wherever it applies | yes | every hero mini in Idle_A |
+| `--empty-handed` | wherever it applies | yes | hero minis holding nothing |
+| `--figure <0|1>` | wherever it applies | yes | the class's second figure |
+| `--head <model>` | wherever it applies | yes | any head on the hero's body, its headgear off (kaykit/Mage.glb) |
+
+*The picture*
+
+| flag | where | in a release | what it does |
+|---|---|---|---|
+| `--shot [file]` | wherever it applies |  | saves a picture of the screen (table.png otherwise) and quits; not headless |
+| `--after <frames>` | wherever it applies |  | with --shot, wait so many frames first (150 otherwise) |
+| `--size <WxH>` | wherever it applies |  | with --shot, the window made that size first |
+| `--zoom <0..1>` | wherever it applies |  | with --shot, the camera at that zoom (1 all the way in) |
+| `--quarter <n>` | wherever it applies |  | with --shot, the table turned so many quarters |
+| `--focus <name>` | wherever it applies |  | with --shot, the camera following the first mini (or node) of that name |
+| `--tray-up` | wherever it applies |  | with --shot, wait for the tray to come up and its dice to be read |
+| `--frames <n>` | wherever it applies |  | with --shot, so many pictures, one a frame (tools/flicker.ps1) |
+
+*The demonstration table*
+
+| flag | where | in a release | what it does |
+|---|---|---|---|
+| `--lineup` | table.tscn on its own |  | a goblin, a bandit and a giant rat in a row beside the hero, as their minis |
+| `--companion [look]` | table.tscn on its own |  | the class's companion by the GM screen, or any look by name |
+| `--mood <mood>` | table.tscn on its own |  | with --companion, it feels that (pleased, alert, quiet, watching) |
+| `--mood-after <seconds>` | table.tscn on its own |  | with --mood, so many seconds in (2 otherwise) |
+| `--corners` | table.tscn on its own |  | a cross of walls on the map, so every kind of wall post is on the table |
+| `--open-door` | table.tscn on its own |  | the map's door swung open |
+
+*The probes and the checks*
+
+| flag | where | in a release | what it does |
+|---|---|---|---|
+| `--controls` | launch.tscn |  | every act on the Controls page, and Change rebinds (check-controls) |
+| `--creation` | launch.tscn |  | character creation, driven (check-creation) |
+| `--map-probe` | launch.tscn |  | the map builder driven: paint, walls, a prop, start, spawn, undo, save (check-mapbuilder) |
+| `--layout` | wherever it applies |  | every launch screen, or the table's HUD, pause menu, sheet and pack, at six window sizes (check-layout) |
+| `--prone-probe` | at the table, in a campaign |  | in a fight, Prone lies down in its square and Stand Up stands it up (check-play) |
+| `--access-probe` | at the table, in a campaign |  | presses F2, F1, Tab, Shift+Tab and F3 at the table (check-controls) |
+| `--locale` | table.tscn on its own |  | does Godot have English for every key the engine emits (check-table) |
+| `--figures-probe` | table.tscn on its own |  | stands every class's two minis up and looks at them (check-table) |
+| `--dice <die>` | table.tscn on its own |  | the fairness sweep: throws that die and tallies the faces (check-dice) |
+| `--throws <n>` | table.tscn on its own |  | with --dice, so many throws (200 otherwise) |
+| `--handful <n>` | table.tscn on its own |  | with --dice, so many at once, up to the tray's seats (8 otherwise) |
+| `--tray-skin <skin>` | table.tscn on its own |  | with --dice, sweep another tray skin |
+| `--alternate <die>` | table.tscn on its own |  | with --dice, a handful of that die between the counted throws |
+
+<!-- end of dev flags -->
 
 The physics runs at **120 ticks a second** (`project.godot`): at Godot's default 60 a d4 or d6 lying on a face rocks
 on its corners for good (`game/Dice/DieBody.Wobble.cs`).

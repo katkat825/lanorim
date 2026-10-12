@@ -65,31 +65,9 @@ namespace Content.Classes
                 return null;
             }
 
-            // a boon's key on the feature itself: it goes in the feature's boons
-            IEnumerable<string> boonKeys = BoonSpecReader.Keys.Where(k => !Keys.Contains(k));
+            OnlyFeatureKeys(raw, $"{owner}/{id}", problems);
 
-            foreach (string key in boonKeys.Where(k => raw.Has(k)))
-                problems.Add($"{owner}/{id}: '{key}' is what a boon is - it goes in the feature's 'boons'");
-
-            Keyed.OnlyKnown(raw, Keys.Concat(boonKeys), $"{owner}/{id}", problems);
-
-            if (!EnumWords.TryParse(raw.Text("when", "always"), out When when))
-                problems.Add($"{owner}/{id}: '{raw.Text("when")}' is not a trigger");
-
-            if (!EnumWords.TryParse(raw.Text("grants", "action"), out Spend grants) ||
-                grants != Spend.Action && grants != Spend.Bonus && grants != Spend.Reaction)
-                problems.Add($"{owner}/{id}: '{raw.Text("grants")}' is not an action, a " +
-                             "bonus_action or a reaction");
-
-            if (!EnumWords.TryParse(raw.Text("duration", "encounter"), out Duration duration))
-                problems.Add($"{owner}/{id}: '{raw.Text("duration")}' is not a duration");
-
-            // absent is None, which only a spellcasting feature is then refused for - every other
-            // kind of feature has no progression and should not have to say so
-            if (!EnumWords.TryName(raw.Text("progression", "none"),
-                                    out CasterProgression progression))
-                problems.Add($"{owner}/{id}: '{raw.Text("progression")}' is not a caster " +
-                             "progression - it is " + Vocabulary.Offer<CasterProgression>());
+            (When when, Spend grants, Duration duration, CasterProgression progression) = Words(raw, $"{owner}/{id}", problems);
 
             var skills = raw.SkillList("skills", problems, $"{owner}/{id}").ToList();
 
@@ -155,6 +133,43 @@ namespace Content.Classes
             Check(feature, owner, problems);
 
             return feature;
+        }
+
+        // only a feature's own keys; a boon's key on the feature itself is refused by name: it goes in the feature's boons
+        // (cc_task_j Part 3 took this and Words out of Read)
+        static void OnlyFeatureKeys(JsonElement raw, string where, List<string> problems)
+        {
+            IEnumerable<string> boonKeys = BoonSpecReader.Keys.Where(k => !Keys.Contains(k));
+
+            foreach (string key in boonKeys.Where(k => raw.Has(k)))
+                problems.Add($"{where}: '{key}' is what a boon is - it goes in the feature's 'boons'");
+
+            Keyed.OnlyKnown(raw, Keys.Concat(boonKeys), where, problems);
+        }
+
+        // the feature's words: when it acts, what it grants, how long it lasts, and a caster's progression
+        static (When When, Spend Grants, Duration Duration, CasterProgression Progression) Words(
+            JsonElement raw, string where, List<string> problems)
+        {
+            if (!EnumWords.TryParse(raw.Text("when", "always"), out When when))
+                problems.Add($"{where}: '{raw.Text("when")}' is not a trigger");
+
+            if (!EnumWords.TryParse(raw.Text("grants", "action"), out Spend grants) ||
+                grants != Spend.Action && grants != Spend.Bonus && grants != Spend.Reaction)
+                problems.Add($"{where}: '{raw.Text("grants")}' is not an action, a " +
+                             "bonus_action or a reaction");
+
+            if (!EnumWords.TryParse(raw.Text("duration", "encounter"), out Duration duration))
+                problems.Add($"{where}: '{raw.Text("duration")}' is not a duration");
+
+            // absent is None, which only a spellcasting feature is then refused for - every other
+            // kind of feature has no progression and should not have to say so
+            if (!EnumWords.TryName(raw.Text("progression", "none"),
+                                    out CasterProgression progression))
+                problems.Add($"{where}: '{raw.Text("progression")}' is not a caster " +
+                             "progression - it is " + Vocabulary.Offer<CasterProgression>());
+
+            return (when, grants, duration, progression);
         }
 
         // a feature's boons: a list of records in the BoonSpec vocabulary (Danger Sense's one boon, Remarkable

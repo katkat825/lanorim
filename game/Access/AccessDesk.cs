@@ -23,7 +23,8 @@ namespace Game.Access
     //   F3               the reader on and off, kept in the settings (GameSettings.ReadAloud)
     //
     // What there is to reach and where we are come from whichever screen is up: they set Reaching and Where.
-    // `--access-probe` presses each key in turn on the table and prints what came of it (checks/check-controls.ps1)
+    // `--access-probe` presses each key in turn on the table and prints what came of it (checks/check-controls.ps1;
+    // Dev/AccessProbe.cs, added by the dev registry)
     public partial class AccessDesk : Node
     {
         public static AccessDesk Instance { get; private set; }
@@ -70,7 +71,7 @@ namespace Game.Access
             _toast.Position = new Vector2(-450, 110);
             _layer.AddChild(_toast);
 
-            if (OS.GetCmdlineUserArgs().Contains(Probe)) _probing = true;
+            Game.Dev.DevHooks.AtAccessDesk(this);
         }
 
         public override void _ExitTree()
@@ -159,6 +160,9 @@ namespace Game.Access
             return _toast.Text;
         }
 
+        // what F2 put up, while it's up ("" when it isn't)
+        public string Toast => _toast?.Visible == true ? _toast.Text : "";
+
         // a sentence, its arguments said first when they are keys themselves (a campaign's name, a monster's)
         public static string Words(Said said) =>
             Ui.Say(said.Key, said.Args.Select(a => a is string s && Spoken.IsAKey(s) ? Ui.Say(s) : a).ToArray());
@@ -225,8 +229,6 @@ namespace Game.Access
         public override void _Process(double delta)
         {
             if (_toastLeft > 0 && (_toastLeft -= delta) <= 0) _toast.Visible = false;
-
-            if (_probing) Probing(delta);
         }
     }
 }

@@ -54,7 +54,8 @@ namespace Content.Sheet
             // Goodberry's berries last a day
             Pack.Vanish();
 
-            _spent.Clear();
+            _uses.LongRest();
+            _keepsake.Refresh();
             Budget.LongRest();
 
             Rerolls();

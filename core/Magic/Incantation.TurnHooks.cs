@@ -35,105 +35,120 @@ namespace Core.Magic
             Actor whose = turn.Actor;
 
             foreach (Placement placed in _placed.ToList())
-            {
-                if (!_placed.Contains(placed)) continue;
-
-                // Command: the turn is the word's, and then the word is spent
-                if (placed.Command != Command.None && ReferenceEquals(placed.Target, whose))
-                {
-                    _placed.Remove(placed);
-
-                    if (!turn.Ended && whose.CanAct) Obey(fight, turn, placed);
-
-                    continue;
-                }
-
-                // Fear: a Dash away from the caster before anything else
-                if (placed.Spec.Flees && ReferenceEquals(placed.Target, whose) && !turn.Ended &&
-                    placed.Caster != null)
-                {
-                    if (fight.Dash(turn)) RunFrom(fight, turn, placed.Caster.Actor);
-                }
-
-                // SRD 5.2.1 Banishment: held for the full minute, a creature of another plane
-                // doesn't come back, and one of this plane does - the spell is over either way
-                if (placed.Spec.Gone is Gone gone && ReferenceEquals(placed.Target, whose) &&
-                    fight.Round - placed.Since >= gone.AfterRounds)
-                {
-                    if (gone.TagRules.Give(whose, TagOutcome.Only))
-                    {
-                        _placed.RemoveAll(p => ReferenceEquals(p.Target, whose) && p.Spell == placed.Spell);
-                        whose.Boons.EndFrom(placed.Spell);
-                        fight.Dismiss(whose);
-                    }
-                    else
-                    {
-                        Lift(whose, placed.Spell, fight);
-                    }
-
-                    if (placed.Caster != null && placed.Caster.Actor.Concentrating == placed.Spell &&
-                        !_placed.Any(p => p.Spell == placed.Spell && ReferenceEquals(p.Caster, placed.Caster)))
-                        Release(placed.Caster.Actor);
-
-                    continue;
-                }
-
-                // SRD 5.2.1 Flesh to Stone: held the full minute, the Petrified stays until Greater
-                // Restoration ends it - the spell is over and dropping it no longer lifts it
-                if (placed.Spec.PermanentAfterRounds > 0 && placed.Caster != null &&
-                    ReferenceEquals(placed.Caster.Actor, whose) &&
-                    fight.Round - placed.Since >= placed.Spec.PermanentAfterRounds &&
-                    placed.Condition == Condition.Petrified && placed.Target.Has(Condition.Petrified))
-                {
-                    Actor stone = placed.Target;
-
-                    _placed.RemoveAll(p => ReferenceEquals(p.Target, stone) && p.Spell == placed.Spell);
-                    Forget(placed.Caster.Actor, stone, placed.Spell);
-
-                    if (placed.Caster.Actor.Concentrating == placed.Spell) Release(placed.Caster.Actor);
-
-                    continue;
-                }
-
-                // Finger of Death: the start of the caster's next turn, and the dead rise
-                if (placed.RaisesAs.Length > 0 && placed.Caster != null &&
-                    ReferenceEquals(placed.Caster.Actor, whose))
-                {
-                    _placed.Remove(placed);
-                    fight.Raise(placed.Target, placed.RaisesAs, whose);
-                    continue;
-                }
-
-                bool mine = ReferenceEquals(placed.Owner ?? placed.Target, whose);
-
-                if (placed.Duration == Duration.NextTurn && mine)
-                {
-                    Drop(placed, fight);
-                    continue;
-                }
-
-                if (placed.Duration == Duration.NextTurnEnd && mine) placed.Armed = true;
-
-                if (!placed.Burns.IsNothing && ReferenceEquals(placed.Target, whose))
-                {
-                    int suffered = whose.Suffer(Math.Max(0, _resolver.Roll(placed.Burns, placed.Caster?.Actor)),
-                                                placed.DamageType, placed.Caster?.Actor);
-
-                    fight.Hurt(placed.Caster?.Actor, whose, suffered, placed.DamageType);
-
-                    // SRD 5.2.1 Searing Smite: "takes 1d6 Fire damage and then makes a
-                    // Constitution saving throw" - a success ends it. the save track of a burning
-                    // comes here, right after the burn, and not at the end of the turn
-                    if (placed.Spec.RepeatSave is RepeatSave track && _placed.Contains(placed) && !whose.IsDown &&
-                        Checks.Save(_resolver, whose, track.Ability, placed.Dc, whose.AgainstSpells).Succeeded)
-                        Lift(whose, placed.Spell, fight);
-                }
-            }
+                if (_placed.Contains(placed)) TurnStarts(fight, turn, placed);
 
             Drift(fight, whose);
             Refresh(fight);
 
             Check(fight.Actors);
+        }
+
+        // one thing a spell left, as somebody's turn starts (cc_task_j Part 3 split TurnStarts along these steps)
+        void TurnStarts(Encounter fight, Turn turn, Placement placed)
+        {
+            Actor whose = turn.Actor;
+
+            // Command: the turn is the word's, and then the word is spent
+            if (placed.Command != Command.None && ReferenceEquals(placed.Target, whose))
+            {
+                _placed.Remove(placed);
+
+                if (!turn.Ended && whose.CanAct) Obey(fight, turn, placed);
+
+                return;
+            }
+
+            // Fear: a Dash away from the caster before anything else
+            if (placed.Spec.Flees && ReferenceEquals(placed.Target, whose) && !turn.Ended &&
+                placed.Caster != null)
+            {
+                if (fight.Dash(turn)) RunFrom(fight, turn, placed.Caster.Actor);
+            }
+
+            if (Banished(fight, whose, placed) || TurnedToStone(fight, whose, placed)) return;
+
+            // Finger of Death: the start of the caster's next turn, and the dead rise
+            if (placed.RaisesAs.Length > 0 && placed.Caster != null &&
+                ReferenceEquals(placed.Caster.Actor, whose))
+            {
+                _placed.Remove(placed);
+                fight.Raise(placed.Target, placed.RaisesAs, whose);
+                return;
+            }
+
+            bool mine = ReferenceEquals(placed.Owner ?? placed.Target, whose);
+
+            if (placed.Duration == Duration.NextTurn && mine)
+            {
+                Drop(placed, fight);
+                return;
+            }
+
+            if (placed.Duration == Duration.NextTurnEnd && mine) placed.Armed = true;
+
+            if (!placed.Burns.IsNothing && ReferenceEquals(placed.Target, whose)) Burn(fight, whose, placed);
+        }
+
+        // SRD 5.2.1 Banishment: held for the full minute, a creature of another plane
+        // doesn't come back, and one of this plane does - the spell is over either way. true when it was
+        bool Banished(Encounter fight, Actor whose, Placement placed)
+        {
+            if (!(placed.Spec.Gone is Gone gone && ReferenceEquals(placed.Target, whose) &&
+                  fight.Round - placed.Since >= gone.AfterRounds))
+                return false;
+
+            if (gone.TagRules.Give(whose, TagOutcome.Only))
+            {
+                _placed.RemoveAll(p => ReferenceEquals(p.Target, whose) && p.Spell == placed.Spell);
+                whose.Boons.EndFrom(placed.Spell);
+                fight.Dismiss(whose);
+            }
+            else
+            {
+                Lift(whose, placed.Spell, fight);
+            }
+
+            if (placed.Caster != null && placed.Caster.Actor.Concentrating == placed.Spell &&
+                !_placed.Any(p => p.Spell == placed.Spell && ReferenceEquals(p.Caster, placed.Caster)))
+                Release(placed.Caster.Actor);
+
+            return true;
+        }
+
+        // SRD 5.2.1 Flesh to Stone: held the full minute, the Petrified stays until Greater
+        // Restoration ends it - the spell is over and dropping it no longer lifts it. true when it was
+        bool TurnedToStone(Encounter fight, Actor whose, Placement placed)
+        {
+            if (!(placed.Spec.PermanentAfterRounds > 0 && placed.Caster != null &&
+                  ReferenceEquals(placed.Caster.Actor, whose) &&
+                  fight.Round - placed.Since >= placed.Spec.PermanentAfterRounds &&
+                  placed.Condition == Condition.Petrified && placed.Target.Has(Condition.Petrified)))
+                return false;
+
+            Actor stone = placed.Target;
+
+            _placed.RemoveAll(p => ReferenceEquals(p.Target, stone) && p.Spell == placed.Spell);
+            Forget(placed.Caster.Actor, stone, placed.Spell);
+
+            if (placed.Caster.Actor.Concentrating == placed.Spell) Release(placed.Caster.Actor);
+
+            return true;
+        }
+
+        // a burning bites its bearer as its turn starts
+        void Burn(Encounter fight, Actor whose, Placement placed)
+        {
+            int suffered = whose.Suffer(Math.Max(0, _resolver.Roll(placed.Burns, placed.Caster?.Actor)),
+                                        placed.DamageType, placed.Caster?.Actor);
+
+            fight.Hurt(placed.Caster?.Actor, whose, suffered, placed.DamageType);
+
+            // SRD 5.2.1 Searing Smite: "takes 1d6 Fire damage and then makes a
+            // Constitution saving throw" - a success ends it. the save track of a burning
+            // comes here, right after the burn, and not at the end of the turn
+            if (placed.Spec.RepeatSave is RepeatSave track && _placed.Contains(placed) && !whose.IsDown &&
+                Checks.Save(_resolver, whose, track.Ability, placed.Dc, whose.AgainstSpells).Succeeded)
+                Lift(whose, placed.Spell, fight);
         }
 
         // the end of a creature's turn: a delayed splash lands, timed things end, and every spell

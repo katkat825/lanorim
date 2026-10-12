@@ -11,7 +11,8 @@ Open it in Godot. The main scene is **`launch.tscn`** (the title and the campaig
 Campaigns/  finds campaign folders on disk and loads their locale; discovery only
 
 Screens/    every screen, built in code from containers and the theme (ui/lanorim_theme.tres)
-  Launch.cs       the main scene (launch.tscn): title, the campaign book, tutorials, settings, creation
+  Launch.cs       the main scene (launch.tscn): title, the campaign book, creation
+  BookMenu        the book's other pages, one list: TutorialsPage, MapBuilderPage, SettingsPage, CreditsPage
   CreationScreen  one page a creation step
   TableScreens    the cards over the table: level-up, pack + merchant, sheet, menus, the Ask prompt
   CombatHudUi     the turn strip, the action bar and pips, End Turn, the log
@@ -20,6 +21,8 @@ Screens/    every screen, built in code from containers and the theme (ui/lanori
 Play/       the campaign at the table
   GameState       what survives a scene change: campaigns, saves, settings, the run
   PlayDirector    the story, fights, shops, level-ups, death and the end, on the table
+  VerdictCaption  what the hero's roll came to, under the tray's prompt
+  BehindTheScreen the GM's secrets, heard: the screen's rattle and its cooldown
   CombatDirector  the fight: board steps paced at the enemy speed, the hero's hands
   RulesThread     the rules on their own thread, so the tray can throw mid-attack
   TrayDice        the hero's dice ARE the tray's
@@ -29,14 +32,12 @@ Table/      the table itself
   GmScreen.cs     the GM's screen beyond the board's far edge; the hidden rolls rattle behind it
   TableCamera.cs  three-quarter overhead, ninety-degree snaps, handheld drift
   TableView.cs    tilts a card with words on it toward the player
-  Shot.cs         saves a picture of the table and quits
 
 Dice/       the dice. ART_DIRECTION says build these first, and they are
   DieSolid.cs     d4 d6 d8 d10 d12 d20 generated as geometry - mesh, hull, numerals and the
                   face table are ONE description, so a die cannot lie about what it shows
   DieBody.cs      the rigid body: throw, settle, cocked, lost, and the recovery from each
   DieParts.cs     turns a solid into a mesh, a convex hull and one Label3D per numeral
-  DiceProbe.cs    is the physics d20 fair? (check-dice.ps1)
 
 Tray/       the vessel the dice land in
   DiceTray.cs     measures the scene, dresses it from a skin, throws, reads the felt
@@ -52,7 +53,18 @@ Board/      the map on the table
 
 audio/      dice impacts driven by how hard they actually hit
 Access/     captions, contrast, legible text, the narrator, key bindings
-Localization/   the one place a key turns into text, and the probe that proves Godot has them
+Localization/   the one place a key turns into text
+DevArgs.cs  the command line, read once: every flag after `--` as a typed member
+
+Dev/        the developer's and the checks' hooks - NOT in a release build (Lanorim.csproj leaves it out of
+            ExportRelease, and DevHooks.Release.cs stands in for the registry)
+  DevHooks.cs     the registry: every flag, and the one place each scene asks what the command line adds to it
+  QuickStart      --begin, --build, --show create/controls: the launch screen started from the command line
+  DemoTable       table.tscn on its own: a hero, a map, one real check on the tray; DemoLineup, the look tests
+  Shot            saves a picture and quits
+  DiceProbe       is the physics d20 fair? (check-dice.ps1)
+  LocaleProbe     does Godot have every key's English? (check-table.ps1)
+  and the other probes: Access, Controls, Creation, Figures, Layout (with LayoutCheck), MapBuilder, Prone
 shaders/    painted_miniature.gdshader - the visual signature, and painted.tres to drop on things
 models/     minis, the dice trays and the GM screens (see ../THIRD_PARTY.md for where each came from)
 textures/   table, tray, map and die materials
@@ -83,7 +95,8 @@ godot --headless --path game res://table.tscn -- --dice d20 --throws 500
 godot --path game res://table.tscn -- --shot table.png
 ```
 
-The last one is not headless on purpose: headless has no renderer, and a picture is the point.
+The last one is not headless on purpose: headless has no renderer, and a picture is the point. Every flag is
+listed in `../README.md` (made from `Dev/DevHooks.cs`).
 
 **After editing `locale/game.csv`, re-import:**
 

@@ -46,9 +46,7 @@ namespace Game.Play
             _bubble = new BarkBubble { Name = "Bark", Camera = Table.Camera, Over = figure };
             _ui.AddChild(_bubble);
 
-            string[] args = OS.GetCmdlineUserArgs();
-            int at = Array.IndexOf(args, "--say-bark");
-            _sayBark = at >= 0 && at + 1 < args.Length ? args[at + 1] : null;
+            _sayBark = DevArgs.SayBark;
 
             GD.Print($"play    {GameState.Companion}: {bank?.ToString() ?? "no barks"}");
         }

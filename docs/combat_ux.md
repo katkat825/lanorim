@@ -123,7 +123,7 @@ hero's Fire Bolt and Burning Hands are thrown on the tray too; the target's savi
 **Critical** with the armor class (a save: **Saved** or **Failed** with the DC), then, on a hit, the damage
 throw, then the damage line: "Greataxe hits Giant Rat: 1d12+3, for 9 Slashing damage." The verdict also stands
 under the turn hint as the tray's caption, heading "Your dice are waiting" while the damage dice wait
-(`ICombatObserver.Judged` and `Dealt`, `FightLog`, `PlayDirector.Verdict`). A hero's roll that falls back to
+(`ICombatObserver.Judged` and `Dealt`, `FightLog`, `VerdictCaption.Verdict`). A hero's roll that falls back to
 digital dice for any reason but the player's own setting logs a warning.
 
 **The tray comes to you** (2026-10-01, `updated_decisions.md`): asked for the hero's dice, the tray lifts toward

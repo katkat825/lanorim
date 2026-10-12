@@ -72,7 +72,7 @@ namespace Content.Screens
 
         public static string LineKey(Edge line) => K("line_" + Core.Words.EnumWords.Name(line));
 
-        static string K(string thing) => ScreenKeys.Key("map", thing);
+        static readonly Func<string, string> K = ScreenKeys.For("map");
 
         public static readonly string TitleKey = K("title");
         public static readonly string NewKey = K("new");

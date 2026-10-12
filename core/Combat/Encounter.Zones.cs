@@ -10,27 +10,8 @@ namespace Core.Combat
     {
         // --- zones ---------------------------------------------------------------------------------
 
-        sealed class Placed
-        {
-            public Placed(IZone zone, Duration duration)
-            {
-                Zone = zone;
-                Duration = duration;
-            }
-
-            public IZone Zone { get; }
-
-            public Duration Duration { get; }
-
-            public bool Armed { get; set; }
-        }
-
-        readonly List<Placed> _zones = new();
-
-        // who a zone has already done its once-a-turn thing to this turn
-        readonly HashSet<(IZone, Actor, Pulses?)> _pulsedThisTurn = new();
-
-        public IReadOnlyList<IZone> Zones => _zones.Select(p => p.Zone).ToList();
+        // which zones lie where, for how long, and who each has acted on this turn are BoardZones' (cc_task_j Part 1)
+        public IReadOnlyList<IZone> Zones => _zones.Snapshot();
 
         // a zone arrives. whoever is already inside and does not get a pass is hit by the
         // appearing, if the zone is one that does that
@@ -38,7 +19,7 @@ namespace Core.Combat
         {
             if (zone == null) return;
 
-            _zones.Add(new Placed(zone, duration));
+            _zones.Add(zone, duration);
 
             if (!zone.Pulses.HasFlag(Pulses.Appear)) return;
 
@@ -49,7 +30,7 @@ namespace Core.Combat
         // one zone gone, whatever made it - a Sunburst burning away a Darkness
         public bool EndZone(IZone zone)
         {
-            if (_zones.RemoveAll(p => ReferenceEquals(p.Zone, zone)) == 0) return false;
+            if (!_zones.RemoveAll(zone)) return false;
 
             zone.Removed(this);
             return true;
@@ -58,14 +39,9 @@ namespace Core.Combat
         // ends every zone from one source that one owner made - a concentration dropped
         public int EndZones(string source, Actor owner)
         {
-            List<Placed> going = _zones.Where(p => p.Zone.Source == source &&
-                                                   ReferenceEquals(p.Zone.Owner, owner)).ToList();
+            List<IZone> going = _zones.From(source, owner);
 
-            foreach (Placed placed in going)
-            {
-                _zones.Remove(placed);
-                placed.Zone.Removed(this);
-            }
+            foreach (IZone zone in going) Take(zone);
 
             return going.Count;
         }
@@ -86,7 +62,7 @@ namespace Core.Combat
                                     Affects(zone, a));
 
         public bool IsRough(Cell cell, Actor mover) =>
-            _zones.Any(p => p.Zone.Rough && p.Zone.Core(Field, cell) && Affects(p.Zone, mover));
+            _zones.Each.Any(z => z.Rough && z.Core(Field, cell) && Affects(z, mover));
 
         // a zone that was picked up and put down somewhere else - Moonbeam's beam, a Flaming
         // Sphere rolled across the floor - washes over whoever it now covers that it did not
@@ -106,7 +82,7 @@ namespace Core.Combat
         // the first time on a turn or ends its turn there" is two burns, not one and not three
         void Once(IZone zone, Actor creature, Pulses pulse)
         {
-            if (!_pulsedThisTurn.Add((zone, creature, zone.EachTime ? pulse : (Pulses?)null))) return;
+            if (!_zones.FirstThisTurn(zone, creature, pulse)) return;
 
             zone.Act(this, creature, pulse);
         }
@@ -115,18 +91,15 @@ namespace Core.Combat
         {
             if (!(Field.Where(creature) is Cell here)) return;
 
-            foreach (Placed placed in _zones.ToList())
-                if (placed.Zone.Pulses.HasFlag(pulse) && placed.Zone.Covers(Field, here) &&
-                    Affects(placed.Zone, creature))
-                    Once(placed.Zone, creature, pulse);
+            foreach (IZone zone in _zones.Snapshot())
+                if (zone.Pulses.HasFlag(pulse) && zone.Covers(Field, here) && Affects(zone, creature))
+                    Once(zone, creature, pulse);
         }
 
         void PulseStep(Actor mover, Cell from, Cell to)
         {
-            foreach (Placed placed in _zones.ToList())
+            foreach (IZone zone in _zones.Snapshot())
             {
-                IZone zone = placed.Zone;
-
                 if (!zone.Covers(Field, to) || !Affects(zone, mover)) continue;
 
                 if (zone.Pulses.HasFlag(Pulses.EachSquare)) zone.Act(this, mover, Pulses.EachSquare);
@@ -140,8 +113,7 @@ namespace Core.Combat
 
         // the zones the mover carries (an emanation around its owner), with who each covers now
         IReadOnlyDictionary<IZone, List<Actor>> CaughtByZonesOf(Actor mover) =>
-            _zones.Where(p => ReferenceEquals(p.Zone.Owner, mover))
-                  .ToDictionary(p => p.Zone, p => CaughtIn(p.Zone).ToList());
+            _zones.OwnedBy(mover).ToDictionary(z => z, z => CaughtIn(z).ToList());
 
         void PulseCarried(IReadOnlyDictionary<IZone, List<Actor>> before)
         {
@@ -152,20 +124,14 @@ namespace Core.Combat
         // a zone that lasts until its owner's next turn starts or ends, counted the way boons are
         void TickZones(Actor whose, bool starting)
         {
-            foreach (Placed placed in _zones.Where(p => ReferenceEquals(p.Zone.Owner, whose)).ToList())
-            {
-                if (starting && placed.Duration == Duration.NextTurn)
-                {
-                    _zones.Remove(placed);
-                    placed.Zone.Removed(this);
-                }
-                else if (starting && placed.Duration == Duration.NextTurnEnd) placed.Armed = true;
-                else if (!starting && placed.Duration == Duration.NextTurnEnd && placed.Armed)
-                {
-                    _zones.Remove(placed);
-                    placed.Zone.Removed(this);
-                }
-            }
+            foreach (IZone zone in _zones.Lapsing(whose, starting)) Take(zone);
+        }
+
+        // one zone taken up, and told so
+        void Take(IZone zone)
+        {
+            _zones.Remove(zone);
+            zone.Removed(this);
         }
 
 

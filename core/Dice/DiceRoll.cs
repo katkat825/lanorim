@@ -85,7 +85,30 @@ namespace Core.Dice
 
             string s = text.Trim().ToLowerInvariant().Replace(" ", "");
 
-            int modifier = 0;
+            if (!TrySplitModifier(ref s, out int modifier, out problem)) return false;
+
+            if (s.Length == 0)
+            {
+                problem = "a modifier on its own - write a flat number without a sign";
+                return false;
+            }
+
+            // a bare number is a flat amount: "4" is 4 damage, no dice
+            if (int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out int flat))
+            {
+                dice = Flat(flat + modifier);
+                return true;
+            }
+
+            return TryParseDice(s, text, modifier, out dice, out problem);
+        }
+
+        // the "+3" or "-1" off the end, and what's left before it (cc_task_j Part 3 took the steps out of TryParse)
+        static bool TrySplitModifier(ref string s, out int modifier, out string problem)
+        {
+            modifier = 0;
+            problem = null;
+
             int sign = s.LastIndexOf('+');
             int minus = s.LastIndexOf('-');
 
@@ -108,20 +131,16 @@ namespace Core.Dice
                 s = s.Substring(0, split);
             }
 
-            if (s.Length == 0)
-            {
-                problem = "a modifier on its own - write a flat number without a sign";
-                return false;
-            }
+            return true;
+        }
 
-            // a bare number is a flat amount: "4" is 4 damage, no dice
-            if (int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out int flat))
-            {
-                dice = Flat(flat + modifier);
-                return true;
-            }
+        // "2d6" (or "d20"), the modifier already taken off
+        static bool TryParseDice(string s, string text, int modifier, out DiceRoll dice, out string problem)
+        {
+            dice = None;
+            problem = null;
 
-            d = s.IndexOf('d');
+            int d = s.IndexOf('d');
 
             if (d < 0)
             {

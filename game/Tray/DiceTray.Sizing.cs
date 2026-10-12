@@ -34,9 +34,8 @@ namespace Game.Tray
 
         void Resize()
         {
-            string[] args = OS.GetCmdlineUserArgs();
-            Footprint = Number(args, "--tray-footprint", Footprint);
-            WallHeight = Number(args, "--tray-walls", WallHeight);
+            Footprint = DevArgs.TrayFootprint ?? Footprint;
+            WallHeight = DevArgs.TrayWalls ?? WallHeight;
 
             if (Mathf.IsEqualApprox(Footprint, 1f) && Mathf.IsEqualApprox(WallHeight, 1f)) return;
 
@@ -89,16 +88,5 @@ namespace Game.Tray
 
         // how far the felt rose (or fell) with the walls, so a release point keeps its height above it
         float FeltRise() => TrayBounds.Shipped.FeltY * (WallHeight - 1f);
-
-        static float Number(string[] args, string flag, float fallback)
-        {
-            int at = Array.IndexOf(args ?? Array.Empty<string>(), flag);
-
-            return at >= 0 && at + 1 < args.Length &&
-                   float.TryParse(args[at + 1], System.Globalization.NumberStyles.Float,
-                                  System.Globalization.CultureInfo.InvariantCulture, out float value)
-                ? Mathf.Clamp(value, 0.4f, 3f)
-                : fallback;
-        }
     }
 }

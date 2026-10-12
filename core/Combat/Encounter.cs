@@ -13,18 +13,29 @@ namespace Core.Combat
     //
     // it does not decide what anybody does. the UI drives the hero's turn and an ITactics drives
     // everyone else's; this is the referee, not a player.
+    //
+    // WHAT IT HOLDS, each with its own books (cc_task_j-split-classes-dev-hooks.md Part 1): the turn order and the
+    // round (TurnClock), the reaction window (ReactionDesk), the zones on the board (BoardZones), the grapples
+    // (Grapples), who is off the board (OffTheBoard), the enemies' morale (MoraleWatch) and the conditions that
+    // last until a creature's next turn (UntilNextTurn). What they set off is still said from here
     public sealed partial class Encounter
     {
         readonly IResolver _resolver;
         readonly Dictionary<Actor, ActionBudget> _budgets = new();
-        readonly Dictionary<Actor, int> _reactions = new();
-        readonly List<InitiativeRoll> _order = new();
+        readonly TurnClock _clock = new();
+        readonly ReactionDesk _reactions;
+        readonly BoardZones _zones = new();
+        readonly Grapples _grapples = new();
+        readonly OffTheBoard _off = new();
+        readonly MoraleWatch _morale = new();
+        readonly UntilNextTurn _untilNextTurn = new();
 
         public Encounter(IResolver resolver, Battlefield field, ICombatObserver observer = null)
         {
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             Field = field ?? throw new ArgumentNullException(nameof(field));
             Observer = observer ?? new Observers();
+            _reactions = new ReactionDesk(this);
 
             // what only the fight knows about a step, put where every route asks (Battlefield.StepCost): a spell's
             // difficult ground, and dragging a grappled creature - one more square unless it is Tiny or two sizes
@@ -46,7 +57,7 @@ namespace Core.Combat
         // so a scripted fight stays scripted all the way down
         public IResolver Resolver => _resolver;
 
-        public int Round { get; private set; }
+        public int Round => _clock.Round;
 
         public Turn Current { get; private set; }
 
@@ -54,20 +65,14 @@ namespace Core.Combat
 
         public bool Over => Outcome != Outcome.Open;
 
-        public IReadOnlyList<InitiativeRoll> Order => _order;
+        public IReadOnlyList<InitiativeRoll> Order => _clock.Order;
 
-        public IEnumerable<Actor> Actors => _order.Select(r => r.Actor);
+        public IEnumerable<Actor> Actors => _clock.Order.Select(r => r.Actor);
 
         // WHERE A CREATURE IS IN THE TURN ORDER, the explicit last word wherever creatures tie (who a monster goes for,
         // who a spell picks): an id used to settle those, so renaming one changed who got hit
         // (cc_task_open-questions-answers.md 2.7). One not in the fight comes last
-        public int InitiativeRank(Actor actor)
-        {
-            int at = _order.FindIndex(r => ReferenceEquals(r.Actor, actor));
-            return at < 0 ? int.MaxValue : at;
-        }
-
-        int _next;
+        public int InitiativeRank(Actor actor) => _clock.Rank(actor);
 
         public ActionBudget BudgetFor(Actor actor) =>
             _budgets.TryGetValue(actor, out ActionBudget budget) ? budget : null;
@@ -86,29 +91,46 @@ namespace Core.Combat
 
         public void Begin()
         {
-            if (_order.Count > 0) throw new InvalidOperationException("the fight already started");
+            if (_clock.Started) throw new InvalidOperationException("the fight already started");
 
-            foreach (InitiativeRoll roll in Initiative.Roll(_resolver, Field.Pieces))
-                _order.Add(roll);
+            _clock.Start(Initiative.Roll(_resolver, Field.Pieces));
 
-            Round = 0;
-            _next = 0;
-
-            Observer.Began(_order);
+            Observer.Began(_clock.Order);
 
             BeginRound();
         }
 
         void BeginRound()
         {
-            Round++;
-            _next = 0;
+            _clock.NextRound();
 
             // a reaction is spent between your turns, so it is the round that hands it back
             foreach (Actor actor in Actors)
-                _reactions[actor] = BudgetFor(actor).ReactionsFor(Round);
+                _reactions.HandBack(actor, BudgetFor(actor).ReactionsFor(Round));
 
             Observer.RoundBegan(Round);
+        }
+
+        // a corpse is rising as a statblock on its master's side: Finger of Death's Zombie. the
+        // content layer knows statblocks, so it answers with Join
+        public event Action<Actor, string, Actor> Rising;
+
+        public void Raise(Actor corpse, string statblock, Actor master) =>
+            Rising?.Invoke(corpse, statblock, master);
+
+        // A CREATURE JOINING A FIGHT ALREADY UNDER WAY: it rolls initiative and takes its place in
+        // the order - after the creature it belongs to, when it belongs to one
+        public bool Join(Actor actor, Cell cell, ActionBudget budget = null, Actor after = null)
+        {
+            if (actor == null || !Field.Place(actor, cell)) return false;
+
+            _budgets[actor] = budget ?? new ActionBudget();
+            _reactions.HandBack(actor, _budgets[actor].ReactionsFor(Round));
+
+            _clock.Insert(Initiative.Roll(_resolver, new[] { actor }).First(), after);
+
+            Observer.Moved(actor, new[] { cell });
+            return true;
         }
 
         // the next actor that can still take a turn, or null when the fight is over. an actor that
@@ -123,80 +145,90 @@ namespace Core.Combat
             {
                 if (Judge() != Outcome.Open) return null;
 
-                if (_next >= _order.Count)
+                if (_clock.RoundDone)
                 {
                     BeginRound();
 
                     if (Judge() != Outcome.Open) return null;
                 }
 
-                Actor actor = _order[_next].Actor;
-                _next++;
+                Actor actor = _clock.Advance();
 
                 // sent away for good (Banishment held for its full minute): no more turns
-                if (_gone.Contains(actor)) continue;
+                if (_off.IsGone(actor)) continue;
 
-                if (actor.IsDown)
-                {
-                    // the hero gets the single d20 >= 10; a monster at 0 is simply out
-                    // a Stable hero rolls no death save: it lies there until it is healed
-                    if (actor.Side == Allegiance.Hero && !actor.Stable)
-                    {
-                        Attempt save = Checks.DeathSave(_resolver, actor);
-                        Observer.DeathSaved(actor, save);
+                if (actor.IsDown && StaysDown(actor)) continue;
 
-                        if (!save.Succeeded) Field.Remove(actor);
-                    }
-
-                    // the save is thrown at the start of the turn (SRD 5.2.1), so a hero it brings
-                    // back up takes that turn - skipping it left a revived hero at 1 hit point with
-                    // nothing to do but be knocked down again, forever
-                    if (actor.IsDown) continue;
-                }
-
-                // SRD's "until the start of your next turn" - a Shield ends here, not at the end
-                // of the round and not at the end of the fight - and whatever lasts until the end
-                // of this actor's next turn starts counting from now. on every actor, because a
-                // glimmer on a goblin can be the caster's to end
-                foreach (Actor any in Actors) any.Boons.TurnStarting(actor, any);
-
-                // a zone's "once per turn" is per turn, so every turn starts with a clean slate
-                _pulsedThisTurn.Clear();
-                TickZones(actor, starting: true);
-
-                Current = new Turn(actor, BudgetFor(actor), Round);
-
-                // the spell books first - a blinding that lasted until this creature's turn ends
-                // here, a burning bites here - then a zone that bites at the start of a turn. any
-                // of them can drop the creature before it acts
-                TurnStarting?.Invoke(Current);
-
-                PulseWhereItStands(actor, Pulses.StartTurn);
-
-                // sent away for good as its turn began (Banishment's full minute)
-                if (actor.IsDown || _gone.Contains(actor))
-                {
-                    Current.End();
-                    Lapsing(actor);
-                    continue;
-                }
-
-                // a turn a spell decided for it and has already spent - Command's Grovel or Halt
-                if (Current.Ended)
-                {
-                    Lapsing(actor);
-                    Observer.TurnBegan(Current);
-                    Observer.TurnEnded(Current);
-                    continue;
-                }
-
-                // a dropped weapon within reach is picked up for free
-                PickUp(actor);
-
-                Observer.TurnBegan(Current);
-
-                return Current;
+                if (Starts(actor)) return Current;
             }
+        }
+
+        // down as its turn comes round: the hero gets the single d20 >= 10; a monster at 0 is simply out.
+        // true when it is still down, and so has no turn
+        bool StaysDown(Actor actor)
+        {
+            // a Stable hero rolls no death save: it lies there until it is healed
+            if (actor.Side == Allegiance.Hero && !actor.Stable)
+            {
+                Attempt save = Checks.DeathSave(_resolver, actor);
+                Observer.DeathSaved(actor, save);
+
+                if (!save.Succeeded) Field.Remove(actor);
+            }
+
+            // the save is thrown at the start of the turn (SRD 5.2.1), so a hero it brings
+            // back up takes that turn - skipping it left a revived hero at 1 hit point with
+            // nothing to do but be knocked down again, forever
+            return actor.IsDown;
+        }
+
+        // A TURN STARTS: what lasts until it ends, the zones' and the spells' moments, and then it is the creature's.
+        // true when it is the creature's to play; false when something already spent it or took the creature out
+        // (cc_task_j Part 3 split Next along these steps)
+        bool Starts(Actor actor)
+        {
+            // SRD's "until the start of your next turn" - a Shield ends here, not at the end
+            // of the round and not at the end of the fight - and whatever lasts until the end
+            // of this actor's next turn starts counting from now. on every actor, because a
+            // glimmer on a goblin can be the caster's to end
+            foreach (Actor any in Actors) any.Boons.TurnStarting(actor, any);
+
+            // a zone's "once per turn" is per turn, so every turn starts with a clean slate
+            _zones.NewTurn();
+            TickZones(actor, starting: true);
+
+            Current = new Turn(actor, BudgetFor(actor), Round);
+
+            // the spell books first - a blinding that lasted until this creature's turn ends
+            // here, a burning bites here - then a zone that bites at the start of a turn. any
+            // of them can drop the creature before it acts
+            TurnStarting?.Invoke(Current);
+
+            PulseWhereItStands(actor, Pulses.StartTurn);
+
+            // sent away for good as its turn began (Banishment's full minute)
+            if (actor.IsDown || _off.IsGone(actor))
+            {
+                Current.End();
+                Lapsing(actor);
+                return false;
+            }
+
+            // a turn a spell decided for it and has already spent - Command's Grovel or Halt
+            if (Current.Ended)
+            {
+                Lapsing(actor);
+                Observer.TurnBegan(Current);
+                Observer.TurnEnded(Current);
+                return false;
+            }
+
+            // a dropped weapon within reach is picked up for free
+            PickUp(actor);
+
+            Observer.TurnBegan(Current);
+
+            return true;
         }
 
         public void EndTurn()
@@ -250,39 +282,10 @@ namespace Core.Combat
             return true;
         }
 
-        // a statblock's condition that lasts "until the end of its next turn": the Ghoul's
-        // Paralyzed (SRD 5.2.1 p.288). one put on during the creature's own turn waits a turn more
-        sealed class Lapse
-        {
-            public Lapse(Actor target, Condition condition, bool waiting)
-            {
-                Target = target;
-                Condition = condition;
-                Waiting = waiting;
-            }
-
-            public Actor Target { get; }
-
-            public Condition Condition { get; }
-
-            public bool Waiting { get; set; }
-        }
-
-        readonly List<Lapse> _untilNextTurn = new List<Lapse>();
-
+        // a statblock's condition that lasts "until the end of its next turn" (UntilNextTurn)
         void Lapsing(Actor actor)
         {
-            foreach (Lapse lapse in _untilNextTurn.Where(l => ReferenceEquals(l.Target, actor)).ToList())
-            {
-                if (lapse.Waiting)
-                {
-                    lapse.Waiting = false;
-                    continue;
-                }
-
-                _untilNextTurn.Remove(lapse);
-                actor.Remove(lapse.Condition);
-            }
+            foreach (Condition condition in _untilNextTurn.Ending(actor)) actor.Remove(condition);
         }
 
         void Close(Turn turn)

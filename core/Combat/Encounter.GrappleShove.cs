@@ -13,16 +13,12 @@ namespace Core.Combat
     {
         // --- Grapple and Shove (SRD 5.2.1 Unarmed Strike, p.190) --------------------------------
 
-        // who holds whom, and the escape DC it was made at
-        readonly Dictionary<Actor, (Actor By, int Dc)> _grapples = new();
+        // who holds whom, and the escape DC it was made at, are Grapples' (cc_task_j Part 1)
+        public bool IsGrappledBy(Actor target, Actor grappler) => _grapples.IsBy(target, grappler);
 
-        public bool IsGrappledBy(Actor target, Actor grappler) =>
-            target != null && _grapples.TryGetValue(target, out var g) && ReferenceEquals(g.By, grappler);
+        public bool IsHeldByGrapple(Actor target) => _grapples.Holds(target);
 
-        public bool IsHeldByGrapple(Actor target) => target != null && _grapples.ContainsKey(target);
-
-        List<Actor> Held(Actor grappler) =>
-            _grapples.Where(g => ReferenceEquals(g.Value.By, grappler)).Select(g => g.Key).ToList();
+        List<Actor> Held(Actor grappler) => _grapples.HeldBy(grappler);
 
         // DC 8 + Strength modifier + Proficiency Bonus
         public static int UnarmedDc(Actor attacker) =>
@@ -63,7 +59,7 @@ namespace Core.Combat
 
             if (target.Apply(Condition.Grappled, turn.Actor))
             {
-                _grapples[target] = (turn.Actor, UnarmedDc(turn.Actor));
+                _grapples.Hold(target, turn.Actor, UnarmedDc(turn.Actor));
                 Changed(target, Condition.Grappled, true);
             }
 
@@ -95,7 +91,7 @@ namespace Core.Combat
         // better - against the grapple's DC
         public Attempt EscapeGrapple(Turn turn)
         {
-            if (turn == null || turn.Ended || !_grapples.TryGetValue(turn.Actor, out var held))
+            if (turn == null || turn.Ended || !_grapples.TryGet(turn.Actor, out var held))
                 return null;
 
             if (!turn.Take(Spend.Action)) return null;
@@ -113,7 +109,7 @@ namespace Core.Combat
 
         void Release(Actor target)
         {
-            if (!_grapples.Remove(target)) return;
+            if (!_grapples.Release(target)) return;
 
             target.Remove(Condition.Grappled);
             Changed(target, Condition.Grappled, false);
@@ -123,10 +119,9 @@ namespace Core.Combat
         // within reach of each other
         void LetGo()
         {
-            foreach (var g in _grapples.ToList())
-                if (g.Value.By.IsDown || !g.Value.By.CanAct || g.Key.IsDown ||
-                    Field.Distance(g.Value.By, g.Key) > 1)
-                    Release(g.Key);
+            foreach ((Actor held, Actor by) in _grapples.All())
+                if (by.IsDown || !by.CanAct || held.IsDown || Field.Distance(by, held) > 1)
+                    Release(held);
         }
     }
 }

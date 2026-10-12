@@ -12,4 +12,13 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
+  <!-- the developer's and the checks' hooks (Dev/: the probes, the demonstration table, the picture, the registry) are
+       left out of a release export, and DevHooks.Release.cs, which answers the scenes' calls with nothing, stands in
+       (cc_task_j Part 2). The editor builds Debug and a debug export ExportDebug: both keep Dev/ -->
+  <ItemGroup Condition=" '$(Configuration)' == 'ExportRelease' ">
+    <Compile Remove="Dev/**" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)' != 'ExportRelease' ">
+    <Compile Remove="DevHooks.Release.cs" />
+  </ItemGroup>
 </Project>

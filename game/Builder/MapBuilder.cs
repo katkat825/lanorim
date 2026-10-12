@@ -48,8 +48,8 @@ namespace Game.Builder
             Lay();
             GD.Print($"builder {View.Id} in {View.Campaign}: {View.Draft}");
 
-            if (System.Array.IndexOf(OS.GetCmdlineUserArgs(), MapBuilderProbe.Flag) >= 0)
-                AddChild(new MapBuilderProbe { Name = "MapBuilderProbe", Builder = this });
+            // `--map-probe`: the builder driven (the dev registry, Dev/MapBuilderProbe.cs)
+            Game.Dev.DevHooks.AtBuilder(this);
         }
 
         // --- the board ----------------------------------------------------------------------------------------------

@@ -16,6 +16,11 @@ namespace Content.Screens
 
         public static string Key(string screen, string thing) => KeyConventions.Key(Ns, screen, thing);
 
+        // ONE SCREEN'S KEYS: `static readonly Func<string, string> K = ScreenKeys.For("map");` and K("title") is
+        // ui.map.title. What each screen's own little K(...) helper was, written once (cc_task_j Part 4). Declare it
+        // above the keys made with it: static fields are set in the order they're written
+        public static Func<string, string> For(string screen) => thing => Key(screen, thing);
+
         public static IEnumerable<string> All() =>
             CampaignBook.Keys()
                 .Concat(TutorialPicker.Keys())

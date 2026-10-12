@@ -12,23 +12,20 @@ namespace Core.Combat
 
         // SRD 5.2.1 Banishment and Maze send a creature to a demiplane. v1 takes it off the board
         // for the duration (the table stands its mini beside the map) and puts it back where it
-        // left, or on the nearest free square, when the spell ends
-        readonly Dictionary<Actor, (Cell From, string Source)> _away = new();
-        readonly HashSet<Actor> _gone = new();
-
-        public bool IsAway(Actor actor) => actor != null && _away.ContainsKey(actor);
+        // left, or on the nearest free square, when the spell ends. who is where is OffTheBoard's (cc_task_j Part 1)
+        public bool IsAway(Actor actor) => _off.IsAway(actor);
 
         // gone for good - Banishment on a creature of another plane, held for the full minute
-        public bool IsGone(Actor actor) => actor != null && _gone.Contains(actor);
+        public bool IsGone(Actor actor) => _off.IsGone(actor);
 
-        public IEnumerable<Actor> Away => _away.Keys;
+        public IEnumerable<Actor> Away => _off.Away;
 
         public bool Banish(Actor actor, string source)
         {
             if (actor == null || IsAway(actor) || !(Field.Where(actor) is Cell from)) return false;
 
             Field.Remove(actor);
-            _away[actor] = (from, source ?? "");
+            _off.SendAway(actor, from, source);
             Observer.Away(actor, true);
             return true;
         }
@@ -36,13 +33,13 @@ namespace Core.Combat
         // back from wherever it was sent. a source narrows it to the spell that sent it
         public bool Recall(Actor actor, string source = null)
         {
-            if (actor == null || !_away.TryGetValue(actor, out (Cell From, string Source) was)) return false;
+            if (actor == null || !_off.TryAway(actor, out (Cell From, string Source) was)) return false;
 
             if (source != null && was.Source != source) return false;
 
             Cell? to = Free(was.From, actor);
 
-            _away.Remove(actor);
+            _off.Back(actor);
 
             if (!to.HasValue) return false;
 
@@ -57,9 +54,9 @@ namespace Core.Combat
         {
             if (actor == null) return;
 
-            _away.Remove(actor);
+            _off.Back(actor);
             Field.Remove(actor);
-            _gone.Add(actor);
+            _off.Gone(actor);
             Judge();
         }
 

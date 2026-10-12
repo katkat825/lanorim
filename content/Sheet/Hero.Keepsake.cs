@@ -21,14 +21,14 @@ namespace Content.Sheet
         // hero is given one (Build, and HeroSaves.Restore for a save from before it). Its story and look are
         // Kathleen's; the name and words are a working "Keepsake". Behind SoloRules.Keepsake
 
-        public const string KeepsakeId = "keepsake";
+        public const string KeepsakeId = Content.Sheet.Keepsake.Id;
 
         // carried, and the switch on
         public bool HasKeepsake => SoloRules.Keepsake && Pack.Has(KeepsakeId);
 
-        // used since the last long rest. kept in the same per-rest ledger as a feature's uses, so a long rest brings it
-        // back and a save keeps it
-        public bool KeepsakeSpent => _spent.ContainsKey(KeepsakeId);
+        // used since the last long rest. its own books (Keepsake.cs); a long rest brings it back, and a save keeps it in the
+        // same ledger as a feature's uses (Spent)
+        public bool KeepsakeSpent => _keepsake.Spent;
 
         public bool KeepsakeReady => HasKeepsake && !KeepsakeSpent;
 
@@ -44,17 +44,8 @@ namespace Content.Sheet
         }
 
         // a save putting the ledger back
-        internal void RespendKeepsake() => _spent[KeepsakeId] = 1;
+        internal void RespendKeepsake() => _keepsake.Spend();
 
-        // dropped to 0 just now: held up if it's ready. true when it held
-        bool Keepsake()
-        {
-            if (!KeepsakeReady || !Actor.IsDown || Actor.IsDead) return false;
-
-            _spent[KeepsakeId] = 1;
-            Actor.StaysUp(KeepsakeHeals);
-
-            return true;
-        }
+        // dropped to 0 just now (HoldUp): Keepsake.Catch, with whether it's carried and what it heals
     }
 }

@@ -90,7 +90,7 @@ namespace Content.Screens
         public IEnumerable<Credit> Covering(string path) =>
             All.Where(c => c.Files.Any(f => path.StartsWith(f, StringComparison.Ordinal)));
 
-        static string K(string thing) => ScreenKeys.Key("credits", thing);
+        static readonly Func<string, string> K = ScreenKeys.For("credits");
 
         public static readonly string TitleKey = K("title");
 

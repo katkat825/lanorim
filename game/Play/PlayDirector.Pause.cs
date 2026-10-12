@@ -9,7 +9,7 @@ namespace Game.Play
     {
         // --- the pause menu -------------------------------------------------------------------------
 
-        void Pause()
+        internal void Pause()
         {
             bool idle = !_rules.Busy;
 
@@ -22,7 +22,7 @@ namespace Game.Play
                 (ScreenWords.ToTheBook, ToTheBook, true)), Refresh);
         }
 
-        void Swap(Overlay next)
+        internal void Swap(Overlay next)
         {
             Overlay was = _overlay;
             _overlay = null;
@@ -87,7 +87,7 @@ namespace Game.Play
         public override void _Process(double delta)
         {
             _played += delta;
-            AgeVerdict();
+            _caption.Age();
             TickCompanion(delta);
 
             // a roll the rules asked for while the board was still playing back is asked for once it has caught up

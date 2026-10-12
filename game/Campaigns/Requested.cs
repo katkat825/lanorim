@@ -39,7 +39,7 @@ namespace Game.Campaigns
 
         static string Value(string flag)
         {
-            foreach (string arg in OS.GetCmdlineUserArgs())
+            foreach (string arg in DevArgs.All)
                 if (arg.StartsWith(flag, System.StringComparison.Ordinal))
                     return arg.Substring(flag.Length).Trim();
 

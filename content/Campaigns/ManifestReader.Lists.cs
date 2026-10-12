@@ -12,16 +12,9 @@ namespace Content.Campaigns
         {
             var tags = new List<string>();
 
-            if (!root.TryGetProperty("tags", out JsonElement value)) return tags;
-
-            if (value.ValueKind == JsonValueKind.Null) return tags;
-
-            if (value.ValueKind != JsonValueKind.Array)
-            {
-                problems.Add(new ContentProblem(
-                    file, "tags", "tags is a list of words, like [ \"undead\", \"short\" ]"));
+            if (!PackJson.OptionalList(root, "tags", file, "tags is a list of words, like [ \"undead\", \"short\" ]",
+                                       problems, out JsonElement value))
                 return tags;
-            }
 
             int at = 0;
 
@@ -64,18 +57,11 @@ namespace Content.Campaigns
         {
             var needs = new List<string>();
 
-            if (!root.TryGetProperty("dependencies", out JsonElement value)) return needs;
-
-            if (value.ValueKind == JsonValueKind.Null) return needs;
-
-            if (value.ValueKind != JsonValueKind.Array)
-            {
-                problems.Add(new ContentProblem(
-                    file, "dependencies",
-                    "dependencies is a list of the ids of packs this one needs, like " +
-                    "[ \"grimdark_minis\" ]"));
+            if (!PackJson.OptionalList(root, "dependencies", file,
+                                       "dependencies is a list of the ids of packs this one needs, like " +
+                                       "[ \"grimdark_minis\" ]",
+                                       problems, out JsonElement value))
                 return needs;
-            }
 
             int at = 0;
 

@@ -14,8 +14,15 @@ namespace Content.Sheet
     // the whole character: the Actor the rules roll against, plus everything the rules do not
     // need to know about - which class it is, what is in the pack, which spells are on the card
     // rack. the character sheet UI binds to this; nothing here draws anything.
+    //
+    // what it holds with books of its own (cc_task_j-split-classes-dev-hooks.md Part 1): the uses spent since the
+    // last rest (DailyUses), the keepsake's once a rest (Keepsake) and the experience points (ExperiencePoints)
     public sealed partial class Hero
     {
+        readonly DailyUses _uses = new DailyUses();
+        readonly Keepsake _keepsake = new Keepsake();
+        readonly ExperiencePoints _xp = new ExperiencePoints();
+
         public Hero(string name, CharacterClass cls, Kind species, Background background,
                     AbilityScores scores, int level = 1, Kind lineage = null,
                     SpellResourceMode resource = SpellResourceMode.Slots)

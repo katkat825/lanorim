@@ -44,43 +44,8 @@ namespace Content.Items
                 entry.Text("slot", "none") != "none")
                 problems.Add($"{id}: '{entry.Text("slot")}' is not an equipment slot");
 
-            Attack attack = null;
-            ArmorProfile? armor = null;
-
-            if (entry.Has("weapon"))
-            {
-                JsonElement w = entry.GetProperty("weapon");
-
-                Keyed.OnlyKnown(w, WeaponKeys.Concat(AttackReader.Keys), $"{id} weapon", problems);
-
-                attack = AttackReader.Read(w, id, slot == Slot.TwoHand ? Hand.Two
-                                                  : slot == Slot.OffHand ? Hand.Off : Hand.Main,
-                                           id, problems);
-
-                if (attack.Category.Length > 0 && attack.Category != "simple" && attack.Category != "martial")
-                    problems.Add($"{id}: a weapon's category is simple or martial");
-            }
-            else if (kind == ItemKind.Weapon)
-            {
-                problems.Add($"{id}: a weapon with no 'weapon' block");
-            }
-
-            if (entry.Has("armor"))
-            {
-                JsonElement a = entry.GetProperty("armor");
-
-                Keyed.OnlyKnown(a, ArmorKeys, $"{id} armor", problems);
-
-                if (!EnumWords.TryParse(a.Text("category", "none"), out ArmorCategory category))
-                    problems.Add($"{id}: '{a.Text("category")}' is not light, medium or heavy");
-
-                armor = new ArmorProfile(category, a.Number("base", 10),
-                                         a.Number("strength"), a.Flag("noisy"));
-            }
-            else if (kind == ItemKind.Armor)
-            {
-                problems.Add($"{id}: armor with no 'armor' block");
-            }
+            Attack attack = Weapon(entry, id, kind, slot, problems);
+            ArmorProfile? armor = Armor(entry, id, kind, problems);
 
             var boons = new List<Boon>();
 
@@ -118,6 +83,48 @@ namespace Content.Items
             Check(item, problems);
 
             return item;
+        }
+
+        // its 'weapon' block, read as the attack it makes (cc_task_j Part 3 took this and Armor out of ReadOne)
+        static Attack Weapon(JsonElement entry, string id, ItemKind kind, Slot slot, List<string> problems)
+        {
+            if (!entry.Has("weapon"))
+            {
+                if (kind == ItemKind.Weapon) problems.Add($"{id}: a weapon with no 'weapon' block");
+                return null;
+            }
+
+            JsonElement w = entry.GetProperty("weapon");
+
+            Keyed.OnlyKnown(w, WeaponKeys.Concat(AttackReader.Keys), $"{id} weapon", problems);
+
+            Attack attack = AttackReader.Read(w, id, slot == Slot.TwoHand ? Hand.Two
+                                                     : slot == Slot.OffHand ? Hand.Off : Hand.Main,
+                                              id, problems);
+
+            if (attack.Category.Length > 0 && attack.Category != "simple" && attack.Category != "martial")
+                problems.Add($"{id}: a weapon's category is simple or martial");
+
+            return attack;
+        }
+
+        // its 'armor' block
+        static ArmorProfile? Armor(JsonElement entry, string id, ItemKind kind, List<string> problems)
+        {
+            if (!entry.Has("armor"))
+            {
+                if (kind == ItemKind.Armor) problems.Add($"{id}: armor with no 'armor' block");
+                return null;
+            }
+
+            JsonElement a = entry.GetProperty("armor");
+
+            Keyed.OnlyKnown(a, ArmorKeys, $"{id} armor", problems);
+
+            if (!EnumWords.TryParse(a.Text("category", "none"), out ArmorCategory category))
+                problems.Add($"{id}: '{a.Text("category")}' is not light, medium or heavy");
+
+            return new ArmorProfile(category, a.Number("base", 10), a.Number("strength"), a.Flag("noisy"));
         }
 
         // an item's boon: its own id and duration, and what the boon is in the one boon vocabulary

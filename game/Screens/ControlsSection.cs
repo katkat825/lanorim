@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core.Localization;
+using Content.Screens;
 using Core.Words;
 using Game.Access;
 using Game.Play;
@@ -18,7 +18,7 @@ namespace Game.Screens
     // the way the rest of it does; the Change button carries its row's words as its accessible name.
     public partial class ControlsSection : VBoxContainer
     {
-        static string K(string thing) => KeyConventions.Key(KeyConventions.UiNs, "controls", thing);
+        static readonly Func<string, string> K = ScreenKeys.For("controls");
 
         public static readonly string TitleKey = K("title");
         public static readonly string KeyboardKey = K("keyboard");

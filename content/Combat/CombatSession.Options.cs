@@ -106,8 +106,8 @@ namespace Content.Combat
                     NameKey = spell.NameKey,
                     Cost = spell.CastingTime == Spend.Bonus ? Spend.Bonus : Spend.Action,
                     Spell = spell,
-                    Targeting = TargetingOf(spell, false),
-                    MaxTargets = MaxTargets(spell, spell.Level),
+                    Targeting = SpellTargeting.Of(spell, false),
+                    MaxTargets = SpellTargeting.MostTargets(spell, spell.Level),
                     Modes = spell.Modes,
                     DamageChoices = spell.Effects.SelectMany(e => e.DamageChoices).Distinct().ToList(),
                     Enabled = why == null,
@@ -134,7 +134,7 @@ namespace Content.Combat
                     NameKey = held.NameKey,
                     Cost = cost,
                     Spell = held,
-                    Targeting = TargetingOf(held, true),
+                    Targeting = SpellTargeting.Of(held, true),
                     Enabled = why == null,
                     WhyNotKey = why,
                 };
@@ -379,27 +379,5 @@ namespace Content.Combat
 
             return null;
         }
-
-        static Targeting TargetingOf(Spell spell, bool again)
-        {
-            IEnumerable<SpellEffect> effects = spell.Effects.Where(e => again ? e.Lands.Repeats() : e.Lands != Lands.OnRepeat);
-
-            if (effects.Any(e => e.AimKind.IsDirected())) return Targeting.Direction;
-
-            if (effects.Any(e => e.AimKind.NeedsATargetSquare() || e.Handler.AimsAtASquare(e)))
-                return Targeting.Square;
-
-            if (effects.Any(e => e.AimKind == AimKind.Creatures)) return Targeting.Creatures;
-
-            if (effects.Any(e => e.AimKind == AimKind.Creature)) return Targeting.Creature;
-
-            return Targeting.None;
-        }
-
-        static int MaxTargets(Spell spell, int castAt) =>
-            spell.Effects.Where(e => e.AimKind == AimKind.Creatures)
-                 .Select(e => e.TargetsAt(spell.Level, castAt))
-                 .DefaultIfEmpty(1)
-                 .Max();
     }
 }

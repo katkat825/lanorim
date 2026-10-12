@@ -72,29 +72,9 @@ namespace Core.Space
 
             int width = rows[0].Text.Length;
 
-            if (rows.Count % 2 == 0 || rows.Count < 3)
-            {
-                problem = $"{rows.Count} lines of map - a map is lines of squares with a line of " +
-                          "walls above, below and between them, so the count is always odd and at " +
-                          "least 3";
-                return false;
-            }
+            problem = ShapeProblem(rows, width);
 
-            if (width % 2 == 0 || width < 3)
-            {
-                problem = $"line {rows[0].Line} is {width} characters wide - a row is squares with a " +
-                          "wall position before, after and between them, so the width is always odd " +
-                          "and at least 3";
-                return false;
-            }
-
-            foreach ((int line, string row) in rows)
-                if (row.Length > width)
-                {
-                    problem = $"line {line} is {row.Length} characters but line {rows[0].Line} is " +
-                              $"{width} - every line of a map is the same width";
-                    return false;
-                }
+            if (problem != null) return false;
 
             int columns = (width - 1) / 2;
             int mapRows = (rows.Count - 1) / 2;
@@ -153,6 +133,29 @@ namespace Core.Space
 
             map = new MapLayout(columns, mapRows, tiles, start.Value, vertical, horizontal, spawns);
             return true;
+        }
+
+        // what's wrong with the lines' count and widths, or null: squares with a line of walls above, below and between
+        // them, so both are odd and at least 3, and every line as wide as the first (cc_task_j Part 3 took this out of
+        // TryRead)
+        static string ShapeProblem(List<(int Line, string Text)> rows, int width)
+        {
+            if (rows.Count % 2 == 0 || rows.Count < 3)
+                return $"{rows.Count} lines of map - a map is lines of squares with a line of " +
+                       "walls above, below and between them, so the count is always odd and at " +
+                       "least 3";
+
+            if (width % 2 == 0 || width < 3)
+                return $"line {rows[0].Line} is {width} characters wide - a row is squares with a " +
+                       "wall position before, after and between them, so the width is always odd " +
+                       "and at least 3";
+
+            foreach ((int line, string row) in rows)
+                if (row.Length > width)
+                    return $"line {line} is {row.Length} characters but line {rows[0].Line} is " +
+                           $"{width} - every line of a map is the same width";
+
+            return null;
         }
 
         static bool Square(char glyph, int line, int column, Cell cell, Tile[] tiles, int columns,
