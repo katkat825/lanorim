@@ -50,6 +50,9 @@ namespace Content.Screens
         // who didn't want it is a game they turn off
         public bool ReadAloud { get; set; }
 
+        // how much the companion says (cc_task_i 2.5): Off, Some (the frequent pools halved) or All
+        public Companions.CompanionChatter Chatter { get; set; } = Companions.CompanionChatter.All;
+
         public ReactionSettings Reactions { get; } = new ReactionSettings();
 
         // seconds an enemy's move is given at each speed; Instant is none
@@ -75,6 +78,7 @@ namespace Content.Screens
                 json.WriteBoolean("bring_tray", BringTrayToMe);
                 json.WriteBoolean("log_open", LogOpen);
                 json.WriteBoolean("read_aloud", ReadAloud);
+                json.WriteString("companion_chatter", EnumWords.Name(Chatter));
 
                 json.WritePropertyName("reactions");
                 json.WriteStartObject();
@@ -123,6 +127,14 @@ namespace Content.Screens
                         found.Add($"'{root.Text("difficulty")}' is not a difficulty");
                 }
 
+                if (root.Has("companion_chatter"))
+                {
+                    if (EnumWords.TryName(root.Text("companion_chatter"), out Companions.CompanionChatter chatter))
+                        settings.Chatter = chatter;
+                    else
+                        found.Add($"'{root.Text("companion_chatter")}' is not a companion chatter setting");
+                }
+
                 settings.SkipPhysicalDice = Flag(root, "skip_physical_dice", false);
                 settings.FollowEnemies = Flag(root, "follow_enemies", true);
                 settings.BringTrayToMe = Flag(root, "bring_tray", true);
@@ -161,6 +173,11 @@ namespace Content.Screens
 
         public static readonly string DifficultyTitleKey = ScreenKeys.Key("settings", "difficulty");
 
+        public static string ChatterKey(Companions.CompanionChatter chatter) =>
+            ScreenKeys.Key("settings", "chatter_" + EnumWords.Name(chatter));
+
+        public static readonly string ChatterTitleKey = ScreenKeys.Key("settings", "chatter");
+
         public static readonly string TitleKey = ScreenKeys.Key("settings", "title");
         public static readonly string GameTabKey = ScreenKeys.Key("settings", "game");
         public static readonly string AccessTabKey = ScreenKeys.Key("settings", "access");
@@ -175,6 +192,8 @@ namespace Content.Screens
             Enum.GetValues<CombatSpeed>().Select(SpeedKey)
                 .Concat(Enum.GetValues<PlayDifficulty>().Select(DifficultyKey))
                 .Concat(Enum.GetValues<PlayDifficulty>().Select(DifficultyAboutKey))
+                .Concat(Enum.GetValues<Companions.CompanionChatter>().Select(ChatterKey))
+                .Concat(new[] { ChatterTitleKey })
                 .Concat(new[] { DifficultyTitleKey, TitleKey, GameTabKey, AccessTabKey, EnemySpeedKey, SkipDiceKey, FollowKey, BringTrayKey, ReactionsKey,
                                 ReadAloudKey });
     }

@@ -38,5 +38,9 @@ namespace Content.Dialogue
 
         // the hero is on the floor. This is where a companion goes quiet, so most banks are short
         Down,
+
+        // danger ahead: a story's <<bark danger>>, and sometimes a fight's start (cc_task_i Part 2; Kathleen's
+        // Bramble notes call it trouble_ahead)
+        Danger,
     }
 }

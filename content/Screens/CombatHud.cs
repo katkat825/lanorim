@@ -148,7 +148,8 @@ namespace Content.Screens
         // form's own attacks are never it
         bool InMore(ActionOption o) =>
             o.Kind is OptionKind.Dash or OptionKind.Disengage or OptionKind.Hide or OptionKind.Grapple or
-                OptionKind.Shove or OptionKind.StandUp or OptionKind.BreakFree or OptionKind.Shake or OptionKind.OpenDoor ||
+                OptionKind.Shove or OptionKind.StandUp or OptionKind.BreakFree or OptionKind.Shake or OptionKind.OpenDoor or
+                OptionKind.Yield ||
             ReferenceEquals(o.Attack, Content.Sheet.Hero.UnarmedStrike) && o.Kind == OptionKind.Attack &&
                 Session.Hero.HoldsAWeapon;
 

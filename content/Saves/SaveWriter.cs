@@ -133,6 +133,7 @@ namespace Content.Saves
             if (!string.IsNullOrEmpty(hero.Size)) json.WriteString("size", hero.Size);
             if (hero.ShopsFirst) json.WriteBoolean("shops_first", true);
             if (hero.Figure != 0) json.WriteNumber("figure", hero.Figure);
+            if (hero.Experience != 0) json.WriteNumber("xp", hero.Experience);
             json.WriteNumber("level", hero.Level);
         }
 
@@ -259,6 +260,8 @@ namespace Content.Saves
 
                 json.WriteEndObject();
             }
+
+            Words(json, "loaned", hero.Loaned);
 
             if (hero.Pack.Count > 0)
             {

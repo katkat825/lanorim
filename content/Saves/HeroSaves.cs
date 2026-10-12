@@ -41,6 +41,7 @@ namespace Content.Saves
                 Size = hero.Size?.Id() ?? "",
                 ShopsFirst = hero.ShopsFirst,
                 Figure = hero.Figure,
+                Experience = hero.Experience,
                 Level = hero.Level,
                 HitPoints = actor.Health.Current,
                 TemporaryHitPoints = actor.Health.Temporary,
@@ -89,6 +90,8 @@ namespace Content.Saves
 
             foreach (KeyValuePair<Slot, Item> worn in hero.Equipment.Worn)
                 saved.Worn[worn.Key] = worn.Value.Id;
+
+            foreach (string lent in hero.Loaned.OrderBy(i => i, System.StringComparer.Ordinal)) saved.Loaned.Add(lent);
 
             // one line per item however many stacks it fills: stacking is the pack's business,
             // and it stacks them again on the way back in

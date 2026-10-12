@@ -57,11 +57,17 @@ namespace Content.Campaigns
         // shops: an id, what it stocks, and optionally what it pays (inventory_decisions.md)
         public const string MerchantsFolder = "merchants";
 
+        // a companion's extra lines for this campaign, on top of the game's (cc_task_i 2.2): the bark bank shape
+        public const string BarksFolder = "barks";
+
+        // the campaign's own nat-1 / nat-20 consequences (cc_task_i 4.3), in content/srd/consequences' shape
+        public const string ConsequencesFolder = "consequences";
+
         public static readonly string[] Folders =
         {
             MonstersFolder, ItemsFolder, SpellsFolder, MapsFolder, EncountersFolder, LootFolder,
             LocaleFolder, AssetsFolder, DialogueFolder, MinisFolder, ModelsFolder, AudioFolder,
-            MerchantsFolder,
+            MerchantsFolder, BarksFolder, ConsequencesFolder,
         };
 
         // read, but nothing is done with them yet. (dialogue/ is read by DialogueBook when a campaign
@@ -140,7 +146,22 @@ namespace Content.Campaigns
                 .Concat(Encounters.SelectMany(t => t.Keys()))
                 .Concat(Loot.All.SelectMany(t => t.Keys()))
                 .Concat(Merchants.Select(m => m.NameKey))
+                .Concat(Barks.Keys())
+                .Concat(Consequences.SelectMany(c => c.Keys()))
                 .Distinct();
+
+        // its own consequences, and the pool they make with the game's while it runs: added to it, or in place of it
+        // ("consequences": "add" | "replace" in pack.json)
+        public IReadOnlyList<Core.Resolution.Consequence> Consequences { get; private set; } =
+            Array.Empty<Core.Resolution.Consequence>();
+
+        public Core.Resolution.ConsequencePool PoolOn(Core.Resolution.ConsequencePool game) =>
+            Consequences.Count == 0 ? game
+            : Manifest?.Rules.Consequences == Layering.Replace ? new Core.Resolution.ConsequencePool(Consequences)
+            : new Core.Resolution.ConsequencePool((game?.All ?? Enumerable.Empty<Core.Resolution.Consequence>()).Concat(Consequences));
+
+        // the companions' extra lines this campaign adds (barks/), keyed under the campaign
+        public Dialogue.BarkBook Barks { get; private set; } = new Dialogue.BarkBook();
 
         // the campaign's shops, by id
         public IReadOnlyList<MerchantDef> Merchants { get; private set; } = Array.Empty<MerchantDef>();

@@ -31,7 +31,7 @@ namespace Core.Tables
 
         public Visibility Visibility { get; }
 
-        public bool IsHidden => Visibility == Visibility.Hidden;
+        public bool IsHidden => Visibility.IsBehind();
 
         // the table it was rolled for, or empty for an aside
         public string Table { get; }

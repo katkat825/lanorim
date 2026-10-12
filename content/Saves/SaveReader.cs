@@ -118,6 +118,7 @@ namespace Content.Saves
                 Size = entry.Text("size"),
                 ShopsFirst = entry.Flag("shops_first"),
                 Figure = entry.Number("figure", 0),
+                Experience = entry.Number("xp", 0),
                 Level = entry.Number("level", 1),
                 HitPoints = entry.Number("hp", -1),
                 TemporaryHitPoints = entry.Number("temp_hp", 0),
@@ -224,6 +225,8 @@ namespace Content.Saves
                     hero.Worn[slot] = property.Value.ValueKind == JsonValueKind.String
                         ? property.Value.GetString() : "";
                 }
+
+            foreach (string lent in entry.Strings("loaned")) hero.Loaned.Add(lent);
 
             if (entry.Has("pack"))
                 foreach (JsonElement one in entry.GetProperty("pack").EnumerateArray())

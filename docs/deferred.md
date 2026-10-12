@@ -115,3 +115,16 @@
     - **[DEFER]** **Two keys, read from the compiled story.** The check reads one shape in the .yarn text (`content/Dialogue/TwoKeys.cs`). What would catch the rest: walking the compiled Yarn program's nodes, following each check's fail branch through jumps to where the story ends, and treating an `<<if>>` on a variable set by the fail as a branch. A day or two.
     - **[DEFER]** **The keepsake told inside a fight's own crit.** A bane drawn from the consequence pool by the hero's own critical (`CombatSession.Consequence`) that drops them is held up by the keepsake (`Referee.Consequence`), but the fight's log and board don't hear it (`HeldUp` is told only from `Battle`'s damage hook). Rare; about an hour to tell it from the session too.
     - **[DEFER]** **Morale on a risen or summoned creature, and difficulty on it.** Both apply to the fight's own foes (`Battle.Set`); a creature that joins mid-fight (Finger of Death's risen zombie, an ally) isn't counted in a morale's half or scaled by the difficulty. None of the enemies' side join mid-fight in v1.
+
+- v1 bark pools trimmed (Kathleen, 2026-10-12: "there's too many bark pools for v1"; cc_task_i Part 2):
+    - **[DEFER]** No bark, and no trigger, for: **Nudge** (a cocked die nosed flat), **Down** (the hero at 0), **Overasked**
+      (a hint asked too often: "we don't want to punish people for asking for hints"), **level_up**, **fled**, **foe_down**,
+      **incoming_quest**, and **the hero hurt** (Nerve on a death save, dropping below half hit points, the keepsake
+      firing). The companion's mood and animation still react to those moments (`CompanionMind`), with no line; the
+      `Bark` enum keeps its backend names, and none of the new ones were added. Stories write such moments inline as
+      companion lines (`#speaker:companion`).
+    - Folded, not deferred: Perfect plays a Maxed line, Trouble a Snag line. `trouble_ahead` is the Danger pool.
+    - **[DEFER]** **First-time lines** (the first natural 20 on an attack, the first opportunity attack, the first long
+      rest, and so on): a `First Time` pool with one line per event and companion. The importer warns on the folder
+      until the engine reads it; the file shape is suggested in `_design_docs/RUN_LOG_2026-10-12_i.md`.
+

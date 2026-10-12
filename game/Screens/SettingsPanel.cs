@@ -58,6 +58,7 @@ namespace Game.Screens
             AddChild(Ui.Row(12, Ui.Label(GameSettings.EnemySpeedKey), speed));
 
             Difficulties(settings);
+            Chatters(settings);
 
             AddChild(Toggle(GameSettings.SkipDiceKey, settings.SkipPhysicalDice, on => settings.SkipPhysicalDice = on));
             AddChild(Toggle(GameSettings.FollowKey, settings.FollowEnemies, on => settings.FollowEnemies = on));

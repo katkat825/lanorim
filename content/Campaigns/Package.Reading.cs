@@ -56,12 +56,49 @@ namespace Content.Campaigns
 
             IReadOnlyList<MerchantDef> merchants = ReadMerchants(folder, items, problems);
 
+            var barks = Dialogue.BarkBook.Read(Path.Combine(folder, BarksFolder), manifest.Id);
+            problems.AddRange(barks.Problems);
+
+            IReadOnlyList<Core.Resolution.Consequence> consequences = ReadConsequences(folder, manifest, problems);
+
             return new Package(folder, manifest.Id, manifest, monsters, items, spells, maps,
                                encounters, loot, problems)
             {
                 Merchants = merchants,
                 Props = props,
+                Barks = barks,
+                Consequences = consequences,
             };
+        }
+
+        // A CAMPAIGN'S CONSEQUENCES (cc_task_i 4.3): added to the game's pool, so one can't take an id the game's has; a
+        // campaign that replaces the pool needs a boon and a bane of its own
+        static IReadOnlyList<Core.Resolution.Consequence> ReadConsequences(string folder, Manifest manifest,
+                                                                           List<ContentProblem> problems)
+        {
+            IReadOnlyList<Core.Resolution.Consequence> own =
+                ReadFolder(folder, ConsequencesFolder, ConsequenceReader.CampaignEntries, c => c.Id, problems);
+
+            if (own.Count == 0) return own;
+
+            if (manifest.Rules.Consequences == Layering.Add)
+            {
+                var game = new HashSet<string>(Library.Srd().Consequences.All.Select(c => c.Id), StringComparer.Ordinal);
+
+                foreach (Core.Resolution.Consequence taken in own.Where(c => game.Contains(c.Id)))
+                    problems.Add(new ContentProblem(ConsequencesFolder, taken.Id,
+                        $"'{taken.Id}' is one of the game's own consequences - give yours another id"));
+            }
+            else
+            {
+                foreach (Core.Resolution.Polarity side in Enum.GetValues<Core.Resolution.Polarity>())
+                    if (own.All(c => c.Polarity != side))
+                        problems.Add(new ContentProblem(ConsequencesFolder, "",
+                            $"this campaign replaces the game's consequences and has no {Core.Words.EnumWords.Name(side)} - a natural " +
+                            "1 or 20 there would buy nothing"));
+            }
+
+            return own;
         }
 
         // a campaign's merchants (MerchantReader, the reader the SRD's starting shop has too); an item a stock names
@@ -78,6 +115,19 @@ namespace Content.Campaigns
                 foreach (string item in merchant.Stock.Where(i => !own.Contains(i) && !srd.Has(i)))
                     problems.Add(new ContentProblem(MerchantsFolder, $"merchants.{merchant.Id}",
                         $"'{item}' is not an item in this campaign or the SRD"));
+
+            // AN ARMORY LENDS WHAT IS WORN (cc_task_i 3.3): a potion would be spent, not lent back, so it is refused; a
+            // thing nobody wears could never be taken, so it is a caution
+            foreach (MerchantDef armory in all.Where(m => m.Armory))
+                foreach (Item item in armory.Stock.Select(i => items.FirstOrDefault(x => x.Id == i) ?? srd.Find(i)).Where(i => i != null))
+                {
+                    if (item.Kind == ItemKind.Consumable)
+                        problems.Add(new ContentProblem(MerchantsFolder, $"merchants.{armory.Id}",
+                            $"'{item.Id}' is used up, and an armory lends gear - no consumables in an armory"));
+                    else if (!item.IsEquippable)
+                        problems.Add(ContentProblem.Caution(MerchantsFolder, $"merchants.{armory.Id}",
+                            $"'{item.Id}' isn't worn or held, so nobody can take it from an armory"));
+                }
 
             return all;
         }

@@ -115,6 +115,581 @@ damage.psychic.name,Psychic
 damage.radiant.name,Radiant
 damage.slashing.name,Slashing
 damage.thunder.name,Thunder
+dialogue.bonded_wolf.bark.camp.001,That was a lovely night.
+dialogue.bonded_wolf.bark.camp.002,Relaxing night. Where's breakfast?
+dialogue.bonded_wolf.bark.camp.003,Today will be a good day.
+dialogue.bonded_wolf.bark.camp.004,The morning air feels wonderful.
+dialogue.bonded_wolf.bark.camp.005,I love the smell of fresh dew in the morning.
+dialogue.bonded_wolf.bark.camp.006,I stayed awake for THAT?
+dialogue.bonded_wolf.bark.camp.007,I think the wilderness is broken.
+dialogue.bonded_wolf.bark.camp.008,Not a single challenger.
+dialogue.bonded_wolf.bark.camp.009,Ha! The wilderness fears us!
+dialogue.bonded_wolf.bark.camp.010,A quiet night makes for a strong morning.
+dialogue.bonded_wolf.bark.camp.011,I smell no enemies.
+dialogue.bonded_wolf.bark.camp.012,Do we HAVE to get up?
+dialogue.bonded_wolf.bark.camp.013,Nobody rolled initiative. Beautiful.
+dialogue.bonded_wolf.bark.camp.014,But my blanket is still warm.
+dialogue.bonded_wolf.bark.camp.015,I think I drooled on my bedding.
+dialogue.bonded_wolf.bark.danger.001,That's an awful lot of silence.
+dialogue.bonded_wolf.bark.danger.002,Something smells rotten.
+dialogue.bonded_wolf.bark.danger.003,Something's disturbed the ground.
+dialogue.bonded_wolf.bark.danger.004,The air feels heavy.
+dialogue.bonded_wolf.bark.danger.005,I feel like we're being watched.
+dialogue.bonded_wolf.bark.danger.006,Watch your footing.
+dialogue.bonded_wolf.bark.danger.007,The GM's smiling. I'm not sure I like that.
+dialogue.bonded_wolf.bark.danger.008,Keep your eyes open.
+dialogue.bonded_wolf.bark.danger.009,I smell a fight!
+dialogue.bonded_wolf.bark.danger.010,Something's ahead. Should be fun!
+dialogue.bonded_wolf.bark.maxed.001,Did you SEE that?!
+dialogue.bonded_wolf.bark.maxed.002,Again! Do it again!
+dialogue.bonded_wolf.bark.maxed.003,YES! More of that!
+dialogue.bonded_wolf.bark.maxed.004,I'm impressed!
+dialogue.bonded_wolf.bark.maxed.005,That's the kind of talent that keeps you alive.
+dialogue.bonded_wolf.bark.maxed.006,This is living!
+dialogue.bonded_wolf.bark.maxed.007,Now we're getting somewhere!
+dialogue.bonded_wolf.bark.maxed.008,And THAT is how to handle shiny math rocks!
+dialogue.bonded_wolf.bark.maxed.009,My ancestors felt that!
+dialogue.bonded_wolf.bark.maxed.010,"Well, someone's getting extra dessert!"
+dialogue.bonded_wolf.bark.maxed.011,"I don't know what just happened, but I LOVE IT!"
+dialogue.bonded_wolf.bark.maxed.012,You have my respect.
+dialogue.bonded_wolf.bark.maxed.013,GM smells afraid now.
+dialogue.bonded_wolf.bark.maxed.014,Your enemies should fear you.
+dialogue.bonded_wolf.bark.maxed.015,That was AMAZING!
+dialogue.bonded_wolf.bark.nearby.001,WAIT! I know this place!
+dialogue.bonded_wolf.bark.nearby.002,I smell opportunity.
+dialogue.bonded_wolf.bark.nearby.003,Adventure is calling nearby! Again!
+dialogue.bonded_wolf.bark.nearby.004,Didn't someone ask for help near here?
+dialogue.bonded_wolf.bark.nearby.005,That smells like fresh bread. Or a quest.
+dialogue.bonded_wolf.bark.nearby.006,I remember this smell. I think we have a nearby quest.
+dialogue.bonded_wolf.bark.nearby.007,Something smells familiar.
+dialogue.bonded_wolf.bark.nearby.008,The wind's changed. Maybe that other quest.
+dialogue.bonded_wolf.bark.nearby.009,The math rocks are pointing that way.
+dialogue.bonded_wolf.bark.nearby.010,I smell a side quest!
+dialogue.bonded_wolf.bark.secret.001,I don't like the sound of that.
+dialogue.bonded_wolf.bark.secret.002,Did anyone else just get a spine shiver?
+dialogue.bonded_wolf.bark.secret.003,Wait. Did you hear that?
+dialogue.bonded_wolf.bark.secret.004,There's something we're not seeing.
+dialogue.bonded_wolf.bark.secret.005,Wait a minute...
+dialogue.bonded_wolf.bark.secret.006,"GM, what's that face? This might get interesting."
+dialogue.bonded_wolf.bark.secret.007,Huh. That's different.
+dialogue.bonded_wolf.bark.secret.008,We should be careful here.
+dialogue.bonded_wolf.bark.secret.009,I was hoping for a little excitement.
+dialogue.bonded_wolf.bark.secret.010,Is that a trap?
+dialogue.bonded_wolf.bark.secret.011,We should just keep going.
+dialogue.bonded_wolf.bark.secret.012,"Whatever that was, I'm sure you can handle it."
+dialogue.bonded_wolf.bark.secret.013,"Ooooh, mysterious!"
+dialogue.bonded_wolf.bark.secret.014,What if it's a secret door?
+dialogue.bonded_wolf.bark.secret.015,What if it's a secret monster?
+dialogue.bonded_wolf.bark.secret.016,We should investigate that!
+dialogue.bonded_wolf.bark.secret.017,I love surprises!
+dialogue.bonded_wolf.bark.secret.018,That sounds exciting!
+dialogue.bonded_wolf.bark.secret.019,I'm hungry.
+dialogue.bonded_wolf.bark.secret.020,Is it nap time?
+dialogue.bonded_wolf.bark.snag.001,That die betrayed you. I'll eat it later.
+dialogue.bonded_wolf.bark.snag.002,"Well, that was rude."
+dialogue.bonded_wolf.bark.snag.003,I almost felt that.
+dialogue.bonded_wolf.bark.snag.004,"Oh, that's not good."
+dialogue.bonded_wolf.bark.snag.005,I guess we're not getting free dinner.
+dialogue.bonded_wolf.bark.snag.006,Shake it off.
+dialogue.bonded_wolf.bark.snag.007,I've had worse days.
+dialogue.bonded_wolf.bark.snag.008,Stop thinking and DO IT!
+dialogue.bonded_wolf.bark.snag.009,Well butter my butt and call us unlucky.
+dialogue.bonded_wolf.bark.snag.010,"Can't win them all, I guess."
+dialogue.bonded_wolf.bark.snag.011,Don't dwell on it.
+dialogue.bonded_wolf.bark.snag.012,"GM, why the smile?"
+dialogue.bonded_wolf.bark.snag.013,"GM, that wasn't very nice."
+dialogue.bonded_wolf.bark.snag.014,Ouch.
+dialogue.bonded_wolf.bark.snag.015,I'm going to take a nap and forget this happened.
+dialogue.bonded_wolf.bark.victory.001,Now THAT was a fight!
+dialogue.bonded_wolf.bark.victory.002,More! Send more!
+dialogue.bonded_wolf.bark.victory.003,That could've gone better... for them!
+dialogue.bonded_wolf.bark.victory.004,That was worth getting out of bed for!
+dialogue.bonded_wolf.bark.victory.005,Hear that silence? That's the sound of victory!
+dialogue.bonded_wolf.bark.victory.006,"Can we do that again? Right now, I mean."
+dialogue.bonded_wolf.bark.victory.007,Who's next? We're ready!
+dialogue.bonded_wolf.bark.victory.008,I knew that would work!
+dialogue.bonded_wolf.bark.victory.009,They won't bother us again!
+dialogue.bonded_wolf.bark.victory.010,All quiet now. The best kind of quiet.
+dialogue.bonded_wolf.bark.victory.011,I smell victory! Or blood... same thing I guess.
+dialogue.bonded_wolf.bark.victory.012,I've made sure the perimeter is now secure.
+dialogue.bonded_wolf.bark.victory.013,You did great out there!
+dialogue.bonded_wolf.bark.victory.014,Time for snacks?
+dialogue.bonded_wolf.bark.victory.015,Good job!
+dialogue.bonded_wolf.bark.victory.016,That was awesome!
+dialogue.bonded_wolf.bark.victory.017,YES!
+dialogue.bonded_wolf.bark.victory.018,Now that's what I'm talking about!
+dialogue.bonded_wolf.bark.victory.019,That last strike was brilliant.
+dialogue.bonded_wolf.bark.victory.020,My blood is still singing.
+dialogue.bonded_wolf.bark.victory.021,All's well that ends well.
+dialogue.bonded_wolf.bark.victory.022,You earned that win!
+dialogue.bonded_wolf.bark.victory.023,I could watch you do this all day!
+dialogue.bonded_wolf.bark.victory.024,Another victory in the bag!
+dialogue.bonded_wolf.bark.victory.025,Another glorious battle!
+dialogue.bonded_wolf.bark.victory.026,And they're gone! Keep it up!
+dialogue.bonded_wolf.bark.victory.027,VICTORY!
+dialogue.bonded_wolf.bark.victory.028,Let's do that again!
+dialogue.bonded_wolf.bark.victory.029,Did you see* that?!
+dialogue.bonded_wolf.bark.victory.030,I call dibs on any food!
+dialogue.borrowed_shape_spirit.bark.camp.001,Was the encounter table empty?
+dialogue.borrowed_shape_spirit.bark.camp.002,I had a dream about a goat wearing a ballgown.
+dialogue.borrowed_shape_spirit.bark.camp.003,Morning already?
+dialogue.borrowed_shape_spirit.bark.camp.004,Your species makes interesting sounds when you sleep.
+dialogue.borrowed_shape_spirit.bark.camp.005,The absence of danger is a welcome variable.
+dialogue.borrowed_shape_spirit.bark.camp.006,I believed we selected an acceptable campsite.
+dialogue.borrowed_shape_spirit.bark.camp.007,A most efficient use of eight hours.
+dialogue.borrowed_shape_spirit.bark.camp.008,Interesting. No disturbances at all.
+dialogue.borrowed_shape_spirit.bark.camp.009,Do you think ducks know they're waterproof?
+dialogue.borrowed_shape_spirit.bark.camp.010,A statistically favorable outcome.
+dialogue.borrowed_shape_spirit.bark.camp.011,I'll make note of this location.
+dialogue.borrowed_shape_spirit.bark.camp.012,Our preparations appear to have been sufficient.
+dialogue.borrowed_shape_spirit.bark.camp.013,Is it normal for your species to sleep in THAT position?
+dialogue.borrowed_shape_spirit.bark.camp.014,An encouraging result.
+dialogue.borrowed_shape_spirit.bark.camp.015,I shall have to repeat this experiment.
+dialogue.borrowed_shape_spirit.bark.danger.001,There's something unusual about this area.
+dialogue.borrowed_shape_spirit.bark.danger.002,I suspect we're approaching something significant.
+dialogue.borrowed_shape_spirit.bark.danger.003,The lack of animal activity is concerning.
+dialogue.borrowed_shape_spirit.bark.danger.004,Is this how your species usually approaches danger?
+dialogue.borrowed_shape_spirit.bark.danger.005,Interesting. I'm ready to take notes.
+dialogue.borrowed_shape_spirit.bark.danger.006,Is that goat planning something?
+dialogue.borrowed_shape_spirit.bark.danger.007,Why does your species put candles on cakes?
+dialogue.borrowed_shape_spirit.bark.danger.008,I have been practicing smiling. So far it has been unsuccessful.
+dialogue.borrowed_shape_spirit.bark.danger.009,Something's wrong... Oh! I'm just standing on a rock.
+dialogue.borrowed_shape_spirit.bark.danger.010,Teeth are just bones sticking out of one's face?
+dialogue.borrowed_shape_spirit.bark.maxed.001,That was mathematically beautiful.
+dialogue.borrowed_shape_spirit.bark.maxed.002,The probability of that was rather low.
+dialogue.borrowed_shape_spirit.bark.maxed.003,A most impressive demonstration.
+dialogue.borrowed_shape_spirit.bark.maxed.004,A most remarkable example of your species.
+dialogue.borrowed_shape_spirit.bark.maxed.005,May I study this technique?
+dialogue.borrowed_shape_spirit.bark.maxed.006,I should make note of this outcome.
+dialogue.borrowed_shape_spirit.bark.maxed.007,You continue to surprise me.
+dialogue.borrowed_shape_spirit.bark.maxed.008,So physics doesn't always work on your species?
+dialogue.borrowed_shape_spirit.bark.maxed.009,Precise. Efficient. Effective.
+dialogue.borrowed_shape_spirit.bark.maxed.010,Remarkable.
+dialogue.borrowed_shape_spirit.bark.maxed.011,This exceeded my expectations.
+dialogue.borrowed_shape_spirit.bark.maxed.012,Statistically impressive.
+dialogue.borrowed_shape_spirit.bark.maxed.013,Was that supposed to happen?
+dialogue.borrowed_shape_spirit.bark.maxed.014,Is this normal for your species?
+dialogue.borrowed_shape_spirit.bark.maxed.015,I believe you may have broken probability.
+dialogue.borrowed_shape_spirit.bark.nearby.001,Didn't someone mention this place?
+dialogue.borrowed_shape_spirit.bark.nearby.002,I believe we were expected here.
+dialogue.borrowed_shape_spirit.bark.nearby.003,This area corresponds to something we discussed earlier.
+dialogue.borrowed_shape_spirit.bark.nearby.004,Wasn't there a goat to save nearby?
+dialogue.borrowed_shape_spirit.bark.nearby.005,An interesting coincidence of location.
+dialogue.borrowed_shape_spirit.bark.nearby.006,We should consider making use of our proximity.
+dialogue.borrowed_shape_spirit.bark.nearby.007,Perhaps we should consult our notes.
+dialogue.borrowed_shape_spirit.bark.nearby.008,I believe we're approaching a location of interest.
+dialogue.borrowed_shape_spirit.bark.nearby.009,I recall a reference to this region.
+dialogue.borrowed_shape_spirit.bark.nearby.010,This could be relevant to a different investigation.
+dialogue.borrowed_shape_spirit.bark.secret.001,I wonder what's for dinner?
+dialogue.borrowed_shape_spirit.bark.secret.002,I think there's a stone beneath me.
+dialogue.borrowed_shape_spirit.bark.secret.003,Do you get an itch you can't reach?
+dialogue.borrowed_shape_spirit.bark.secret.004,Did we leave anything back at the last inn?
+dialogue.borrowed_shape_spirit.bark.secret.005,Something seems off... I'm sure it's fine.
+dialogue.borrowed_shape_spirit.bark.secret.006,Are we there yet?
+dialogue.borrowed_shape_spirit.bark.secret.007,I have a song stuck in my head. Want to hear it?
+dialogue.borrowed_shape_spirit.bark.secret.008,"Your species has instincts, correct? Use those."
+dialogue.borrowed_shape_spirit.bark.secret.009,...
+dialogue.borrowed_shape_spirit.bark.secret.010,Did you just say something?
+dialogue.borrowed_shape_spirit.bark.secret.011,What was that noise?
+dialogue.borrowed_shape_spirit.bark.secret.012,I should make note of this.
+dialogue.borrowed_shape_spirit.bark.secret.013,Do you think goats can swim?
+dialogue.borrowed_shape_spirit.bark.secret.014,"Ah, there's something behind the screen! Oh, it's just the GM."
+dialogue.borrowed_shape_spirit.bark.secret.015,There are several possible explanations for that.
+dialogue.borrowed_shape_spirit.bark.secret.016,Do you think that might be significant?
+dialogue.borrowed_shape_spirit.bark.secret.017,There may be a pattern here.
+dialogue.borrowed_shape_spirit.bark.secret.018,That sounds like rain. I like rain.
+dialogue.borrowed_shape_spirit.bark.secret.019,Have we done this before?
+dialogue.borrowed_shape_spirit.bark.secret.020,That cloud looks like a goat.
+dialogue.borrowed_shape_spirit.bark.snag.001,An interesting choice.
+dialogue.borrowed_shape_spirit.bark.snag.002,"Statistically speaking, this was bound to happen."
+dialogue.borrowed_shape_spirit.bark.snag.003,Is your species always so unlucky?
+dialogue.borrowed_shape_spirit.bark.snag.004,Interesting. Very interesting.
+dialogue.borrowed_shape_spirit.bark.snag.005,I may need to revise my assessment.
+dialogue.borrowed_shape_spirit.bark.snag.006,My calculations didn't take this into account.
+dialogue.borrowed_shape_spirit.bark.snag.007,That warrants further investigation.
+dialogue.borrowed_shape_spirit.bark.snag.008,"Well, the probability of perfection was always zero."
+dialogue.borrowed_shape_spirit.bark.snag.009,Fascinating. Do your die often do that?
+dialogue.borrowed_shape_spirit.bark.snag.010,That was... unexpected.
+dialogue.borrowed_shape_spirit.bark.snag.011,I believe we've identified a weakness.
+dialogue.borrowed_shape_spirit.bark.snag.012,An unfortunate outcome.
+dialogue.borrowed_shape_spirit.bark.snag.013,I hadn't considered that possibility.
+dialogue.borrowed_shape_spirit.bark.snag.014,Perhaps a different approach?
+dialogue.borrowed_shape_spirit.bark.snag.015,One?! You rolled a one?
+dialogue.borrowed_shape_spirit.bark.victory.001,Still have all your limbs? Good.
+dialogue.borrowed_shape_spirit.bark.victory.002,Well that was... squishy.
+dialogue.borrowed_shape_spirit.bark.victory.003,An interesting tactical choice.
+dialogue.borrowed_shape_spirit.bark.victory.004,I'll need to make notes.
+dialogue.borrowed_shape_spirit.bark.victory.005,So that's how your species does this.
+dialogue.borrowed_shape_spirit.bark.victory.006,That was efficient.
+dialogue.borrowed_shape_spirit.bark.victory.007,I must remember that technique.
+dialogue.borrowed_shape_spirit.bark.victory.008,You appear to be improving.
+dialogue.borrowed_shape_spirit.bark.victory.009,I have no idea what just happened.
+dialogue.borrowed_shape_spirit.bark.victory.010,Was this what you intended?
+dialogue.borrowed_shape_spirit.bark.victory.011,Note to self: never anger this species.
+dialogue.borrowed_shape_spirit.bark.victory.012,You do seem to have a talent for this.
+dialogue.borrowed_shape_spirit.bark.victory.013,What's your strategy?
+dialogue.borrowed_shape_spirit.bark.victory.014,This is where I'm supposed to applaud?
+dialogue.borrowed_shape_spirit.bark.victory.015,I almost feel bad for them. Almost.
+dialogue.borrowed_shape_spirit.bark.victory.016,That was unexpected.
+dialogue.borrowed_shape_spirit.bark.victory.017,"Oh, we won already?"
+dialogue.borrowed_shape_spirit.bark.victory.018,I guess that settles the matter.
+dialogue.borrowed_shape_spirit.bark.victory.019,I'm sure they had good personalities.
+dialogue.borrowed_shape_spirit.bark.victory.020,"Is this what is known as ""diplomacy""?"
+dialogue.borrowed_shape_spirit.bark.victory.021,Is this a normal hobby for you?
+dialogue.borrowed_shape_spirit.bark.victory.022,We're still here? We persist!
+dialogue.borrowed_shape_spirit.bark.victory.023,The wonder of opposable thumbs.
+dialogue.borrowed_shape_spirit.bark.victory.024,This sets a good precedent.
+dialogue.borrowed_shape_spirit.bark.victory.025,Well... done? Did I say that right?
+dialogue.borrowed_shape_spirit.bark.victory.026,I lack sufficient words for this experience.
+dialogue.borrowed_shape_spirit.bark.victory.027,That confirms my hypothesis.
+dialogue.borrowed_shape_spirit.bark.victory.028,You are an interesting specimen of your species.
+dialogue.borrowed_shape_spirit.bark.victory.029,Hmm... I think I understand you better now.
+dialogue.borrowed_shape_spirit.bark.victory.030,Well executed!
+dialogue.bound_imp.bark.camp.001,Not a single attempted murder. How refreshing.
+dialogue.bound_imp.bark.camp.002,I suppose we should be grateful.
+dialogue.bound_imp.bark.camp.003,It's because I kept watch. You're welcome.
+dialogue.bound_imp.bark.camp.004,Well. Nobody died. Promising start.
+dialogue.bound_imp.bark.camp.005,Imagine that. A night without a catastrophe.
+dialogue.bound_imp.bark.camp.006,How terribly ordinary.
+dialogue.bound_imp.bark.camp.007,I was expecting at least one disaster.
+dialogue.bound_imp.bark.camp.008,That was almost suspiciously pleasant.
+dialogue.bound_imp.bark.camp.009,I see the local monsters have taken the night off.
+dialogue.bound_imp.bark.camp.010,"Well, there's a first time for everything."
+dialogue.bound_imp.bark.camp.011,I don't know what to do with all this tranquility.
+dialogue.bound_imp.bark.camp.012,Nobody tried to eat us. How considerate.
+dialogue.bound_imp.bark.camp.013,That's how a proper camp should go.
+dialogue.bound_imp.bark.camp.014,"Thanks, GM, I needed my beauty sleep."
+dialogue.bound_imp.bark.camp.015,Did the GM forget about us?
+dialogue.bound_imp.bark.danger.001,I think the GM's about to do something unpleasant.
+dialogue.bound_imp.bark.danger.002,The math rocks are getting nervous.
+dialogue.bound_imp.bark.danger.003,"Well, this looks perfectly safe."
+dialogue.bound_imp.bark.danger.004,How reassuringly sinister.
+dialogue.bound_imp.bark.danger.005,"Ah, yes. The unmistakable smell of poor decisions."
+dialogue.bound_imp.bark.danger.006,"Well, at least the scenery is appropriately threatening."
+dialogue.bound_imp.bark.danger.007,"Whatever comes, I'll supervise. From over there."
+dialogue.bound_imp.bark.danger.008,I'm beginning to suspect this isn't the scenic route.
+dialogue.bound_imp.bark.danger.009,You need to survive whatever may come. You owe me a drink.
+dialogue.bound_imp.bark.danger.010,This is an unusually ominous atmosphere.
+dialogue.bound_imp.bark.maxed.001,"I don't care what anyone says, that was magic."
+dialogue.bound_imp.bark.maxed.002,Send some of that luck my way.
+dialogue.bound_imp.bark.maxed.003,The universe owes you an apology!
+dialogue.bound_imp.bark.maxed.004,"Wait, wait, wait. HOW?!"
+dialogue.bound_imp.bark.maxed.005,Put that die somewhere safe.
+dialogue.bound_imp.bark.maxed.006,I think you just made the GM rewrite something.
+dialogue.bound_imp.bark.maxed.007,I could've done better.
+dialogue.bound_imp.bark.maxed.008,"Oh, so you CAN do that."
+dialogue.bound_imp.bark.maxed.009,Don't expect applause.
+dialogue.bound_imp.bark.maxed.010,Show-off.
+dialogue.bound_imp.bark.maxed.011,Try not to let it go to your head.
+dialogue.bound_imp.bark.maxed.012,Are you sure you're entirely moral?
+dialogue.bound_imp.bark.maxed.013,That's going to ruins someone's careful planning.
+dialogue.bound_imp.bark.maxed.014,Your welcome. What? I helped.
+dialogue.bound_imp.bark.maxed.015,I'm glad to see you using my technique.
+dialogue.bound_imp.bark.nearby.001,Something about this area sounds familiar.
+dialogue.bound_imp.bark.nearby.002,"I guess we're just going to walk past that, then?"
+dialogue.bound_imp.bark.nearby.003,How many errands can one person accumulate?
+dialogue.bound_imp.bark.nearby.004,I suppose one more detour couldn't hurt.
+dialogue.bound_imp.bark.nearby.005,Of course something else is happening nearby.
+dialogue.bound_imp.bark.nearby.006,Do we ever actually finish anything?
+dialogue.bound_imp.bark.nearby.007,"Well, this seems like an opportunity to get sidetracked."
+dialogue.bound_imp.bark.nearby.008,I was beginning to worry we'd run out of things to do.
+dialogue.bound_imp.bark.nearby.009,"Oh, good. More unfinished business."
+dialogue.bound_imp.bark.nearby.010,Our schedule is looking wonderfully unrealistic.
+dialogue.bound_imp.bark.secret.001,"No unnecessary risks, please."
+dialogue.bound_imp.bark.secret.002,Nice! Something new.
+dialogue.bound_imp.bark.secret.003,I knew things were going too well.
+dialogue.bound_imp.bark.secret.004,You should proceed with caution. I'll supervise.
+dialogue.bound_imp.bark.secret.005,You'll protect me right? It's in the contract.
+dialogue.bound_imp.bark.secret.006,"Oh, great. More mysteries..."
+dialogue.bound_imp.bark.secret.007,I think I just heard something.
+dialogue.bound_imp.bark.secret.008,I'm not sure how I feel about that.
+dialogue.bound_imp.bark.secret.009,Is it too late to turn around?
+dialogue.bound_imp.bark.secret.010,You might want to start worrying.
+dialogue.bound_imp.bark.secret.011,This is why I prefer taverns.
+dialogue.bound_imp.bark.secret.012,I feel like we're being toyed with.
+dialogue.bound_imp.bark.secret.013,I'm sure it's nothing. Probably nothing. Hopefully nothing.
+dialogue.bound_imp.bark.secret.014,Just another uneventful day.
+dialogue.bound_imp.bark.secret.015,I'm that was harmless.
+dialogue.bound_imp.bark.secret.016,"Maybe if we ignore it, it'll just go away."
+dialogue.bound_imp.bark.secret.017,Is something about to happen?
+dialogue.bound_imp.bark.secret.018,"Really, GM?"
+dialogue.bound_imp.bark.secret.019,Don't let your guard down.
+dialogue.bound_imp.bark.secret.020,"Not again! GM, we talked about this?"
+dialogue.bound_imp.bark.snag.001,Well. That was certainly an attempt.
+dialogue.bound_imp.bark.snag.002,"Oh, that was painful to watch."
+dialogue.bound_imp.bark.snag.003,Of course. Why wouldn't that happen?
+dialogue.bound_imp.bark.snag.004,I'm going to pretend I didn't just see that. For a fee.
+dialogue.bound_imp.bark.snag.005,"Oh, that's just lovely."
+dialogue.bound_imp.bark.snag.006,I assume that was a practice attempt?
+dialogue.bound_imp.bark.snag.007,How delightfully inconvenient.
+dialogue.bound_imp.bark.snag.008,I'd like to lodge a complaint with fate.
+dialogue.bound_imp.bark.snag.009,Oof.
+dialogue.bound_imp.bark.snag.010,That die needs a dunce cap.
+dialogue.bound_imp.bark.snag.011,"The math rocks giveth, the math rocks taketh away."
+dialogue.bound_imp.bark.snag.012,What was that?
+dialogue.bound_imp.bark.snag.013,Put that die in jail.
+dialogue.bound_imp.bark.snag.014,And things were going so well.
+dialogue.bound_imp.bark.snag.015,Such is the nature of failure.
+dialogue.bound_imp.bark.victory.001,Still alive? Good enough.
+dialogue.bound_imp.bark.victory.002,"Well, that's over with."
+dialogue.bound_imp.bark.victory.003,"Another successful social encounter, I see."
+dialogue.bound_imp.bark.victory.004,I suppose you'll want a long rest now.
+dialogue.bound_imp.bark.victory.005,"I think I forgot to breathe. Oh, that's right. I don't need to breathe."
+dialogue.bound_imp.bark.victory.006,Wake me up when you're done bleeding.
+dialogue.bound_imp.bark.victory.007,That one's going in my memoirs.
+dialogue.bound_imp.bark.victory.008,I owed Bork there some money. Guess I don't have to pay that back anymore.
+dialogue.bound_imp.bark.victory.009,I expected that to take longer.
+dialogue.bound_imp.bark.victory.010,"That deserves a trophy. For me, obviously. Impeccable moral support."
+dialogue.bound_imp.bark.victory.011,"Couldn't you have left that one? He always let me use my ""special"" dice set."
+dialogue.bound_imp.bark.victory.012,I think you owe me a drink after that one.
+dialogue.bound_imp.bark.victory.013,"We should celebrate! With your money, of course."
+dialogue.bound_imp.bark.victory.014,Think that'll earn us a free dinner?
+dialogue.bound_imp.bark.victory.015,I'm still shaking. The look on your face was hilarious!
+dialogue.bound_imp.bark.victory.016,Still have spells left? Cast mage hand to get this itch for me.
+dialogue.bound_imp.bark.victory.017,I can't believe that worked.
+dialogue.bound_imp.bark.victory.018,"Hey, GM, doesn't this player remind you of that one time..."
+dialogue.bound_imp.bark.victory.019,We're alive? We're still alive!
+dialogue.bound_imp.bark.victory.020,That went better than I thought it would.
+dialogue.bound_imp.bark.victory.021,You certainly have a talent for trouble.
+dialogue.bound_imp.bark.victory.022,I'm glad we're on the same side.
+dialogue.bound_imp.bark.victory.023,I knew you could do it. Ignore the bet I placed.
+dialogue.bound_imp.bark.victory.024,We're still standing! Your welcome.
+dialogue.bound_imp.bark.victory.025,"Yeah! Take that, enemies!"
+dialogue.bound_imp.bark.victory.026,"I've seen worse. I've seen better, too, but I've seen worse."
+dialogue.bound_imp.bark.victory.027,"Well, that's one way to win an argument."
+dialogue.bound_imp.bark.victory.028,And I was hoping for a quiet afternoon.
+dialogue.bound_imp.bark.victory.029,So I see diplomacy is out.
+dialogue.bound_imp.bark.victory.030,I can't believe that actually worked!
+dialogue.gossiping_raven.bark.camp.001,I was able to pop over to the local tavern for a good gossip.
+dialogue.gossiping_raven.bark.camp.002,Who invented mornings? I'd like a word.
+dialogue.gossiping_raven.bark.camp.003,The GM let us sleep? Seems suspicious.
+dialogue.gossiping_raven.bark.camp.004,I heard the monsters are all on strike.
+dialogue.gossiping_raven.bark.camp.005,The sparrows are certainly cheerful this morning.
+dialogue.gossiping_raven.bark.camp.006,I could get used to waking up like this.
+dialogue.gossiping_raven.bark.camp.007,"I did a little recon last night... Ok, I went looking for loot. Nothing."
+dialogue.gossiping_raven.bark.camp.008,Last night this one owl went home with no food. His wife was NOT happy.
+dialogue.gossiping_raven.bark.camp.009,I was hoping for a fight and some loot.
+dialogue.gossiping_raven.bark.camp.010,Five more minutes.
+dialogue.gossiping_raven.bark.camp.011,"I don't want to school today, mom."
+dialogue.gossiping_raven.bark.camp.012,Eight hours of glorious nothing!
+dialogue.gossiping_raven.bark.camp.013,"GM, I think you're getting lazy on us."
+dialogue.gossiping_raven.bark.camp.014,Wake me again when something interesting happens.
+dialogue.gossiping_raven.bark.camp.015,What am I supposed to tell everyone? Peaceful isn't a great story.
+dialogue.gossiping_raven.bark.danger.001,Maybe this will result in loot!
+dialogue.gossiping_raven.bark.danger.002,This is either going to be amazing or horrible.
+dialogue.gossiping_raven.bark.danger.003,Didn't the innkeeper warn us about this road?
+dialogue.gossiping_raven.bark.danger.004,I heard this area is haunted.
+dialogue.gossiping_raven.bark.danger.005,Oooh! Something's about to happen and I'll have stories to share!
+dialogue.gossiping_raven.bark.danger.006,Apparently the miller won't come this way.
+dialogue.gossiping_raven.bark.danger.007,"Hey GM, how long did this trap take you to design?"
+dialogue.gossiping_raven.bark.danger.008,"This has ""roll for initiative"" written all over it."
+dialogue.gossiping_raven.bark.danger.009,The GM's being awfully quiet.
+dialogue.gossiping_raven.bark.danger.010,That shadow moved! I saw it!
+dialogue.gossiping_raven.bark.maxed.001,I'm telling EVERYONE about this!
+dialogue.gossiping_raven.bark.maxed.002,The math rocks have spoken!
+dialogue.gossiping_raven.bark.maxed.003,The GM isn't going to like that.
+dialogue.gossiping_raven.bark.maxed.004,Someone tell my mother I'm witnessing greatness.
+dialogue.gossiping_raven.bark.maxed.005,And I got to SEE that!
+dialogue.gossiping_raven.bark.maxed.006,"It was a loaded die, wasn't it?"
+dialogue.gossiping_raven.bark.maxed.007,"Don't give me that look, GM. I didn't do it."
+dialogue.gossiping_raven.bark.maxed.008,That's it! I'm starting a religion.
+dialogue.gossiping_raven.bark.maxed.009,That was illegal. I'm sure of it. Well done!
+dialogue.gossiping_raven.bark.maxed.010,Wait till the guys hear about this one!
+dialogue.gossiping_raven.bark.maxed.011,Can we put that in a bottle and sell it?
+dialogue.gossiping_raven.bark.maxed.012,This will make a great story!
+dialogue.gossiping_raven.bark.maxed.013,That's going to leave an impression.
+dialogue.gossiping_raven.bark.maxed.014,I wish someone else had been here to see that with me!
+dialogue.gossiping_raven.bark.maxed.015,"Oh, that was SATISFYING!"
+dialogue.gossiping_raven.bark.nearby.001,I wonder if there's treasure nearby.
+dialogue.gossiping_raven.bark.nearby.002,Didn't someone promise us a reward around here?
+dialogue.gossiping_raven.bark.nearby.003,I bet this is where that thing happened.
+dialogue.gossiping_raven.bark.nearby.004,"Oh, this is where that one thing happened."
+dialogue.gossiping_raven.bark.nearby.005,I heard the blacksmith's convinced his anvil is haunted.
+dialogue.gossiping_raven.bark.nearby.006,We're standing next to a side quest. We could use the loot.
+dialogue.gossiping_raven.bark.nearby.007,Isn't this where that guy lost his pants? Or that other quest?
+dialogue.gossiping_raven.bark.nearby.008,I don't trust that windmill. Or whatever we're supposed to do here.
+dialogue.gossiping_raven.bark.nearby.009,Ooooh! Didn't we hear something about this place?
+dialogue.gossiping_raven.bark.nearby.010,I think we're standing next to a side quest.
+dialogue.gossiping_raven.bark.secret.001,That sounds like loot.
+dialogue.gossiping_raven.bark.secret.002,"Whatever that means, I got a guy who can help."
+dialogue.gossiping_raven.bark.secret.003,That reminds me of this one time...
+dialogue.gossiping_raven.bark.secret.004,Sounds like something interesting might be about to happen.
+dialogue.gossiping_raven.bark.secret.005,Do I sense adventure?
+dialogue.gossiping_raven.bark.secret.006,Is that something shiny?
+dialogue.gossiping_raven.bark.secret.007,I'm not worried.
+dialogue.gossiping_raven.bark.secret.008,"Whatever happens, I'll make you sound good when I tell it later."
+dialogue.gossiping_raven.bark.secret.009,Adventure calls!
+dialogue.gossiping_raven.bark.secret.010,Oh good! Things were starting to get boring.
+dialogue.gossiping_raven.bark.secret.011,That should be interesting.
+dialogue.gossiping_raven.bark.secret.012,What are your guesses for what that means?
+dialogue.gossiping_raven.bark.secret.013,Let's go poke it!
+dialogue.gossiping_raven.bark.secret.014,"Ooooh, a development perhaps?"
+dialogue.gossiping_raven.bark.secret.015,You ready to stab something?
+dialogue.gossiping_raven.bark.secret.016,What if it's secret loot?
+dialogue.gossiping_raven.bark.secret.017,We should investigate!
+dialogue.gossiping_raven.bark.secret.018,Last time GM did this it turned out interesting.
+dialogue.gossiping_raven.bark.secret.019,GM has that look again. Did I tell you about...
+dialogue.gossiping_raven.bark.secret.020,I feel like we're being judged.
+dialogue.gossiping_raven.bark.snag.001,I won't tell anyone about this. Probably...
+dialogue.gossiping_raven.bark.snag.002,"Ooh, the guys are going to love this."
+dialogue.gossiping_raven.bark.snag.003,I see we're improvising now.
+dialogue.gossiping_raven.bark.snag.004,"Well, there's a surprise."
+dialogue.gossiping_raven.bark.snag.005,Bad shiny math rocks!
+dialogue.gossiping_raven.bark.snag.006,I think probability owes us an apology.
+dialogue.gossiping_raven.bark.snag.007,Someone fetch the emergency ale.
+dialogue.gossiping_raven.bark.snag.008,How rude!
+dialogue.gossiping_raven.bark.snag.009,That's how it goes sometimes.
+dialogue.gossiping_raven.bark.snag.010,My friends at the tavern are going to laugh so hard.
+dialogue.gossiping_raven.bark.snag.011,Oh wow!
+dialogue.gossiping_raven.bark.snag.012,I wonder if I can get a free drink out of pity from someone.
+dialogue.gossiping_raven.bark.snag.013,And now for something completely different.
+dialogue.gossiping_raven.bark.snag.014,Someone's having a laugh. Not sure who.
+dialogue.gossiping_raven.bark.snag.015,That's one way to keep things interesting.
+dialogue.gossiping_raven.bark.victory.001,Can I have that shiny thing?
+dialogue.gossiping_raven.bark.victory.002,Wait till I tell the tavern about this one!
+dialogue.gossiping_raven.bark.victory.003,That was FUN!
+dialogue.gossiping_raven.bark.victory.004,The gang is going to love it when I tell them about that last hit.
+dialogue.gossiping_raven.bark.victory.005,I know a guy who'll buy their boots. Don't ask...
+dialogue.gossiping_raven.bark.victory.006,I knew traveling with you was a good idea!
+dialogue.gossiping_raven.bark.victory.007,Are you done showing off?
+dialogue.gossiping_raven.bark.victory.008,So how much were we getting paid for this one?
+dialogue.gossiping_raven.bark.victory.009,"Another day, another bit of gossip to share."
+dialogue.gossiping_raven.bark.victory.010,I haven't had that much fun in weeks!
+dialogue.gossiping_raven.bark.victory.011,I heard there's a bounty on them. We should find out!
+dialogue.gossiping_raven.bark.victory.012,They really should've run away.
+dialogue.gossiping_raven.bark.victory.013,Anyone else? No? That's what I thought.
+dialogue.gossiping_raven.bark.victory.014,They should've known better than to try.
+dialogue.gossiping_raven.bark.victory.015,"All thanks to me! Well, I was cheering for you."
+dialogue.gossiping_raven.bark.victory.016,Yes! Free drink for me! I told the tavern wench you'd win.
+dialogue.gossiping_raven.bark.victory.017,That calls for a reward!
+dialogue.gossiping_raven.bark.victory.018,"We can level up for this! Don't give me that look again, GM."
+dialogue.gossiping_raven.bark.victory.019,"You're going to share the loot with me, right?"
+dialogue.gossiping_raven.bark.victory.020,Nice! I needed that!
+dialogue.gossiping_raven.bark.victory.021,"The sweet, sweet sound of loot... I mean victory."
+dialogue.gossiping_raven.bark.victory.022,I could kiss you! Once you wash the blood off.
+dialogue.gossiping_raven.bark.victory.023,I give that performance a solid seven out of ten.
+dialogue.gossiping_raven.bark.victory.024,That went exactly as I expected.
+dialogue.gossiping_raven.bark.victory.025,Think they'll reconsider their life choices?
+dialogue.gossiping_raven.bark.victory.026,Wait till I tell Cheryl! That one was her ex.
+dialogue.gossiping_raven.bark.victory.027,So what are you going to buy with all that loot?
+dialogue.gossiping_raven.bark.victory.028,Did that one just move again? Made you look!
+dialogue.gossiping_raven.bark.victory.029,We should celebrate!
+dialogue.gossiping_raven.bark.victory.030,That was either incredibly brilliant or incredibly stupid.
+dialogue.saints_fragment.bark.camp.001,The dice gods have blessed our bedrolls.
+dialogue.saints_fragment.bark.camp.002,Another night has passed.
+dialogue.saints_fragment.bark.camp.003,The shadows left us undisturbed.
+dialogue.saints_fragment.bark.camp.004,A rare moment of peace.
+dialogue.saints_fragment.bark.camp.005,Even the darkness rests.
+dialogue.saints_fragment.bark.camp.006,The darkness held no teeth this night.
+dialogue.saints_fragment.bark.camp.007,The gods granted us a merciful night.
+dialogue.saints_fragment.bark.camp.008,The spirits left us in peace.
+dialogue.saints_fragment.bark.camp.009,The gods smiled upon our camp.
+dialogue.saints_fragment.bark.camp.010,Even the wilderness occasionally knows peace.
+dialogue.saints_fragment.bark.camp.011,The dawn brings renewed hope.
+dialogue.saints_fragment.bark.camp.012,May fortune follow us into this day.
+dialogue.saints_fragment.bark.camp.013,May every night be so gentle.
+dialogue.saints_fragment.bark.camp.014,Peace is fleeting.
+dialogue.saints_fragment.bark.camp.015,The night asked nothing of us.
+dialogue.saints_fragment.bark.danger.001,Death has walked this road.
+dialogue.saints_fragment.bark.danger.002,The silence speaks.
+dialogue.saints_fragment.bark.danger.003,There is darkness ahead.
+dialogue.saints_fragment.bark.danger.004,May the fates be merciful.
+dialogue.saints_fragment.bark.danger.005,May the gods watch over us.
+dialogue.saints_fragment.bark.danger.006,The shadows seem deeper here.
+dialogue.saints_fragment.bark.danger.007,The wind carries an ill omen.
+dialogue.saints_fragment.bark.danger.008,This place has seen suffering.
+dialogue.saints_fragment.bark.danger.009,This area feels ill-favored.
+dialogue.saints_fragment.bark.danger.010,The gods send warnings in many forms.
+dialogue.saints_fragment.bark.maxed.001,The gods are taking notes.
+dialogue.saints_fragment.bark.maxed.002,Perhaps there's hope yet.
+dialogue.saints_fragment.bark.maxed.003,Fate seems to favor you.
+dialogue.saints_fragment.bark.maxed.004,A moment worth remembering.
+dialogue.saints_fragment.bark.maxed.005,Even the shadows noticed.
+dialogue.saints_fragment.bark.maxed.006,A ray of light brought to the world's darkness.
+dialogue.saints_fragment.bark.maxed.007,The dice gods favor you.
+dialogue.saints_fragment.bark.maxed.008,The dice have chosen.
+dialogue.saints_fragment.bark.maxed.009,May fortune continue to guide you.
+dialogue.saints_fragment.bark.maxed.010,The threads of fate have shifted.
+dialogue.saints_fragment.bark.maxed.011,A moment of divine grace.
+dialogue.saints_fragment.bark.maxed.012,The light shines upon you.
+dialogue.saints_fragment.bark.maxed.013,"Even in darkness, there exists hope."
+dialogue.saints_fragment.bark.maxed.014,A blessing upon your hands.
+dialogue.saints_fragment.bark.maxed.015,"Forgive us, GM, for what we may have done."
+dialogue.saints_fragment.bark.nearby.001,Something remains unresolved here.
+dialogue.saints_fragment.bark.nearby.002,We have unfinished business.
+dialogue.saints_fragment.bark.nearby.003,Not all promises fade with time.
+dialogue.saints_fragment.bark.nearby.004,The past has a way of finding us.
+dialogue.saints_fragment.bark.nearby.005,There may still be time.
+dialogue.saints_fragment.bark.nearby.006,The fates desire our presence.
+dialogue.saints_fragment.bark.nearby.007,The other quest awaits.
+dialogue.saints_fragment.bark.nearby.008,The road of life requires some detours.
+dialogue.saints_fragment.bark.nearby.009,We've heard of this place.
+dialogue.saints_fragment.bark.nearby.010,The gods have called.
+dialogue.saints_fragment.bark.secret.001,I have the strangest feeling a decision was just made.
+dialogue.saints_fragment.bark.secret.002,I feel like fate is watching us.
+dialogue.saints_fragment.bark.secret.003,The silence speaks.
+dialogue.saints_fragment.bark.secret.004,Death walks alongside us.
+dialogue.saints_fragment.bark.secret.005,The darkness is listening.
+dialogue.saints_fragment.bark.secret.006,The shadows are restless.
+dialogue.saints_fragment.bark.secret.007,We should pay attention.
+dialogue.saints_fragment.bark.secret.008,I believe I've seen this before.
+dialogue.saints_fragment.bark.secret.009,This feels familiar.
+dialogue.saints_fragment.bark.secret.010,This is how it begins.
+dialogue.saints_fragment.bark.secret.011,I don't like this.
+dialogue.saints_fragment.bark.secret.012,Something's changed.
+dialogue.saints_fragment.bark.secret.013,May the gods have mercy on us.
+dialogue.saints_fragment.bark.secret.014,Pray we have the favor of the gods.
+dialogue.saints_fragment.bark.secret.015,Choices were made.
+dialogue.saints_fragment.bark.secret.016,The gods watch.
+dialogue.saints_fragment.bark.secret.017,I know this feeling.
+dialogue.saints_fragment.bark.secret.018,Trouble hounds our steps.
+dialogue.saints_fragment.bark.secret.019,Not all dangers announce themselves.
+dialogue.saints_fragment.bark.secret.020,I can only pray for mercy.
+dialogue.saints_fragment.bark.snag.001,One step at a time.
+dialogue.saints_fragment.bark.snag.002,Fortune turns.
+dialogue.saints_fragment.bark.snag.003,The shadows stir.
+dialogue.saints_fragment.bark.snag.004,Nothing comes without a struggle.
+dialogue.saints_fragment.bark.snag.005,Another trial.
+dialogue.saints_fragment.bark.snag.006,We endure.
+dialogue.saints_fragment.bark.snag.007,Such is our lot.
+dialogue.saints_fragment.bark.snag.008,The gods can be cruel.
+dialogue.saints_fragment.bark.snag.009,A cruel twist.
+dialogue.saints_fragment.bark.snag.010,Fate is unkind.
+dialogue.saints_fragment.bark.snag.011,The world is rarely fair.
+dialogue.saints_fragment.bark.snag.012,The gods test our patience.
+dialogue.saints_fragment.bark.snag.013,Perhaps a prayer wouldn't hurt.
+dialogue.saints_fragment.bark.snag.014,May fortune be kinder next time.
+dialogue.saints_fragment.bark.snag.015,The wheel of fortune never rests.
+dialogue.saints_fragment.bark.victory.001,"You fought well, my friend."
+dialogue.saints_fragment.bark.victory.002,They chose their fate.
+dialogue.saints_fragment.bark.victory.003,Is there really glory in this?
+dialogue.saints_fragment.bark.victory.004,We lived. They didn't. Let's move on.
+dialogue.saints_fragment.bark.victory.005,"Blood washes away, but memory doesn't."
+dialogue.saints_fragment.bark.victory.006,A valuable lesson.
+dialogue.saints_fragment.bark.victory.007,And the world grew quieter.
+dialogue.saints_fragment.bark.victory.008,Death comes for all in the end.
+dialogue.saints_fragment.bark.victory.009,"A victory, but at what cost?"
+dialogue.saints_fragment.bark.victory.010,The gods favored us today.
+dialogue.saints_fragment.bark.victory.011,May their souls find peace.
+dialogue.saints_fragment.bark.victory.012,Let us give thanks that we live another day.
+dialogue.saints_fragment.bark.victory.013,Faith has carried us through.
+dialogue.saints_fragment.bark.victory.014,May the fallen find serenity.
+dialogue.saints_fragment.bark.victory.015,And the darkness retreats.
+dialogue.saints_fragment.bark.victory.016,Our cause remains just.
+dialogue.saints_fragment.bark.victory.017,Let us not squander this victory.
+dialogue.saints_fragment.bark.victory.018,Justice has been served.
+dialogue.saints_fragment.bark.victory.019,Let us pray for them.
+dialogue.saints_fragment.bark.victory.020,We have been spared.
+dialogue.saints_fragment.bark.victory.021,Are you wounded?
+dialogue.saints_fragment.bark.victory.022,They return to the earth.
+dialogue.saints_fragment.bark.victory.023,Thanks be to the gods for this victory.
+dialogue.saints_fragment.bark.victory.024,It is done.
+dialogue.saints_fragment.bark.victory.025,Why don't we take a moment and just breathe.
+dialogue.saints_fragment.bark.victory.026,Praise be that we still stand.
+dialogue.saints_fragment.bark.victory.027,Was there no other way?
+dialogue.saints_fragment.bark.victory.028,Do you need a moment to pray?
+dialogue.saints_fragment.bark.victory.029,Let's meditate and reflect on what just happened.
+dialogue.saints_fragment.bark.victory.030,It didn't have to come to this.
 difficulty.easy.name,Easy
 difficulty.hard.name,Hard
 difficulty.medium.name,Medium
@@ -1092,6 +1667,7 @@ ui.combat_action.shove.name,Shove
 ui.combat_action.shove_prone.name,Knock prone
 ui.combat_action.stand_up.name,Stand up
 ui.combat_action.surge.name,Action Surge
+ui.combat_action.yield.name,Yield
 ui.combat_why.cannot_act.name,You can't act right now.
 ui.combat_why.cannot_cast.name,You can't cast spells in this form.
 ui.combat_why.charmed.name,You can't bring yourself to harm them.
@@ -1340,6 +1916,7 @@ ui.not_castable.not_known.name,Not on your sheet
 ui.not_castable.reaction.name,"Cast as a reaction, when its moment comes"
 ui.not_castable.shifted.name,You can't cast in a borrowed shape
 ui.not_castable.spent.name,Nothing left to cast it with
+ui.pack.armory,Armory
 ui.pack.buy,Buy
 ui.pack.copper,{0} cp
 ui.pack.discard,Discard
@@ -1348,10 +1925,12 @@ ui.pack.dont_warn_again,Don't warn me again for this character
 ui.pack.equip,Equip
 ui.pack.gold,{0} gp
 ui.pack.leave,Leave
+ui.pack.loaned,(on loan)
 ui.pack.make_room,Your pack is full. Choose what to leave behind.
 ui.pack.new_item,New
 ui.pack.off_hand,Off hand
 ui.pack.quest_items,Quest items
+ui.pack.racks,On the racks: free to wear
 ui.pack.sell,Sell
 ui.pack.sell_equipped,You are using this. Sell it anyway?
 ui.pack.silver,{0} sp
@@ -1398,6 +1977,10 @@ ui.school.necromancy.name,Necromancy
 ui.school.transmutation.name,Transmutation
 ui.settings.access,Access
 ui.settings.bring_tray,Bring the dice tray to me
+ui.settings.chatter,Companion chatter
+ui.settings.chatter_all,All
+ui.settings.chatter_off,Off
+ui.settings.chatter_some,Some
 ui.settings.difficulty,Difficulty
 ui.settings.difficulty_hard,Hard
 ui.settings.difficulty_hard_about,"Hard: foes take longer to bring down, for a closer fight."
@@ -1427,6 +2010,8 @@ ui.sheet.solo_slot,"One extra 1st-level spell slot, a solo bonus"
 ui.sheet.species_spells,Species spells: {0}
 ui.sheet.spells,Spells
 ui.sheet.title,Character
+ui.sheet.xp,XP {0} of {1}
+ui.sheet.xp_top,XP {0}
 ui.size.gargantuan.name,Gargantuan
 ui.size.huge.name,Huge
 ui.size.large.name,Large

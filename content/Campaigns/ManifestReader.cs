@@ -59,6 +59,8 @@ namespace Content.Campaigns
                     problems.Add(new ContentProblem(file, "gm_screen",
                         $"'{screen}' is not a GM screen - it is {Vocabulary.Offer(Manifest.GmScreens)}"));
 
+                CampaignRules rules = Rules(root, file, problems);
+
                 Unknown(root, file, problems);
 
                 if (problems.Count > 0) return Read<Manifest>.Bad(problems);
@@ -68,6 +70,7 @@ namespace Content.Campaigns
                                  chapters, start)
                     {
                         GmScreen = screen,
+                        Rules = rules,
                     });
             }
         }
@@ -82,7 +85,7 @@ namespace Content.Campaigns
         {
             foreach (JsonProperty property in root.EnumerateObject())
             {
-                if (Array.IndexOf(Fields, property.Name) >= 0) continue;
+                if (Array.IndexOf(Fields, property.Name) >= 0 || Array.IndexOf(RuleFields, property.Name) >= 0) continue;
 
                 // title/name/description get their own sentence; it's the mistake every modder makes
                 if (property.Name == "title" || property.Name == "name" ||
@@ -100,7 +103,7 @@ namespace Content.Campaigns
 
                 problems.Add(new ContentProblem(
                     file, property.Name,
-                    $"a campaign has no '{property.Name}' - it has {Vocabulary.Offer(Fields)}"));
+                    $"a campaign has no '{property.Name}' - it has {Vocabulary.Offer(Fields.Concat(RuleFields))}"));
             }
         }
     }

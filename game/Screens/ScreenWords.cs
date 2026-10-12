@@ -92,6 +92,11 @@ namespace Game.Screens
 
         public static readonly string SheetTitle = K("sheet", "title");
         public static readonly string SheetLevel = K("sheet", "level");
+
+        // "XP 350 of 900" (cc_task_i 3.4), and at level 20 just the total
+        public static readonly string SheetXp = K("sheet", "xp");
+
+        public static readonly string SheetXpTop = K("sheet", "xp_top");
         public static readonly string SheetHp = K("sheet", "hit_points");
         public static readonly string SheetSize = K("sheet", "size");
         public static readonly string SheetSpeciesSpells = K("sheet", "species_spells");
@@ -116,7 +121,7 @@ namespace Game.Screens
                 ThrowPrompt, VerdictHit, VerdictCritical, VerdictMiss, VerdictSaved, VerdictFailed, TurnHint, AimHint, CameRound, YourTurn, FightWon, FightFled,
                 OnYourself, CaptionCast, CaptionCastOn, CaptionChanged,
                 BeforeFightTitle, BeforeFightLine, BeforeFightCast, ToTheFight,
-                SheetTitle, SheetLevel, SheetHp, SheetAc, SheetSpells, SheetFeatures, SheetSoloSlot, SheetKeepsakeReady, SheetKeepsakeSpent, SheetSize, SheetSpeciesSpells,
+                SheetTitle, SheetLevel, SheetXp, SheetXpTop, SheetHp, SheetAc, SheetSpells, SheetFeatures, SheetSoloSlot, SheetKeepsakeReady, SheetKeepsakeSpent, SheetSize, SheetSpeciesSpells,
                 TraitSkill, TraitSpellAbility, TraitSize,
                 KitFromClass, KitFromBackground, KitGear, KitGold, KitStartsWith, KitShopFirst, KitList, KitNoGear,
                 AskCard.TurnsTheHitKey,

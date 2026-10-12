@@ -36,4 +36,9 @@
     <None Include="..\campaigns\**\*" LinkBase="campaigns" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- test-only campaigns the game never loads: crucible_fixture (cc_task_i Part 3) -->
+  <ItemGroup>
+    <None Include="Fixtures\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

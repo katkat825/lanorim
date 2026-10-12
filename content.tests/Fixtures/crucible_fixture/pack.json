@@ -1,0 +1,24 @@
+{
+  "id": "crucible_fixture",
+  "kind": "campaign",
+  "format": 1,
+  "engine": "0.1",
+  "author": "Lanorim test content",
+  "tags": [
+    "test"
+  ],
+  "chapters": [
+    {
+      "id": "arena",
+      "maps": [
+        "pit"
+      ]
+    }
+  ],
+  "start": "arena",
+  "defeat": "continues",
+  "leveling": "xp",
+  "characters": 8,
+  "starting_shop": false,
+  "consequences": "add"
+}

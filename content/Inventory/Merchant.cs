@@ -149,19 +149,13 @@ namespace Content.Inventory
             // a quest item isn't for sale: the keepsake, a key, a letter (cc_task_h 3.2)
             if (item.Kind == ItemKind.Quest) return new Deal(false, Rebuff.NothingToSell, item, count);
 
-            // selling what you are wearing warns every time, and the warning cannot be dismissed
-            // for good (inventory_decisions.md)
-            if (equip != null && equip.IsEquipped(item.Id) && !confirmed)
-                return new Deal(false, Rebuff.Equipped, item, count);
+            // what's in the pack is sold from the pack; only when the pack hasn't got it is it the one being worn
+            // (cc_task_i 5.1: a spare sword sold used to take the worn one off)
+            if (pack.CountOf(item.Id) < count && equip != null && equip.IsEquipped(item.Id))
+                return SellWorn(pack, item, equip, hero, confirmed);
 
-            if (pack.CountOf(item.Id) < count && !(equip?.IsEquipped(item.Id) ?? false))
+            if (pack.CountOf(item.Id) < count)
                 return new Deal(false, Rebuff.NothingToSell, item, count);
-
-            if (equip != null && equip.IsEquipped(item.Id))
-            {
-                equip.Remove(item.Id, hero);
-                pack.Take(item);
-            }
 
             int sold = pack.Drop(item.Id, count);
 
@@ -172,6 +166,24 @@ namespace Content.Inventory
             pack.Earn(paid);
 
             return new Deal(true, Rebuff.None, item, sold, paid);
+        }
+
+        // SELLING WHAT YOU ARE WEARING (inventory_decisions.md: "sell equipped items, with a confirmation every time"):
+        // it warns every time, and the warning cannot be dismissed for good. it comes straight off and is paid for -
+        // never through the pack, which may be full (it was lost unpaid when it was)
+        public Deal SellWorn(Pack pack, Item item, Equipment equip, Actor hero = null, bool confirmed = false)
+        {
+            if (pack == null || item == null || equip == null || !equip.IsEquipped(item.Id) || item.Kind == ItemKind.Quest)
+                return new Deal(false, Rebuff.NothingToSell, item, 1);
+
+            if (!confirmed) return new Deal(false, Rebuff.Equipped, item, 1);
+
+            equip.Remove(item.Id, hero);
+
+            int paid = PaysFor(item);
+            pack.Earn(paid);
+
+            return new Deal(true, Rebuff.None, item, 1, paid);
         }
 
         public static string LineFor(Rebuff rebuff) =>

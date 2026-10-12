@@ -1,0 +1,17 @@
+keys,en
+campaign.crucible_fixture.description,A test arena: an armory and a bout that goes on after defeat.
+campaign.crucible_fixture.name,The Crucible (test fixture)
+consequence.sand_in_your_eye.line,"Sand in your eye. Nothing comes of it, but the crowd laughs."
+consequence.sand_in_your_eye.name,Sand in your eye
+consequence.the_crowd_chants_your_name.line,The crowd chants your name.
+consequence.the_crowd_chants_your_name.name,The crowd chants your name
+dialogue.bonded_wolf.bark.victory.crucible_fixture.001,The crowd loved that!
+dialogue.dm.line.crucible_fixture.day_over,That is the day's bout.
+dialogue.dm.line.crucible_fixture.lost,"You wake on the sand, and the crowd has gone home."
+dialogue.dm.line.crucible_fixture.racks,The quartermaster waves you at the racks.
+dialogue.dm.line.crucible_fixture.won,The crowd roars.
+dialogue.dm.line.crucible_fixture.yielded,"You raise a hand, and the bout is over."
+encounter.bouts.line.first_bout,Two goblins step onto the sand.
+encounter.bouts.line.to_the_death,A goblin with nothing to lose.
+merchant.racks.name,The racks
+quest.crucible_fixture.arena.title,The arena

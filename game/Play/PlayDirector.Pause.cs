@@ -16,7 +16,7 @@ namespace Game.Play
             Open(new MenuCard(ScreenWords.PauseTitle, null, true,
                 (ScreenWords.Resume, () => _overlay?.Close(), true),
                 (ScreenWords.Save, SaveNow, idle),
-                (ScreenWords.Sheet, () => Swap(new SheetScreen(Content.Sheet.SheetView.Of(Run.Hero))), idle),
+                (ScreenWords.Sheet, () => Swap(new SheetScreen(Content.Sheet.SheetView.Of(Run.Hero, leveling: Run.Pack.Manifest.Rules.Leveling))), idle),
                 (ScreenWords.Pack, () => Swap(new PackScreen(new PackView(Run.Hero, Run.Items), GameState.Resolver)), idle),
                 (CampaignBook.SettingsKey, () => Swap(SettingsCard()), true),
                 (ScreenWords.ToTheBook, ToTheBook, true)), Refresh);
@@ -86,6 +86,7 @@ namespace Game.Play
 
         public override void _Process(double delta)
         {
+            _played += delta;
             AgeVerdict();
             TickCompanion(delta);
 

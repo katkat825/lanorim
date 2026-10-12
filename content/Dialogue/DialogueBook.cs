@@ -159,17 +159,26 @@ namespace Content.Dialogue
 
             // the compiler is a third party at the edge of the loader, and Workshop content is the
             // normal case for reaching a path it did not expect - so it is wrapped, not trusted
+            // a story can't change the hero by writing to what it reads about them (cc_task_i 4.1)
+            foreach (CompilationJob.File source in sources)
+                foreach (string variable in HeroVariables.Names.Where(v => source.Source.Contains("<<set " + v)))
+                    _problems.Add(ContentProblem.Caution(source.FileName, variable,
+                        $"{variable} is the hero's, read-only - setting it does nothing"));
+
+            var library = new Yarn.Library();
+            HeroVariables.Declare(library);
+
             try
             {
                 result = Compiler.Compile(new CompilationJob
                 {
                     Inputs = sources,
-                    Library = new Yarn.Library(),
+                    Library = library,
 
                     // the variables the table answers into (Asks.cs), declared here so a campaign
                     // reads $passed without having to declare it, and cannot declare it as
-                    // something else
-                    VariableDeclarations = EngineVariables,
+                    // something else; and what it can read about the hero (cc_task_i 4.1)
+                    VariableDeclarations = EngineVariables.Concat(HeroVariables.Declarations).ToList(),
                 });
             }
             catch (Exception threw)
@@ -187,7 +196,7 @@ namespace Content.Dialogue
                 // the table's variables are declared for every campaign, and a campaign that never
                 // reads one is not doing anything wrong - that one notice is Yarn's, not the author's
                 if (complaint.Severity != Diagnostic.DiagnosticSeverity.Error &&
-                    EngineVariables.Any(v => complaint.Message.Contains($"'{v.Name}'")) &&
+                    EngineVariables.Concat(HeroVariables.Declarations).Any(v => complaint.Message.Contains($"'{v.Name}'")) &&
                     complaint.Message.Contains("never used"))
                     continue;
 

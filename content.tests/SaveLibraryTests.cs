@@ -64,7 +64,9 @@ namespace Content.Tests
             }
 
             Assert.Equal(-1, saves.FreeSlot("sample"));
-            Assert.Throws<ArgumentOutOfRangeException>(() => saves.Save(Game(5), SaveKind.Manual));
+
+            // the sixth slot is a campaign's own choice ("characters": n, cc_task_i 3.5); past the most any can hold, none
+            Assert.Throws<ArgumentOutOfRangeException>(() => saves.Save(Game(Content.Campaigns.CampaignRules.MostCharacters), SaveKind.Manual));
 
             saves.Forget("sample", 2);
             Assert.Equal(2, saves.FreeSlot("sample"));

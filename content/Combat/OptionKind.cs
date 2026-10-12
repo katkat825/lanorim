@@ -22,5 +22,8 @@ namespace Content.Combat
 
         // a shut door beside the hero (Encounter.Doors.cs): free once a turn, then an action
         OpenDoor,
+
+        // give the bout up (cc_task_i 3.2): a fight that continues after defeat, with no way off the map
+        Yield,
     }
 }

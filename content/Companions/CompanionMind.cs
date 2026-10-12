@@ -159,23 +159,32 @@ namespace Content.Companions
         }
     }
 
-    // WHAT THE COMPANION SAYS AND FEELS, from what the table tells it: a roll, a fight event, a
-    // hint asked for. It speaks from its bark bank (a shuffle bag per situation); silence is a real
-    // answer when the bank has nothing for the moment
+    // WHAT THE COMPANION SAYS AND FEELS, from what the table tells it: a roll, a fight event, a story's cue. It
+    // speaks from its bark bank (a shuffle bag per pool); silence is a real answer when the bank has nothing for
+    // the moment, and the Chatter (if it has one) keeps it from talking too much (cc_task_i Part 2).
+    //
+    // It hears from the rules thread (a fight, the story) and the main thread (a rattle, the clock), so what it
+    // decides is decided under one lock.
     public sealed class CompanionMind : CombatObserver
     {
         readonly Speaking _speaking;
         readonly Actor _hero;
+        readonly Chatter _chatter;
+        readonly object _gate = new object();
 
-        public CompanionMind(Speaking speaking, Actor hero = null)
+        public CompanionMind(Speaking speaking, Actor hero = null, Chatter chatter = null)
         {
             _speaking = speaking;
             _hero = hero;
+            _chatter = chatter;
         }
 
         public Mood Mood { get; private set; } = Mood.Calm;
 
         public double Holding { get; private set; }
+
+        // seconds of play it has been ticked through: the chatter's clock
+        public double Now { get; private set; }
 
         // every key it said, in order - the bubble shows them
         public IReadOnlyList<string> Said => _said;
@@ -186,15 +195,34 @@ namespace Content.Companions
 
         public event Action<Mood> Felt;
 
-        public string Say(Bark situation)
+        // the hero is hurt (Bloodied): Danger keeps quiet, because its lines warn of something coming
+        bool Hurt => _hero != null && _hero.Health.IsBloodied;
+
+        // a moment at the table: the companion feels it, and says a line from its pool if it has one and may.
+        // `fromStory` is a story's own cue (<<bark>>, a rest), which a fight's start keeps quiet after
+        public string Say(Bark situation, bool fromStory = false)
         {
-            Feel(TableCues.MoodFor(situation));
+            string key;
 
-            string key = _speaking?.Next(situation);
+            lock (_gate)
+            {
+                Feel(TableCues.MoodFor(situation));
 
-            if (key == null) return null;
+                Bark pool = situation.Pool();
 
-            _said.Add(key);
+                if (!pool.Speaks() || _speaking?.Has(pool) != true) return null;
+
+                if (pool == Bark.Danger && Hurt) return null;
+
+                if (_chatter != null && !_chatter.Allows(pool, Now, fromStory)) return null;
+
+                key = _speaking.Next(pool);
+
+                if (key == null) return null;
+
+                _said.Add(key);
+            }
+
             Spoke?.Invoke(key);
             return key;
         }
@@ -211,11 +239,16 @@ namespace Content.Companions
         // time passes; a held reaction runs out and it settles
         public void Tick(double delta)
         {
-            if (Holding <= 0) return;
+            lock (_gate)
+            {
+                Now += delta;
 
-            Holding -= delta;
+                if (Holding <= 0) return;
 
-            if (Holding <= 0) Settle();
+                Holding -= delta;
+
+                if (Holding <= 0) Settle();
+            }
         }
 
         public void Settle()
@@ -226,7 +259,10 @@ namespace Content.Companions
         }
 
         // the dice are in the air
-        public void Watches() => Feel(Mood.Watching);
+        public void Watches()
+        {
+            lock (_gate) Feel(Mood.Watching);
+        }
 
         // one of the player's d20s has landed
         public string Sees(Attempt roll) =>
@@ -234,11 +270,30 @@ namespace Content.Companions
 
         public string HearsASecretRoll() => Say(Bark.Secret);
 
+        // the story asked for a line (<<bark nearby>>), or rested (Camp)
+        public string Hears(Bark cue) => Say(cue, fromStory: true);
+
+        // a fight is laid, before initiative: now and then, a warning (cc_task_i 2.3)
+        public string FightStarts()
+        {
+            bool warns;
+
+            lock (_gate) warns = _chatter != null && !Hurt && _chatter.DangerAhead(Now);
+
+            return warns ? Say(Bark.Danger) : null;
+        }
+
         // --- the fight, watched ---------------------------------------------------------------
 
         public override void Struck(Blow blow)
         {
             if (_hero != null && ReferenceEquals(blow?.Attacker, _hero)) Sees(blow.Attempt);
+        }
+
+        // a save the hero made against something: a natural 1 or 20 on it is a Snag or a Maxed
+        public override void Judged(Actor by, Actor target, Attempt attempt)
+        {
+            if (_hero != null && ReferenceEquals(target, _hero) && attempt?.Kind == RollKind.Save) Sees(attempt);
         }
 
         public override void Downed(Actor actor)

@@ -37,8 +37,10 @@ namespace Content.Play
             Screen = new GmScreen(_gm);
             Referee = new Referee(hero, heroDice ?? new StandardResolver(_gm), Screen, library, pack);
 
-            _store = new StoryVariables();
+            // what the story can read about the hero, live (cc_task_i 4.1)
+            _store = new StoryVariables { Live = name => HeroVariables.Read(Hero, name) };
             Talk = new Conversation(Book, _store) { NodeStarted = Entered };
+            Talk.Lets(HeroVariables.HasItem, id => HeroVariables.Has(Hero, id));
 
             Day = new Day(hero.Actor);
         }
@@ -81,6 +83,24 @@ namespace Content.Play
         public Haul Spoils { get; private set; }
 
         public ItemShelf Items => Library.Items;
+
+        // A SECRET THE PLAYER HEARS (cc_task_i Part 1): an encounter table, or a <<roll ... heard>>, rolled behind
+        // the screen. the table rattles the screen for it - at most once every RattleSeconds of play - and the
+        // companion has its Secret bark. raised on the rules thread
+        public event Action Heard;
+
+        // the rattle's cooldown, in seconds of play: about 1-3 an hour in the sample campaign (cc_task_i Part 1)
+        public const double RattleSeconds = 300;
+
+        // THE COMPANION'S CUES FROM THE STORY (cc_task_i Part 2): a <<bark>>, or Camp for a rest. raised on the rules
+        // thread; the table's CompanionMind hears them
+        public event Action<Bark> Cued;
+
+        // the hero's own d20 for a story's check or save, landed: a natural 1 or 20 is a Snag or a Maxed
+        public event Action<Core.Resolution.Attempt> Tested;
+
+        // the companion this campaign's hero has, speaking from the game's barks and this campaign's
+        public BarkBank Barks => Library.Barks.For(Hero.Class.Companion, Pack.Barks);
 
         public override string ToString() => $"{Pack.Id} at {Talk.Node}: {Now}";
     }

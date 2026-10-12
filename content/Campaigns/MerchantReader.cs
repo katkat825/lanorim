@@ -10,7 +10,7 @@ namespace Content.Campaigns
     public static class MerchantReader
     {
         // every key a merchant takes
-        public static readonly IReadOnlyList<string> Keys = new[] { "id", "stock", "sell_percent" };
+        public static readonly IReadOnlyList<string> Keys = new[] { "id", "stock", "sell_percent", "armory" };
 
         // the file: { "merchants": [ ... ] }, each entry read by ReadOne (EntryList)
         public static readonly EntryList<MerchantDef> Entries =
@@ -20,8 +20,15 @@ namespace Content.Campaigns
                                    out IReadOnlyList<string> problems) =>
             Entries.TryRead(text, out merchants, out problems);
 
-        static MerchantDef ReadOne(JsonElement entry, string id, List<string> problems) =>
-            new MerchantDef(id, entry.Strings("stock"), entry.Has("sell_percent") ? entry.Number("sell_percent") : -1);
+        static MerchantDef ReadOne(JsonElement entry, string id, List<string> problems)
+        {
+            bool armory = entry.Flag("armory");
+
+            if (armory && entry.Has("sell_percent"))
+                problems.Add($"{id}: an armory lends its gear and buys nothing, so it has no 'sell_percent'");
+
+            return new MerchantDef(id, entry.Strings("stock"), entry.Has("sell_percent") ? entry.Number("sell_percent") : -1, armory);
+        }
 
         // THE STARTING SHOP every campaign has unless it writes its own merchant with this id: the SRD's mundane
         // weapons and armor, potions of healing and the adventuring basics, at SRD prices. No ammunition: it is free

@@ -56,6 +56,9 @@ namespace Content.Dialogue
             _dialogue.LogErrorMessage = message => Complained.Add(message);
         }
 
+        // A FUNCTION THE STORY CAN CALL, the engine's own (cc_task_i 4.1: has_item). like the verbs, never a campaign's
+        public void Lets(string function, Func<string, bool> answer) => _dialogue.Library.RegisterFunction(function, answer);
+
         // developer diagnostics from the runtime itself, not localized and never shown
         public IList<string> Complained { get; } = new List<string>();
 

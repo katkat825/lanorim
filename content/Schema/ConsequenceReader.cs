@@ -27,6 +27,11 @@ namespace Content.Schema
         public static readonly EntryList<Consequence> Entries =
             new EntryList<Consequence>("consequences", "consequence", Keys, ReadOne, BothSides);
 
+        // A CAMPAIGN'S consequences/ (cc_task_i 4.3): the same entries, and a file may hold one side only - it adds to
+        // the game's pool, which has both. a campaign that replaces the pool is held to both sides as a whole (Package)
+        public static readonly EntryList<Consequence> CampaignEntries =
+            new EntryList<Consequence>("consequences", "consequence", Keys, ReadOne);
+
         // a pool with nothing on one side is a natural 20 that does nothing, which is the one
         // thing the delta is for
         static void BothSides(List<Consequence> found, List<string> problems)

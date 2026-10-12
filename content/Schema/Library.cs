@@ -50,6 +50,10 @@ namespace Content.Schema
         // beast-catalogue converter v1_class_roster.md rules out
         public FormShelf Forms { get; }
 
+        // the companions' game-wide barks (content/srd/barks, cc_task_i 2.1). a campaign's own are its pack's, and
+        // are added only while it runs (BarkBook.For), so they're not laid on here
+        public Dialogue.BarkBook Barks => Dialogue.BarkBook.Srd();
+
         public IReadOnlyList<string> Problems { get; }
 
         public bool Sound => Problems.Count == 0;
@@ -77,6 +81,7 @@ namespace Content.Schema
                   .Concat(Consequences.All.SelectMany(c => c.Keys()))
                   .Concat(Forms.Keys())
                   .Concat(Inventory.Merchant.Keys())
+                  .Concat(Barks.Keys())
                   .Distinct();
 
         // A CAMPAIGN'S CONTENT, LAID ON TOP OF THE SRD'S. The SRD library is never edited: the game
@@ -152,6 +157,8 @@ namespace Content.Schema
 
             FormShelf forms = FormShelf.Srd();
             problems.AddRange(forms.Problems);
+
+            problems.AddRange(Dialogue.BarkBook.Srd().Problems.Select(p => p.ToString()));
 
             var consequences = Schema.Srd.ReadAll<Core.Resolution.Consequence>(
                 "consequences", ConsequenceReader.TryRead, problems);

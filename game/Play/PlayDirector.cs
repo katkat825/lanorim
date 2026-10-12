@@ -121,16 +121,8 @@ namespace Game.Play
 
             if (args.Contains(ProneProbe.Flag)) AddChild(new ProneProbe { Name = "ProneProbe", Combat = _combat });
 
-            // the GM's rolls behind the screen: heard, captioned, never shown
-            GameState.Resolver.Rolled += roll =>
-            {
-                if (!roll.OnTheTable)
-                    MainQueue.Post(() =>
-                    {
-                        Table.Captions?.Says(Game.Audio.Sound.Behind);
-                        Table.GmScreen?.Rattle();
-                    });
-            };
+            // a secret behind the screen: heard, captioned, never shown, and rarely (cc_task_i Part 1)
+            Run.Heard += HeardBehind;
 
             _level = Run.Hero.Level;
             _maxHp = Run.Hero.Actor.Health.Maximum;
@@ -156,6 +148,9 @@ namespace Game.Play
         {
             _dice?.Abandon();
             _rules?.Dispose();
+
+            if (Run != null) Run.Heard -= HeardBehind;
+            SleepCompanion();
 
             Game.Access.AccessDesk.Reaching = null;
             Game.Access.AccessDesk.Where = null;

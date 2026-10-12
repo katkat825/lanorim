@@ -25,7 +25,7 @@ namespace Game.Play
 
             probe.Screens.Add(("fight", () => _overlay?.Close()));
             probe.Screens.Add(("pause", (System.Action)(() => { _overlay?.Close(); Pause(); })));
-            probe.Screens.Add(("sheet", () => Swap(new SheetScreen(Content.Sheet.SheetView.Of(Run.Hero)))));
+            probe.Screens.Add(("sheet", () => Swap(new SheetScreen(Content.Sheet.SheetView.Of(Run.Hero, leveling: Run.Pack.Manifest.Rules.Leveling)))));
             probe.Screens.Add(("pack", () => Swap(new PackScreen(new Content.Screens.PackView(Run.Hero, Run.Items), GameState.Resolver))));
 
             AddChild(probe);

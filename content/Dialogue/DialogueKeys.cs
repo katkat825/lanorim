@@ -35,10 +35,17 @@ namespace Content.Dialogue
         public static string Bark(string speaker, Bark situation, int index) =>
             KeyConventions.Bark(speaker, situation.Id(), index);
 
+        // a campaign's own barks for a speaker, on top of the game's: dialogue.wolf.bark.victory.bramble.001
+        // (cc_task_i 2.2), so its numbering never collides with the game-wide bank's
+        public static string Bark(string speaker, Bark situation, int index, string campaign) =>
+            string.IsNullOrEmpty(campaign)
+                ? Bark(speaker, situation, index)
+                : KeyConventions.Bark(speaker, situation.Id(), campaign, index);
+
         // 1-based, because a bank of forty barks is numbered one to forty on paper
-        public static IEnumerable<string> Barks(string speaker, Bark situation, int count)
+        public static IEnumerable<string> Barks(string speaker, Bark situation, int count, string campaign = "")
         {
-            for (int index = 1; index <= count; index++) yield return Bark(speaker, situation, index);
+            for (int index = 1; index <= count; index++) yield return Bark(speaker, situation, index, campaign);
         }
 
         // every readout a speaker can be asked for; all of them format numbers in

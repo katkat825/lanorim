@@ -76,5 +76,24 @@ namespace Game.Screens
         // the hero stands as its class's KayKit body (game/Board/HeroMinis.cs, task G's look test); off, as
         // rogue_v3 (the board's HeroFigure) for every class, to compare in the game itself
         [Export] public bool HeroByClass { get; set; } = true;
+
+        // --- the companion's bark (cc_task_i 2.4) ---------------------------------------------------------
+        //
+        // built plain: a box of text near the companion for a few seconds. how it looks is Kathleen's
+
+        // the bubble's width; the text wraps inside it
+        [Export] public int BarkWidth { get; set; } = 340;
+
+        [Export] public int BarkFontSize { get; set; } = 26;
+
+        [Export] public Color BarkText { get; set; } = new Color(0.12f, 0.1f, 0.08f);
+
+        [Export] public Color BarkBackground { get; set; } = new Color(0.98f, 0.95f, 0.88f, 0.94f);
+
+        // how far above the companion's feet the bubble's tail sits, in table units
+        [Export] public float BarkLift { get; set; } = 0.12f;
+
+        // the shortest a bark stays up; a longer one stays as long as the player's reading pace says
+        [Export] public float BarkSeconds { get; set; } = 3.0f;
     }
 }

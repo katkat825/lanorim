@@ -552,6 +552,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `level` | number, 1 to 20 | the hero's level the fight is meant for: the campaign check holds its monsters to the SRD's XP Budget per Character for one character, and to the solo enemy cap. never read in play (cc_task_h 3.5) | | encounter | a statblock's challenge is the monster's; this is the fight's, at a level |
 | `difficulty` | `low` \| `moderate` \| `high` | how hard the fight is meant to be at that level, the SRD's Combat Encounter Difficulty; moderate when unsaid (cc_task_h 3.5) | | encounter | the DC ladder's words (`Difficulty`) are a check's, and the player's Story/Standard/Hard is a setting, not data |
 | `morale` | `none` \| `leader` \| `half` | when the enemies break and run (or surrender with nowhere to run): when the leader falls, or half of them are down. none is to the end (cc_task_h 3.4) | | reserved: no shipped fight has one yet; a campaign's author decides it per fight | nothing said when a fight ends but its outcome; morale is a fight's, not a monster's |
+| `defeat` | `death` \| `continues` | what losing this fight means: death is the death screen; continues goes back to the story with `$fight` "lost", the hero brought round, and a failed death save a knockout. unsaid is the campaign's `defeat` in pack.json (cc_task_i 3.1) | | reserved: no shipped fight has one yet; the Crucible pack is Kathleen's | `morale` is when the enemies give up; this is what happens when the hero does |
 
 ### `encounter.monster`: one band in a fight's `monsters`
 

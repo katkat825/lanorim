@@ -9,9 +9,19 @@ namespace Core.Tables
     // the dice land and learns only what the table decided (decisions_checklist.md section 3)
     public enum Visibility
     {
+        // behind the screen, and heard: the screen rattles (cc_task_i Part 1)
         Hidden,
 
         Shown,
+
+        // behind the screen and not heard: a table the author doesn't want the player to notice
+        Quiet,
+    }
+
+    public static class Visibilities
+    {
+        // a roll the player doesn't see the numbers of, heard or not
+        public static bool IsBehind(this Visibility visibility) => visibility != Visibility.Shown;
     }
 
     public enum EntryKind
@@ -80,9 +90,11 @@ namespace Core.Tables
         public EncounterEntry(string id, EntryKind kind, int weight = 1,
                               IReadOnlyList<Band> monsters = null, string map = null,
                               string loot = null, Combat.Morale morale = Combat.Morale.None,
-                              int level = 0, EncounterDifficulty difficulty = EncounterDifficulty.Moderate)
+                              int level = 0, EncounterDifficulty difficulty = EncounterDifficulty.Moderate,
+                              Combat.Defeat defeat = Combat.Defeat.Unsaid)
         {
             Morale = morale;
+            Defeat = defeat;
             Level = level;
             Difficulty = difficulty;
             Id = id ?? "";
@@ -111,6 +123,9 @@ namespace Core.Tables
 
         // when its enemies break (cc_task_h 3.4): none, leader or half. the campaign's, per fight
         public Combat.Morale Morale { get; }
+
+        // what losing it means, when the fight says (cc_task_i 3.1); Unsaid is the campaign's
+        public Combat.Defeat Defeat { get; }
 
         // the level the author meant it for, 0 when unsaid, and how hard (cc_task_h 3.5): what the campaign check holds
         // its monsters to (FightBudget). never read in play

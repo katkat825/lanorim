@@ -37,25 +37,44 @@ namespace Content.Dialogue
         public bool TakesAnArgument(string key) => All.Any(bank => bank.TakesAnArgument(key));
 
 
-        public static BarkBook Read(string folder)
+        // a pack's barks/ folder; its lines are keyed under the campaign, on top of the game's
+        public static BarkBook Read(string folder, string campaign = "")
         {
             var book = new BarkBook();
 
             foreach ((string name, string _, string text) in PackFolder.Read(folder, Extension, null, book._problems))
-            {
-                Read<BarkBank> read = BarkReader.Parse(text, name);
-
-                if (!read.Ok)
-                {
-                    book._problems.AddRange(read.Problems);
-                    continue;
-                }
-
-                book.Add(read.Value, name);
-            }
+                book.Take(BarkReader.Parse(text, name, campaign), name);
 
             return book;
         }
+
+        // THE GAME-WIDE BANKS (cc_task_i 2.1): content/srd/barks, one file per companion, written by
+        // tools/import_barks.py from Kathleen's vault
+        public const string SrdFolder = "barks";
+
+        static BarkBook _srd;
+
+        public static BarkBook Srd()
+        {
+            if (_srd != null) return _srd;
+
+            var book = new BarkBook();
+
+            foreach ((string path, string text) in Schema.Srd.ReadFolder(SrdFolder))
+                book.Take(BarkReader.Parse(text, path), path);
+
+            return _srd = book;
+        }
+
+        void Take(Read<BarkBank> read, string file)
+        {
+            if (read.Ok) Add(read.Value, file);
+            else _problems.AddRange(read.Problems);
+        }
+
+        // the bank a companion speaks from with this campaign at the table: the game's lines and the campaign's
+        public BarkBank For(string speaker, BarkBook campaign) =>
+            Of(speaker) is BarkBank game ? game.Adding(campaign?.Of(speaker)) : campaign?.Of(speaker);
 
         void Add(BarkBank bank, string file)
         {

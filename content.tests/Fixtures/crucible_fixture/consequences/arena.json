@@ -1,0 +1,6 @@
+{
+  "consequences": [
+    { "id": "sand_in_your_eye", "polarity": "bane", "kind": "flavour", "weight": 2 },
+    { "id": "the_crowd_chants_your_name", "polarity": "boon", "kind": "flavour", "weight": 2 }
+  ]
+}

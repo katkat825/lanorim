@@ -137,13 +137,14 @@ namespace Content.Schema
             return counted;
         }
 
-        // "rolled": "hidden" (behind the screen, the default) or "shown"
+        // "rolled": "hidden" (behind the screen and heard, the default), "quiet" (behind it, unheard: no rattle,
+        // cc_task_i Part 1) or "shown"
         public static Visibility Rolled(JsonElement table, string id, List<string> problems)
         {
             string rolled = table.Text("rolled", "hidden");
 
             if (!EnumWords.TryParse(rolled, out Visibility visibility))
-                problems.Add($"{id}: 'rolled' is '{rolled}', and it is 'hidden' or 'shown'");
+                problems.Add($"{id}: 'rolled' is '{rolled}', and it is 'hidden', 'quiet' or 'shown'");
 
             return visibility;
         }

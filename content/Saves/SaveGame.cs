@@ -121,6 +121,9 @@ namespace Content.Saves
         // which of its class's figures the hero's mini is (cc_task_h Part 2); 0 in a save from before it
         public int Figure { get; set; }
 
+        // experience points, in a campaign that levels by XP (cc_task_i 3.4); 0 otherwise and in an older save
+        public int Experience { get; set; }
+
         public int Level { get; set; } = 1;
 
         // BASE scores, before anything shifted them. A shift lasts until a rest, so it is a thing
@@ -195,6 +198,9 @@ namespace Content.Saves
 
         // item ids by the slot they are worn in
         public IDictionary<Slot, string> Worn { get; } = new Dictionary<Slot, string>();
+
+        // the worn items an armory lent (cc_task_i 3.3): taken off, they go back rather than into the pack
+        public IList<string> Loaned { get; } = new List<string>();
 
         // what is in the pack: item id and how many
         public IList<SavedStack> Pack { get; } = new List<SavedStack>();

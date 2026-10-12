@@ -69,6 +69,85 @@ The table writes these Yarn variables when it answers a command (`RequestVariabl
 | `$roll` | `<<roll>>` | the total |
 | `$encounter` | `<<encounter>>` | the entry the table picked, `""` for nothing |
 | `$encounter_fight` | `<<encounter>>` | that entry is a fight |
-| `$fight` | `<<fight>>` | `"won"`, `"lost"` or `"fled"` |
+| `$fight` | `<<fight>>` | `"won"`, `"lost"`, `"fled"` or `"yielded"` (`"lost"` and `"yielded"` only where defeat continues, §8) |
 | `$fight_broke` | `<<fight>>` | won because the enemies' morale broke (a rout or a surrender), not because the last fell |
 | `$loot_gold` | `<<loot>>` | the gold it found |
+
+And these about the hero, read-only and always current (`HeroVariables`, `content/Dialogue/HeroVariables.cs`; cc_task_i
+4.1). Setting one does nothing, and the campaign check says so:
+
+| Variable | Holds |
+|---|---|
+| `$hero_class` | the class id: `"fighter"`, `"mage"` |
+| `$hero_level` | the hero's level |
+| `$hero_casts` | true if the hero has any spells |
+| `$hero_figure` | which of the class's two minis the player picked: 1 or 2 |
+| `$hero_name` | the name the player gave |
+
+And one function: **`has_item("rope")`** is true when the item is in the pack or worn.
+
+```
+<<if $hero_casts>>
+    The runes on the door hum at you. #line:runes_hum
+<<elseif has_item("crowbar")>>
+    You could lever it. #line:lever_it
+<<endif>>
+```
+
+## 6. Commands added by task I
+
+| Command | What it does |
+|---|---|
+| `<<roll 1d20>>` | the GM rolls behind the screen, **silently** (it used to rattle the screen; nearly every roll did) |
+| `<<roll 1d20 heard>>` | the same, and the player hears it: the GM screen rattles, a caption says so, and the companion may react. Use it when the roll should feel like a secret |
+| `<<bark pool>>` | the companion says a line from one of its bark pools: `<<bark nearby>>`, `<<bark danger>>` (§7) |
+| `<<armory id>>` | a loadout screen, not a shop: a merchant with `"armory": true`, §8 |
+| `<<xp 50>>` | experience points, in a campaign that levels by XP; ignored with a warning in a milestone one |
+| `<<level 3>>` | as before, milestone levelling; ignored with a warning in a campaign that levels by XP |
+
+**The GM screen rattles rarely now** (cc_task_i Part 1): for an encounter table (`<<encounter>>`, or a `<<fight>>` that
+names a table) and a `<<roll ... heard>>`, and never more than once every five minutes of play. An enemy's attacks,
+damage and saves are in the fight's log, so they make no sound behind the screen. An encounter table that shouldn't be
+heard says so: `"rolled": "quiet"` (beside `"hidden"`, the default, and `"shown"`).
+
+## 7. The companion's barks
+
+Each companion says short lines from bark pools: game-wide ones from Kathleen's vault (`tools/import_barks.py`), and a
+campaign can add lines on top in its `barks/` folder - the same file shape as `content/srd/barks/`, one file per
+companion, its lines keyed `dialogue.<companion>.bark.<pool>.<campaign>.001` in the campaign's locale.
+
+| Pool | When it plays |
+|---|---|
+| `snag` | a natural 1 on the hero's attack, check or save |
+| `maxed` | a natural 20 on the hero's attack, check or save |
+| `danger` | `<<bark danger>>`; and at a fight's start, one time in three, unless the story barked in the last ten seconds. Never when the hero is Bloodied: its lines warn of something coming |
+| `victory` | a fight is won |
+| `secret` | the GM screen rattles (§6) |
+| `camp` | `<<rest short>>` or `<<rest long>>` |
+| `nearby` | only `<<bark nearby>>` |
+
+One line at a time, then twenty seconds of quiet; a higher pool in that list cuts in on a lower one, and a lower one is
+dropped, not saved for later. The player's "Companion chatter" setting can turn them down (Some halves Victory, Snag
+and Maxed) or off. For the moments with no pool in v1 (the hero hurt, a level up, a quest offered), write the line
+into the story as `#speaker:companion`.
+
+## 8. How the campaign plays (pack.json)
+
+Each of these is optional; left out, the campaign plays as the game always has.
+
+| Field | Values | What it does |
+|---|---|---|
+| `defeat` | `"death"` (default), `"continues"` | continues: a lost fight goes back to the story with `$fight` `"lost"`, the hero brought round on 1 hit point. The keepsake still catches the first drop; the next drop makes the single death save, and **failing it is a knockout, not death**. A fight entry can say `"defeat"` for itself |
+| `leveling` | `"milestone"` (default), `"xp"` | xp: a won fight gives its monsters' XP (the SRD's XP by challenge rating, all of it to the solo hero), `<<xp n>>` gives more, and the hero levels at the SRD's Character Advancement thresholds (300, 900, 2,700...). XP shows on the sheet. A lost, yielded or fled fight gives none |
+| `characters` | 1 to 20 (default 5) | how many characters the campaign holds |
+| `starting_shop` | `true` (default), `false` | false: a new hero goes straight into the story, wearing the best of what it has |
+| `consequences` | `"add"` (default), `"replace"` | the campaign's own `consequences/*.json` (the shape of `content/srd/consequences/pool.json`) are added to the game's nat-1 / nat-20 pool while it runs, or replace it. An entry can be flavour only: `"kind": "flavour"`, a line and no effect. Added ones can't reuse a game id; a replacing pool needs a boon and a bane |
+
+**Yield:** in a fight where defeat continues and the map has no way off, "Yield" is in More actions. It ends the bout
+at once, no knockout: `$fight` is `"yielded"`.
+
+**An armory** is a merchant with `"armory": true` and a stock of things to wear (no consumables: the check refuses
+them). `<<armory id>>` opens it: the hero puts on anything in it for free, as often as they like; what it replaces goes
+back to the racks (if it was lent) or into the pack (if it was theirs). No gold moves and nothing borrowed goes in the
+pack; a loan taken off goes back, and can't be sold.
+

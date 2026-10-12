@@ -60,6 +60,10 @@ namespace Game.Play
                         return visit;
                     },
                 };
+
+                // before initiative, now and then: "this has 'roll for initiative' written all over it" (cc_task_i 2.3)
+                _mind?.FightStarts();
+
                 session.Start();
 
                 MainQueue.Post(() => _combat.Started(session));

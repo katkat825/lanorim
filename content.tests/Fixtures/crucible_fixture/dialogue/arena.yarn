@@ -1,0 +1,20 @@
+title: arena
+speaker: dm
+---
+The quartermaster waves you at the racks. #line:racks
+<<armory racks>>
+<<fight first_bout>>
+<<if $fight == "lost">>
+    You wake on the sand, and the crowd has gone home. #line:lost
+<<elseif $fight == "yielded">>
+    You raise a hand, and the bout is over. #line:yielded
+<<else>>
+    The crowd roars. #line:won
+<<endif>>
+<<xp 250>>
+<<level 5>>
+<<bark nearby>>
+<<roll 1d20 heard>>
+<<rest long>>
+That is the day's bout. #line:day_over
+===

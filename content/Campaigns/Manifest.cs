@@ -43,6 +43,10 @@ namespace Content.Campaigns
 
         public string GmScreen { get; init; } = "blank";
 
+        // how it plays where it differs from the game's defaults (cc_task_i): defeat, leveling, characters,
+        // the starting shop, its consequences
+        public CampaignRules Rules { get; init; } = CampaignRules.Default;
+
         public PackKind Kind { get; }
 
         // campaign and mixed have chapters to play; a mini or class pack does not

@@ -25,7 +25,8 @@ namespace Content.Dialogue
         // <<save dex 13>>
         Save,
 
-        // <<roll 1d20>> - the GM rolls behind the screen, and the number is the author's to use
+        // <<roll 1d20>> - the GM rolls behind the screen, and the number is the author's to use. silent unless
+        // the author writes <<roll 1d20 heard>>, which rattles the screen (cc_task_i Part 1)
         Roll,
 
         // <<encounter north_road>> - the GM consults one of the campaign's encounter tables
@@ -40,8 +41,13 @@ namespace Content.Dialogue
         // <<gold 50>> - negative takes it away
         Gold,
 
-        // <<level 3>> - milestone levelling: the campaign says when
+        // <<level 3>> - milestone levelling: the campaign says when. ignored, with a warning, in a campaign that levels
+        // by XP (cc_task_i 3.4)
         Level,
+
+        // <<xp 50>> - experience points, in a campaign that levels by XP (cc_task_i 3.4); ignored, with a warning,
+        // in a milestone one
+        Xp,
 
         // <<loot goblin_pockets>> - the GM opens one of the campaign's loot tables
         Loot,
@@ -52,6 +58,14 @@ namespace Content.Dialogue
 
         // <<rest short>> or <<rest long>> - the hero rests, and a rest is an autosave
         Rest,
+
+        // <<armory crucible_racks>> - a loadout screen, not a shop (cc_task_i 3.3): the hero wears anything in the
+        // armory's stock for free, and the story comes back when the player walks away (a scene, like a shop)
+        Armory,
+
+        // <<bark nearby>> - the companion says a line from one of its bark pools (cc_task_i 2.3). nothing to
+        // answer; the story goes straight on
+        Bark,
     }
 
     public sealed class Request
@@ -80,6 +94,12 @@ namespace Content.Dialogue
 
         public int Amount { get; private set; }
 
+        // <<roll 1d20 heard>>: the player hears the dice behind the screen
+        public bool Heard { get; private set; }
+
+        // the word that makes a <<roll>> heard
+        public const string HeardWord = "heard";
+
         public override string ToString() => Command;
 
         // the verbs, with the variable each one answers into. the variables are declared to the
@@ -95,9 +115,12 @@ namespace Content.Dialogue
                 ["give"] = RequestKind.Give,
                 ["gold"] = RequestKind.Gold,
                 ["level"] = RequestKind.Level,
+                ["xp"] = RequestKind.Xp,
                 ["loot"] = RequestKind.Loot,
                 ["shop"] = RequestKind.Shop,
                 ["rest"] = RequestKind.Rest,
+                ["bark"] = RequestKind.Bark,
+                ["armory"] = RequestKind.Armory,
             };
 
         // null when it is not an engine verb at all; a problem when it is one written wrong
@@ -115,9 +138,10 @@ namespace Content.Dialogue
                 RequestKind.Check or RequestKind.Save => ReadTest,
                 RequestKind.Roll => ReadRoll,
                 RequestKind.Rest => ReadRest,
-                RequestKind.Encounter or RequestKind.Fight or RequestKind.Loot or RequestKind.Shop => ReadId,
+                RequestKind.Bark => ReadBark,
+                RequestKind.Encounter or RequestKind.Fight or RequestKind.Loot or RequestKind.Shop or RequestKind.Armory => ReadId,
                 RequestKind.Give => ReadGive,
-                RequestKind.Gold or RequestKind.Level => ReadAmount,
+                RequestKind.Gold or RequestKind.Level or RequestKind.Xp => ReadAmount,
                 _ => null,
             };
 
@@ -162,10 +186,12 @@ namespace Content.Dialogue
 
         static string ReadRoll(Request request, string[] words, string command)
         {
-            if (words.Length != 2 || !DiceRoll.TryParse(words[1], out DiceRoll dice, out _) || !dice.RollsAnything)
-                return $"'{command}' - it is <<roll 1d20>>";
+            if (words.Length is < 2 or > 3 || !DiceRoll.TryParse(words[1], out DiceRoll dice, out _) || !dice.RollsAnything ||
+                words.Length == 3 && words[2] != HeardWord)
+                return $"'{command}' - it is <<roll 1d20>>, or <<roll 1d20 {HeardWord}>> for one the player hears";
 
             request.Dice = dice;
+            request.Heard = words.Length == 3;
             return null;
         }
 
@@ -175,6 +201,17 @@ namespace Content.Dialogue
                 return $"'{command}' - it is <<rest short>> or <<rest long>>";
 
             request.Id = words[1];
+            return null;
+        }
+
+        // <<bark danger>>: a pool the engine has, by its word
+        static string ReadBark(Request request, string[] words, string command)
+        {
+            if (words.Length != 2 || !EnumWords.TryParse(words[1], out Bark pool) || !pool.Speaks())
+                return $"'{command}' - it is <<bark pool>>, the pool one of " +
+                       string.Join(", ", BarkPools.Spoken.Select(p => p.Id()));
+
+            request.Id = pool.Id();
             return null;
         }
 
@@ -202,10 +239,14 @@ namespace Content.Dialogue
         static string ReadAmount(Request request, string[] words, string command)
         {
             if (words.Length != 2 || !int.TryParse(words[1], out int amount) ||
-                request.Kind == RequestKind.Level && (amount < 1 || amount > 20))
-                return request.Kind == RequestKind.Gold
-                    ? $"'{command}' - it is <<gold 50>>, or <<gold -50>> to take it"
-                    : $"'{command}' - it is <<level 3>>, a level from 1 to 20";
+                request.Kind == RequestKind.Level && (amount < 1 || amount > 20) ||
+                request.Kind == RequestKind.Xp && amount < 1)
+                return request.Kind switch
+                {
+                    RequestKind.Gold => $"'{command}' - it is <<gold 50>>, or <<gold -50>> to take it",
+                    RequestKind.Xp => $"'{command}' - it is <<xp 50>>, a number of experience points",
+                    _ => $"'{command}' - it is <<level 3>>, a level from 1 to 20",
+                };
 
             request.Amount = amount;
             return null;
@@ -275,6 +316,7 @@ namespace Content.Dialogue
         public const string Roll = "$roll";
         public const string Encounter = "$encounter";
         public const string EncounterFight = "$encounter_fight";
+        // won, lost, fled, or yielded (cc_task_i 3.2: a bout that continues after defeat, given up)
         public const string Fight = "$fight";
 
         // true when the enemies' morale ended the fight - a rout, or a surrender - rather than the last of them falling

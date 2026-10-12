@@ -15,7 +15,8 @@ namespace Content.Saves
     //   keeps its last ten.
     // - RELOAD ON DEATH: the newest save for the character - which, because a fight always autosaves
     //   as it starts, is the moment before the fight that killed them.
-    // - FIVE CHARACTERS PER CAMPAIGN (section 2): five slots, 0 to 4.
+    // - FIVE CHARACTERS PER CAMPAIGN (section 2): five slots, 0 to 4, unless the campaign says otherwise
+    //   ("characters": n in pack.json, cc_task_i 3.5; up to CampaignRules.MostCharacters).
     //
     // One folder per campaign under the root; a file's name says its slot, its kind and when.
     public sealed class SaveLibrary
@@ -48,9 +49,9 @@ namespace Content.Saves
         {
             if (game == null) throw new ArgumentNullException(nameof(game));
 
-            if (game.Slot < 0 || game.Slot >= CharactersPerCampaign)
+            if (game.Slot < 0 || game.Slot >= Campaigns.CampaignRules.MostCharacters)
                 throw new ArgumentOutOfRangeException(nameof(game),
-                    $"slot {game.Slot} - a campaign has {CharactersPerCampaign} character slots");
+                    $"slot {game.Slot} - a campaign has at most {Campaigns.CampaignRules.MostCharacters} character slots");
 
             game.Kind = kind;
             game.Label = kind == SaveKind.Manual ? label ?? "" : "";
@@ -94,12 +95,12 @@ namespace Content.Saves
             return slots;
         }
 
-        // the first empty slot, or -1 when all five are taken
-        public int FreeSlot(string campaign)
+        // the first empty slot, or -1 when all of them (five, or the campaign's own number) are taken
+        public int FreeSlot(string campaign, int slots = CharactersPerCampaign)
         {
             IReadOnlyDictionary<int, SaveShelf.Saved> used = Characters(campaign);
 
-            for (int slot = 0; slot < CharactersPerCampaign; slot++)
+            for (int slot = 0; slot < slots; slot++)
                 if (!used.ContainsKey(slot)) return slot;
 
             return -1;

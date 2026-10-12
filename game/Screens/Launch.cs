@@ -234,7 +234,7 @@ namespace Game.Screens
                 return;
             }
 
-            int slot = GameState.Saves.FreeSlot(pack.Id);
+            int slot = GameState.Saves.FreeSlot(pack.Id, pack.Manifest?.Rules.Characters ?? Content.Saves.SaveLibrary.CharactersPerCampaign);
 
             if (slot < 0) return;
 

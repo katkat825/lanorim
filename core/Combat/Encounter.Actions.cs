@@ -144,5 +144,23 @@ namespace Core.Combat
             Flee();
             return true;
         }
+
+        // YIELDING (cc_task_i 3.2): in a bout that continues after defeat and has no way off the map, the hero can
+        // give it up on their turn. no knockout, no roll; the story hears "yielded"
+        public bool Yieldable { get; set; }
+
+        public bool CanYield(Turn turn) =>
+            Yieldable && turn != null && !turn.Ended && !Over &&
+            turn.Actor.Side == Allegiance.Hero && !turn.Actor.IsDown;
+
+        public bool Yield(Turn turn)
+        {
+            if (!CanYield(turn)) return false;
+
+            turn.End();
+            Outcome = Outcome.Yielded;
+            Observer.Ended(Outcome);
+            return true;
+        }
     }
 }

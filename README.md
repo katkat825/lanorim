@@ -60,7 +60,7 @@ game/         the Godot 4 / .NET project. the only thing that touches Godot. see
   Table/      the table, the camera, and the ten lines that join dice to rules
   Campaigns/  finding campaign folders on disk and loading their locale
   audio/ Access/ Localization/ shaders/
-tools/        the palette bake, the model puller, the impact slicer, the duplicate finder
+tools/        the palette bake, the model puller, the impact slicer, the duplicate finder, the bark importer
 checks/       the check scripts, and _common.ps1, what they share
 core.tests/   xUnit
 content.tests/ xUnit
@@ -102,6 +102,23 @@ The check scripts each **build first**, then print a one-line verdict:
 
 `game/locale/game.csv` is written by hand. `sim locale` only reads it and says which keys have no English.
 
+### The companions' barks
+
+Kathleen writes the barks in her vault, one file per pool per companion
+(`../campaign_authoring/Bark Pools/<Pool>/<companion>.md`). To bring them into the game:
+
+```bash
+python tools/import_barks.py
+```
+
+then re-import the locale (`godot --headless --path game --import`) and play. It reads the vault and never writes to it;
+it writes `content/srd/barks/<companion>.json` and the lines into `game/locale/game.csv` (every other row untouched),
+and prints each pool's size against the minimum in `_design_docs/DIALOG_POOLS.md`, anything it skipped, and a warning
+for a pool folder the game doesn't know yet. Run it as often as you like; `.\checks\check-barks.ps1` runs it with
+`--check` (writes nothing, fails if the game is behind the vault).
+
+`dotnet run --project sim -- rattles [plays] [class]` counts how often the GM screen rattles in the sample campaign.
+
 These need Godot, and find it themselves under `C:\Godot` (or `$env:GODOT_ROOT`):
 
 ```powershell
@@ -138,7 +155,7 @@ table, and `--gm-tallness 1` at its authored height; `--tray-footprint 0.65 --tr
 tray (`DiceTray.Sizing`); `--shot <file> --after <frames>` saves a picture and quits. For checks: `--prone-probe` (in a
 fight: Prone lies down in its square, Stand Up stands up), `--access-probe` (Tab, Shift+Tab, F1, F2, F3 at the table),
 `table.tscn -- --dice d20 --throws N --handful H --tray-skin gamblers` (the fairness sweep; add `--fixed-fps 60` before
-`--path` to run it as fast as it can), `table.tscn -- --open-door` (the demonstration's door, open). Since 2026-10-06: `--show builder|credits` (the map builder's page, the credits), `--build <campaign> [map]` (that map, or a new one, in the builder), `--map-probe` (the builder driven, for `check-mapbuilder.ps1`), `--shot <png> --frames N` (N frames in a row, for `tools/flicker.ps1`), and `table.tscn -- --corners` (every kind of wall post on the demonstration's map).
+`--path` to run it as fast as it can), `table.tscn -- --open-door` (the demonstration's door, open). Since 2026-10-06: `--show builder|credits` (the map builder's page, the credits), `--build <campaign> [map]` (that map, or a new one, in the builder), `--map-probe` (the builder driven, for `check-mapbuilder.ps1`), `--shot <png> --frames N` (N frames in a row, for `tools/flicker.ps1`), and `table.tscn -- --corners` (every kind of wall post on the demonstration's map). Since 2026-10-12: `--say-bark <pool>` (a line from that bark pool every few seconds, past the chatter, and past the starting shop: for a picture of the companion's bubble).
 
 The physics runs at **120 ticks a second** (`project.godot`): at Godot's default 60 a d4 or d6 lying on a face rocks
 on its corners for good (`game/Dice/DieBody.Wobble.cs`).

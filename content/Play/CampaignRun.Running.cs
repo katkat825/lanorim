@@ -14,6 +14,14 @@ namespace Content.Play
 
             // THE STARTING SHOP (cc_task_e-shop-species-and-ui-notes.md 1.4): a new hero spends their gold before the
             // first scene, gear or gold (cc_task_f 1.3). Leaving it (LeaveShop) starts the story where this would have
+            // a campaign can skip it (cc_task_i 4.2: the beginner tutorial teaches shopping in its story); the hero
+            // then goes in wearing the best of what it has
+            if (Hero.ShopsFirst && !(Pack.Manifest?.Rules.StartingShop ?? true))
+            {
+                Hero.ShopsFirst = false;
+                Hero.WearTheBest();
+            }
+
             if (Hero.ShopsFirst && Pack.StartingShop != null)
             {
                 _startAfterShop = node;
@@ -85,13 +93,17 @@ namespace Content.Play
                         return Now = Scene.Fight;
                     }
 
-                    if (request.Kind == RequestKind.Shop)
+                    // a merchant's counter, or an armory's racks (cc_task_i 3.3): both the shop scene, which knows which
+                    if (request.Kind is RequestKind.Shop or RequestKind.Armory)
                     {
                         Shop = Pack.Merchant(request.Id);
 
-                        if (Shop == null)
+                        if (Shop == null || request.Kind == RequestKind.Armory && !Shop.Armory)
                         {
-                            Talk.Complained.Add($"no merchant '{request.Id}' in this campaign");
+                            Talk.Complained.Add(request.Kind == RequestKind.Armory
+                                ? $"no armory '{request.Id}' in this campaign - a merchant with \"armory\": true"
+                                : $"no merchant '{request.Id}' in this campaign");
+                            Shop = null;
                             Reply(new Answer());
                             continue;
                         }
@@ -99,15 +111,25 @@ namespace Content.Play
                         return Now = Scene.Shop;
                     }
 
+                    int levelWas = Hero.Level;
                     Settled settled = Referee.Settle(request);
                     _settled.Add(settled);
+
+                    // what the referee couldn't do as written, for the author's playthrough (a missing item, an <<xp>>
+                    // in a milestone campaign)
+                    if (settled.Problem != null) Talk.Complained.Add(settled.Problem);
+
+                    if (settled.Heard) Heard?.Invoke();
+                    if (settled.Cue is Bark cue) Cued?.Invoke(cue);
+                    if (settled.Attempt != null) Tested?.Invoke(settled.Attempt);
 
                     if (request.Kind == RequestKind.Encounter && settled.Table?.Fights == true)
                         _lastEncounter = settled.Table;
 
                     Reply(settled.Answer ?? new Answer());
 
-                    if (request.Kind == RequestKind.Level) Autosave(SaveKind.LevelUp);
+                    if (request.Kind == RequestKind.Level || request.Kind == RequestKind.Xp && Hero.Level > levelWas)
+                        Autosave(SaveKind.LevelUp);
                     if (request.Kind == RequestKind.Rest || settled.Rested)
                     {
                         Day.Slept();

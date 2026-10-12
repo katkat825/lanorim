@@ -8,6 +8,7 @@ using Core.Characters;
 using Core.Resolution;
 using Core.Rules;
 using Core.Tables;
+using Core.Words;
 
 namespace Content.Dialogue
 {
@@ -41,6 +42,13 @@ namespace Content.Dialogue
         public GmRoll Roll { get; init; }
 
         public TableRoll Table { get; init; }
+
+        // A SECRET THE PLAYER HEARS (cc_task_i Part 1): an encounter table rolled behind the screen, or a
+        // <<roll ... heard>>. the screen rattles for these and nothing else the GM rolls
+        public bool Heard => Roll?.Visibility == Visibility.Hidden || Table?.Table.Visibility == Visibility.Hidden;
+
+        // a line the companion owes the story (cc_task_i 2.3): a <<bark>>'s pool, or Camp for a rest
+        public Bark? Cue { get; init; }
 
         // what a <<loot>> turned up and where it went - the pack screen shows this, and anything in
         // its Waiting list goes through the discard flow before the story moves on
@@ -102,9 +110,15 @@ namespace Content.Dialogue
                 RequestKind.Loot => Looted(request),
                 RequestKind.Rest => Rested(request),
                 RequestKind.Level => Levelled(request),
+                RequestKind.Xp => Earned(request),
+                RequestKind.Bark => Barked(request),
                 _ => new Settled(request, null),
             };
         }
+
+        // the pool was checked as the story was read (Request.ReadBark)
+        static Settled Barked(Request request) =>
+            new Settled(request, new Answer()) { Cue = EnumWords.TryParse(request.Id, out Bark pool) ? pool : null };
 
         static Settled Tested(Request request, Attempt attempt) =>
             new Settled(request, Answer.Of(attempt)) { Attempt = attempt };
@@ -139,7 +153,7 @@ namespace Content.Dialogue
         // the story's checks and a fight's crits (CombatSession.Consequence). null when it buys nothing
         public Consequences.Visit Consequence(Attempt attempt)
         {
-            Consequence drawn = _screen.Draw(_library.Consequences, attempt);
+            Consequence drawn = _screen.Draw(Pool, attempt);
 
             if (drawn == null) return null;
 
@@ -154,7 +168,7 @@ namespace Content.Dialogue
 
         Settled Rolled(Request request)
         {
-            GmRoll roll = _screen.Roll(request.Dice);
+            GmRoll roll = _screen.Roll(request.Dice, request.Heard ? Visibility.Hidden : Visibility.Quiet);
 
             return new Settled(request, new Answer { Total = roll.Total }) { Roll = roll };
         }
@@ -247,16 +261,44 @@ namespace Content.Dialogue
                 _hero.ShortRest(_resolver);
             }
 
-            return new Settled(request, new Answer());
+            return new Settled(request, new Answer()) { Cue = Bark.Camp };
         }
 
         // milestone levelling only goes up; a campaign that says <<level 3>> to a level 5 hero is a
         // campaign played out of order, not a demotion
         Settled Levelled(Request request)
         {
+            if (Leveling == Leveling.Xp)
+                return new Settled(request, new Answer())
+                {
+                    Problem = $"<<level {request.Amount}>> is ignored: this campaign levels by XP - give <<xp n>> instead",
+                };
+
             _hero.LevelTo(request.Amount);
 
             return new Settled(request, new Answer());
         }
+
+        // XP LEVELLING (cc_task_i 3.4): the story's experience points, in a campaign that levels by them
+        Settled Earned(Request request)
+        {
+            if (Leveling != Leveling.Xp)
+                return new Settled(request, new Answer())
+                {
+                    Problem = $"<<xp {request.Amount}>> is ignored: this campaign levels by milestone - " +
+                              "give <<level n>>, or set \"leveling\": \"xp\" in pack.json",
+                };
+
+            _hero.Earn(request.Amount);
+
+            return new Settled(request, new Answer());
+        }
+
+        Leveling Leveling => _pack?.Manifest?.Rules.Leveling ?? Leveling.Milestone;
+
+        // the game's consequences with the campaign's on top, or in their place (cc_task_i 4.3)
+        ConsequencePool Pool => _pool ??= _pack?.PoolOn(_library.Consequences) ?? _library.Consequences;
+
+        ConsequencePool _pool;
     }
 }

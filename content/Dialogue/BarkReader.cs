@@ -12,7 +12,8 @@ namespace Content.Dialogue
         // the size of the bank a writer would sit down to fill; CORE_RULES.md section 12 asks for about forty Snags
         public const int MostLinesInABank = 999;
 
-        public static Read<BarkBank> Parse(string json, string file)
+        // a campaign's file names its lines under the campaign (DialogueKeys.Bark), the game-wide one's don't
+        public static Read<BarkBank> Parse(string json, string file, string campaign = "")
         {
             var problems = new List<ContentProblem>();
 
@@ -38,7 +39,7 @@ namespace Content.Dialogue
                         $"'{speaker}' has no barks at all, so it is a voice that never speaks - " +
                         $"give it a bank ({string.Join(", ", EnumWords.Ids<Bark>())}), or delete the file"));
 
-                return Read<BarkBank>.Good(new BarkBank(speaker, banks, reads));
+                return Read<BarkBank>.Good(new BarkBank(speaker, banks, reads, campaign));
             }
         }
 

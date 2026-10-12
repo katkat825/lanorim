@@ -103,7 +103,13 @@ namespace Core.Localization
         // one kind of line the engine itself asks for by name, so the word "bark" belongs here
         // beside the other conventions rather than in the dialogue module that happens to use it.
         public static string Bark(string speaker, string situation, int index) =>
-            Line(speaker, "bark", situation, index);
+            Line(speaker, BarkAspect, situation, index);
+
+        public const string BarkAspect = "bark";
+
+        // a campaign's barks on top of the game's, numbered apart: dialogue.wolf.bark.victory.bramble.001
+        public static string Bark(string speaker, string situation, string campaign, int index) =>
+            Key(DialogueNs, speaker, BarkAspect, situation, campaign, index.ToString("000"));
 
 
         static bool IsSegment(string s) =>

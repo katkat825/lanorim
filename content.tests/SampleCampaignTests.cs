@@ -34,16 +34,19 @@ namespace Content.Tests
             if (Directory.Exists(_saves)) Directory.Delete(_saves, true);
         }
 
-        static Package Pack()
+        static Package Pack() => Sound(Folder);
+
+        // a campaign folder read, and held to loading without a fault
+        internal static Package Sound(string folder)
         {
-            Package pack = Package.Read(Folder);
+            Package pack = Package.Read(folder);
 
             Assert.True(pack.Sound, string.Join("\n", pack.Problems));
 
             return pack;
         }
 
-        static Hero Make(Library library, string className)
+        internal static Hero Make(Library library, string className)
         {
             var making = new Creation.Creation(library, library.Backgrounds);
 

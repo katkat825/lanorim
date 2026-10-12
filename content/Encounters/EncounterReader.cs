@@ -79,7 +79,7 @@ namespace Content.Encounters
         }
 
         public static readonly IReadOnlyList<string> EntryKeys =
-            new[] { "id", "kind", "weight", "monsters", "map", "loot", "morale", "level", "difficulty" };
+            new[] { "id", "kind", "weight", "monsters", "map", "loot", "morale", "level", "difficulty", "defeat" };
 
         // a monster entry's flag: the leader whose fall breaks a "morale": "leader" fight (cc_task_h 3.4)
         const string LeaderFlag = "leader";
@@ -124,6 +124,15 @@ namespace Content.Encounters
             if ((entry.Has("level") || entry.Has("difficulty")) && kind != EntryKind.Fight)
                 problems.Add($"{where}: only a fight has a level and a difficulty");
 
+            // what losing it means, for this fight alone (cc_task_i 3.1)
+            Core.Combat.Defeat defeat = Core.Combat.Defeat.Unsaid;
+
+            if (entry.Has("defeat") && (!EnumWords.TryName(entry.Text("defeat"), out defeat) || defeat == Core.Combat.Defeat.Unsaid))
+                problems.Add($"{where}: '{entry.Text("defeat")}' is not a defeat - death or continues");
+
+            if (entry.Has("defeat") && kind != EntryKind.Fight)
+                problems.Add($"{where}: only a fight has a defeat");
+
             if (monsters.Count(m => m.Leader) > 1)
                 problems.Add($"{where}: one leader to a fight - {monsters.Count(m => m.Leader)} are marked");
 
@@ -151,7 +160,7 @@ namespace Content.Encounters
                     break;
             }
 
-            return new EncounterEntry(id, kind, weight, monsters, map, loot, morale, System.Math.Max(0, level), difficulty);
+            return new EncounterEntry(id, kind, weight, monsters, map, loot, morale, System.Math.Max(0, level), difficulty, defeat);
         }
     }
 }

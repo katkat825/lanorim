@@ -48,6 +48,9 @@ namespace Game.Play
 
         public BoardShow Show(Func<Actor, bool> isHero) => new BoardShow(_steps, isHero);
 
+        // a line of the table's own in the fight's log: the companion's bark (cc_task_i 2.4)
+        public void Write(string line) => _hud?.Write(line);
+
         public void Mount(Control ui)
         {
             _hud = new CombatHudUi(this);

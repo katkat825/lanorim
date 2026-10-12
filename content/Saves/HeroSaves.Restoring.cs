@@ -113,8 +113,10 @@ namespace Content.Saves
             hero.DiscardWarningDismissed = saved.DiscardWarningDismissed;
             hero.ShopsFirst = saved.ShopsFirst;
             hero.Figure = saved.Figure;
+            hero.Remember(saved.Experience);
 
             RestoreKit(saved, library, hero, file, found);
+            hero.Lent(saved.Loaned);
 
             // a hero from before the keepsake gets one as the save loads (cc_task_h 3.2)
             hero.GiveKeepsake(library.Items);

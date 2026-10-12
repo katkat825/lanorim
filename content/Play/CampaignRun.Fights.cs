@@ -27,6 +27,8 @@ namespace Content.Play
 
             TableRoll rolled = table != null ? Screen.Consult(table) : null;
 
+            if (table?.Visibility == Visibility.Hidden) Heard?.Invoke();
+
             if (rolled == null || !rolled.Fights)
             {
                 if (_lastEncounter != null && (_lastEncounter.Entry?.Id == id || _lastEncounter.Table.Id == id))
@@ -67,6 +69,11 @@ namespace Content.Play
             return new FightCall { Entry = entry, Group = group, MapId = map, Map = layout };
         }
 
+        // XP LEVELLING (cc_task_i 3.4): a won fight's XP is its monsters', the SRD's Experience Points by Challenge
+        // Rating; a solo hero takes it all
+        public int FightXp =>
+            Fight?.Group.Sum(band => Find(band.Monster) is Monster monster ? Encounters.FightBudget.Xp(monster) * band.Count : 0) ?? 0;
+
         Monster Find(string id) =>
             Pack.Monsters.FirstOrDefault(m => m.Id == id) ?? Library.Bestiary.Find(id);
 
@@ -102,6 +109,9 @@ namespace Content.Play
             Battle battle = Battle.Set(Library, Fight.Map, Hero, foes, resolver, chooser, observers)
                                   .Holding(Fight.Entry?.Morale ?? Morale.None);
 
+            // a bout that continues after defeat and has no way off the map can be yielded (cc_task_i 3.2)
+            battle.Fight.Yieldable = DefeatHere == Defeat.Continues && !battle.Fight.Field.Exits.Any();
+
             _battle = battle;
 
             Day.Knows(battle.What);
@@ -109,8 +119,12 @@ namespace Content.Play
             return battle;
         }
 
-        // the combat screen is done: the story reads $fight, a win opens the fight's loot, and a
-        // loss is the death screen - it does not go back into the story
+        // what losing the fight being fought means: its own word, else the campaign's (cc_task_i 3.1)
+        public Defeat DefeatHere => (Pack.Manifest?.Rules ?? Campaigns.CampaignRules.Default).For(Fight?.Entry);
+
+        // the combat screen is done: the story reads $fight, a win opens the fight's loot and (in a campaign that
+        // levels by XP) gives its monsters' XP, and a loss is the death screen - it does not go back into the story -
+        // unless defeat continues here (cc_task_i 3.1): then the hero comes round and the story hears "lost"
         public Scene EndFight(Outcome outcome)
         {
             if (Now != Scene.Fight) return Now;
@@ -118,8 +132,14 @@ namespace Content.Play
             MapId = Fight?.MapId ?? MapId;
             Hero.FightOver();
 
-            if (outcome == Outcome.HeroesLost)
+            if (outcome == Outcome.HeroesLost && DefeatHere != Defeat.Continues)
                 return Now = Scene.Dead;
+
+            // a knockout, not death: brought round on 1 hit point, and what the story does next is the story's
+            if (outcome == Outcome.HeroesLost && (Hero.Actor.IsDead || Hero.Actor.IsDown)) Hero.Actor.Raise();
+
+            if (outcome == Outcome.HeroesWon && Pack.Manifest?.Rules.Leveling == Campaigns.Leveling.Xp)
+                Hero.Earn(FightXp);
 
             Spoils = null;
 

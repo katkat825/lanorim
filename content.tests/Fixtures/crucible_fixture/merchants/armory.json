@@ -1,0 +1,14 @@
+{
+  "merchants": [
+    {
+      "id": "racks",
+      "armory": true,
+      "stock": [
+        "longsword",
+        "chain_mail",
+        "shield",
+        "shortbow"
+      ]
+    }
+  ]
+}

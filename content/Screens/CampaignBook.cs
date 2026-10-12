@@ -79,7 +79,10 @@ namespace Content.Screens
 
         public IReadOnlyList<CharacterSlot> Characters { get; init; } = Array.Empty<CharacterSlot>();
 
-        public bool CanStartNew => Characters.Count < SaveLibrary.CharactersPerCampaign;
+        // the campaign's character slots: five, or its own "characters" (cc_task_i 3.5)
+        public int Slots { get; init; } = SaveLibrary.CharactersPerCampaign;
+
+        public bool CanStartNew => Characters.Count < Slots;
 
         // the label on a test campaign's page: it is not a real one
         public string LabelKey => Kind == PageKind.Test ? CampaignBook.TestLabel : null;
@@ -109,6 +112,7 @@ namespace Content.Screens
                     DescriptionKey = manifest.DescriptionKey,
                     Kind = KindOf(manifest),
                     Characters = Characters(saves, manifest.Id),
+                    Slots = manifest.Rules.Characters,
                 });
 
             // stable: real campaigns keep their found order, tests go to the back

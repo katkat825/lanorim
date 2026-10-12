@@ -1,0 +1,31 @@
+{
+  "tables": [
+    {
+      "id": "bouts",
+      "entries": [
+        {
+          "id": "first_bout",
+          "kind": "fight",
+          "map": "pit",
+          "monsters": [
+            {
+              "monster": "goblin",
+              "count": "2"
+            }
+          ]
+        },
+        {
+          "id": "to_the_death",
+          "kind": "fight",
+          "map": "pit",
+          "defeat": "death",
+          "monsters": [
+            {
+              "monster": "goblin"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

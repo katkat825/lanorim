@@ -226,7 +226,7 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   never be added. (`09-25 Q19`)
 - **[DEFERRED 2026-10-01] Firearms** (Musket, Pistol, SRD): not in v1. (`09-25 Q16`)
 - **[DECIDED] Level range & leveling** — milestone leveling, up to level 20; XP deferred (allowing both,
-  campaign-chosen, is cheap and a fine fast-follow).
+  campaign-chosen, is cheap and a fine fast-follow). *(Both built 2026-10-12, cc_task_i 3.4: a campaign picks with `"leveling": "milestone"` (the default) or `"xp"` in pack.json.)*
 - **[DECIDED] Classes & subclasses** — **7 v1 classes: Barbarian, Fighter, Rogue, Mage, Cleric,
   Paladin, Druid**, one SRD subclass each (`v1_class_roster.md`). **Mage is merged** (Wizard + Warlock +
   Sorcerer themes in one class). **Fighter shares Barbarian's companion; Paladin (the cheap 7th, a
@@ -261,10 +261,10 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
 - **[DECIDED 2026-10-01] Doors in a fight:** the SRD's rule; where the SRD is silent, opening one mid-fight costs
   an action, unless a bonus action makes more sense. (`09-28g Q5`) *Built 2026-10-03: SRD 5.2.1 (Interacting with Things) has one object
   interaction free each turn, so the first door a turn is free and a second is the Utilize action. Monsters open them too.*
-- **[OPEN] Combat interaction model — how faithful to 5e tactics?** Opportunity attacks, cover, LoS,
+- **[DECIDED] Combat interaction model — how faithful to 5e tactics?** Opportunity attacks, cover, LoS,
   flanking, AoE templates, targeting/range, and *how the player issues an action*. Biggest scope driver;
   also a cost hotspot (§6). suggest a simplified version for v1
-- **[OPEN] Enemy AI** — scripted per-monster vs. generic "approach + attack" with tags. How smart, v1? standard enemy ai?
+- **[DECIDED] Enemy AI** — scripted per-monster vs. generic "approach + attack" with tags. How smart, v1? standard enemy ai?
 - **[DECIDED] Companion function** — the companion is a live **off-map** table thing (its own token,
   distinct from the on-map minis), and like everything else it's a **Quaternius** creature: Wolf for
   Barbarian + Fighter, the Imp you own for Mage, Fox/beast for Druid; Cleric + Paladin's "saint's
@@ -273,11 +273,11 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   carries identity. **5 companion voices across 7 classes** (Fighter shares Barbarian, Paladin shares
   Cleric). Details in `v1_class_roster.md`.
 - **[DECIDED] Save model** — reload-on-death. autosave on events plus manual saves, save all if feasible, otherwise last 10. 
-- **[OPEN] Character-creation flow** — guided vs. freeform; order of picks. [DECIDED] whatever's easiest
+- **[DECIDED] Character-creation flow** — guided vs. freeform; order of picks. [DECIDED] whatever's easiest
 - **[OPEN] Encounter & map authoring format** — how a campaign places monsters and lays out a fight. *(Build status 2026-09-24: maps + spawns exist in the map format; a story starts a fight with `<<fight id>>`; encounter tables name a monster group and a map. The authoring UI is the map builder.)*
 - **[DECIDED] Dialog presentation** — popup with Continue button.
 - **[DECIDED-ish] Tutorial / onboarding.** - tutorial campaigns. ask player how familiar they are with ttrpg (beginner, intermediate, advanced) and select related tutorial campaign. tutorial campaigns are replayable
-- **[OPEN] Fleeing combat** — an option? [DECIDED-ish] whatever is more expected and is easier. *(Built 2026-09-24: step off an open edge of the map; provokes opportunity attacks unless you Disengage; a closed map can't be fled.)*
+- **[DECIDED] Fleeing combat** — an option? [DECIDED-ish] whatever is more expected and is easier. *(Built 2026-09-24: step off an open edge of the map; provokes opportunity attacks unless you Disengage; a closed map can't be fled.)*
 
 ## 4. Presentation & art
 
@@ -405,4 +405,4 @@ additive (currently deferred; v1 is flat 40 slots) · global inventory / lost-an
 
 *Add anything here as it comes up. Half-formed is fine.*
 
-- **[OPEN] Campaign-specific nat-1 / nat-20 consequences.** *(raised 2026-09-24 — the campaign's goat is growing a personality.)* **Not currently wired up.** The engine already supports it — the consequence pool is data with a `.With()` layer, and there's a `Flavour` kind that's a pure narrator line (no mechanics) — but the campaign seam isn't connected: a campaign `Package` has no `consequences` folder, and `Library.With(pack)` passes the SRD pool through unchanged. Two levels: **(a) campaign-wide** additions (goat-tone banes/boons that can be drawn on any nat-1/20 in that campaign) is a ~3-edit wire and easy — and since the pool is additive it sidesteps the "can't redefine SRD content yet" limit entirely; **(b) encounter/NPC-scoped** (a line that fires *only* around the goat / in one encounter) is a bigger add — the pool has no context/tag filtering today, only polarity. Decision pending on whether to wire (a), and whether (b) is worth it.
+- **[DECIDED] Campaign-specific nat-1 / nat-20 consequences.** *(Built 2026-10-12, cc_task_i 4.3: (a) campaign-wide. A pack's `consequences/*.json`, in `content/srd/consequences/pool.json`'s shape, adds to the game-wide pool while that campaign runs, or replaces it with `"consequences": "replace"` in pack.json; flavour-only entries work. (b), encounter- or NPC-scoped lines, is not built. Kathleen to confirm.)* Was: *(raised 2026-09-24 — the campaign's goat is growing a personality.)* **Not currently wired up.** The engine already supports it — the consequence pool is data with a `.With()` layer, and there's a `Flavour` kind that's a pure narrator line (no mechanics) — but the campaign seam isn't connected: a campaign `Package` has no `consequences` folder, and `Library.With(pack)` passes the SRD pool through unchanged. Two levels: **(a) campaign-wide** additions (goat-tone banes/boons that can be drawn on any nat-1/20 in that campaign) is a ~3-edit wire and easy — and since the pool is additive it sidesteps the "can't redefine SRD content yet" limit entirely; **(b) encounter/NPC-scoped** (a line that fires *only* around the goat / in one encounter) is a bigger add — the pool has no context/tag filtering today, only polarity. Decision pending on whether to wire (a), and whether (b) is worth it.

@@ -85,6 +85,9 @@ namespace Core.Combat
 
         // the hero left the fight rather than finishing it
         Fled,
+
+        // the hero gave the bout up (cc_task_i 3.2): a fight that continues after defeat, with no way off the map
+        Yielded,
     }
 
     // implement one method, ignore the rest

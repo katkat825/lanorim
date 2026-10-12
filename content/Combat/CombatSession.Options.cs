@@ -309,6 +309,8 @@ namespace Content.Combat
 
             if (Fight.CanFlee(Turn)) yield return Free("flee", OptionKind.Flee);
 
+            if (Fight.CanYield(Turn)) yield return Free("yield", OptionKind.Yield);
+
             yield return Free("end_turn", OptionKind.EndTurn);
         }
 
@@ -319,7 +321,7 @@ namespace Content.Combat
 
         public static IEnumerable<string> ActionKeys() =>
             new[] { "dash", "disengage", "hide", "bonus_dash", "bonus_disengage", "bonus_hide",
-                    "stand_up", "break_free", "shake", "surge", "flee", "end_turn",
+                    "stand_up", "break_free", "shake", "surge", "flee", "yield", "end_turn",
                     "grapple", "shove", "shove_prone", "open_door", "off_hand" }
                 .Select(UiName)
                 .Concat(Keys())

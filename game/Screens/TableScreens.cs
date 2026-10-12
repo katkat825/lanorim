@@ -148,129 +148,6 @@ namespace Game.Screens
         }
     }
 
-    // THE PACK, and the merchant's counter beside it when there is one
-    public partial class PackScreen : Overlay
-    {
-        readonly PackView _view;
-        readonly IResolver _dice;
-        string _confirming;
-
-        public PackScreen(PackView view, IResolver dice)
-        {
-            _view = view;
-            _dice = dice;
-            Width = 820;
-        }
-
-        protected override void Draw()
-        {
-            Body.AddChild(Ui.Title(PackView.TitleKey));
-            Body.AddChild(Ui.Row(24, Ui.Plain(Ui.Money(_view.Copper)),
-                                 Ui.Label(PackView.SlotsKey, _view.Used, _view.Capacity)));
-
-            if (_view.AtTheCounter)
-                Body.AddChild(Ui.Label(_view.MerchantLineKey));
-
-            var mine = Ui.Column(4);
-
-            foreach (PackRow row in _view.Rows)
-            {
-                PackRow r = row;
-                var line = Ui.Row(6, Ui.Plain($"{Ui.Say(r.NameKey)}  ×{r.Count}{(r.Equipped ? "  ●" : "")}"));
-                line.GetChild<Label>(0).SizeFlagsHorizontal = SizeFlags.ExpandFill;
-
-                if (!r.Quest && !r.Item.Heals.IsNothing)
-                    line.AddChild(Ui.Button(PackView.UseKey, () => { _view.Use(r.Item.Id, _dice); Redraw(); }));
-
-                // put it on, or hold a Light weapon in the off hand (cc_task_open-questions-answers.md 3.1)
-                if (_view.CanEquip(r.Item.Id))
-                    line.AddChild(Ui.Button(PackView.EquipKey, () => { _view.Equip(r.Item.Id); Redraw(); }));
-
-                if (_view.CanHoldInOffHand(r.Item.Id))
-                    line.AddChild(Ui.Button(PackView.OffHandKey, () => { _view.HoldInOffHand(r.Item.Id); Redraw(); }));
-
-                if (_view.AtTheCounter && r.SellsFor >= 0)
-                {
-                    line.AddChild(Ui.Button($"{Ui.Say(PackView.SellKey)} {Ui.Money(r.SellsFor)}", () =>
-                    {
-                        if (_view.NeedsSellConfirmation(r.Item.Id) && _confirming != "sell:" + r.Item.Id)
-                        {
-                            _confirming = "sell:" + r.Item.Id;
-                            Redraw();
-                            return;
-                        }
-
-                        _confirming = null;
-                        _view.Sell(r.Item.Id, 1, confirmed: true);
-                        Redraw();
-                    }, true));
-                }
-
-                if (!r.Quest)
-                    line.AddChild(Ui.Button(PackView.DiscardKey, () =>
-                    {
-                        if (_view.NeedsDiscardWarning && _confirming != "discard:" + r.Item.Id)
-                        {
-                            _confirming = "discard:" + r.Item.Id;
-                            Redraw();
-                            return;
-                        }
-
-                        _confirming = null;
-                        _view.Discard(r.Item.Id);
-                        Redraw();
-                    }));
-
-                mine.AddChild(line);
-
-                if (_confirming == "sell:" + r.Item.Id) mine.AddChild(Ui.Label(PackView.SellEquippedKey));
-
-                if (_confirming == "discard:" + r.Item.Id)
-                {
-                    mine.AddChild(Ui.Label(PackView.DiscardWarningKey));
-
-                    var never = new CheckBox { Text = Ui.Say(PackView.DontWarnAgainKey), FocusMode = FocusModeEnum.All };
-                    never.Toggled += on => { if (on) _view.DismissDiscardWarning(); };
-                    mine.AddChild(never);
-                }
-            }
-
-            // what is worn and held, each with Unequip: it goes back in the pack (cc_task_open-questions-answers.md 3.1)
-            if (_view.Worn.Count > 0) mine.AddChild(Ui.Label(PackView.WornKey));
-
-            foreach ((Content.Items.Slot slot, Content.Items.Item item) in _view.Worn)
-            {
-                Content.Items.Slot s = slot;
-                var worn = Ui.Row(6, Ui.Plain($"{Ui.Say(PackView.SlotKey(s))}: {Ui.Say(item.NameKey)}"));
-                worn.GetChild<Label>(0).SizeFlagsHorizontal = SizeFlags.ExpandFill;
-                worn.AddChild(Ui.Button(PackView.UnequipKey, () => { _view.TakeOff(s); Redraw(); }));
-                mine.AddChild(worn);
-            }
-
-            if (!_view.AtTheCounter)
-            {
-                Body.AddChild(Ui.Scroll(mine, 360));
-            }
-            else
-            {
-                var shelf = Ui.Column(4);
-
-                foreach (ShopRow row in _view.Shelf)
-                {
-                    ShopRow r = row;
-                    shelf.AddChild(Ui.Row(6,
-                        Ui.Plain($"{Ui.Say(r.NameKey)}  {Ui.Money(r.Price)}"),
-                        Ui.Button(PackView.BuyKey, () => { _view.Buy(r.Item.Id); Redraw(); })
-                          .Greyed(!r.Affordable, Merchant.LineFor(Rebuff.NoGold))));
-                }
-
-                Body.AddChild(Ui.Row(16, Ui.Scroll(mine, 360), Ui.Scroll(shelf, 360)));
-            }
-
-            Body.AddChild(Ui.Button(PackView.LeaveKey, Close));
-        }
-    }
-
     // THE CHARACTER SHEET, the short form: who, how hurt, how hard to hit, the scores, the spells,
     // the features with uses left
     public partial class SheetScreen : Overlay
@@ -291,6 +168,12 @@ namespace Game.Screens
                 Ui.Label(ScreenWords.SheetLevel, _sheet.Level),
                 Ui.Label(ScreenWords.SheetHp, _sheet.HitPoints, _sheet.MaxHitPoints),
                 Ui.Label(ScreenWords.SheetAc, _sheet.ArmorClass)));
+
+            // in a campaign that levels by XP (cc_task_i 3.4)
+            if (_sheet.Experience is int xp)
+                Body.AddChild(_sheet.NextLevelAt > 0
+                    ? Ui.Label(ScreenWords.SheetXp, xp, _sheet.NextLevelAt)
+                    : Ui.Label(ScreenWords.SheetXpTop, xp));
 
             var origin = Ui.Row(24, Ui.Label(ScreenWords.SheetSize, Ui.Say(_sheet.SizeKey)));
 

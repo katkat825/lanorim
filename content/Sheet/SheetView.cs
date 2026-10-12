@@ -51,6 +51,12 @@ namespace Content.Sheet
         // shows "you have an improvement to spend" while this is above 0
         public int PendingImprovements { get; private set; }
 
+        // experience points and the next level's, in a campaign that levels by XP (cc_task_i 3.4); null in a milestone
+        // one, which shows none. the next is 0 at level 20
+        public int? Experience { get; private set; }
+
+        public int NextLevelAt { get; private set; }
+
         // --- basics --------------------------------------------------------------------------
 
         public int ArmorClass { get; private set; }
@@ -139,7 +145,8 @@ namespace Content.Sheet
         public bool? Keepsake { get; private set; }
 
 
-        public static SheetView Of(Hero hero, Encounter fight = null, Turn turn = null)
+        public static SheetView Of(Hero hero, Encounter fight = null, Turn turn = null,
+                                   Campaigns.Leveling leveling = Campaigns.Leveling.Milestone)
         {
             if (hero == null) throw new ArgumentNullException(nameof(hero));
 
@@ -158,6 +165,8 @@ namespace Content.Sheet
                 SpeciesSpellAbilityKey = hero.SpeciesSpellAbility?.NameKey(),
                 BackgroundKey = hero.Background?.NameKey,
                 PendingImprovements = hero.PendingImprovements,
+                Experience = leveling == Campaigns.Leveling.Xp ? hero.Experience : null,
+                NextLevelAt = hero.NextLevelAt,
 
                 ArmorClass = actor.ArmorClass,
                 Initiative = actor.AbilityModifier(Ability.Dexterity),

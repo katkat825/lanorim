@@ -30,11 +30,11 @@ namespace Content.Tests
         [Theory]
         [InlineData("encounters")]
         [InlineData("loot")]
-        public void HiddenOrShownAndNothingElse(string reader)
+        public void HiddenQuietOrShownAndNothingElse(string reader)
         {
             Assert.Contains(Problems(reader, @"{ ""tables"": [ { ""id"": ""north_road"", ""rolled"": ""secret"",
                                                 ""entries"": [ { ""id"": ""quiet"", ""kind"": ""nothing"" } ] } ] }"),
-                            p => p.Contains("'hidden' or 'shown'"));
+                            p => p.Contains("'hidden', 'quiet' or 'shown'"));
         }
     }
 }
