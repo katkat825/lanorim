@@ -10,14 +10,14 @@ namespace Core.Tables
     public sealed class LootRoll
     {
         public LootRoll(LootTable table, GmRoll pick, LootEntry entry, IReadOnlyList<Found> found,
-                        int gold, LootRoll inner, IReadOnlyList<string> weightedOut,
+                        int copper, LootRoll inner, IReadOnlyList<string> weightedOut,
                         IReadOnlyList<GmRoll> rolls)
         {
             Table = table;
             PickRoll = pick;
             Entry = entry;
             Found = found ?? Array.Empty<Found>();
-            Gold = Math.Max(0, gold);
+            Copper = Math.Max(0, copper);
             Inner = inner;
             WeightedOut = weightedOut ?? Array.Empty<string>();
             Rolls = rolls ?? Array.Empty<GmRoll>();
@@ -33,8 +33,8 @@ namespace Core.Tables
         // every item found, this table's and the nested ones', in the order they were rolled
         public IReadOnlyList<Found> Found { get; }
 
-        // all the gold, nested tables included
-        public int Gold { get; }
+        // all the coin, nested tables included, in copper: gold, silver and copper together (cc_task_k)
+        public int Copper { get; }
 
         // the table the entry rolled, or null
         public LootRoll Inner { get; }
@@ -45,7 +45,7 @@ namespace Core.Tables
         // every roll made, in order - the pick, the counts, the gold, then the nested table's
         public IReadOnlyList<GmRoll> Rolls { get; }
 
-        public bool IsEmpty => Found.Count == 0 && Gold == 0;
+        public bool IsEmpty => Found.Count == 0 && Copper == 0;
 
         // the narrator's lines, outer table first; empty when nobody has anything to say
         public IEnumerable<string> LineKeys
@@ -67,7 +67,7 @@ namespace Core.Tables
             (Entry == null ? "nothing to find"
              : IsEmpty ? $"{Entry.Id}, and nothing in it"
              : $"{Entry.Id} - " + string.Join(", ", Found.Select(f => f.ToString())
-                                                        .Concat(Gold > 0 ? new[] { $"{Gold} gold" }
+                                                        .Concat(Copper > 0 ? new[] { $"{Copper} cp" }
                                                                          : Array.Empty<string>())));
     }
 }

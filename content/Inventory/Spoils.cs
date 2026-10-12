@@ -5,21 +5,22 @@ using Core.Tables;
 
 namespace Content.Inventory
 {
-    // what a loot roll came to once it met the pack: the gold banked, what went in, and what is
+    // what a loot roll came to once it met the pack: the coin banked, what went in, and what is
     // waiting on the player to make room. it holds the overflows and does not resolve them - that
     // is the player's choice, one at a time, through the same Overflow a full pack always uses.
     public sealed class Haul
     {
-        public Haul(int gold, IReadOnlyList<Found> taken, IReadOnlyList<Overflow> waiting,
+        public Haul(int copper, IReadOnlyList<Found> taken, IReadOnlyList<Overflow> waiting,
                     IReadOnlyList<string> unknown)
         {
-            Gold = gold;
+            Copper = copper;
             Taken = taken ?? Array.Empty<Found>();
             Waiting = waiting ?? Array.Empty<Overflow>();
             Unknown = unknown ?? Array.Empty<string>();
         }
 
-        public int Gold { get; }
+        // gold, silver and copper together, in copper (Coins)
+        public int Copper { get; }
 
         public IReadOnlyList<Found> Taken { get; }
 
@@ -34,7 +35,7 @@ namespace Content.Inventory
         public IReadOnlyList<string> Unknown { get; }
 
         public override string ToString() =>
-            $"{Gold} gold, {Taken.Count} taken" +
+            $"{Copper} cp, {Taken.Count} taken" +
             (MustMakeRoom ? $", {Waiting.Count} waiting for room" : "") +
             (Unknown.Count > 0 ? $", {Unknown.Count} unknown" : "");
     }
@@ -69,7 +70,7 @@ namespace Content.Inventory
             return screen.Open(table, tables, UsableBy(shelf, className, level));
         }
 
-        // gold goes straight in - it costs no slot, and currency is gold-only. each item goes in
+        // coin goes straight in - it costs no slot, and the roll has it in copper already. each item goes in
         // whole if it fits and waits whole if it does not: a stack half-taken would leave the
         // player refusing "the new item" when some of it is already in the pack
         public static Haul Hand(Pack pack, LootRoll roll, ItemShelf shelf)
@@ -79,7 +80,7 @@ namespace Content.Inventory
 
             if (roll == null) return new Haul(0, null, null, null);
 
-            pack.Earn(Coins.FromGold(roll.Gold));
+            pack.Earn(roll.Copper);
 
             var taken = new List<Found>();
             var waiting = new List<Overflow>();
@@ -111,7 +112,7 @@ namespace Content.Inventory
                 }
             }
 
-            return new Haul(roll.Gold, taken, waiting, unknown);
+            return new Haul(roll.Copper, taken, waiting, unknown);
         }
     }
 }

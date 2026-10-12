@@ -71,7 +71,8 @@ The table writes these Yarn variables when it answers a command (`RequestVariabl
 | `$encounter_fight` | `<<encounter>>` | that entry is a fight |
 | `$fight` | `<<fight>>` | `"won"`, `"lost"`, `"fled"` or `"yielded"` (`"lost"` and `"yielded"` only where defeat continues, §8) |
 | `$fight_broke` | `<<fight>>` | won because the enemies' morale broke (a rout or a surrender), not because the last fell |
-| `$loot_gold` | `<<loot>>` | the gold it found |
+| `$loot_gold` | `<<loot>>` | what it found, in whole gold, rounded down (99 copper is 0) |
+| `$loot_copper` | `<<loot>>` | everything it found, gold, silver and copper together, in copper: "a few coppers" is `$loot_copper > 0 and $loot_gold == 0` |
 
 And these about the hero, read-only and always current (`HeroVariables`, `content/Dialogue/HeroVariables.cs`; cc_task_i
 4.1). Setting one does nothing, and the campaign check says so:
@@ -151,3 +152,29 @@ them). `<<armory id>>` opens it: the hero puts on anything in it for free, as of
 back to the racks (if it was lent) or into the pack (if it was theirs). No gold moves and nothing borrowed goes in the
 pack; a loan taken off goes back, and can't be sold.
 
+## 9. Money: gold, silver and copper
+
+*cc_task_k, 2026-10-12.* **The purse is copper.** The SRD's coins are 1 GP = 10 SP = 100 CP, and the game holds every
+amount in copper and shows it as gold, silver and copper. Write money in whichever coin reads right; they all land in
+the same purse.
+
+| Command | What it does |
+|---|---|
+| `<<gold 50>>` | gives 50 gold; `<<gold -50>>` takes it |
+| `<<silver 12>>` | gives 12 silver; `<<silver -25>>` takes it |
+| `<<copper 5>>` | gives 5 copper; `<<copper -5>>` takes it |
+
+Taking more than the hero has takes what there is: a toll doesn't go into debt.
+
+A loot table's find can hold `"gold"`, `"silver"` and `"copper"`, any or all of them, each written the same way, as
+dice or as dice times a number:
+
+```json
+{ "id": "mara_reward", "kind": "find", "silver": "2d6" },
+{ "id": "fat_purse", "kind": "find", "gold": "1d4", "silver": { "roll": "3d6", "times": 10 }, "copper": "5" }
+```
+
+A find needs `items` or at least one coin. `<<loot>>` answers `$loot_gold` and `$loot_copper` (§5).
+
+Still in gold only: an item's cost in an item file (fractions work: `0.5` is 5 silver), a class's or background's
+starting gold, and a consequence's `"kind": "gold"`.

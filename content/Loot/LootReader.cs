@@ -57,7 +57,18 @@ namespace Content.Loot
             return new LootTable(id, entries, visibility);
         }
 
-        static readonly string[] EntryKeys = { "id", "kind", "weight", "items", "gold", "table", "line" };
+        static readonly string[] EntryKeys = { "id", "kind", "weight", "items", "gold", "silver", "copper", "table", "line" };
+
+        // the coins an author may write, each with what one is worth in copper (cc_task_k). the purse is copper
+        // (Coins); a find says it in whichever coin reads right - "a few coppers", "a silver for your trouble"
+        static readonly (string Key, int Worth)[] CoinKeys =
+        {
+            ("gold", Inventory.Coins.PerGold),
+            ("silver", Inventory.Coins.PerSilver),
+            ("copper", 1),
+        };
+
+        static bool HasCoin(JsonElement entry) => CoinKeys.Any(c => entry.Has(c.Key));
 
         static LootEntry ReadEntry(JsonElement entry, string table, List<string> problems)
         {
@@ -71,7 +82,8 @@ namespace Content.Loot
             List<Lot> items = TableReader.Counted(entry, "items", "item", "an item id", where, problems)
                                          .Select(i => new Lot(i.Id, i.Count)).ToList();
 
-            Purse gold = ReadGold(entry, where, problems);
+            List<Purse> coins = CoinKeys.Select(c => ReadPurse(entry, c.Key, c.Worth, where, problems))
+                                        .Where(p => !p.IsEmpty).ToList();
 
             string next = entry.Text("table");
 
@@ -81,8 +93,8 @@ namespace Content.Loot
             switch (kind)
             {
                 case LootKind.Find:
-                    if (!entry.Has("items") && !entry.Has("gold"))
-                        problems.Add($"{where}: a find needs 'items' or 'gold' - what is in it");
+                    if (!entry.Has("items") && !HasCoin(entry))
+                        problems.Add($"{where}: a find needs 'items', 'gold', 'silver' or 'copper' - what is in it");
                     if (next.Length > 0)
                         problems.Add($"{where}: a find does not roll a table - make it a " +
                                      "'table' entry");
@@ -91,14 +103,14 @@ namespace Content.Loot
                 case LootKind.Table:
                     if (next.Length == 0)
                         problems.Add($"{where}: a table entry needs 'table' - which one it rolls");
-                    if (entry.Has("items") || entry.Has("gold"))
+                    if (entry.Has("items") || HasCoin(entry))
                         problems.Add($"{where}: a table entry rolls a table and gives nothing " +
                                      "of its own - put the items in that table");
                     break;
 
                 default:
-                    if (entry.Has("items") || entry.Has("gold") || next.Length > 0)
-                        problems.Add($"{where}: 'nothing' has nothing in it - no items, gold " +
+                    if (entry.Has("items") || HasCoin(entry) || next.Length > 0)
+                        problems.Add($"{where}: 'nothing' has nothing in it - no items, coin " +
                                      "or table");
                     break;
             }
@@ -106,18 +118,20 @@ namespace Content.Loot
             // the narrator only speaks when asked to, so a quiet find owes the locale nothing
             bool speaks = entry.Flag("line");
 
-            return new LootEntry(id, kind, weight, items, gold, next, speaks);
+            return new LootEntry(id, kind, weight, items, coins, next, speaks);
         }
 
         // "gold": "2d6" or "gold": { "roll": "3d6", "times": 10 } - the multiplier is its own
-        // field because dice notation has no "*10" and a purse is the only thing that needs one
-        static Purse ReadGold(JsonElement entry, string where, List<string> problems)
+        // field because dice notation has no "*10" and a purse is the only thing that needs one.
+        // "silver" and "copper" are written the same way, and read here too: key is which coin, worth is one of it
+        // in copper
+        static Purse ReadPurse(JsonElement entry, string key, int worth, string where, List<string> problems)
         {
-            if (!entry.Has("gold")) return Purse.Empty;
+            if (!entry.Has(key)) return Purse.Empty;
 
-            JsonElement gold = entry.GetProperty("gold");
+            JsonElement coin = entry.GetProperty(key);
 
-            Keyed.OnlyKnown(gold, new[] { "roll", "times" }, $"{where} gold", problems);
+            Keyed.OnlyKnown(coin, new[] { "roll", "times" }, $"{where} {key}", problems);
 
             // so dice that did not parse are said once, by the parser, and not again below
             int said = problems.Count;
@@ -125,13 +139,13 @@ namespace Content.Loot
             DiceRoll dice;
             int times = 1;
 
-            if (gold.ValueKind == JsonValueKind.Object)
+            if (coin.ValueKind == JsonValueKind.Object)
             {
-                dice = gold.Dice("roll", problems, where);
+                dice = coin.Dice("roll", problems, where);
 
-                if (gold.Has("times"))
+                if (coin.Has("times"))
                 {
-                    times = gold.Number("times", 0);
+                    times = coin.Number("times", 0);
 
                     if (times < 1)
                     {
@@ -142,24 +156,24 @@ namespace Content.Loot
             }
             else
             {
-                dice = entry.Dice("gold", problems, where);
+                dice = entry.Dice(key, problems, where);
             }
 
             if (dice.IsNothing)
             {
-                if (gold.ValueKind == JsonValueKind.Object && !gold.Has("roll"))
-                    problems.Add($"{where}: gold needs 'roll' - write it like " +
+                if (coin.ValueKind == JsonValueKind.Object && !coin.Has("roll"))
+                    problems.Add($"{where}: {key} needs 'roll' - write it like " +
                                  "{ \"roll\": \"3d6\", \"times\": 10 }, or \"2d6\" on its own");
                 else if (problems.Count == said)
-                    problems.Add($"{where}: no gold - leave 'gold' out instead");
+                    problems.Add($"{where}: no {key} - leave '{key}' out instead");
 
                 return Purse.Empty;
             }
 
-            var purse = new Purse(dice, times);
+            var purse = new Purse(dice, times, worth);
 
             if (purse.Dice.Minimum < 0)
-                problems.Add($"{where}: {dice} gold can come to less than none - a purse is " +
+                problems.Add($"{where}: {dice} {key} can come to less than none - a purse is " +
                              "never in debt");
 
             return purse;

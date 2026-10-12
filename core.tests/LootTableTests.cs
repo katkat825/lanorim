@@ -16,7 +16,7 @@ namespace Core.Tests
             {
                 new LootEntry("lint", LootKind.Nothing, 1),
                 new LootEntry("coins", LootKind.Find, 2,
-                              gold: new Purse(DiceRoll.Parse("3d6"), 10), speaks: true),
+                              coins: new[] { new Purse(DiceRoll.Parse("3d6"), 10) }, speaks: true),
                 new LootEntry("torches", LootKind.Find, 3,
                               new[] { new Lot("torch", DiceRoll.Parse("1d4")) }),
             }, visibility);
@@ -41,7 +41,7 @@ namespace Core.Tests
             // ticket 2 is the coins, then three dice of 4, 5 and 6
             LootRoll roll = new GmScreen(new ScriptedRng(2, 4, 5, 6)).Open(Pockets());
 
-            Assert.Equal(150, roll.Gold);
+            Assert.Equal(150, roll.Copper);
             Assert.Empty(roll.Found);
 
             GmRoll gold = roll.Rolls.Single(r => r.Purpose == RollPurpose.Gold);
@@ -55,13 +55,34 @@ namespace Core.Tests
         {
             var table = new LootTable("purse", new[]
             {
-                new LootEntry("five", LootKind.Find, gold: new Purse(DiceRoll.Flat(5))),
+                new LootEntry("five", LootKind.Find, coins: new[] { new Purse(DiceRoll.Flat(5)) }),
             });
 
             LootRoll roll = new GmScreen(new ScriptedRng(1)).Open(table);
 
-            Assert.Equal(5, roll.Gold);
+            Assert.Equal(5, roll.Copper);
             Assert.Single(roll.Rolls);
+        }
+
+        [Fact]
+        public void EachCoinIsItsOwnRollAndAllOfItCountsInCopper()
+        {
+            // cc_task_k: 1d4 gold, 2d6 silver and a flat 3 copper - core is told what a coin is worth, not its name
+            var table = new LootTable("purse", new[]
+            {
+                new LootEntry("mixed", LootKind.Find, coins: new[]
+                {
+                    new Purse(DiceRoll.Parse("1d4"), 1, 100),
+                    new Purse(DiceRoll.Parse("2d6"), 1, 10),
+                    new Purse(DiceRoll.Flat(3)),
+                }),
+            });
+
+            // the pick, then 2 gold, then 4 and 5 silver
+            LootRoll roll = new GmScreen(new ScriptedRng(1, 2, 4, 5)).Open(table);
+
+            Assert.Equal(2 * 100 + 9 * 10 + 3, roll.Copper);
+            Assert.Equal(2, roll.Rolls.Count(r => r.Purpose == RollPurpose.Gold));
         }
 
         [Fact]
@@ -114,7 +135,7 @@ namespace Core.Tests
 
         static readonly LootTable Hoard = new LootTable("hoard", new[]
         {
-            new LootEntry("coins", LootKind.Find, 1, gold: new Purse(DiceRoll.Flat(40))),
+            new LootEntry("coins", LootKind.Find, 1, coins: new[] { new Purse(DiceRoll.Flat(40)) }),
             new LootEntry("gem_pouch", LootKind.Table, 1, table: "gems", speaks: true),
         });
 
@@ -140,7 +161,7 @@ namespace Core.Tests
             var ouroboros = new LootTable("ouroboros", new[]
             {
                 new LootEntry("again", LootKind.Table, table: "ouroboros"),
-                new LootEntry("coin", LootKind.Find, gold: new Purse(DiceRoll.Flat(1))),
+                new LootEntry("coin", LootKind.Find, coins: new[] { new Purse(DiceRoll.Flat(1)) }),
             });
 
             var tables = new LootTables(new[] { ouroboros });

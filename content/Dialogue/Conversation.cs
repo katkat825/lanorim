@@ -183,6 +183,7 @@ namespace Content.Dialogue
 
                 case RequestKind.Loot:
                     store.SetValue(RequestVariables.LootGold, (float)answer.Gold);
+                    store.SetValue(RequestVariables.LootCopper, (float)answer.Copper);
                     break;
             }
 

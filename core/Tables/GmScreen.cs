@@ -153,7 +153,7 @@ namespace Core.Tables
             LootEntry chosen = offered.Walk(ticket);
 
             var found = new List<Found>();
-            int gold = 0;
+            int copper = 0;
             LootRoll inner = null;
 
             foreach (Lot lot in chosen.Items)
@@ -172,19 +172,19 @@ namespace Core.Tables
                 found.Add(new Found(lot.Item, Math.Max(1, count)));
             }
 
-            if (!chosen.Gold.IsEmpty)
+            // gold, silver and copper, each its own roll, all of it counted in copper (cc_task_k)
+            foreach (Purse purse in chosen.Coins)
             {
-                int rolled = chosen.Gold.Dice.Modifier;
+                int rolled = purse.Dice.Modifier;
 
-                if (chosen.Gold.Dice.RollsAnything)
+                if (purse.Dice.RollsAnything)
                 {
-                    GmRoll counted = Roll(chosen.Gold.Dice, table.Visibility, RollPurpose.Gold,
-                                          table.Id);
+                    GmRoll counted = Roll(purse.Dice, table.Visibility, RollPurpose.Gold, table.Id);
                     rolls.Add(counted);
                     rolled = counted.Total;
                 }
 
-                gold += chosen.Gold.Of(rolled);
+                copper += purse.Of(rolled);
             }
 
             LootTable next = chosen.Kind == LootKind.Table ? tables.Find(chosen.Table) : null;
@@ -194,13 +194,13 @@ namespace Core.Tables
                 inner = Open(next, tables, usable, opening);
 
                 found.AddRange(inner.Found);
-                gold += inner.Gold;
+                copper += inner.Copper;
                 rolls.AddRange(inner.Rolls);
             }
 
             opening.Remove(table.Id);
 
-            return new LootRoll(table, pick, chosen, found, gold, inner, passed, rolls);
+            return new LootRoll(table, pick, chosen, found, copper, inner, passed, rolls);
         }
 
         // whether an entry could give this hero anything but what they cannot use. "nothing" always

@@ -11,7 +11,7 @@ namespace Core.Tables
         // the pockets were empty. an entry of its own, so an author sets the odds of it
         Nothing,
 
-        // items, gold, or both
+        // items, coins, or both
         Find,
 
         // roll another table - the "roll on the gem table" of every printed hoard
@@ -35,14 +35,19 @@ namespace Core.Tables
         public override string ToString() => $"{Count} {Item}";
     }
 
-    // gold, as dice and a multiplier. DiceRoll has no "*10" and should not grow one for this -
-    // "3d6 x 10" is the only place the SRD multiplies a roll, and it is always a purse
+    // coins of one kind, as dice and a multiplier. DiceRoll has no "*10" and should not grow one for this -
+    // "3d6 x 10" is the only place the SRD multiplies a roll, and it is always a purse.
+    //
+    // what it comes to is in copper (cc_task_k): Worth is what one of its coins is in copper, 100 for gold, 10 for
+    // silver, 1 for copper. core does not know a gold piece from a copper one - the reader that wrote the purse says
+    // (Content.Inventory.Coins) - so a hand-built purse with no worth given is copper
     public readonly struct Purse
     {
-        public Purse(DiceRoll dice, int times = 1)
+        public Purse(DiceRoll dice, int times = 1, int worth = 1)
         {
             Dice = dice;
             Times = times < 1 ? 1 : times;
+            Worth = worth < 1 ? 1 : worth;
         }
 
         public static readonly Purse Empty = new Purse(DiceRoll.None);
@@ -51,29 +56,33 @@ namespace Core.Tables
 
         public int Times { get; }
 
+        // one coin, in copper
+        public int Worth { get; }
+
         public bool IsEmpty => Dice.IsNothing;
 
-        public int Minimum => Math.Max(0, Dice.Minimum) * Times;
+        // in copper, as Of is
+        public int Minimum => Math.Max(0, Dice.Minimum) * Times * Worth;
 
-        public int Maximum => Math.Max(0, Dice.Maximum) * Times;
+        public int Maximum => Math.Max(0, Dice.Maximum) * Times * Worth;
 
-        // what a rolled total comes to. never below nothing - a purse can be empty, not in debt
-        public int Of(int rolled) => Math.Max(0, rolled) * Times;
+        // what a rolled total comes to, in copper. never below nothing - a purse can be empty, not in debt
+        public int Of(int rolled) => Math.Max(0, rolled) * Times * Worth;
 
         public override string ToString() =>
-            IsEmpty ? "no gold" : Times == 1 ? $"{Dice} gold" : $"{Dice}x{Times} gold";
+            IsEmpty ? "no coin" : (Times == 1 ? $"{Dice}" : $"{Dice}x{Times}") + $" of {Worth} cp";
     }
 
     public sealed class LootEntry : ITableEntry
     {
         public LootEntry(string id, LootKind kind, int weight = 1, IReadOnlyList<Lot> items = null,
-                         Purse gold = default, string table = null, bool speaks = false)
+                         IReadOnlyList<Purse> coins = null, string table = null, bool speaks = false)
         {
             Id = id ?? "";
             Kind = kind;
             Weight = weight < 1 ? 1 : weight;
             Items = items ?? Array.Empty<Lot>();
-            Gold = gold;
+            Coins = (coins ?? Array.Empty<Purse>()).Where(p => !p.IsEmpty).ToList();
             Table = table ?? "";
             Speaks = speaks;
         }
@@ -87,7 +96,8 @@ namespace Core.Tables
 
         public IReadOnlyList<Lot> Items { get; }
 
-        public Purse Gold { get; }
+        // the gold, silver and copper in it, a purse each, as the author wrote them - each rolled on its own
+        public IReadOnlyList<Purse> Coins { get; }
 
         // the table this entry rolls, or empty
         public string Table { get; }
@@ -99,7 +109,7 @@ namespace Core.Tables
         public override string ToString() =>
             $"{Id} x{Weight} {EnumWords.Name(Kind)}" +
             (Items.Count > 0 ? ": " + string.Join(", ", Items) : "") +
-            (Gold.IsEmpty ? "" : $" + {Gold}") +
+            string.Concat(Coins.Select(c => $" + {c}")) +
             (Table.Length > 0 ? $" -> {Table}" : "");
     }
 

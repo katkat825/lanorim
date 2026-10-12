@@ -41,6 +41,11 @@ namespace Content.Dialogue
         // <<gold 50>> - negative takes it away
         Gold,
 
+        // <<silver 12>> and <<copper 5>> - the same, in smaller coin (cc_task_k). the purse is copper either way
+        Silver,
+
+        Copper,
+
         // <<level 3>> - milestone levelling: the campaign says when. ignored, with a warning, in a campaign that levels
         // by XP (cc_task_i 3.4)
         Level,
@@ -114,6 +119,8 @@ namespace Content.Dialogue
                 ["fight"] = RequestKind.Fight,
                 ["give"] = RequestKind.Give,
                 ["gold"] = RequestKind.Gold,
+                ["silver"] = RequestKind.Silver,
+                ["copper"] = RequestKind.Copper,
                 ["level"] = RequestKind.Level,
                 ["xp"] = RequestKind.Xp,
                 ["loot"] = RequestKind.Loot,
@@ -141,7 +148,8 @@ namespace Content.Dialogue
                 RequestKind.Bark => ReadBark,
                 RequestKind.Encounter or RequestKind.Fight or RequestKind.Loot or RequestKind.Shop or RequestKind.Armory => ReadId,
                 RequestKind.Give => ReadGive,
-                RequestKind.Gold or RequestKind.Level or RequestKind.Xp => ReadAmount,
+                RequestKind.Gold or RequestKind.Silver or RequestKind.Copper or RequestKind.Level or RequestKind.Xp
+                    => ReadAmount,
                 _ => null,
             };
 
@@ -244,6 +252,8 @@ namespace Content.Dialogue
                 return request.Kind switch
                 {
                     RequestKind.Gold => $"'{command}' - it is <<gold 50>>, or <<gold -50>> to take it",
+                    RequestKind.Silver => $"'{command}' - it is <<silver 5>>, or <<silver -5>> to take it",
+                    RequestKind.Copper => $"'{command}' - it is <<copper 5>>, or <<copper -5>> to take it",
                     RequestKind.Xp => $"'{command}' - it is <<xp 50>>, a number of experience points",
                     _ => $"'{command}' - it is <<level 3>>, a level from 1 to 20",
                 };
@@ -292,7 +302,11 @@ namespace Content.Dialogue
         // the fight was won because the enemies broke (cc_task_h 3.4)
         public bool Broke { get; init; }
 
-        public int Gold { get; init; }
+        // what a <<loot>> found, gold, silver and copper together, in copper (cc_task_k)
+        public int Copper { get; init; }
+
+        // the same, in whole gold, rounded down - what $loot_gold has always said
+        public int Gold => Copper / Inventory.Coins.PerGold;
 
         public static Answer Of(Attempt attempt) => attempt == null
             ? new Answer()
@@ -323,7 +337,9 @@ namespace Content.Dialogue
         // (cc_task_h 3.4), so the story can tell a rout from a slaughter
         public const string FightBroke = "$fight_broke";
 
-        // how much gold a <<loot>> found, so the story can say "a fat purse" or "a few coppers"
+        // how much a <<loot>> found, so the story can say "a fat purse" or "a few coppers": in whole gold, rounded
+        // down, and everything in copper (cc_task_k), so "a few coppers" is said truthfully
         public const string LootGold = "$loot_gold";
+        public const string LootCopper = "$loot_copper";
     }
 }

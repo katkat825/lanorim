@@ -105,7 +105,9 @@ namespace Content.Dialogue
                 RequestKind.Save => Tested(request, Checks.Save(_resolver, _hero.Actor, request.Ability, request.Dc)),
                 RequestKind.Roll => Rolled(request),
                 RequestKind.Encounter => Consulted(request),
-                RequestKind.Gold => Paid(request),
+                RequestKind.Gold => Paid(request, Coins.FromGold(request.Amount)),
+                RequestKind.Silver => Paid(request, Coins.FromSilver(request.Amount)),
+                RequestKind.Copper => Paid(request, request.Amount),
                 RequestKind.Give => Given(request),
                 RequestKind.Loot => Looted(request),
                 RequestKind.Rest => Rested(request),
@@ -195,12 +197,12 @@ namespace Content.Dialogue
             };
         }
 
-        Settled Paid(Request request)
+        // <<gold N>>, <<silver N>>, <<copper N>>, each already turned into copper (Coins): the purse is copper
+        Settled Paid(Request request, int copper)
         {
             // taking more than the hero has takes what there is: a toll does not go into debt
-            // <<gold N>> is in gold; the purse is copper (Coins)
-            if (request.Amount >= 0) _hero.Pack.Earn(Coins.FromGold(request.Amount));
-            else _hero.Pack.Spend(Math.Min(_hero.Pack.Copper, Coins.FromGold(-request.Amount)));
+            if (copper >= 0) _hero.Pack.Earn(copper);
+            else _hero.Pack.Spend(Math.Min(_hero.Pack.Copper, -copper));
 
             return new Settled(request, new Answer());
         }
@@ -239,7 +241,7 @@ namespace Content.Dialogue
 
             Haul haul = Spoils.Hand(_hero.Pack, roll, _library.Items);
 
-            return new Settled(request, new Answer { Gold = roll.Gold })
+            return new Settled(request, new Answer { Copper = roll.Copper })
             {
                 Loot = roll,
                 Haul = haul,

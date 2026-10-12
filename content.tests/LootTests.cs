@@ -67,15 +67,18 @@ namespace Content.Tests
 
             LootEntry coins = pockets.Entries.Single(e => e.Id == "coins");
 
-            Assert.Equal("3d6", coins.Gold.Dice.ToString());
-            Assert.Equal(10, coins.Gold.Times);
-            Assert.Equal(30, coins.Gold.Minimum);
-            Assert.Equal(180, coins.Gold.Maximum);
+            Purse gold = coins.Coins.Single();
+
+            Assert.Equal("3d6", gold.Dice.ToString());
+            Assert.Equal(10, gold.Times);
+            Assert.Equal(Coins.PerGold, gold.Worth);
+            Assert.Equal(Coins.FromGold(30), gold.Minimum);
+            Assert.Equal(Coins.FromGold(180), gold.Maximum);
 
             LootEntry torches = pockets.Entries.Single(e => e.Id == "torches");
 
             Assert.Equal("1d4", torches.Items.Single().Count.ToString());
-            Assert.Equal(2, torches.Gold.Minimum);
+            Assert.Equal(Coins.FromGold(2), torches.Coins.Single().Minimum);
 
             Assert.Equal("gems", pockets.Entries.Single(e => e.Kind == LootKind.Table).Table);
             Assert.Equal("1", tables.Single(t => t.Id == "gems").Entries[0].Items[0].Count.ToString());
@@ -86,7 +89,7 @@ namespace Content.Tests
         [InlineData(@"{ ""id"": ""lint"", ""kind"": ""nothing"", ""weight"": ""lots"" }", "weight")]
         [InlineData(@"{ ""id"": ""lint"", ""kind"": ""chest"" }", "not a kind of entry")]
         [InlineData(@"{ ""id"": ""Lint"", ""kind"": ""nothing"" }", "not an entry id")]
-        [InlineData(@"{ ""id"": ""box"", ""kind"": ""find"" }", "needs 'items' or 'gold'")]
+        [InlineData(@"{ ""id"": ""box"", ""kind"": ""find"" }", "needs 'items', 'gold', 'silver' or 'copper'")]
         [InlineData(@"{ ""id"": ""box"", ""kind"": ""table"" }", "needs 'table'")]
         [InlineData(@"{ ""id"": ""lint"", ""kind"": ""nothing"", ""gold"": ""5"" }",
                     "'nothing' has nothing")]
@@ -107,9 +110,68 @@ namespace Content.Tests
                         ""gold"": { ""roll"": ""3d6"", ""times"": 0 } }", "'times'")]
         [InlineData(@"{ ""id"": ""lint"", ""kind"": ""nothing"" },
                       { ""id"": ""lint"", ""kind"": ""nothing"" }", "twice")]
+        // silver and copper are held to the same shape as gold (cc_task_k)
+        [InlineData(@"{ ""id"": ""lint"", ""kind"": ""nothing"", ""copper"": ""5"" }", "'nothing' has nothing")]
+        [InlineData(@"{ ""id"": ""box"", ""kind"": ""table"", ""table"": ""gems"", ""silver"": ""5"" }",
+                    "gives nothing of its own")]
+        [InlineData(@"{ ""id"": ""box"", ""kind"": ""find"", ""silver"": ""heaps"" }", "not dice")]
+        [InlineData(@"{ ""id"": ""box"", ""kind"": ""find"", ""copper"": ""1d4-6"" }", "1d4-6 copper can come to less")]
+        [InlineData(@"{ ""id"": ""box"", ""kind"": ""find"", ""silver"": { ""times"": 10 } }",
+                    "silver needs 'roll'")]
+        [InlineData(@"{ ""id"": ""box"", ""kind"": ""find"",
+                        ""copper"": { ""roll"": ""3d6"", ""times"": 0 } }", "'times'")]
+        [InlineData(@"{ ""id"": ""box"", ""kind"": ""find"", ""silver"": { ""roll"": ""1d6"", ""by"": 2 } }", "'by' is not a key")]
         public void ABadEntryIsRefused(string entry, string said)
         {
             Assert.Contains(Problems(One(entry: entry)), p => p.Contains(said));
+        }
+
+        static LootEntry Read(string entry)
+        {
+            Assert.True(LootReader.TryRead(One(entry: entry), out IReadOnlyList<LootTable> tables,
+                                           out IReadOnlyList<string> problems),
+                        string.Join("; ", problems));
+
+            return tables.Single().Entries.Single();
+        }
+
+        [Fact]
+        public void AFindCanBeSilverAlone()
+        {
+            LootEntry find = Read(@"{ ""id"": ""box"", ""kind"": ""find"", ""silver"": ""2d6"" }");
+
+            Purse silver = find.Coins.Single();
+
+            Assert.Equal("2d6", silver.Dice.ToString());
+            Assert.Equal(Coins.PerSilver, silver.Worth);
+            Assert.Equal(Coins.FromSilver(2), silver.Minimum);
+            Assert.Equal(Coins.FromSilver(12), silver.Maximum);
+
+            // ticket 1, then a 3 and a 4: 7 silver, in copper
+            LootRoll roll = new GmScreen(new ScriptedRng(1, 3, 4)).Open(new LootTable("t", new[] { find }));
+
+            Assert.Equal(Coins.FromSilver(7), roll.Copper);
+        }
+
+        [Fact]
+        public void AFindCanHoldAllThreeCoinsAndTheyAddUpInCopper()
+        {
+            LootEntry find = Read(@"{ ""id"": ""box"", ""kind"": ""find"", ""gold"": ""1d4"",
+                                      ""silver"": { ""roll"": ""1d6"", ""times"": 10 }, ""copper"": ""5"" }");
+
+            Assert.Equal(new[] { Coins.PerGold, Coins.PerSilver, 1 }, find.Coins.Select(c => c.Worth));
+
+            // ticket 1, 3 gold, then a 2 on the silver: 20 silver; the copper is flat and makes no sound
+            LootRoll roll = new GmScreen(new ScriptedRng(1, 3, 2)).Open(new LootTable("t", new[] { find }));
+
+            Assert.Equal(Coins.FromGold(3) + Coins.FromSilver(20) + 5, roll.Copper);
+            Assert.Equal(3, roll.Rolls.Count);
+
+            var pack = new Pack();
+            Haul haul = Spoils.Hand(pack, roll, Shelf);
+
+            Assert.Equal(roll.Copper, haul.Copper);
+            Assert.Equal(roll.Copper, pack.Copper);
         }
 
         [Fact]
@@ -220,6 +282,30 @@ namespace Content.Tests
             // the narrator's lines are the campaign's to write, so its locale owes them
             Assert.Contains("encounter.goblin_pockets.loot.coins", package.Keys());
             Assert.DoesNotContain("encounter.goblin_pockets.loot.lint", package.Keys());
+        }
+
+        [Fact]
+        public void ALootFindOfSmallCoinAnswersInCopperAndInWholeGold()
+        {
+            using var folder = new Folder("ash_yard");
+
+            Package package = Pack(folder, One(@"{ ""id"": ""coppers"", ""kind"": ""find"",
+                                                   ""silver"": ""1d6"", ""copper"": ""4"" }"));
+
+            Assert.True(package.Sound, Said(package));
+
+            Sheet.Hero hero = SilverAndCopperTests.Fighter();
+            int had = hero.Pack.Copper;
+
+            // ticket 1, then 5 on the silver: 54 copper, none of it a gold piece
+            Dialogue.Settled settled = new Dialogue.Referee(hero, new Core.Resolution.StandardResolver(new ScriptedRng(10)),
+                                                            new GmScreen(new ScriptedRng(1, 5)), Library.Srd(), package)
+                .Settle(Dialogue.Request.Parse("loot goblin_pockets", out _));
+
+            Assert.Null(settled.Problem);
+            Assert.Equal(54, settled.Answer.Copper);
+            Assert.Equal(0, settled.Answer.Gold);
+            Assert.Equal(had + 54, hero.Pack.Copper);
         }
 
         [Fact]
@@ -378,13 +464,13 @@ namespace Content.Tests
             var table = new LootTable("purse", new[]
             {
                 new LootEntry("purse", LootKind.Find, items: new[] { new Lot("torch", DiceRoll.Flat(3)) },
-                              gold: new Purse(DiceRoll.Parse("2d6"), 10)),
+                              coins: new[] { new Purse(DiceRoll.Parse("2d6"), 10, Coins.PerGold) }),
             });
 
             LootRoll roll = new GmScreen(new ScriptedRng(1, 3, 4)).Open(table, null, Shelf, "fighter", 1);
             Haul haul = Spoils.Hand(pack, roll, Shelf);
 
-            Assert.Equal(70, haul.Gold);
+            Assert.Equal(Coins.FromGold(70), haul.Copper);
             Assert.Equal(Coins.FromGold(70), pack.Copper); // a table's gold, into a purse of copper
             Assert.Equal(3, pack.CountOf("torch"));
             Assert.False(haul.MustMakeRoom);
@@ -398,7 +484,7 @@ namespace Content.Tests
 
             var table = new LootTable("rack", new[]
             {
-                new LootEntry("rack", LootKind.Find, gold: new Purse(DiceRoll.Flat(5)), items: new[]
+                new LootEntry("rack", LootKind.Find, coins: new[] { new Purse(DiceRoll.Flat(5), 1, Coins.PerGold) }, items: new[]
                 {
                     new Lot("longsword", DiceRoll.Flat(1)),
                     new Lot("dagger", DiceRoll.Flat(1)),

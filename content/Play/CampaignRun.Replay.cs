@@ -41,7 +41,8 @@ namespace Content.Play
         {
             _steps.Add(string.Join(":", AnsweredStep, answer.Passed ? 1 : 0, answer.Total,
                                    answer.Natural, answer.DrawsConsequence ? 1 : 0, answer.Entry ?? "",
-                                   answer.StartsAFight ? 1 : 0, (int)answer.Outcome, answer.Gold, answer.Broke ? 1 : 0));
+                                   answer.StartsAFight ? 1 : 0, (int)answer.Outcome, answer.Gold, answer.Broke ? 1 : 0,
+                                   answer.Copper));
             Talk.Answer(answer);
         }
 
@@ -56,8 +57,9 @@ namespace Content.Play
                 return true;
             }
 
-            // nine parts before $fight_broke (cc_task_h 3.4), ten since
-            if (parts[0] == AnsweredStep && parts.Length is 9 or 10 && Talk.IsWaiting)
+            // nine parts before $fight_broke (cc_task_h 3.4), ten before $loot_copper (cc_task_k), eleven since. the
+            // ninth is the loot in whole gold; an older step had nothing smaller, so its gold is all of it
+            if (parts[0] == AnsweredStep && parts.Length is 9 or 10 or 11 && Talk.IsWaiting)
             {
                 int Int(int i) => int.TryParse(parts[i], out int v) ? v : 0;
 
@@ -70,7 +72,7 @@ namespace Content.Play
                     Entry = parts[5],
                     StartsAFight = Int(6) == 1,
                     Outcome = (Outcome)Int(7),
-                    Gold = Int(8),
+                    Copper = parts.Length > 10 ? Int(10) : Inventory.Coins.FromGold(Int(8)),
                     Broke = parts.Length > 9 && Int(9) == 1,
                 });
 

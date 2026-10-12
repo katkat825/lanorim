@@ -142,6 +142,7 @@ namespace Content.Dialogue
             Declare(RequestVariables.Fight, Types.String, ""),
             Declare(RequestVariables.FightBroke, Types.Boolean, false),
             Declare(RequestVariables.LootGold, Types.Number, 0f),
+            Declare(RequestVariables.LootCopper, Types.Number, 0f),
         };
 
         static Declaration Declare(string name, IType type, IConvertible value) =>

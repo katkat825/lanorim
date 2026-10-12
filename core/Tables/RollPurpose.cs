@@ -11,7 +11,7 @@ namespace Core.Tables
         // how many of one monster, or of one item
         Count,
 
-        // how much gold was in it
+        // how many coins were in it - gold, silver or copper
         Gold,
 
         // anything else a campaign rolls behind the screen
