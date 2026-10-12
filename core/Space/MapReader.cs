@@ -25,6 +25,7 @@ namespace Core.Space
             ('.', Tile.Floor, "floor"),
             ('~', Tile.Rough, "difficult ground"),
             ('#', Tile.Void, "rock - not part of the map"),
+            ('_', Tile.Chasm, "deep water or a chasm - seen across, not crossed"),
         };
 
         // an edge glyph says which way its line runs, so a '|' on a horizontal line gets caught

@@ -49,7 +49,8 @@ namespace Game.Play
                                    .ToList();
 
                 IReadOnlyList<Content.Maps.Prop> props = Run.Pack.PropsOn(Run.Fight?.MapId);
-                MainQueue.Post(() => _combat.Lay(battle, places, props));
+                Content.Maps.MapLook look = Run.Pack.LookOn(Run.Fight?.MapId);
+                MainQueue.Post(() => _combat.Lay(battle, places, props, look));
 
                 // a critical hit buys a consequence: the campaign's referee draws and carries it out,
                 // and the log says what it was
@@ -117,6 +118,15 @@ namespace Game.Play
             {
                 _fighting = false;
                 _combat.Clear();
+
+                // a map being tried goes back to its builder when the fight ends, won, lost or fled (cc_task_l Part 5)
+                if (GameState.Trying != null)
+                {
+                    GD.Print($"trial   the fight is over: {outcome}");
+                    BackToBuilder();
+                    return;
+                }
+
                 LayChapterMap();
                 Refresh();
             });

@@ -1183,55 +1183,280 @@ monster.wolf.name,Wolf
 monster.zombie.description,15 hit points; Armor Class 8; speed 20 feet; Slam for 1d8 bludgeoning; takes no poison damage.
 monster.zombie.name,Zombie
 prop.anvil.name,Anvil
+prop.anvil_log.name,Anvil on a log
+prop.archery_range.name,Archery butts
+prop.archway.name,Archway
+prop.armchair.name,Armchair
+prop.axe_in_block.name,Axe
+prop.backpack.name,Backpack
 prop.banner.name,Banner
+prop.banner_hanging.name,Hanging banner
+prop.banner_torn.name,"Banner, torn"
+prop.bare_tree.name,Leafless tree
+prop.barn.name,Barn
+prop.barn_big.name,"Barn, big"
+prop.barn_open.name,Open barn
+prop.barn_small.name,"Barn, small"
+prop.barracks.name,Barracks
 prop.barrel.name,Barrel
+prop.barrel_apples.name,Barrel of apples
+prop.barrel_holder.name,Barrel on a rack
+prop.barrel_plain.name,"Barrel, plain"
 prop.barrel_small.name,Small barrel
 prop.barrier.name,Barrier
+prop.bear_trap.name,Bear trap
 prop.bed.name,Bed
+prop.bed_bunk.name,Bunk bed
+prop.bed_double.name,"Bed, double"
+prop.bed_single.name,"Bed, single"
+prop.bed_twin.name,"Bed, plain"
 prop.bench.name,Bench
+prop.birch_1.name,Birch
+prop.birch_2.name,"Birch, slim"
+prop.birch_3.name,"Birch, tall"
+prop.book_stand.name,Book stand
 prop.bookcase.name,Bookcase
+prop.bookshelf.name,Bookshelf
+prop.boulder.name,Boulder
+prop.bracket_fungus.name,Bracket fungus
 prop.bucket.name,Bucket
 prop.bush.name,Bush
+prop.bush_common.name,"Bush, leafy"
+prop.bush_flowers.name,"Bush, flowering"
+prop.bush_large.name,Thicket
+prop.bush_round.name,"Bush, round"
 prop.cabinet.name,Cabinet
+prop.cabinet_tall.name,Tall cabinet
 prop.cage.name,Cage
+prop.camp_torch.name,Camp torch
+prop.campfire.name,Campfire
+prop.campfire_cold.name,"Campfire, cold"
 prop.candle.name,Candle
+prop.candles.name,Candles
+prop.candles_many.name,"Candles, many"
 prop.candlestick.name,Candlestick
+prop.candlestick_triple.name,Three-branched candlestick
+prop.carpet.name,Carpet
+prop.carpet_round.name,Round rug
+prop.carrot_crate.name,Crate of carrots
 prop.cart.name,Cart
 prop.cauldron.name,Cauldron
+prop.chain_coil.name,Coiled chain
 prop.chair.name,Chair
+prop.chair_high.name,High-backed chair
+prop.chair_wooden.name,Wooden chair
 prop.chandelier.name,Chandelier
 prop.chest.name,Chest
 prop.chest_gold.name,Gilded chest
+prop.chest_of_drawers.name,Chest of drawers
+prop.chest_old.name,Old chest
+prop.chest_wood.name,Wooden chest
+prop.chicken_coop.name,Chicken coop
+prop.chimney.name,Chimney stack
+prop.clover.name,Clover
 prop.coins.name,Coins
 prop.column.name,Column
+prop.cooking_pot.name,Cooking pot
+prop.cottage.name,Cottage
+prop.crag.name,Crag
+prop.crag_tall.name,"Crag, tall"
 prop.crate.name,Crate
+prop.crate_iron.name,"Crate, iron-bound"
+prop.crate_pile.name,Crate pile
+prop.crate_small.name,"Crate, small"
+prop.crate_stack.name,Crate stack
+prop.crate_village.name,"Crate, slatted"
 prop.crates_stacked.name,Stacked crates
+prop.cupboard.name,Cupboard
+prop.curtains.name,Curtains
+prop.dead_birch.name,Dead birch
+prop.dead_tree_1.name,Dead tree
+prop.dead_tree_2.name,"Dead tree, forked"
+prop.dead_tree_3.name,"Dead tree, tall"
+prop.dock.name,Jetty
+prop.door_fieldstone_wall.name,"Doorway, fieldstone"
+prop.door_frame.name,Door frame
+prop.door_plaster_wall.name,"Doorway, plaster"
+prop.door_wooden.name,Wooden door
+prop.dresser.name,Dresser
 prop.dummy.name,Training dummy
 prop.farm_crate.name,Apple crate
+prop.farm_crate_empty.name,Farm crate
+prop.farm_fence.name,Farm fence
+prop.farm_fence_rails.name,"Farm fence, rails"
+prop.farmhouse.name,Farmhouse
+prop.farmstead.name,Farmstead
+prop.fence_iron.name,Iron railing
+prop.fence_iron_ornate.name,"Iron railing, ornate"
+prop.fence_rail.name,Rail fence
+prop.fence_wooden.name,Wooden fence
+prop.fern.name,Ferns
+prop.fireplace.name,Fireplace
+prop.flagstones.name,Flagstones
+prop.flowers_bright.name,"Flowers, bright"
+prop.flowers_white.name,"Flowers, pale"
+prop.gatehouse.name,Gatehouse
+prop.gatehouse_stone.name,"Gatehouse, stone"
+prop.gold_vein.name,Gold vein
 prop.grass.name,Grass
+prop.grass_short.name,Grass tuft
+prop.grass_tall.name,Tall grass
+prop.grass_wispy.name,Wispy grass
+prop.great_hall.name,Great hall
+prop.great_oak.name,Great oak
+prop.handcart.name,Handcart
+prop.hedge.name,Hedge
+prop.house.name,House
+prop.house_small.name,"House, small"
+prop.house_tall.name,"House, tall"
+prop.houseplant.name,Potted plant
+prop.houseplant_tall.name,"Potted plant, tall"
+prop.hut.name,Hut
 prop.keg.name,Keg
+prop.kerb.name,Kerbstones
+prop.kitchen_counter.name,Kitchen counter
 prop.lantern.name,Lantern
+prop.leafy_tree_1.name,Leafy tree
+prop.leafy_tree_2.name,"Leafy tree, round"
+prop.leafy_tree_3.name,"Leafy tree, tall"
+prop.log.name,Log
+prop.log_pile.name,Log pile
+prop.longhouse.name,Longhouse
+prop.manor.name,Manor
+prop.market.name,Market stalls
+prop.market_square.name,"Market, covered"
+prop.mill.name,Mill
+prop.mill_stone.name,"Mill, stone"
+prop.mine_entrance.name,Mine entrance
+prop.mushrooms.name,Mushrooms
+prop.nightstand.name,Nightstand
+prop.oak_1.name,Oak
+prop.oak_2.name,"Oak, broad"
+prop.oak_3.name,"Oak, tall"
+prop.oak_4.name,"Oak, slender"
+prop.oak_5.name,"Oak, lopsided"
+prop.palisade.name,Palisade
+prop.pantry_shelf.name,Shelf of bottles
+prop.pebbles.name,Pebbles
+prop.peg_rack.name,Peg rack
+prop.pickaxe.name,Pickaxe
 prop.pillar.name,Pillar
 prop.pillar_carved.name,Carved pillar
+prop.pine_1.name,"Pine, straight"
+prop.pine_2.name,"Pine, wide"
+prop.pine_3.name,"Pine, narrow"
+prop.pine_4.name,"Pine, tall"
+prop.pine_5.name,"Pine, old"
+prop.pine_clump.name,Clump of pines
+prop.plant_broad.name,Broad-leaf plant
+prop.plant_spiky.name,Spiky plant
+prop.ploughed_field.name,Ploughed field
+prop.pot_lidded.name,Lidded pot
+prop.raft.name,Raft
+prop.railing.name,Stone railing
 prop.rock.name,Rock
+prop.rock_medium_1.name,"Rock, round"
+prop.rock_medium_2.name,"Rock, flat"
+prop.rock_medium_3.name,"Rock, jagged"
+prop.rock_scatter.name,Scattered rocks
 prop.rock_small.name,Small rock
+prop.rope_coil.name,Coil of rope
 prop.rubble.name,Rubble
 prop.rubble_small.name,Loose rubble
 prop.rug.name,Rug
+prop.ruin_arch.name,Arched wall
+prop.ruin_arch_broken.name,"Arched wall, broken"
+prop.ruin_arch_gothic.name,Pointed arch
+prop.ruin_arch_overgrown.name,"Arched wall, overgrown"
+prop.ruin_brick.name,Loose brick
+prop.ruin_bricks.name,Fallen bricks
+prop.ruin_bridge.name,Bridge span
+prop.ruin_column.name,Ruined column
+prop.ruin_column_short.name,Broken column
+prop.ruin_column_square.name,Square column
+prop.ruin_corner.name,Ruined corner
+prop.ruin_dead_tree.name,Withered tree
+prop.ruin_doors.name,Great doors
+prop.ruin_flag.name,Tattered flag
+prop.ruin_floor.name,Tiled floor
+prop.ruin_floor_diamond.name,"Tiled floor, diamond"
+prop.ruin_jar.name,Jar
+prop.ruin_pot.name,Urn
+prop.ruin_pot_broken.name,"Urn, broken"
+prop.ruin_stairs.name,Steps
+prop.ruin_support.name,Buttress
+prop.ruin_trapdoor.name,Trapdoor
+prop.ruin_tree.name,Ruin tree
+prop.ruin_wall.name,Ruined wall
+prop.ruin_wall_broken.name,"Ruined wall, broken"
+prop.ruin_wall_half.name,"Ruined wall, half"
+prop.ruin_wall_hole.name,"Ruined wall, holed"
+prop.ruin_wall_low.name,"Ruined wall, low"
+prop.ruin_wall_overgrown.name,"Ruined wall, overgrown"
+prop.ruin_window.name,Barred window
+prop.sack.name,Sack
+prop.settle.name,Settle
 prop.shelf.name,Shelf
+prop.shelves_tall.name,Shelves
+prop.shovel.name,Shovel
+prop.shrine.name,Shrine
+prop.silo.name,Silo
+prop.silo_barn.name,Silo and shed
+prop.skull.name,Skull
+prop.spruce.name,Spruce
 prop.stairs.name,Stairs
 prop.stall.name,Market stall
+prop.statue_fox.name,Statue of a fox
+prop.statue_stag.name,Statue of a stag
+prop.stepping_stones.name,Stepping stones
+prop.stone_house.name,Stone house
 prop.stool.name,Stool
+prop.storehouse.name,Storehouse
+prop.stumps.name,Felled stumps
 prop.table.name,Table
 prop.table_broken.name,Broken table
+prop.table_large.name,Trestle table
 prop.table_long.name,Long table
+prop.table_round.name,Round table
+prop.table_small.name,Side table
+prop.temple.name,Temple
+prop.tent.name,Tent
 prop.torch.name,Torch
+prop.torch_iron.name,Iron torch
+prop.torch_post.name,Torch on a post
 prop.torch_wall.name,Wall torch
+prop.tower_house.name,Tower house
+prop.tower_house_stone.name,"Tower house, stone"
+prop.town_hall.name,Town hall
+prop.town_wall.name,Town wall
+prop.townhouse.name,Townhouse
 prop.tree.name,Tree
 prop.tree_bare.name,Bare tree
+prop.tree_clump.name,Clump of trees
 prop.tree_pine.name,Pine
+prop.twisted_tree_1.name,Twisted tree
+prop.twisted_tree_2.name,"Twisted tree, leaning"
+prop.twisted_tree_3.name,"Twisted tree, gnarled"
+prop.vase.name,Vase
+prop.vase_rubble.name,Broken pottery
+prop.wagon.name,Wagon
+prop.wall_fieldstone.name,"Wall, fieldstone"
+prop.wall_plaster.name,"Wall, plaster"
+prop.wall_shelf.name,Wall shelf
+prop.wall_timbered.name,Timber frame
+prop.wall_window.name,Wall with a window
+prop.warehouse.name,Warehouse
+prop.watchtower.name,Watchtower
+prop.watchtower_stone.name,"Watchtower, stone"
+prop.water_tower.name,Water tower
 prop.weapon_stand.name,Weapon stand
+prop.well.name,Well
+prop.wheat_field.name,Wheat field
+prop.wheat_strip.name,Wheat strip
+prop.windmill.name,Windmill
+prop.windmill_tower.name,Tower windmill
 prop.workbench.name,Workbench
+prop.workbench_drawers.name,Workbench with drawers
 skill.acrobatics.name,Acrobatics
 skill.animal_handling.name,Animal Handling
 skill.arcana.name,Arcana
@@ -1549,15 +1774,23 @@ ui.access.reading_on,Reading aloud.
 ui.access.tray,The dice tray: {0}.
 ui.access.tray_empty,"The dice tray, empty."
 ui.access.you,"You: {0} of {1} hit points."
+ui.act.copy_selection.name,Map builder: copy what's selected: {0}
+ui.act.delete_selection.name,Map builder: clear what's selected: {0}
 ui.act.help.name,Open the rules: {0}
+ui.act.paste_selection.name,Map builder: paste it where the pointer is: {0}
 ui.act.reach_back.name,Move back to the last one: {0}
 ui.act.reach_next.name,Move to the next thing on the table: {0}
 ui.act.read_aloud.name,"Read the table aloud, on and off: {0}"
+ui.act.redo_edit.name,Map builder: redo: {0}
+ui.act.save_map.name,Map builder: save the map: {0}
 ui.act.throw_dice.name,Throw the dice: {0}
 ui.act.toggle_log.name,Open or close the fight log: {0}
 ui.act.touch.name,Press what you are on: {0}
 ui.act.turn_left.name,Turn the table a quarter to the left: {0}
+ui.act.turn_prop.name,Map builder: turn the prop a quarter: {0}
+ui.act.turn_prop_back.name,Map builder: turn the prop back a quarter: {0}
 ui.act.turn_right.name,Turn the table a quarter to the right: {0}
+ui.act.undo_edit.name,Map builder: undo: {0}
 ui.act.waiting,press a key
 ui.act.where_are_we.name,Ask where you are and what you were doing: {0}
 ui.act.zoom_in.name,Lean in: {0}
@@ -1864,30 +2097,54 @@ ui.log.turn.name,{0}'s turn.
 ui.log.won.name,The fight is won.
 ui.map.all_props,All
 ui.map.campaign,Campaign
+ui.map.campaign_maps,Campaign maps
+ui.map.cancel,Cancel
+ui.map.category_buildings,Buildings
+ui.map.category_camp,Camp
 ui.map.category_containers,Containers
 ui.map.category_dungeon,Dungeon
+ui.map.category_farm,Farm
 ui.map.category_furniture,Furniture
 ui.map.category_light,Light
-ui.map.category_nature,Nature
-ui.map.category_village,Village
+ui.map.category_plants_rocks,Plants & rocks
+ui.map.category_ruins,Ruins
+ui.map.category_trees,Trees
+ui.map.category_village_market,Village & market
+ui.map.category_walls_fences,Walls & fences
 ui.map.columns,Columns
+ui.map.copied,Copied to {0} as {1}.
+ui.map.copy,Copy
+ui.map.copy_to,Copy to campaign...
 ui.map.could_not_save,Couldn't save: {0}
-ui.map.ground_floor,Floor
-ui.map.ground_rough,Difficult ground
-ui.map.ground_void,Rock
+ui.map.delete,Delete
+ui.map.ground_cobble,Cobblestone
+ui.map.ground_dirt,Dirt
+ui.map.ground_grass,Grass
+ui.map.ground_planks,Wood planks
+ui.map.ground_sand,Sand
+ui.map.ground_snow,Snow
+ui.map.ground_stone,Stone floor
+ui.map.ground_water,Shallow water
 ui.map.id,Map name (its file)
 ui.map.id_rule,"A map's name is its file's: lowercase letters, numbers and underscores."
 ui.map.leave,Leave
 ui.map.leave_anyway,Leave without saving
 ui.map.line_door,Door
 ui.map.line_wall,Wall
+ui.map.lives,Keep it in
+ui.map.looks,Ground
+ui.map.my_maps,My maps
 ui.map.new,A new map
 ui.map.no_campaigns,There are no campaign folders to keep a map in.
 ui.map.no_maps,This campaign has no maps yet.
 ui.map.no_problems,No problems: this map plays.
 ui.map.open,Open a map
+ui.map.paste,Paste
+ui.map.play,Play this map
 ui.map.problem_nothing_painted,Nothing has been painted yet.
 ui.map.problem_prop_in_wall,A {0} is inside a wall.
+ui.map.problem_prop_off_map,A {0} runs off the edge of the map.
+ui.map.problem_props_overlap,A {0} stands on top of another prop that blocks.
 ui.map.problem_spawn_in_prop,Spawn {0} is inside a prop that blocks.
 ui.map.problem_spawn_on_rock,Spawn {0} is on solid rock.
 ui.map.problem_spawn_unreachable,"Spawn {0} can't be walked to from the start: a wall, rock or a prop that blocks is in the way."
@@ -1895,21 +2152,59 @@ ui.map.problem_start_in_prop,The hero starts inside a prop that blocks. Move the
 ui.map.problem_start_on_rock,The hero starts on solid rock. Put the start somewhere you can stand.
 ui.map.problems,Problems
 ui.map.redo,Redo
+ui.map.rename,Give it another name
+ui.map.replace,Replace that one
 ui.map.rotate,Turn
 ui.map.rows,Rows
+ui.map.rule_chasm,Deep water or a chasm
+ui.map.rule_floor,Open ground
+ui.map.rule_rough,Difficult ground
+ui.map.rule_void,Rock
+ui.map.rules,Underfoot
 ui.map.save,Save
+ui.map.save_as,Save as...
 ui.map.saved,Saved.
 ui.map.saved_with_problems,"Saved. It has problems, so its campaign won't load it until they're fixed."
+ui.map.scatter_hint,Hold Shift and drag to scatter this prop.
+ui.map.search,Search props
+ui.map.select_hint,"Drag a box to select, or click a prop to pick it up. Drag to move; R turns, Delete clears."
 ui.map.spawn,Spawn {0}
 ui.map.stay,Stay
+ui.map.style_fence,Wooden fence
+ui.map.style_fieldstone,Fieldstone
+ui.map.style_hedge,Hedge
+ui.map.style_plaster,Plaster and beam
+ui.map.style_stone,Dungeon stone
+ui.map.style_timber,Timber
+ui.map.styles,Made of
+ui.map.taken,There's already a map called {0} there.
+ui.map.template,Start from
+ui.map.template_dungeon_room,Dungeon room
+ui.map.template_empty_field,Empty field
+ui.map.template_forest_clearing,Forest clearing
+ui.map.template_house_room,Room in a house
+ui.map.template_village_street,Village street
 ui.map.title,Map builder
 ui.map.tool_erase,Erase
+ui.map.tool_fill,Fill
 ui.map.tool_paint,Paint
 ui.map.tool_prop,Props
+ui.map.tool_select,Select
 ui.map.tool_spawn,Monster spawn
 ui.map.tool_start,Hero start
 ui.map.tool_wall,Walls and doors
 ui.map.top_down,From above
+ui.map.trial,Play this map
+ui.map.trial_at_spawn,At spawn {0}
+ui.map.trial_could_not,Couldn't set up the fight: {0}
+ui.map.trial_fight,Fight
+ui.map.trial_hero,The hero
+ui.map.trial_level,level
+ui.map.trial_no_spawns,Put at least one monster spawn on the map first.
+ui.map.trial_over_budget,"That's more than a high fight for one level {1} hero. You can still play it."
+ui.map.trial_over_cap,"{0} enemies is over the solo cap of {1} at level {2}. You can still play it."
+ui.map.trial_problems,This map has problems to fix before it can be played.
+ui.map.trial_readout,"{0} XP of monsters. For one level {4} hero: a low fight is {1} XP, moderate {2}, high {3}."
 ui.map.undo,Undo
 ui.map.unsaved,This map has changes that aren't saved.
 ui.not_castable.not_known.name,Not on your sheet

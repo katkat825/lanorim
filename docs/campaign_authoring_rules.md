@@ -178,3 +178,30 @@ A find needs `items` or at least one coin. `<<loot>>` answers `$loot_gold` and `
 
 Still in gold only: an item's cost in an item file (fractions work: `0.5` is 5 silver), a class's or background's
 starting gold, and a consequence's `"kind": "gold"`.
+
+## 10. Maps
+
+*cc_task_l, 2026-10-12.* A map is `maps/<id>.map` in the campaign, made in the map builder (the book's **Map
+builder**) and readable in a text editor. A map that belongs to no campaign lives in **My maps** (`user://maps`; on
+Windows `%APPDATA%\Godot\app_userdata\Lanorim\maps`), and the builder's **Copy to campaign...** puts it in one.
+
+**Format 2** adds how the map looks. Format 1 still reads, as stone floor and stone walls, so older maps load unchanged.
+
+| Key | What it is |
+|---|---|
+| `map` | the squares and the lines between them, one glyph each: `.` floor, `~` difficult, `#` rock, `_` deep water or a chasm (seen across, never crossed), `@` the start, `1`-`9` spawns; `\|` `-` a wall, `x` a door |
+| `ground` | one letter a square, a row of letters a row of squares: `s` stone, `p` wood planks, `g` grass, `d` dirt, `c` cobblestone, `a` sand, `n` snow, `w` shallow water. Left out when the whole map is stone |
+| `walls` | the `map`'s own shape, a letter on each wall or door that isn't the dungeon's stone: `t` timber, `p` plaster and beam, `f` fieldstone, `e` wooden fence, `h` hedge. Left out when every wall is stone |
+| `rough_markers` | `[[x, y], ...]`: a start or spawn standing on difficult ground (the `map` writes `@` there, which can't say so) |
+| `props` | `{ "id", "x", "y", "turn" }`: a prop from the builder's palette, its top-left square and its quarter turns |
+
+**A ground is a look; the square's glyph is its rule.** Painting a ground in the builder brings its rule with it
+(shallow water and snow are difficult, the rest floor), and difficult, rock or a chasm can be painted over any ground.
+Deep water is shallow water's ground on a chasm square.
+
+**A fence or a hedge** stops a walker and not an eye: the rules see bars there. A door in it is a gate, and a shut gate
+blocks the view as any door does.
+
+**A prop can cover more than one square** (a cottage is 2 x 2, a barn 4 x 4); its size is the palette's, so the map file
+only says where its top-left square is and how it's turned. A prop that blocks can't share a square with another that
+blocks, or cover the start or a spawn, and a campaign won't load a map where one runs off the edge.

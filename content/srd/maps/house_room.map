@@ -1,0 +1,18 @@
+{
+  "format": 2,
+  "columns": 10,
+  "rows": 8,
+  "map": "+-+-+-+-+-+-+-+-+-+-+\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n|. . . . @ . . . . .|\n+-+-+-+-+x+-+-+-+-+-+\n",
+  "ground": "pppppppppp\npppppppppp\npppppppppp\npppppppppp\npppppppppp\npppppppppp\npppppppppp\npppppppppp\n",
+  "walls": "+t+t+t+t+t+t+t+t+t+t+\nt. . . . . . . . . .t\n+ + + + + + + + + + +\nt. . . . . . . . . .t\n+ + + + + + + + + + +\nt. . . . . . . . . .t\n+ + + + + + + + + + +\nt. . . . . . . . . .t\n+ + + + + + + + + + +\nt. . . . . . . . . .t\n+ + + + + + + + + + +\nt. . . . . . . . . .t\n+ + + + + + + + + + +\nt. . . . . . . . . .t\n+ + + + + + + + + + +\nt. . . . . . . . . .t\n+t+t+t+t+t+t+t+t+t+t+\n",
+  "props": [
+    { "id": "fireplace", "x": 4, "y": 0, "turn": 0 },
+    { "id": "table_round", "x": 4, "y": 3, "turn": 0 },
+    { "id": "chair_wooden", "x": 3, "y": 3, "turn": 1 },
+    { "id": "chair_wooden", "x": 5, "y": 3, "turn": 3 },
+    { "id": "bed_single", "x": 0, "y": 0, "turn": 0 },
+    { "id": "chest_of_drawers", "x": 9, "y": 0, "turn": 0 },
+    { "id": "carpet", "x": 4, "y": 5, "turn": 0 },
+    { "id": "bookshelf", "x": 9, "y": 4, "turn": 3 }
+  ]
+}

@@ -20,7 +20,9 @@ namespace Game.Board
 
             var corners = new Dictionary<Vector2I, List<Border>>();
 
-            foreach (Border on in map.Borders.Where(b => map.At(b) is Edge.Wall or Edge.Door))
+            // the dungeon's stone only: a fence, a hedge or a village wall has no column at its corners (cc_task_l)
+            foreach (Border on in map.Borders.Where(b => map.At(b) is Edge.Wall or Edge.Door &&
+                                                        (Look?.At(b) ?? Content.Maps.WallStyle.Stone) == Content.Maps.WallStyle.Stone))
                 foreach (Vector2I end in Ends(on))
                 {
                     if (!corners.TryGetValue(end, out List<Border> lines)) corners[end] = lines = new List<Border>();

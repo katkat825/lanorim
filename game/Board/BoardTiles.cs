@@ -58,6 +58,8 @@ namespace Game.Board
             if (Wall == null || Door == null || Rough == null)
                 GD.PushError("board: a tile kind has no material - that terrain will be untextured");
 
+            Grounds(under, map);
+
             foreach (Cell at in map.Cells) Raise(under, Piece(map, at));
 
             foreach (Border on in map.Borders) Raise(under, Piece(map, on));
@@ -106,17 +108,32 @@ namespace Game.Board
         Node3D Piece(MapLayout map, Cell at) => map.At(at) switch
         {
             Tile.Void => WallModel != null ? Rock(at) : Block(at, RockHeight, _metrics.CellSize, Wall),
+            // snow and shallow water are slow going by their own look, so they wear no patch over it (cc_task_l)
+            Tile.Rough when Look != null && Content.Maps.Grounds.Rule(Look.At(at)) == Tile.Rough => null,
             Tile.Rough => RubbleModel != null ? Rubble(at) : Block(at, RoughHeight,
                                                                   _metrics.CellSize * RoughInset, Rough),
+            Tile.Chasm => Pit(at),
             _ => null,
         };
 
-        Node3D Piece(MapLayout map, Border on) => map.At(on) switch
+        // a line in its style (cc_task_l Part 3.4): the dungeon's stone on the Board's own models, the rest on theirs
+        // (WallLooks). a fence's or a hedge's wall is bars to the rules, and drawn as its fence or hedge; bars with no
+        // style are a spell's (Forcecage), drawn by the spell
+        Node3D Piece(MapLayout map, Border on)
         {
-            Edge.Wall => WallModel != null ? Panel(on) : Slab(on, WallHeight, Wall),
-            Edge.Door => DoorwayModel != null ? Doorway(on) : Hang(on),
-            _ => null,
-        };
+            Content.Maps.WallStyle style = Look?.At(on) ?? Content.Maps.WallStyle.Stone;
+
+            return map.At(on) switch
+            {
+                Edge.Wall or Edge.Bars when style != Content.Maps.WallStyle.Stone && WallLooks.Wall(style) is PackedScene styled =>
+                    Panel(on, styled, style),
+                Edge.Wall => WallModel != null ? Panel(on, WallModel) : Slab(on, WallHeight, Wall),
+                Edge.Door when style != Content.Maps.WallStyle.Stone && WallLooks.Door(style) is PackedScene door =>
+                    Doorway(on, door),
+                Edge.Door => DoorwayModel != null ? Doorway(on, DoorwayModel) : Hang(on),
+                _ => null,
+            };
+        }
 
         Vector3 Centre(Border on) => _metrics.Centre(on);
 
@@ -137,15 +154,30 @@ namespace Game.Board
             return piece;
         }
 
-        // uniform scale: a modular kit's wall already fits a line, so nothing is stretched
-        Node3D Panel(Border on)
+        // uniform scale: a modular kit's wall already fits a line, so nothing is stretched. a low style (a fence, a
+        // hedge) stands at its own height and never comes down for the camera; the rest cut away as the dungeon's do
+        Node3D Panel(Border on, PackedScene model, Content.Maps.WallStyle style = Content.Maps.WallStyle.Stone)
         {
-            Node3D panel = Standing(WallModel, NameFor(on), Centre(on), _metrics.CellSize, out Aabb bounds);
+            Node3D panel = Standing(model, NameFor(on), Centre(on), _metrics.CellSize, out Aabb bounds);
 
             panel.Rotation = new Vector3(0f, Facing(on), 0f);
-            Cutaway?.Line(panel, bounds, on);
+
+            if (WallLooks.Low(style)) StandLow(panel, bounds, WallLooks.Height(style));
+            else Cutaway?.Line(panel, bounds, on);
 
             return panel;
+        }
+
+        // a piece stood at a share of the walls' full height, from its bottom on the board
+        void StandLow(Node3D piece, Aabb bounds, float share)
+        {
+            if (bounds.Size.Y <= 0f) return;
+
+            float y = (Cutaway?.Tall ?? WallHeight) * share / bounds.Size.Y;
+            float over = piece.Position.Y + bounds.Position.Y * piece.Scale.Y;
+
+            piece.Scale = new Vector3(piece.Scale.X, y, piece.Scale.Z);
+            piece.Position = new Vector3(piece.Position.X, over - bounds.Position.Y * y, piece.Position.Z);
         }
 
         Node3D Rock(Cell at)
@@ -175,9 +207,9 @@ namespace Game.Board
         }
 
         // one model, wall-with-hole plus leaf; the leaf is lifted onto its own hinge to swing
-        Node3D Doorway(Border on)
+        Node3D Doorway(Border on, PackedScene doorway)
         {
-            Node3D model = Painted(DoorwayModel, "Frame");
+            Node3D model = Painted(doorway, "Frame");
             Aabb bounds = PaintedModel.Bounds(model);
 
             float scale = PaintedModel.ToFitWidth(bounds, _metrics.CellSize);
@@ -197,7 +229,7 @@ namespace Game.Board
 
             if (leaf == null)
             {
-                GD.PushError($"board: {DoorwayModel.ResourcePath} has no door in it - the doorway will not open");
+                GD.PushError($"board: {doorway.ResourcePath} has no door in it - the doorway will not open");
                 return piece;
             }
 

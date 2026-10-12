@@ -25,8 +25,8 @@ namespace Content.Tests
         {
             PropCatalogue palette = PropCatalogue.Srd();
 
-            Assert.Equal(new[] { "containers", "furniture", "light", "dungeon", "nature", "village" }, palette.Categories);
-            Assert.True(palette.Props.Count >= 40);
+            Assert.Equal(new[] { "trees", "plants_rocks", "buildings", "walls_fences", "village_market", "farm", "camp", "ruins", "furniture", "containers", "light", "dungeon" }, palette.Categories);
+            Assert.True(palette.Props.Count >= 200);
 
             foreach (string category in palette.Categories)
                 Assert.NotEmpty(palette.In(category));
@@ -34,11 +34,26 @@ namespace Content.Tests
             Assert.All(palette.Props, p =>
             {
                 Assert.False(string.IsNullOrEmpty(p.Pack), p.Id);
-                Assert.EndsWith(".gltf", p.Model);
+                Assert.True(p.Model.EndsWith(".gltf") || p.Model.EndsWith(".obj"), p.Model);
             });
 
             Assert.True(palette.Find("barrel").Blocks);
             Assert.Equal("prop.barrel.name", palette.Find("barrel").NameKey);
+        }
+
+        // the palette's search and its thumbnails go by name, so two props called "Pine" can't be told apart
+        // (cc_task_l Part 4.1)
+        [Fact]
+        public void EveryPropHasANameOfItsOwnInEnglish()
+        {
+            var english = Content.Schema.Locale.Read(File.ReadAllText("game.csv"));
+
+            var named = PropCatalogue.Srd().Props.GroupBy(p => english.TryGetValue(p.NameKey, out string n) ? n : p.Id)
+                                     .Where(g => g.Count() > 1)
+                                     .Select(g => $"{g.Key}: {string.Join(", ", g.Select(p => p.Id))}")
+                                     .ToList();
+
+            Assert.True(named.Count == 0, string.Join("\n", named));
         }
 
         [Fact]
@@ -62,7 +77,7 @@ namespace Content.Tests
             Assert.Equal(Tile.Floor, draft.At(new Cell(5, 3)));
 
             editor.Tool = MapTool.Paint;
-            editor.Ground = Tile.Rough;
+            editor.Brush = Brush.Of(Tile.Rough);
             Assert.True(editor.Click(new Cell(2, 2)));
             Assert.Equal(Tile.Rough, draft.At(new Cell(2, 2)));
 

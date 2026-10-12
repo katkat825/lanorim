@@ -61,7 +61,7 @@ namespace Game.Play
         // the rules made the battle; lay the map and stand everyone on it (main thread, rules idle
         // between BattleFor and Start - the positions are the starting ones)
         public void Lay(Battle battle, IReadOnlyList<(Actor Actor, Cell At)> places,
-                        IEnumerable<Content.Maps.Prop> props = null)
+                        IEnumerable<Content.Maps.Prop> props = null, Content.Maps.MapLook look = null)
         {
             Battle = battle;
             _finished = false;
@@ -77,7 +77,7 @@ namespace Game.Play
             _hud.ClearLog();
 
             Board.ClearAll();
-            Board.Lay(battle.Fight.Field.Map);
+            Board.Lay(battle.Fight.Field.Map, look);
             Board.Dress(props);
             Screen?.StandBehind(Board);
             Companion?.StandBy(Board, Screen);

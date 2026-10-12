@@ -67,23 +67,14 @@ namespace Game.Dev
             launch.Play(pack, hero, 0);
         }
 
-        // every default a quick character takes: class, human, soldier, the first skills and expertise,
-        // and (learn) the first spells
+        // every default a quick character takes (QuickHero.Defaults): class, human, soldier, the first skills and
+        // expertise, and (learn) the first spells
         static void Defaults(Creation making, string cls, bool learn)
         {
             // picking a class starts it over, so a class already picked (with spells learned) is kept
             if (making.Class?.Id != cls) making.Pick(GameState.Content.Class(cls));
-            making.Pick(GameState.Content.Kind("human"));
-            making.Pick(GameState.Content.Background("soldier"));
-            making.SuggestTraits();
 
-            foreach (var skill in making.SkillChoices.Take(making.SkillPicksLeft).ToList()) making.Train(skill);
-            foreach (var skill in making.Skills.Take(making.ExpertisePicksLeft).ToList()) making.Master(skill);
-
-            if (!learn) return;
-
-            foreach (var spell in making.SpellChoices.ToList())
-                if (making.CantripPicksLeft > 0 || making.SpellPicksLeft > 0) making.Learn(spell);
+            QuickHero.Defaults(making, GameState.Content, learn);
         }
 
         // `--show create --page spells --class mage`: a creation page part filled in, for a picture of it
@@ -125,32 +116,45 @@ namespace Game.Dev
             }
         }
 
-        // `--build <campaign> [map]`: that campaign's map opened in the builder, or a new one called `probe_map`, for a
-        // picture of the builder; `--map-probe`: the builder driven (checks/check-mapbuilder.ps1). true when either
+        // `--build <campaign|mine> [map]`: that map opened in the builder (mine: My maps), or a new one called `probe_map`
+        // (`--template`: from that template), for a picture of the builder; `--map-probe`: the builder driven
+        // (checks/check-mapbuilder.ps1), from the book's own page. true when either
         public static bool Building(Launch launch)
         {
-            // the map builder, driven: a new map in a throwaway campaign, at the table
             if (DevArgs.MapProbe)
             {
-                MapBuilderPage.Build(launch, new MapBuilderView(MapBuilderView.Fresh(12, 10), MapBuilderProbe.MakeCampaign(),
-                                                                MapBuilderProbe.MapId));
+                MapBuilderProbe.AtLaunch(launch);
                 return true;
             }
 
             if (DevArgs.Build == null) return false;
 
-            Game.Campaigns.Loaded campaign = GameState.Campaigns.Campaign(DevArgs.Build);
+            MapPlace place = DevArgs.Build == "mine" ? MapBuilderPage.Library : null;
 
-            if (campaign == null)
+            if (place == null)
             {
-                GD.PushError($"map builder: no campaign '{DevArgs.Build}'");
-                return false;
+                Game.Campaigns.Loaded campaign = GameState.Campaigns.Campaign(DevArgs.Build);
+
+                if (campaign == null)
+                {
+                    GD.PushError($"map builder: no campaign '{DevArgs.Build}'");
+                    return false;
+                }
+
+                place = MapPlace.OfCampaign(campaign.Folder, campaign.Manifest?.NameKey);
             }
 
             string map = DevArgs.BuildMap;
 
-            if (map != null && MapFiles.Ids(campaign.Folder).Contains(map)) MapBuilderPage.OpenMap(launch, campaign.Folder, map);
-            else MapBuilderPage.Build(launch, new MapBuilderView(MapBuilderView.Fresh(12, 10), campaign.Folder, map ?? "probe_map"));
+            if (map != null && MapFiles.Has(place, map)) MapBuilderPage.OpenMap(launch, place, map);
+            else
+            {
+                // a template at its own size, as the book's page offers it
+                MapDraft drawn = MapTemplates.Read(DevArgs.Template ?? MapTemplates.Standard);
+                MapBuilderPage.Build(launch, new MapBuilderView(
+                    MapBuilderView.Fresh(drawn?.Columns ?? 12, drawn?.Rows ?? 10, DevArgs.Template ?? MapTemplates.Standard),
+                    place, map ?? "probe_map"));
+            }
 
             return true;
         }

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cg3ukaby1h17g"
+path="res://.godot/imported/Carpet_1.obj-047755b765794c60a5bd1d29148c843e.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Carpet_1.obj-047755b765794c60a5bd1d29148c843e.mesh"]
+
+source_file="res://models/props/ultimate_house_interior_pack_june_2020/Carpet_1.obj"
+dest_files=["res://.godot/imported/Carpet_1.obj-047755b765794c60a5bd1d29148c843e.mesh", "res://.godot/imported/Carpet_1.obj-047755b765794c60a5bd1d29148c843e.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

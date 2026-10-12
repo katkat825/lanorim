@@ -236,6 +236,41 @@ namespace Game.Play
             _campaigns = null;
         }
 
+        // --- a map being tried (cc_task_l Part 5, "Play this map") ------------------------------------------------------
+
+        // the builder a trial fight goes back to when it ends, the map in it as it was; null when nothing is being tried
+        public static MapBuilderView Trying { get; private set; }
+
+        // where a trial's saves go: never the player's own, and never seen on the book's shelf
+        public const string TrialFolder = "user://map_trial";
+
+        static string _savesBefore;
+
+        // the throwaway campaign played with this hero, and the builder kept to come back to
+        public static CampaignRun Try(MapBuilderView view, Package pack, Hero hero)
+        {
+            Building = null;
+            Trying = view;
+
+            _savesBefore = SavesFolder;
+            SavesFolder = TrialFolder + "/saves";
+            _saves = null;
+
+            return Begin(pack, hero, 0);
+        }
+
+        // back to the builder from a trial: the run forgotten, its saves gone, the player's own saves back
+        public static void StopTrying()
+        {
+            MapBuilderView view = Trying;
+            Trying = null;
+
+            SavesFolder = _savesBefore ?? "user://saves";
+            _saves = null;
+
+            Build(view);
+        }
+
         // the dice source, looked up when a throw happens rather than when the resolver is made - the
         // table sets it after the run exists
         sealed class Deferred : IDiceSource

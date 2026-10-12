@@ -46,7 +46,11 @@ namespace Game.Dev
             new("--begin", "<campaign> [class]", Where.Launch, false, "a character with every default (fighter otherwise), straight to the table; probe saves are kept apart"),
             new("--learn", "<spell,spell>", Where.Launch, false, "with --begin, those spells learned first"),
             new("--gold", "", Where.Launch, false, "with --begin, the gold instead of the gear, so the run opens in the starting shop"),
-            new("--build", "<campaign> [map]", Where.Launch, false, "that map, or a new one called probe_map, in the map builder"),
+            new("--build", "<campaign|mine> [map]", Where.Launch, false, "that map, or a new one called probe_map, in the map builder; mine is My maps"),
+            new("--template", "<id>", Where.Launch, false, "with --build, a new map starts as that template (dungeon_room otherwise)"),
+            new("--tool", "<tool>", Where.Builder, false, "the builder opens with that tool in hand (select, paint, fill, wall, prop...)"),
+            new("--trial-panel", "", Where.Builder, false, "the builder opens its Play this map panel"),
+            new("--prop-icons", "", Where.Launch, false, "renders every prop's palette thumbnail into game/ui/prop_icons/ and quits; not headless"),
 
             // play
             new("--auto", "", Where.Play, true, "plays itself to the end: first choices, the AutoPlayer in fights, dice thrown when asked (check-play)"),
@@ -88,7 +92,7 @@ namespace Game.Dev
             // the probes and the checks
             new("--controls", "", Where.Launch, false, "every act on the Controls page, and Change rebinds (check-controls)"),
             new("--creation", "", Where.Launch, false, "character creation, driven (check-creation)"),
-            new("--map-probe", "", Where.Launch, false, "the map builder driven: paint, walls, a prop, start, spawn, undo, save (check-mapbuilder)"),
+            new("--map-probe", "", Where.Launch, false, "the map builder driven: a map from each template in My maps, ground, walls, a building, a scatter of trees, undo, save, reopen, copy to a campaign, and play it (check-mapbuilder; with --auto)"),
             new("--layout", "", Where.Any, false, "every launch screen, or the table's HUD, pause menu, sheet and pack, at six window sizes (check-layout)"),
             new("--prone-probe", "", Where.Play, false, "in a fight, Prone lies down in its square and Stand Up stands it up (check-play)"),
             new("--access-probe", "", Where.Play, false, "presses F2, F1, Tab, Shift+Tab and F3 at the table (check-controls)"),
@@ -117,6 +121,12 @@ namespace Game.Dev
             if (DevArgs.CreationProbe)
             {
                 launch.AddChild(new CreationProbe { Name = "CreationProbe" });
+                return true;
+            }
+
+            if (DevArgs.PropIcons)
+            {
+                launch.AddChild(new PropIcons { Name = "PropIcons" });
                 return true;
             }
 
@@ -197,6 +207,14 @@ namespace Game.Dev
         public static void AtBuilder(MapBuilder builder)
         {
             if (DevArgs.MapProbe) builder.AddChild(new MapBuilderProbe { Name = "MapBuilderProbe", Builder = builder });
+
+            if (DevArgs.Tool != null && Core.Words.EnumWords.TryName(DevArgs.Tool, out Content.Maps.MapTool tool))
+            {
+                builder.Editor.Tool = tool;
+                builder.CallDeferred(MapBuilder.MethodName.Chose);
+            }
+
+            if (DevArgs.TrialPanel) builder.CallDeferred(MapBuilder.MethodName.ShowTrial);
         }
 
         public static void AtAccessDesk(AccessDesk desk)

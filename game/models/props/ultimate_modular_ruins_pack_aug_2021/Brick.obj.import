@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://klr5tvvqyd3r"
+path="res://.godot/imported/Brick.obj-10b818ac79a862d829b1a1c82fb8a134.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Brick.obj-10b818ac79a862d829b1a1c82fb8a134.mesh"]
+
+source_file="res://models/props/ultimate_modular_ruins_pack_aug_2021/Brick.obj"
+dest_files=["res://.godot/imported/Brick.obj-10b818ac79a862d829b1a1c82fb8a134.mesh", "res://.godot/imported/Brick.obj-10b818ac79a862d829b1a1c82fb8a134.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

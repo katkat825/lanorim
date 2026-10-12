@@ -38,7 +38,15 @@
         "Ultimate Animated Character Pack",
         "Ultimate Animated Animals",
         "Easy Animated Enemy Pack",
-        "Fantasy Props MegaKit"
+        "Fantasy Props MegaKit",
+        "Stylized Nature MegaKit",
+        "Textured Stylized Trees",
+        "Medieval Village MegaKit",
+        "Farm Buildings",
+        "Ultimate Fantasy RTS",
+        "Ultimate House Interior Pack",
+        "Ultimate Modular Ruins Pack",
+        "Survival Pack"
       ],
       "files": [
         "models/minis/goblin_male.gltf",
@@ -50,7 +58,15 @@
         "models/minis/rat.",
         "models/minis/spider.",
         "models/minis/rogue_v3.glb",
-        "models/props/fantasy_props_megakit_standard/"
+        "models/props/fantasy_props_megakit_standard/",
+        "models/props/stylized_nature_megakit_standard/",
+        "models/props/textured_stylized_trees_may_2020/",
+        "models/props/medieval_village_megakit_standard/",
+        "models/props/farm_buildings_sept_2018/",
+        "models/props/ultimate_fantasy_rts_aug_2022/",
+        "models/props/ultimate_house_interior_pack_june_2020/",
+        "models/props/ultimate_modular_ruins_pack_aug_2021/",
+        "models/props/survival_pack_sept_2020/"
       ],
       "note": "QAL: no attribution required; credited on goodwill. rogue_v3's body rides the Ultimate Animated Character Pack's armature. Ultimate Animated Animals is the enemy wolf mini; its companions left the game on 2026-10-08"
     },

@@ -29,7 +29,7 @@ namespace Game.Access
 
             foreach (InputEvent bound in InputMap.ActionGetEvents(action))
                 if (bound is InputEventKey key)
-                    yield return (key.ShiftPressed ? "Shift+" : "") + Label(key.PhysicalKeycode == Key.None
+                    yield return (key.CtrlPressed ? "Ctrl+" : "") + (key.ShiftPressed ? "Shift+" : "") + Label(key.PhysicalKeycode == Key.None
                         ? key.Keycode
                         : Headless
                             ? key.PhysicalKeycode
@@ -81,6 +81,7 @@ namespace Game.Access
                         // player on a French or Dvorak layout gets the key they actually pressed
                         PhysicalKeycode = one.Value.Key,
                         ShiftPressed = one.Value.Shift,
+                        CtrlPressed = one.Value.Ctrl,
                     });
 
                     bound++;
@@ -107,15 +108,17 @@ namespace Game.Access
 
         // the key and the shift of a raw press, for the arm-then-press rebinding. Physical again, and
         // echoes are ignored: holding a key down should bind it once
-        public static bool Raw(InputEvent what, out Key key, out bool shift)
+        public static bool Raw(InputEvent what, out Key key, out bool shift, out bool ctrl)
         {
             key = Key.None;
             shift = false;
+            ctrl = false;
 
             if (what is not InputEventKey press || !press.Pressed || press.Echo) return false;
 
             key = press.PhysicalKeycode != Key.None ? press.PhysicalKeycode : press.Keycode;
             shift = press.ShiftPressed;
+            ctrl = press.CtrlPressed || press.MetaPressed;
 
             return key != Key.None;
         }

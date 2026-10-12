@@ -39,6 +39,14 @@ namespace Game.Builder
 
         [Export] public Color LineColour { get; set; } = new Color(0.95f, 0.85f, 0.4f, 0.9f);
 
+        // the Select tool's choice, outlined (cc_task_l Part 4.3)
+        [Export] public Color ChosenColour { get; set; } = new Color(0.35f, 0.75f, 0.95f, 0.9f);
+
+        // the prop palette's thumbnails, a side, and how many to a row (cc_task_l Part 4.1)
+        [Export] public int ThumbSize { get; set; } = 96;
+
+        [Export] public int ThumbColumns { get; set; } = 3;
+
         // a line's highlight, as a share of a square: how thick and how tall
         [Export] public float LineThickness { get; set; } = 0.12f;
 

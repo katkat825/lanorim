@@ -174,7 +174,11 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--begin <campaign> [class]` | launch.tscn |  | a character with every default (fighter otherwise), straight to the table; probe saves are kept apart |
 | `--learn <spell,spell>` | launch.tscn |  | with --begin, those spells learned first |
 | `--gold` | launch.tscn |  | with --begin, the gold instead of the gear, so the run opens in the starting shop |
-| `--build <campaign> [map]` | launch.tscn |  | that map, or a new one called probe_map, in the map builder |
+| `--build <campaign|mine> [map]` | launch.tscn |  | that map, or a new one called probe_map, in the map builder; mine is My maps |
+| `--template <id>` | launch.tscn |  | with --build, a new map starts as that template (dungeon_room otherwise) |
+| `--tool <tool>` | in the map builder |  | the builder opens with that tool in hand (select, paint, fill, wall, prop...) |
+| `--trial-panel` | in the map builder |  | the builder opens its Play this map panel |
+| `--prop-icons` | launch.tscn |  | renders every prop's palette thumbnail into game/ui/prop_icons/ and quits; not headless |
 
 *Play*
 
@@ -231,7 +235,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 |---|---|---|---|
 | `--controls` | launch.tscn |  | every act on the Controls page, and Change rebinds (check-controls) |
 | `--creation` | launch.tscn |  | character creation, driven (check-creation) |
-| `--map-probe` | launch.tscn |  | the map builder driven: paint, walls, a prop, start, spawn, undo, save (check-mapbuilder) |
+| `--map-probe` | launch.tscn |  | the map builder driven: a map from each template in My maps, ground, walls, a building, a scatter of trees, undo, save, reopen, copy to a campaign, and play it (check-mapbuilder; with --auto) |
 | `--layout` | wherever it applies |  | every launch screen, or the table's HUD, pause menu, sheet and pack, at six window sizes (check-layout) |
 | `--prone-probe` | at the table, in a campaign |  | in a fight, Prone lies down in its square and Stand Up stands it up (check-play) |
 | `--access-probe` | at the table, in a campaign |  | presses F2, F1, Tab, Shift+Tab and F3 at the table (check-controls) |

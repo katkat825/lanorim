@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+; A HEDGE (cc_task_l Part 3.4): the Ultimate Modular Ruins pack's Bush_2x2 (Quaternius, OBJ), along its line.
+; It blocks a walker and not an eye (the rules see bars). First pass.
+
+[ext_resource type="Mesh" path="res://models/props/ultimate_modular_ruins_pack_aug_2021/Bush_2x2.obj" id="1_body"]
+
+[node name="wall" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.008, 0, 0)
+mesh = ExtResource("1_body")

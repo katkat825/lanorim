@@ -74,6 +74,7 @@ namespace Core.Space
             {
                 Tile.Floor => '.',
                 Tile.Rough => '~',
+                Tile.Chasm => '_',
                 _ => '#',
             };
         }

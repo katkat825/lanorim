@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+; A DOOR IN A PLASTER AND BEAM WALL: the kit's plaster doorway and its door. the door leaf is the child whose name ends in _door: BoardTiles hangs it on a hinge at its edge (DoorPiece)
+
+[ext_resource type="PackedScene" path="res://models/props/medieval_village_megakit_standard/Wall_Plaster_Door_Flat.gltf" id="1_frame"]
+[ext_resource type="PackedScene" path="res://models/props/medieval_village_megakit_standard/Door_1_Flat.gltf" id="2_leaf_door"]
+
+[node name="door" type="Node3D"]
+
+[node name="Frame" parent="." instance=ExtResource("1_frame")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.11)
+
+[node name="Leaf_door" parent="." instance=ExtResource("2_leaf_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.51, 0, 0)

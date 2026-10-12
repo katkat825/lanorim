@@ -1,0 +1,5 @@
+{
+  "_": "The map builder's starting templates (cc_task_l Part 1.3), in the order the New map page offers them. Each is an ordinary map file beside this one (<id>.map), fitted to the size the author asks for (MapDraft.Fitted): change one by opening a copy in the builder, saving it, and putting it here.",
+
+  "templates": ["empty_field", "dungeon_room", "forest_clearing", "village_street", "house_room"]
+}

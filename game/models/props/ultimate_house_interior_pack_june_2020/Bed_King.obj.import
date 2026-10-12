@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bi3d40epw8dvt"
+path="res://.godot/imported/Bed_King.obj-f126990859d67e3fff674a6d7df2fabc.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Bed_King.obj-f126990859d67e3fff674a6d7df2fabc.mesh"]
+
+source_file="res://models/props/ultimate_house_interior_pack_june_2020/Bed_King.obj"
+dest_files=["res://.godot/imported/Bed_King.obj-f126990859d67e3fff674a6d7df2fabc.mesh", "res://.godot/imported/Bed_King.obj-f126990859d67e3fff674a6d7df2fabc.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

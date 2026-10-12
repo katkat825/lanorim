@@ -31,7 +31,7 @@ namespace Content.Maps
         public static readonly IReadOnlyList<string> Names = new[]
         {
             "start_on_rock", "start_in_prop", "spawn_on_rock", "spawn_in_prop", "spawn_unreachable", "prop_in_wall",
-            "nothing_painted",
+            "nothing_painted", "prop_off_map", "props_overlap",
         };
 
         public override string ToString() => Says;

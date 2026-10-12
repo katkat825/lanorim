@@ -1,0 +1,8 @@
+{
+  "format": 2,
+  "columns": 12,
+  "rows": 10,
+  "map": "+ + + + + + + + + + + + +\n . . . . . . . . . . . . \n+ + + + + + + + + + + + +\n . . . . . . . . . . . . \n+ + + + + + + + + + + + +\n . . . . . . . . . . . . \n+ + + + + + + + + + + + +\n . . . . . . . . . . . . \n+ + + + + + + + + + + + +\n . . . . . . . . . . . . \n+ + + + + + + + + + + + +\n . . . . . . @ . . . . . \n+ + + + + + + + + + + + +\n . . . . . . . . . . . . \n+ + + + + + + + + + + + +\n . . . . . . . . . . . . \n+ + + + + + + + + + + + +\n . . . . . . . . . . . . \n+ + + + + + + + + + + + +\n . . . . . . . . . . . . \n+ + + + + + + + + + + + +\n",
+  "ground": "gggggggggggg\ngggggggggggg\ngggggggggggg\ngggggggggggg\ngggggggggggg\ngggggggggggg\ngggggggggggg\ngggggggggggg\ngggggggggggg\ngggggggggggg\n",
+  "props": []
+}

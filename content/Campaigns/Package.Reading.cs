@@ -44,8 +44,8 @@ namespace Content.Campaigns
                 ReadFolder(folder, MonstersFolder, MonsterReader.Entries, m => m.Id, problems);
             IReadOnlyList<Item> items = ReadFolder(folder, ItemsFolder, ItemReader.Entries, i => i.Id, problems);
             IReadOnlyList<Spell> spells = ReadFolder(folder, SpellsFolder, SpellReader.Entries, s => s.Id, problems);
-            var props = new Dictionary<string, IReadOnlyList<Prop>>(StringComparer.Ordinal);
-            IReadOnlyDictionary<string, MapLayout> maps = ReadMaps(folder, problems, props);
+            var scenery = new Dictionary<string, MapScenery>(StringComparer.Ordinal);
+            IReadOnlyDictionary<string, MapLayout> maps = ReadMaps(folder, problems, scenery);
 
             ChaptersNameRealMaps(manifest, maps, problems);
 
@@ -65,7 +65,7 @@ namespace Content.Campaigns
                                encounters, loot, problems)
             {
                 Merchants = merchants,
-                Props = props,
+                Scenery = scenery,
                 Barks = barks,
                 Consequences = consequences,
             };

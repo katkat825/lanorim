@@ -51,6 +51,25 @@ namespace Game.Access
         // the fight's log, open to the whole fight and closed to its last lines. It was L by keycode
         // in the HUD, out of the InputMap, so it could be neither listed nor rebound
         ToggleLog,
+
+        // THE MAP BUILDER'S (cc_task_l Part 4.7), which were raw keys in MapBuilder before: undo, redo and save, the prop
+        // in hand (or picked up) turned either way, and the Select tool's copy, paste and clear. Only the builder
+        // answers them, so they can share no key with the table's acts and needn't with anything else
+        UndoEdit,
+
+        RedoEdit,
+
+        SaveMap,
+
+        TurnProp,
+
+        TurnPropBack,
+
+        CopySelection,
+
+        PasteSelection,
+
+        DeleteSelection,
     }
 
     public static class Acts
@@ -97,6 +116,16 @@ namespace Game.Access
 
             Act.ToggleLog => Key.L,
 
+            // the keys every editor in the world uses
+            Act.UndoEdit => Key.Z,
+            Act.RedoEdit => Key.Y,
+            Act.SaveMap => Key.S,
+            Act.TurnProp => Key.R,
+            Act.TurnPropBack => Key.R,
+            Act.CopySelection => Key.C,
+            Act.PasteSelection => Key.V,
+            Act.DeleteSelection => Key.Delete,
+
             _ => Key.None,
         };
 
@@ -110,8 +139,15 @@ namespace Game.Access
             _ => Array.Empty<Key>(),
         };
 
-        // reaching backward is the one that shares a key, the way it does everywhere
-        public static bool Shifted(this Act act) => act == Act.ReachBack;
+        // reaching backward is the one that shares a key, the way it does everywhere; turning a prop back the other
+        public static bool Shifted(this Act act) => act is Act.ReachBack or Act.TurnPropBack;
+
+        // held with Ctrl: an editor's undo, copy and save (cc_task_l Part 4.7)
+        public static bool Ctrled(this Act act) =>
+            act is Act.UndoEdit or Act.RedoEdit or Act.SaveMap or Act.CopySelection or Act.PasteSelection;
+
+        // a binding's whole default: the key, and what's held with it
+        public static Bindings.Bound Default(this Act act) => new(act.Standard(), act.Shifted(), act.Ctrled());
 
         // the acts a hand needs to walk the room. Named, because a rebinding that left one of these
         // unbound would leave a keyboard player with no way back out of wherever they are

@@ -26,29 +26,33 @@ namespace Game.Access
     {
         public readonly struct Bound : IEquatable<Bound>
         {
-            public Bound(Key key, bool shift = false)
+            public Bound(Key key, bool shift = false, bool ctrl = false)
             {
                 Key = key;
                 Shift = shift;
+                Ctrl = ctrl;
             }
 
             public Key Key { get; }
 
             public bool Shift { get; }
 
+            // Ctrl held with it: the map builder's undo, copy and save (cc_task_l Part 4.7)
+            public bool Ctrl { get; }
+
             public bool Any => Key != Key.None;
 
-            public bool Equals(Bound other) => Key == other.Key && Shift == other.Shift;
+            public bool Equals(Bound other) => Key == other.Key && Shift == other.Shift && Ctrl == other.Ctrl;
 
             public override bool Equals(object other) => other is Bound it && Equals(it);
 
-            public override int GetHashCode() => HashCode.Combine(Key, Shift);
+            public override int GetHashCode() => HashCode.Combine(Key, Shift, Ctrl);
 
             // WHAT IS PRINTED ON THE KEY, and it is not localized: "Tab" is what that key says on
             // every keyboard that has one, and a translated word here would name a key the player
             // cannot find. The same call the "?" makes about its own glyph
             public override string ToString() =>
-                !Any ? "-" : (Shift ? "Shift+" : "") + Enum.GetName(Key);
+                !Any ? "-" : (Ctrl ? "Ctrl+" : "") + (Shift ? "Shift+" : "") + Enum.GetName(Key);
         }
 
         readonly Dictionary<Act, Bound> _bound = new Dictionary<Act, Bound>();
@@ -63,7 +67,7 @@ namespace Game.Access
             _bound.Clear();
 
             foreach (Act act in Enum.GetValues<Act>())
-                _bound[act] = new Bound(act.Standard(), act.Shifted());
+                _bound[act] = act.Default();
         }
 
         public Bound Of(Act act) => _bound.TryGetValue(act, out Bound bound) ? bound : default;
@@ -79,7 +83,7 @@ namespace Game.Access
         }
 
         public int Changed => Enum.GetValues<Act>()
-                                  .Count(a => !Of(a).Equals(new Bound(a.Standard(), a.Shifted())));
+                                  .Count(a => !Of(a).Equals(a.Default()));
 
         // which act already has this key, if any
         public Act? Clash(Bound key, Act except)
@@ -106,7 +110,7 @@ namespace Game.Access
             return true;
         }
 
-        public bool Bind(Act act, Key key, bool shift = false) => Bind(act, new Bound(key, shift));
+        public bool Bind(Act act, Key key, bool shift = false, bool ctrl = false) => Bind(act, new Bound(key, shift, ctrl));
 
 
         // ---- arm, then press ------------------------------------------------------------------
@@ -134,13 +138,13 @@ namespace Game.Access
             Taken,
         }
 
-        public Took Pressed(Key key, bool shift = false)
+        public Took Pressed(Key key, bool shift = false, bool ctrl = false)
         {
             if (Armed is not { } act) return Took.Nothing;
 
             if (key == Key.Escape) { Armed = null; return Took.LetGo; }
 
-            var want = new Bound(key, shift);
+            var want = new Bound(key, shift, ctrl);
 
             if (Clash(want, act) != null) return Took.Taken;
 
@@ -154,12 +158,15 @@ namespace Game.Access
 
         public const string WithShift = "+shift";
 
+        public const string WithCtrl = "+ctrl";
+
         public IEnumerable<string> Lines()
         {
             foreach (KeyValuePair<Act, Bound> one in All)
                 yield return one.Key.Id() + Between +
                              (one.Value.Any ? Enum.GetName(one.Value.Key).ToLowerInvariant() : "") +
-                             (one.Value.Shift ? WithShift : "");
+                             (one.Value.Shift ? WithShift : "") +
+                             (one.Value.Ctrl ? WithCtrl : "");
         }
 
         // a line naming an act this build does not have is skipped rather than refused: a settings
@@ -178,6 +185,10 @@ namespace Game.Access
 
                 string said = line.Substring(at + 1).Trim().ToLowerInvariant();
 
+                bool ctrl = said.EndsWith(WithCtrl, StringComparison.Ordinal);
+
+                if (ctrl) said = said.Substring(0, said.Length - WithCtrl.Length);
+
                 bool shift = said.EndsWith(WithShift, StringComparison.Ordinal);
 
                 if (shift) said = said.Substring(0, said.Length - WithShift.Length);
@@ -190,7 +201,7 @@ namespace Game.Access
 
                 if (!Enum.TryParse(said, ignoreCase: true, out Key key)) continue;
 
-                if (Bind(act, new Bound(key, shift))) took++;
+                if (Bind(act, new Bound(key, shift, ctrl))) took++;
             }
 
             return took;

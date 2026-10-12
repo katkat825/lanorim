@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dgnplborx17cr"
+path="res://.godot/imported/Statue_Fox.obj-82deed5d7e6053b95e8a12dfb8d27b96.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Statue_Fox.obj-82deed5d7e6053b95e8a12dfb8d27b96.mesh"]
+
+source_file="res://models/props/ultimate_modular_ruins_pack_aug_2021/Statue_Fox.obj"
+dest_files=["res://.godot/imported/Statue_Fox.obj-82deed5d7e6053b95e8a12dfb8d27b96.mesh", "res://.godot/imported/Statue_Fox.obj-82deed5d7e6053b95e8a12dfb8d27b96.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

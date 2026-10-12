@@ -1,9 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.Json;
-using Content.Schema;
 using Core.Space;
 
 namespace Content.Maps
@@ -12,7 +8,12 @@ namespace Content.Maps
     {
         // --- what it makes ------------------------------------------------------------------------
 
-        public MapLayout Layout()
+        // the rules' map: the squares, the lines (a fence's or a hedge's wall as bars, which stop a walker and not an
+        // eye: WallStyles.Rule), the start and spawns, and every square a blocking prop covers
+        public MapLayout Layout() => Layout(asDrawn: false);
+
+        // asDrawn: a fence's wall left a wall, as the map text writes it (the "walls" layer says it's a fence)
+        MapLayout Layout(bool asDrawn)
         {
             var vertical = new Edge[Extent.VerticalCount];
             var horizontal = new Edge[Extent.HorizontalCount];
@@ -22,88 +23,16 @@ namespace Content.Maps
                 Edge[] layer = edge.Key.Vertical ? vertical : horizontal;
                 int i = Extent.Index(edge.Key);
 
-                if (i >= 0 && i < layer.Length) layer[i] = edge.Value;
+                if (i >= 0 && i < layer.Length) layer[i] = asDrawn ? edge.Value : StyleAt(edge.Key).Rule(edge.Value);
             }
 
             return new MapLayout(Columns, Rows, (Tile[])_tiles.Clone(), Start,
                                  vertical, horizontal, _spawns,
-                                 _props.Where(Blocks).Select(p => p.Cell));
+                                 _props.Where(Blocks).SelectMany(Covers));
         }
 
-        // what a campaign ships: the map as the same text MapReader reads, plus the props beside
-        // it. one file, and the map part stays hand-editable, which is what makes a Workshop
-        // author's text editor a usable tool
-        public string Save()
-        {
-            var json = new StringBuilder();
-
-            json.Append("{\n  \"format\": 1,\n  \"columns\": ").Append(Columns)
-                .Append(",\n  \"rows\": ").Append(Rows)
-                .Append(",\n  \"map\": ")
-                .Append(JsonSerializer.Serialize(MapWriter.Write(Layout(), _spawns)))
-                .Append(",\n  \"props\": [");
-
-            for (int i = 0; i < _props.Count; i++)
-            {
-                Prop prop = _props[i];
-
-                json.Append(i == 0 ? "\n    " : ",\n    ")
-                    .Append("{ \"id\": ").Append(JsonSerializer.Serialize(prop.Id))
-                    .Append(", \"x\": ").Append(prop.Cell.X)
-                    .Append(", \"y\": ").Append(prop.Cell.Y)
-                    .Append(", \"turn\": ").Append(prop.Turn)
-                    .Append(" }");
-            }
-
-            return json.Append(_props.Count == 0 ? "]" : "\n  ]").Append("\n}\n").ToString();
-        }
-
-        public static bool TryRead(string text, out MapDraft draft, out string problem)
-        {
-            draft = null;
-            problem = null;
-
-            if (!Json.TryParse(text, out JsonDocument document, out problem)) return false;
-
-            using (document)
-            {
-                JsonElement root = document.RootElement;
-
-                if (!MapReader.TryRead(root.Text("map"), out MapLayout map, out problem))
-                    return false;
-
-                draft = new MapDraft(map.Columns, map.Rows);
-
-                foreach (Cell cell in map.Cells) draft.Set(cell, map.At(cell));
-
-                foreach (Border border in map.Borders)
-                    draft.SetEdge(border, map.At(border));
-
-                draft.Start = map.Start;
-
-                foreach (KeyValuePair<int, Cell> spawn in map.Spawns)
-                    draft._spawns[spawn.Key] = spawn.Value;
-
-                foreach (JsonElement raw in root.Items("props"))
-                {
-                    string id = raw.Text("id");
-
-                    if (!Json.IsId(id))
-                    {
-                        problem = $"'{id}' is not a prop id";
-                        return false;
-                    }
-
-                    draft._props.Add(new Prop(id, new Cell(raw.Number("x"), raw.Number("y")),
-                                              raw.Number("turn")));
-                }
-
-                // reading is not an edit, so nothing goes on the undo stack
-                draft._undo.Clear();
-            }
-
-            return true;
-        }
+        // how it looks, for the board: each square's ground and each line's style (cc_task_l Part 2)
+        public MapLook Look() => new MapLook(Extent, _ground, _styles);
 
         // everything that would make the map unplayable: what the map builder shows, live, each with its square where it
         // has one (MapProblem, cc_task_f Part 2). checked on save, so an author finds out in the editor rather than the
@@ -121,6 +50,11 @@ namespace Content.Maps
 
             MapLayout map = Layout();
 
+            // a shut door is a way through: the hero opens it in play (Battlefield.OpenDoor). before cc_task_l a spawn in
+            // the next room of a house was "unreachable"
+            MapLayout opened = map;
+            foreach (Border door in _edges.Where(e => e.Value == Edge.Door).Select(e => e.Key)) opened = opened.With(door, Edge.None);
+
             foreach (KeyValuePair<int, Cell> spawn in _spawns.OrderBy(s => s.Key))
             {
                 if (!At(spawn.Value).IsPassable())
@@ -136,22 +70,51 @@ namespace Content.Maps
                     continue;
                 }
 
-                if (!Route.Exists(map, Start, spawn.Value, _ => false))
+                if (!Route.Exists(opened, Start, spawn.Value, _ => false))
                     problems.Add(new MapProblem("spawn_unreachable", spawn.Value,
-                        $"spawn {spawn.Key} cannot be walked to from the start - " +
+                        $"spawn {spawn.Key} cannot be walked to from the start, even through the doors - " +
                         "a wall, a gap of rock or a prop that blocks is in the way", spawn.Key));
             }
 
-            foreach (Prop prop in _props)
-                if (!At(prop.Cell).IsPassable())
-                    problems.Add(new MapProblem("prop_in_wall", prop.Cell, $"the {prop.Id} at {prop.Cell} is inside a wall",
-                        Palette.Find(prop.Id)?.NameKey ?? prop.Id));
+            PropFindings(problems);
 
             int floor = map.Cells.Count(c => map.At(c).IsPassable());
 
             if (floor == 0) problems.Add(new MapProblem("nothing_painted", null, "nothing has been painted yet"));
 
             return problems;
+        }
+
+        // a prop off the map's edge, in a wall, or two that block on one square (cc_task_l Part 3.3). the builder won't
+        // place one like that, but a map file can say so, or the palette change a prop's size under it
+        void PropFindings(List<MapProblem> problems)
+        {
+            var taken = new Dictionary<Cell, Prop>();
+
+            foreach (Prop prop in _props)
+            {
+                IReadOnlyList<Cell> covers = Covers(prop);
+                string name = Palette.Find(prop.Id)?.NameKey ?? prop.Id;
+
+                if (covers.Any(c => !Contains(c)))
+                    problems.Add(new MapProblem("prop_off_map", prop.Cell, $"the {prop.Id} at {prop.Cell} runs off the map", name));
+                else if (covers.Any(c => !At(c).IsPassable()))
+                    problems.Add(new MapProblem("prop_in_wall", prop.Cell, $"the {prop.Id} at {prop.Cell} is inside a wall", name));
+
+                if (!Blocks(prop)) continue;
+
+                foreach (Cell cell in covers)
+                {
+                    if (taken.TryGetValue(cell, out Prop other))
+                    {
+                        problems.Add(new MapProblem("props_overlap", cell,
+                            $"the {prop.Id} at {prop.Cell} stands on the {other.Id} at {other.Cell}", name));
+                        break;
+                    }
+
+                    taken[cell] = prop;
+                }
+            }
         }
 
         // the same, in English, for the campaign loader's log

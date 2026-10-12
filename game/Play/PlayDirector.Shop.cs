@@ -64,8 +64,21 @@ namespace Game.Play
 
         void ToTheBook()
         {
+            if (GameState.Trying != null)
+            {
+                BackToBuilder();
+                return;
+            }
+
             GameState.Leave();
             Scenes.Go(GetTree(), Scenes.Book);
+        }
+
+        // PLAY THIS MAP, OVER (cc_task_l Part 5): back to the builder with the map as it was, not to the book
+        void BackToBuilder()
+        {
+            GameState.StopTrying();
+            Scenes.Go(GetTree(), Scenes.Table);
         }
     }
 }

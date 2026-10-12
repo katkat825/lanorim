@@ -152,37 +152,11 @@ namespace Sim
             return 0;
         }
 
-        // the hero creation makes: the class's standard array, a human soldier, the first skills and
-        // spells on offer, the suggested improvement at 4. `learnFirst`: a spell learned before the rest (the mage's
-        // Mage Armor, MageBalance); `improve: false` leaves the improvements unpicked, as MageBalance always has
-        public static Hero Make(Library library, string cls, int level, string learnFirst = null, bool improve = true)
-        {
-            var making = new Content.Creation.Creation(library, library.Backgrounds);
-
-            making.StartAt(level);
-            making.Pick(library.Class(cls));
-            making.Pick(library.Kind("human"));
-            making.Pick(library.Background("soldier"));
-            making.SuggestTraits();
-
-            foreach (Skill skill in making.SkillChoices.Take(making.SkillPicksLeft).ToList()) making.Train(skill);
-            foreach (Skill skill in making.Skills.Take(making.ExpertisePicksLeft).ToList()) making.Master(skill);
-
-            if (learnFirst != null) making.Learn(library.Spells.Find(learnFirst));
-
-            foreach (Core.Magic.Spell spell in making.SpellChoices.ToList())
-                if (making.CantripPicksLeft > 0 || making.SpellPicksLeft > 0) making.Learn(spell);
-
-            while (improve && making.ImprovementPicksLeft > 0 && making.Improve(making.SuggestedImprovement())) { }
-
-            making.Call("Sim");
-
-            Hero hero = making.Finish();
-
-            if (hero == null)
-                throw new InvalidOperationException($"{cls} {level}: " + string.Join("; ", making.Problems));
-
-            return hero;
-        }
+        // the hero creation makes (Content.Creation.QuickHero, which `--begin` and "Play this map" make too): the class's
+        // standard array, a human soldier, the first skills and spells on offer, the suggested improvement at 4.
+        // `learnFirst`: a spell learned before the rest (the mage's Mage Armor, MageBalance); `improve: false` leaves the
+        // improvements unpicked, as MageBalance always has
+        public static Hero Make(Library library, string cls, int level, string learnFirst = null, bool improve = true) =>
+            Content.Creation.QuickHero.Make(library, cls, level, "Sim", learnFirst, improve);
     }
 }

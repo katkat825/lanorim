@@ -109,13 +109,18 @@ namespace Content.Campaigns
 
         public IReadOnlyDictionary<string, MapLayout> Maps { get; }
 
-        // what stands on each map's squares, by map id: the builder's props, which a MapLayout (the
-        // rules' map) has no use for and the board draws
-        public IReadOnlyDictionary<string, IReadOnlyList<Prop>> Props { get; private set; } =
-            new Dictionary<string, IReadOnlyList<Prop>>();
+        // what each map has besides its rules, by map id: the builder's props and the map's look (its grounds and wall
+        // styles), which a MapLayout (the rules' map) has no use for and the board draws
+        public IReadOnlyDictionary<string, MapScenery> Scenery { get; private set; } =
+            new Dictionary<string, MapScenery>();
 
-        public IReadOnlyList<Prop> PropsOn(string map) =>
-            map != null && Props.TryGetValue(map, out IReadOnlyList<Prop> props) ? props : Array.Empty<Prop>();
+        MapScenery SceneryOf(string map) =>
+            map != null && Scenery.TryGetValue(map, out MapScenery scenery) ? scenery : MapScenery.None;
+
+        public IReadOnlyList<Prop> PropsOn(string map) => SceneryOf(map).Props;
+
+        // null for a map with no look of its own: the board draws it as the dungeon
+        public MapLook LookOn(string map) => SceneryOf(map).Look;
 
         public IReadOnlyList<EncounterTable> Encounters { get; }
 

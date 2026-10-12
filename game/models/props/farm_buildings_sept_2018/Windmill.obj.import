@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dwtcuta00bhqn"
+path="res://.godot/imported/Windmill.obj-147bec7e4a6a3716d6972ac091fc23d5.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Windmill.obj-147bec7e4a6a3716d6972ac091fc23d5.mesh"]
+
+source_file="res://models/props/farm_buildings_sept_2018/Windmill.obj"
+dest_files=["res://.godot/imported/Windmill.obj-147bec7e4a6a3716d6972ac091fc23d5.mesh", "res://.godot/imported/Windmill.obj-147bec7e4a6a3716d6972ac091fc23d5.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

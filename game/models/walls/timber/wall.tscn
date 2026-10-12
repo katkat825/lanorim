@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+; A TIMBER WALL (cc_task_l Part 3.4): the Ultimate Fantasy RTS pack's plank wall (Quaternius), centred on its
+; line. BoardTiles fits it to a square and Cutaway sets how tall, as the dungeon's. First pass: Kathleen's to judge.
+
+[ext_resource type="PackedScene" path="res://models/props/ultimate_fantasy_rts_aug_2022/Wall_FirstAge.gltf" id="1_body"]
+
+[node name="wall" type="Node3D"]
+
+[node name="Body" parent="." instance=ExtResource("1_body")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.007)

@@ -8,10 +8,14 @@ namespace Game.Board
     {
         // --- the map ------------------------------------------------------------------------
 
+        // how the map looks (its grounds, its wall styles: cc_task_l Part 2), or null for the dungeon's
+        public Content.Maps.MapLook Look { get; private set; }
+
         // lay a map out. idempotent: laying another one clears the first
-        public void Lay(MapLayout map)
+        public void Lay(MapLayout map, Content.Maps.MapLook look = null)
         {
             Map = map ?? throw new ArgumentNullException(nameof(map));
+            Look = look;
 
             Metrics = new BoardMetrics(map.Columns, map.Rows, CellSize);
 
@@ -33,6 +37,7 @@ namespace Game.Board
                 PillarModel = PillarModel,
                 Paint = Paint,
                 Cutaway = _cutaway,
+                Look = look,
             };
 
             _tiles.Build(_tileRoot, map);
@@ -46,8 +51,8 @@ namespace Game.Board
 
         Node3D _propRoot;
 
-        // what stands on the squares: the map builder's props (the barrel, the cauldron), each on its
-        // square, fitted to it, turned a quarter at a time, and painted like everything else. A prop
+        // what stands on the squares: the map builder's props (the barrel, the cauldron, the barn), each on its
+        // squares, fitted to them, turned a quarter at a time, and painted like everything else. A prop
         // whose model was never pulled stands as nothing - the map plays the same without it
         public int Dress(System.Collections.Generic.IEnumerable<Content.Maps.Prop> props)
         {
@@ -62,31 +67,70 @@ namespace Game.Board
 
             foreach (Content.Maps.Prop prop in props)
             {
-                PackedScene scene = PropModels.For(prop.Id);
+                Node3D piece = Stand(prop);
 
-                if (scene == null) continue;
+                if (piece == null) continue;
 
-                var model = scene.Instantiate<Node3D>();
-                if (Paint != null) PaintedModel.Paint(model, Paint, "prop");
-
-                Aabb bounds = PaintedModel.Bounds(model);
-                float scale = PaintedModel.ToFitWidth(bounds, Metrics.CellSize * 0.85f);
-
-                var piece = new Node3D
-                {
-                    Name = $"{prop.Id}_{prop.Cell.X}_{prop.Cell.Y}",
-                    Position = Metrics.Centre(prop.Cell) - new Vector3(0f, bounds.Position.Y * scale, 0f),
-                    Rotation = new Vector3(0f, Mathf.Pi * 0.5f * prop.Turn, 0f),
-                    Scale = Vector3.One * scale,
-                };
-
-                piece.AddChild(model);
                 _propRoot.AddChild(piece);
                 stood++;
             }
 
             return stood;
         }
+
+        // ONE PROP, ITS SIZE FROM THE PALETTE (cc_task_l Part 3.3). A one-square prop is fitted by its widest side to most
+        // of the square about its own origin, as every prop always was. A bigger one (a house) is fitted across and deep
+        // to its footprint and its middle put on the footprint's middle, since a building kit's origin is wherever its
+        // author left it
+        Node3D Stand(Content.Maps.Prop prop)
+        {
+            Node3D model = PropModels.Make(prop.Id);
+
+            if (model == null) return null;
+
+            if (Paint != null) PaintedModel.Paint(model, Paint, "prop");
+
+            Content.Maps.PropEntry entry = Content.Maps.PropCatalogue.Srd().Find(prop.Id);
+            int across = entry?.Width ?? 1, deep = entry?.Depth ?? 1;
+
+            Aabb bounds = PaintedModel.Bounds(model);
+            float scale;
+            Vector3 at;
+
+            if (across == 1 && deep == 1)
+            {
+                scale = PaintedModel.ToFitWidth(bounds, Metrics.CellSize * 0.85f);
+                at = Metrics.Centre(prop.Cell);
+            }
+            else
+            {
+                scale = Mathf.Min(across * Metrics.CellSize * PropFill / Mathf.Max(bounds.Size.X, 0.0001f),
+                                  deep * Metrics.CellSize * PropFill / Mathf.Max(bounds.Size.Z, 0.0001f));
+
+                System.Collections.Generic.IReadOnlyList<Cell> covers = entry.Footprint(prop.Cell, prop.Turn);
+                at = (Metrics.Centre(covers[0]) + Metrics.Centre(covers[^1])) * 0.5f;
+
+                Vector3 middle = bounds.Position + bounds.Size * 0.5f;
+                model.Position = new Vector3(-middle.X, 0f, -middle.Z);
+            }
+
+            // on top of the ground's skin, so a rug or a floor tile isn't under the grass (BoardTiles.GroundTop)
+            at.Y += Metrics.CellSize * BoardTiles.GroundTop;
+
+            var piece = new Node3D
+            {
+                Name = $"{prop.Id}_{prop.Cell.X}_{prop.Cell.Y}",
+                Position = at - new Vector3(0f, bounds.Position.Y * scale, 0f),
+                Rotation = new Vector3(0f, Mathf.Pi * 0.5f * prop.Turn, 0f),
+                Scale = Vector3.One * scale,
+            };
+
+            piece.AddChild(model);
+            return piece;
+        }
+
+        // how much of its footprint a big prop fills, so neighbouring houses don't touch
+        const float PropFill = 0.92f;
 
         void Undress()
         {

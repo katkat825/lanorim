@@ -35,6 +35,7 @@ namespace Content.Screens
                 .Concat(AccessWords.Keys())
                 .Concat(Maps.MapEditor.Keys())
                 .Concat(MapBuilderView.Keys())
+                .Concat(Maps.MapTrial.Keys())
                 .Concat(CreditsView.Keys())
                 .Concat(Maps.PropCatalogue.Srd().Keys())
                 .Distinct();

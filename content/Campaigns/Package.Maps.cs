@@ -12,7 +12,7 @@ namespace Content.Campaigns
     {
         static IReadOnlyDictionary<string, MapLayout> ReadMaps(string folder,
                                                                List<ContentProblem> problems,
-                                                               Dictionary<string, IReadOnlyList<Prop>> props = null)
+                                                               Dictionary<string, MapScenery> scenery = null)
         {
             var maps = new Dictionary<string, MapLayout>(StringComparer.Ordinal);
 
@@ -56,7 +56,7 @@ namespace Content.Campaigns
 
                 maps[id] = draft.Layout();
 
-                if (props != null) props[id] = draft.Props.ToList();
+                if (scenery != null) scenery[id] = MapScenery.Of(draft);
             }
 
             return maps;

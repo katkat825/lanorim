@@ -17,6 +17,8 @@ namespace Content.Tests
 
         string _campaign => Path.Combine(_root, "builder_test");
 
+        MapPlace Campaign => MapPlace.OfCampaign(_campaign);
+
         public void Dispose()
         {
             if (Directory.Exists(_root)) Directory.Delete(_root, true);
@@ -132,15 +134,15 @@ namespace Content.Tests
             editor.Draft.PlaceSpawn(1, new Cell(5, 3));
             editor.Draft.PlaceProp("barrel", new Cell(3, 1), 1);
 
-            var view = new MapBuilderView(editor, _campaign, "crypt");
+            var view = new MapBuilderView(editor, Campaign, "crypt");
 
             Assert.True(editor.Unsaved);
             Assert.Null(view.Save());
             Assert.False(editor.Unsaved);
             Assert.Equal(MapBuilderView.SavedCleanKey, view.SavedKey);
 
-            Assert.Equal(new[] { "crypt" }, MapFiles.Ids(_campaign));
-            Assert.True(MapFiles.Read(_campaign, "crypt", out MapDraft back, out string problem), problem);
+            Assert.Equal(new[] { "crypt" }, MapFiles.Ids(Campaign));
+            Assert.True(MapFiles.Read(Campaign, "crypt", out MapDraft back, out string problem), problem);
             Assert.Equal(editor.Draft.Save(), back.Save());
 
             Package pack = Package.Read(_campaign);
@@ -158,11 +160,11 @@ namespace Content.Tests
             MapEditor editor = MapBuilderView.Fresh(4, 4);
             editor.Draft.Paint(editor.Draft.Start, Tile.Void);
 
-            var view = new MapBuilderView(editor, _campaign, "broken");
+            var view = new MapBuilderView(editor, Campaign, "broken");
             Assert.Null(view.Save());
             Assert.Equal(MapBuilderView.SavedWithProblemsKey, view.SavedKey);
 
-            Assert.Equal(MapBuilderView.IdRuleKey, new MapBuilderView(editor, _campaign, "Bad Name").Save().Key);
+            Assert.Equal(MapBuilderView.IdRuleKey, new MapBuilderView(editor, Campaign, "Bad Name").Save().Key);
         }
     }
 }

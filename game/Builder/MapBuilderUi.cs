@@ -3,28 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using Content.Maps;
 using Content.Screens;
-using Core.Space;
 using Game.Screens;
 using Godot;
 
 namespace Game.Builder
 {
-    // THE MAP BUILDER'S PANELS (cc_task_f Part 2), built plain from the Ui helpers and the theme, every number in
-    // BuilderLayout: down the left the file's buttons, the six tools and what the tool in hand lays (ground, wall or
-    // door, the prop palette by category and its turn, the spawn's number); down the right the problems, live, each a
-    // button that shows where. How it looks is Kathleen's (#5): lay it out as you like
+    // THE MAP BUILDER'S PANELS (cc_task_f Part 2; cc_task_l), built plain from the Ui helpers and the theme, every number in
+    // BuilderLayout: down the left the file's buttons, the tools and what the tool in hand lays (MapBuilderUi.Options.cs);
+    // down the right the problems, live, each a button that shows where; and the questions (MapBuilderUi.Files.cs) and
+    // the Play this map panel (TrialPanel) over the middle. How it looks is Kathleen's (#5): lay it out as you like
     public partial class MapBuilderUi : Control
     {
         public MapBuilder Builder { get; set; }
 
         MapEditor Editor => Builder.Editor;
 
-        VBoxContainer _tools;
+        // the tools as many to a row as fit, so what the tool in hand lays has the height (cc_task_l: eight tools now);
+        // a flow keeps to the panel's width, where a grid of two pushed the panel out over the board
+        HFlowContainer _tools;
         VBoxContainer _options;
         VBoxContainer _problems;
         Label _title;
         Label _notice;
-        PanelContainer _asking;
+        Control _asking;
 
         // what each button checks to show itself pressed: the panel's own, and the options page's, which go with it
         readonly List<Action> _updates = new();
@@ -42,7 +43,7 @@ namespace Game.Builder
             AddChild(Side(left: true, layout.ToolsWidth, Ui.Column(layout.Gap,
                 _title = Ui.Title(MapBuilderView.TitleKey),
                 Files(),
-                _tools = Ui.Column(layout.Gap / 2),
+                _tools = Ui.Flow(layout.Gap / 2),
                 Ui.Scroll(_options = Ui.Column(layout.Gap / 2)))));
 
             AddChild(Side(left: false, layout.ProblemsWidth, Ui.Column(layout.Gap,
@@ -92,15 +93,18 @@ namespace Game.Builder
             HFlowContainer row = Ui.Flow(BuilderLayout.Current.Gap);
 
             row.AddChild(Ui.Button(MapBuilderView.SaveKey, Builder.Save));
+            row.AddChild(Ui.Button(MapBuilderView.SaveAsKey, () => AskWhere(copy: false)));
+            row.AddChild(Ui.Button(MapBuilderView.CopyToKey, () => AskWhere(copy: true)));
             row.AddChild(Ui.Button(MapBuilderView.UndoKey, Builder.Undo));
             row.AddChild(Ui.Button(MapBuilderView.RedoKey, Builder.Redo));
             row.AddChild(Toggle(Ui.Say(MapBuilderView.TopDownKey), () => Builder.ToggleTopDown(), () => Builder.TopDown));
+            row.AddChild(Ui.Button(MapTrial.PlayKey, ShowTrial));
             row.AddChild(Ui.Button(MapBuilderView.LeaveKey, () => Builder.Leave()));
 
             return row;
         }
 
-        // the six tools, one pressed
+        // the tools, one pressed
         void Tools()
         {
             foreach (MapTool tool in MapEditor.Tools)
@@ -109,7 +113,8 @@ namespace Game.Builder
                 _tools.AddChild(Toggle(Ui.Say(MapEditor.ToolKey(one)), () =>
                 {
                     Editor.Tool = one;
-                    Refresh();
+                    if (one != MapTool.Select) Editor.Deselect();
+                    Builder.Chose();
                 }, () => Editor.Tool == one));
             }
         }
@@ -122,87 +127,6 @@ namespace Game.Builder
             _updates.Add(() => button.SetPressedNoSignal(chosen()));
             return button;
         }
-
-        // --- what the tool in hand lays ---------------------------------------------------------------------------
-
-        MapTool? _optionsFor;
-        string _categoryShown;
-
-        void Options()
-        {
-            // rebuilt only when the tool or the palette's category changes, so a press isn't lost to a rebuild
-            if (_optionsFor == Editor.Tool && _categoryShown == Editor.Category) return;
-
-            _optionsFor = Editor.Tool;
-            _categoryShown = Editor.Category;
-            _optionUpdates.Clear();
-
-            Ui.Clear(_options);
-
-            switch (Editor.Tool)
-            {
-                case MapTool.Paint:
-                    foreach (Tile ground in MapBuilderView.Grounds)
-                        Option(MapBuilderView.GroundKey(ground), () => Editor.Ground = ground, () => Editor.Ground == ground);
-                    break;
-
-                case MapTool.Wall:
-                    foreach (Edge line in MapBuilderView.Lines)
-                        Option(MapBuilderView.LineKey(line), () => Editor.Line = line, () => Editor.Line == line);
-                    break;
-
-                case MapTool.Spawn:
-                    foreach (int slot in MapBuilderView.SpawnSlots)
-                        Option(MapBuilderView.SpawnKey, () => Editor.SpawnSlot = slot, () => Editor.SpawnSlot == slot, slot);
-                    break;
-
-                case MapTool.Prop:
-                    Palette();
-                    break;
-            }
-        }
-
-        void Option(string key, Action pick, Func<bool> chosen, params object[] args) =>
-            _options.AddChild(Pressable(Ui.Say(key, args), pick, chosen));
-
-        // a button on the options page that stays pressed while `chosen` is true
-        Button Pressable(string words, Action pick, Func<bool> chosen)
-        {
-            Button button = Ui.Button(words, () => { pick(); Refresh(); }, true);
-            button.ToggleMode = true;
-            _optionUpdates.Add(() => button.SetPressedNoSignal(chosen()));
-            return button;
-        }
-
-        // the palette: its categories, then its props, then the turn
-        void Palette()
-        {
-            HFlowContainer categories = Ui.Flow(BuilderLayout.Current.Gap / 2);
-            _options.AddChild(categories);
-
-            categories.AddChild(Category(null, MapBuilderView.AllPropsKey));
-
-            foreach (string category in Editor.Palette.Categories)
-                categories.AddChild(Category(category, PropCatalogue.CategoryKey(category)));
-
-            VBoxContainer props = Ui.Column(2);
-
-            foreach (PropEntry prop in Editor.Showing)
-            {
-                string id = prop.Id;
-                props.AddChild(Pressable(Ui.Say(prop.NameKey), () => Editor.Choose(id), () => Editor.PropId == id));
-            }
-
-            _options.AddChild(Ui.Scroll(props, BuilderLayout.Current.PaletteHeight));
-
-            // the turn, in degrees: a number, not a word
-            Label turn = Ui.Plain("");
-            _optionUpdates.Add(() => turn.Text = $"{Editor.Turn * 90}°");
-            _options.AddChild(Ui.Row(BuilderLayout.Current.Gap, Ui.Button(MapBuilderView.RotateKey, () => Builder.Rotate(1)), turn));
-        }
-
-        Button Category(string category, string key) =>
-            Pressable(Ui.Say(key), () => Editor.Browse(category), () => Editor.Category == category);
 
         // --- the problems, live -------------------------------------------------------------------------------------
 
@@ -227,12 +151,16 @@ namespace Game.Builder
 
         // --- the whole screen, again --------------------------------------------------------------------------------
 
+        // "My maps / mill_yard •": where it lives, its name, and a dot while there are changes not saved
+        public string Title =>
+            $"{Ui.Say(Builder.View.Place.NameKey ?? Builder.View.Place.Id ?? "")} / {Builder.View.Id}{(Editor.Unsaved ? " •" : "")}";
+
         public void Refresh()
         {
             Options();
             Problems();
 
-            _title.Text = $"{Builder.View.Id}{(Editor.Unsaved ? " •" : "")}";
+            _title.Text = Title;
 
             foreach (Action update in _updates.Concat(_optionUpdates)) update();
         }
@@ -252,30 +180,52 @@ namespace Game.Builder
             if (_noticeLeft <= 0) _notice.Visible = false;
         }
 
-        // "this map has changes that aren't saved": leave anyway, or stay
-        public void AskToLeave()
-        {
-            _asking?.QueueFree();
+        // --- questions over the middle ------------------------------------------------------------------------------
 
-            _asking = Ui.Panel(Ui.Column(BuilderLayout.Current.Gap,
+        // one question at a time, in the middle of the screen
+        void Ask(Control question, string name)
+        {
+            Dismiss();
+
+            _asking = question;
+            _asking.Name = name;
+
+            // grown out from the middle both ways, so a tall question isn't pushed off the top of the screen
+            _asking.GrowHorizontal = GrowDirection.Both;
+            _asking.GrowVertical = GrowDirection.Both;
+            _asking.SetAnchorsAndOffsetsPreset(LayoutPreset.Center);
+            AddChild(_asking);
+
+            // the question's first button, not the panel, which takes no focus
+            Control asking = _asking;
+            Callable.From(() => { if (IsInstanceValid(asking)) Ui.FocusFirst(asking); }).CallDeferred();
+        }
+
+        // "this map has changes that aren't saved": leave anyway, or stay
+        public void AskToLeave() =>
+            Ask(Ui.Panel(Ui.Column(BuilderLayout.Current.Gap,
                 Ui.Label(MapBuilderView.UnsavedKey),
                 Ui.Row(BuilderLayout.Current.Gap,
                     Ui.Button(MapBuilderView.SaveKey, () => { Builder.Save(); Dismiss(); }),
                     Ui.Button(MapBuilderView.LeaveAnywayKey, () => Builder.Leave(anyway: true)),
-                    Ui.Button(MapBuilderView.StayKey, Dismiss))));
+                    Ui.Button(MapBuilderView.StayKey, Dismiss)))), "Unsaved");
 
-            _asking.Name = "Unsaved";
-            _asking.SetAnchorsAndOffsetsPreset(LayoutPreset.Center);
-            AddChild(_asking);
-            Ui.FocusLater(_asking);
+        // PLAY THIS MAP: the hero, the spawns and the budget, over the middle (TrialPanel)
+        public void ShowTrial()
+        {
+            var panel = new TrialPanel { Builder = Builder };
+            panel.Closed += () => _asking = null;
+            Ask(panel, "Trial");
         }
 
         void Dismiss()
         {
-            _asking?.QueueFree();
+            if (_asking != null && IsInstanceValid(_asking)) _asking.QueueFree();
             _asking = null;
         }
 
-        public bool Asking => _asking != null;
+        public bool Asking => _asking != null && IsInstanceValid(_asking);
+
+        public TrialPanel Trial => _asking as TrialPanel;
     }
 }

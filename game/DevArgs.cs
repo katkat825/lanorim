@@ -75,6 +75,18 @@ namespace Game
 
         public static string BuildMap => Second("--build");
 
+        // `--template <id>`: with --build, a new map starts as that template (cc_task_l Part 1.3)
+        public static string Template => Value("--template");
+
+        // `--tool <tool>`: the builder opens with that tool in hand (a picture of the palette, the walls...)
+        public static string Tool => Value("--tool");
+
+        // `--trial-panel`: the builder opens its Play this map panel (a picture of it)
+        public static bool TrialPanel => Has("--trial-panel");
+
+        // `--prop-icons`: the palette's thumbnails rendered into game/ui/prop_icons/, then quit (not headless)
+        public static bool PropIcons => Has("--prop-icons");
+
         // --- the probes and the checks -------------------------------------------------------------------------------
 
         public static bool ControlsProbe => Has("--controls");

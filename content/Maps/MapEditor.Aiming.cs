@@ -44,13 +44,6 @@ namespace Content.Maps
             return run;
         }
 
-        static IEnumerable<Cell> Box(Cell from, Cell to)
-        {
-            for (int y = Math.Min(from.Y, to.Y); y <= Math.Max(from.Y, to.Y); y++)
-                for (int x = Math.Min(from.X, to.X); x <= Math.Max(from.X, to.X); x++)
-                    yield return new Cell(x, y);
-        }
-
         // WHAT A CLICK (from == to) OR A DRAG WOULD TOUCH: the squares of a painted or erased rectangle, the lines of a
         // wall run, or the one square or line the other tools act on. the hover highlight
         public (IReadOnlyList<Cell> Squares, IReadOnlyList<Border> Lines) Preview(MapTarget from, MapTarget to)
@@ -63,11 +56,20 @@ namespace Content.Maps
             if (to.Line is Border only) return (Array.Empty<Cell>(), new[] { only });
 
             Cell end = to.Square.Value;
+            Cell begun = from.Square ?? end;
 
-            if (from.Square is Cell start && Tool is MapTool.Paint or MapTool.Erase)
-                return (Box(start, end).Where(Draft.Contains).ToList(), Array.Empty<Border>());
+            IEnumerable<Cell> squares = Tool switch
+            {
+                MapTool.Paint or MapTool.Erase => CellBox.Between(begun, end).Cells,
+                MapTool.Fill => Draft.Region(end),
+                MapTool.Select => Grabbing(begun, end),
 
-            return (new[] { end }, Array.Empty<Border>());
+                // a prop shows the squares it would cover, turned as it is
+                MapTool.Prop when PropId != null => Palette.Footprint(new Prop(PropId, end, Turn)),
+                _ => new[] { end },
+            };
+
+            return (squares.Where(Draft.Contains).ToList(), Array.Empty<Border>());
         }
 
         // DO IT: a click when the two are the same, a drag when they aren't. how many things changed (0: nothing did)
@@ -75,11 +77,13 @@ namespace Content.Maps
         {
             if (to.IsNothing) return 0;
 
-            if (from == to || from.IsNothing)
+            // a press and let go on one square is a click; but a Select press on the picked prop or in the selection
+            // that ends on the same square is a move of nothing, and keeps them
+            if ((from == to || from.IsNothing) && !(Tool == MapTool.Select && to.Square is Cell held && Holding(held)))
                 return to.Line is Border line ? (Click(line) ? 1 : 0) : Click(to.Square.Value) ? 1 : 0;
 
             if (from.Line is Border a && to.Line is Border b)
-                return Tool == MapTool.Wall ? Draft.Wall(Run(a, b), Line)
+                return Tool == MapTool.Wall ? Draft.Wall(Run(a, b), Line, Style)
                      : Tool == MapTool.Erase ? Draft.Wall(Run(a, b).Where(l => Draft.At(l) != Edge.None), Edge.None)
                      : 0;
 
@@ -87,6 +91,9 @@ namespace Content.Maps
 
             return Apply(to, to);
         }
+
+        bool Holding(Cell cell) =>
+            Selection is CellBox box && box.Contains(cell) || Picked != null && Draft.Covers(Picked).Contains(cell);
 
         // --- unsaved changes ----------------------------------------------------------------------------------------
 

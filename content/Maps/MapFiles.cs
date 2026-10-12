@@ -7,29 +7,30 @@ using Content.Schema;
 
 namespace Content.Maps
 {
-    // WHERE A CAMPAIGN'S MAPS LIVE ON DISK, for the map builder (cc_task_f, Part 2): <campaign>/maps/<id>.map, the
-    // folder and the format Package.ReadMaps reads, so a map the builder saves loads in its campaign with no
-    // conversion. A map is named by its file, so its id is the file name's rules (ContentId.IsLocal)
+    // WHERE MAPS LIVE ON DISK, for the map builder (cc_task_f Part 2; cc_task_l Part 1): a place's folder of <id>.map
+    // files, a campaign's maps/ (the folder and the format Package.ReadMaps reads, so a map the builder saves loads in
+    // its campaign with no conversion) or the "My maps" library (MapPlace). A map is named by its file, so its id is
+    // the file name's rules (ContentId.IsLocal). Nothing here writes over a map unless it is told to
     public static class MapFiles
     {
-        public static string Folder(string campaign) => Path.Combine(campaign ?? "", Package.MapsFolder);
+        public static string PathOf(MapPlace place, string id) => Path.Combine(place.Folder, id + Package.MapExtension);
 
-        public static string PathOf(string campaign, string id) => Path.Combine(Folder(campaign), id + Package.MapExtension);
-
-        // the maps in a campaign, by id, in name order
-        public static IReadOnlyList<string> Ids(string campaign) =>
-            PackFolder.Read(Folder(campaign), Package.MapExtension, Package.MapsFolder, new List<ContentProblem>())
+        // the maps in a place, by id, in name order
+        public static IReadOnlyList<string> Ids(MapPlace place) =>
+            PackFolder.Read(place.Folder, Package.MapExtension, Package.MapsFolder, new List<ContentProblem>())
                       .Select(f => Path.GetFileNameWithoutExtension(f.Path))
                       .Where(ContentId.IsLocal)
                       .ToList();
 
-        public static bool Read(string campaign, string id, out MapDraft draft, out string problem)
+        public static bool Has(MapPlace place, string id) => ContentId.IsLocal(id) && File.Exists(PathOf(place, id));
+
+        public static bool Read(MapPlace place, string id, out MapDraft draft, out string problem)
         {
             draft = null;
 
             try
             {
-                return MapDraft.TryRead(File.ReadAllText(PathOf(campaign, id)), out draft, out problem);
+                return MapDraft.TryRead(File.ReadAllText(PathOf(place, id)), out draft, out problem);
             }
             catch (Exception could) when (could is IOException || could is UnauthorizedAccessException)
             {
@@ -38,22 +39,35 @@ namespace Content.Maps
             }
         }
 
-        // null when it was written, or why not. the folder is made if the campaign has none yet
-        public static string Write(string campaign, string id, MapDraft draft)
+        // null when it was written, or why not. the folder is made if the place has none yet. a map already there is
+        // written over only when `replace` says so: the screen asks first
+        public static string Write(MapPlace place, string id, MapDraft draft, bool replace = true)
         {
             if (!ContentId.IsLocal(id))
                 return $"'{id}' is not a map id - lowercase a-z, 0-9 and underscore, as the file is named";
 
+            if (!replace && Has(place, id)) return $"there is already a map called '{id}' there";
+
             try
             {
-                Directory.CreateDirectory(Folder(campaign));
-                File.WriteAllText(PathOf(campaign, id), draft.Save());
+                Directory.CreateDirectory(place.Folder);
+                File.WriteAllText(PathOf(place, id), draft.Save());
                 return null;
             }
             catch (Exception could) when (could is IOException || could is UnauthorizedAccessException)
             {
                 return could.Message;
             }
+        }
+
+        // the first id like this one that no map in the place has: mill_yard_2, mill_yard_3. what "rename" offers when
+        // a copy's id is taken
+        public static string FreeId(MapPlace place, string id)
+        {
+            if (!Has(place, id)) return id;
+
+            for (int n = 2; ; n++)
+                if (!Has(place, $"{id}_{n}")) return $"{id}_{n}";
         }
     }
 }

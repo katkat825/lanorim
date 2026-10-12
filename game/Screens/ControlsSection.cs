@@ -132,7 +132,7 @@ namespace Game.Screens
         {
             if (Bindings.Armed is not { } act) return;
 
-            if (!Keyboard.Raw(@event, out Key key, out bool shift)) return;
+            if (!Keyboard.Raw(@event, out Key key, out bool shift, out bool ctrl)) return;
 
             GetViewport().SetInputAsHandled();
 
@@ -144,7 +144,7 @@ namespace Game.Screens
                 return;
             }
 
-            switch (Bindings.Pressed(key, shift))
+            switch (Bindings.Pressed(key, shift, ctrl))
             {
                 case Bindings.Took.Bound:
                     Keyboard.Install(Bindings);

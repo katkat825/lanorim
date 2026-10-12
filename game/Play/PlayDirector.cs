@@ -284,7 +284,7 @@ namespace Game.Play
             if (id != null && pack.Maps.TryGetValue(id, out MapLayout map))
             {
                 Table.Board.ClearAll();
-                Table.Board.Lay(map);
+                Table.Board.Lay(map, pack.LookOn(id));
                 Table.Board.Dress(pack.PropsOn(id));
                 Table.GmScreen?.StandBehind(Table.Board);
                 Table.Companion?.StandBy(Table.Board, Table.GmScreen);

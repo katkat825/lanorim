@@ -14,18 +14,27 @@ namespace Game.Builder
         public Game.Board.Board Board { get; set; }
 
         Node3D _lines;
+        Node3D _chosen;
         Node3D _labels;
 
         public override void _Ready()
         {
             AddChild(_lines = new Node3D { Name = "Lines" });
+            AddChild(_chosen = new Node3D { Name = "Chosen" });
             AddChild(_labels = new Node3D { Name = "Labels" });
         }
 
         // a thin bar along each line, lifted off the mat
-        public void Lines(IEnumerable<Border> lines)
+        public void Lines(IEnumerable<Border> lines) => Bars(_lines, lines, BuilderLayout.Current.LineColour);
+
+        // THE SELECT TOOL'S CHOICE (cc_task_l Part 4.3), kept while the pointer is elsewhere: the selection's outline, or
+        // the footprint of the prop picked up
+        public void Chosen(CellBox? box) =>
+            Bars(_chosen, box?.Borders.Where(box.Value.OnOutline) ?? Enumerable.Empty<Border>(), BuilderLayout.Current.ChosenColour);
+
+        void Bars(Node3D into, IEnumerable<Border> lines, Color colour)
         {
-            Clear(_lines);
+            Clear(into);
 
             if (Board?.Map == null) return;
 
@@ -33,7 +42,7 @@ namespace Game.Builder
             float cell = Board.Metrics.CellSize;
             var material = new StandardMaterial3D
             {
-                AlbedoColor = layout.LineColour,
+                AlbedoColor = colour,
                 Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
                 ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
             };
@@ -45,7 +54,7 @@ namespace Game.Builder
                     ? new Vector3(cell * layout.LineThickness, tall, cell)
                     : new Vector3(cell, tall, cell * layout.LineThickness);
 
-                _lines.AddChild(new MeshInstance3D
+                into.AddChild(new MeshInstance3D
                 {
                     Mesh = new BoxMesh { Size = size, Material = material },
                     Position = Board.Metrics.Centre(line) + new Vector3(0f, tall * 0.5f, 0f),

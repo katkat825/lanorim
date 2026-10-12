@@ -29,6 +29,8 @@
        edit them in a text editor. -->
   <ItemGroup>
     <EmbeddedResource Include="srd/**/*.json" />
+    <!-- the map builder's starting templates (cc_task_l Part 1.3): ordinary map files -->
+    <EmbeddedResource Include="srd/**/*.map" />
   </ItemGroup>
 
   <!-- never references Godot either -->

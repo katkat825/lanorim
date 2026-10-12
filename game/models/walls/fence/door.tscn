@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+; A GATE IN A FENCE: the same fence piece, hung as a gate. the door leaf is the child whose name ends in _door: BoardTiles hangs it on a hinge at its edge (DoorPiece)
+
+[ext_resource type="PackedScene" path="res://models/props/medieval_village_megakit_standard/Prop_WoodenFence_Single.gltf" id="1_gate_door"]
+
+[node name="door" type="Node3D"]
+
+[node name="Gate_door" parent="." instance=ExtResource("1_gate_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

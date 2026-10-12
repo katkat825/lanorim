@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+; A FIELDSTONE WALL (cc_task_l Part 3.4): the Medieval Village MegaKit's Wall_UnevenBrick_Straight (Quaternius),
+; centred on its line. First pass.
+
+[ext_resource type="PackedScene" path="res://models/props/medieval_village_megakit_standard/Wall_UnevenBrick_Straight.gltf" id="1_body"]
+
+[node name="wall" type="Node3D"]
+
+[node name="Body" parent="." instance=ExtResource("1_body")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.11)
