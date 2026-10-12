@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Content.Maps;
@@ -7,9 +8,11 @@ using Godot;
 
 namespace Game.Screens
 {
-    // THE BOOK'S "MAP BUILDER" (cc_task_f Part 2; cc_task_l Part 1): a new map first (a name, a size, a starting template,
-    // and where it lives: "My maps", the default, or a campaign), then My maps, then a campaign's maps; each a button
-    // that opens it. The table comes up as the builder (GameState.Building, Game.Builder.MapBuilder). A map is saved
+    // THE BOOK'S "MAP BUILDER" (cc_task_f Part 2; cc_task_l Part 1), WRITTEN ON THE OPEN BOOK the way the contents and a
+    // campaign's pages are (Launch.Spread, BookPages): a new map on the left page (a name, a size, a starting template,
+    // and where it lives: "My maps", the default, or a campaign), and on the right My maps and a campaign's maps, each
+    // a line of the contents that opens it, then Contents to go back. When the pages are too small to read, the same
+    // on a panel over the book, as the menu does. The table comes up as the builder (GameState.Building). A map is saved
     // where it lives (MapFiles): a campaign's loads in that campaign with no conversion.
     // `--build` and `--map-probe` are the dev registry's (Dev/DevHooks.cs)
     public sealed class MapBuilderPage : IBookPage
@@ -40,10 +43,37 @@ namespace Game.Screens
             var campaigns = Campaigns;
             _shown = campaign ?? _shown ?? campaigns.FirstOrDefault().Campaign?.Id;
 
+            if (!launch.CanSpread)
+            {
+                OnPanel(launch, campaigns);
+                return;
+            }
+
+            launch.Spread((left, right) =>
+            {
+                left.AddChild(Ui.Title(MapBuilderView.TitleKey));
+                NewMap(launch, left, campaigns);
+
+                Lists(launch, right, campaigns);
+                right.AddChild(Ui.Button(CampaignBook.ContentsKey, launch.ShowBook));
+            }, () => OnPanel(launch, campaigns));
+        }
+
+        // the pages too small to read: the same, on a panel over the book
+        void OnPanel(Launch launch, IReadOnlyList<(Game.Campaigns.Loaded Campaign, MapPlace Place)> campaigns)
+        {
             var page = Ui.Column(10, Ui.Title(MapBuilderView.TitleKey));
 
             NewMap(launch, page, campaigns);
+            Lists(launch, page, campaigns);
+            page.AddChild(Ui.Button(ScreenWords.Back, launch.ShowBook));
 
+            launch.Show(Ui.Panel(Ui.Scroll(page, 560)));
+        }
+
+        // My maps, then a campaign's maps: the campaign chosen, and its maps
+        void Lists(Launch launch, VBoxContainer page, IReadOnlyList<(Game.Campaigns.Loaded Campaign, MapPlace Place)> campaigns)
+        {
             page.AddChild(Ui.Title(MapPlace.LibraryKey));
             Maps(launch, page, Library);
 
@@ -52,59 +82,51 @@ namespace Game.Screens
             if (campaigns.Count == 0)
             {
                 page.AddChild(Ui.Label(MapBuilderView.NoCampaignsKey));
+                return;
             }
-            else
+
+            var choose = new OptionButton { Name = "Campaign", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, ClipText = true, FitToLongestItem = false };
+
+            for (int i = 0; i < campaigns.Count; i++)
             {
-                var choose = new OptionButton { Name = "Campaign" };
-
-                for (int i = 0; i < campaigns.Count; i++)
-                {
-                    choose.AddItem(Ui.Say(campaigns[i].Campaign.Manifest.NameKey), i);
-                    if (campaigns[i].Campaign.Id == _shown) choose.Selected = i;
-                }
-
-                choose.ItemSelected += i => Open(launch, campaigns[(int)i].Campaign.Id);
-                page.AddChild(Ui.Row(10, Ui.Label(MapBuilderView.CampaignKey), choose));
-
-                var shown = campaigns.FirstOrDefault(c => c.Campaign.Id == _shown);
-                if (shown.Place != null) Maps(launch, page, shown.Place);
+                choose.AddItem(Ui.Say(campaigns[i].Campaign.Manifest.NameKey), i);
+                if (campaigns[i].Campaign.Id == _shown) choose.Selected = i;
             }
 
-            page.AddChild(Ui.Button(ScreenWords.Back, launch.ShowBook));
+            choose.ItemSelected += i => Open(launch, campaigns[(int)i].Campaign.Id);
+            page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.CampaignKey), choose));
 
-            launch.Show(Ui.Panel(Ui.Scroll(page, 560)));
+            var shown = campaigns.FirstOrDefault(c => c.Campaign.Id == _shown);
+            if (shown.Place != null) Maps(launch, page, shown.Place);
         }
 
-        // a place's maps, each a button that opens it
+        // a place's maps, each a line of the contents that opens it
         static void Maps(Launch launch, VBoxContainer page, MapPlace place)
         {
             var ids = MapFiles.Ids(place);
 
             if (ids.Count == 0) page.AddChild(Ui.Label(MapBuilderView.NoMapsKey));
 
-            HFlowContainer maps = Ui.Flow(8);
-            maps.Name = place.IsLibrary ? "MyMaps" : "CampaignMaps";
-
             foreach (string id in ids)
             {
                 string one = id;
-                maps.AddChild(Ui.Button(one, () => OpenMap(launch, place, one), true));
+                page.AddChild(Launch.Leader(Ui.Button(one, () => OpenMap(launch, place, one), true),
+                                            (place.IsLibrary ? "MyMap_" : "CampaignMap_") + one));
             }
-
-            page.AddChild(maps);
         }
 
-        // A NEW ONE, first and big: its name (the file's), its size, what it starts as, and where it lives
+        // A NEW ONE: its name (the file's), its size, what it starts as, where it lives, and the button
         static void NewMap(Launch launch, VBoxContainer page, IReadOnlyList<(Game.Campaigns.Loaded Campaign, MapPlace Place)> campaigns)
         {
-            page.AddChild(Ui.Title(MapBuilderView.NewKey));
+            page.AddChild(Ui.Label(MapBuilderView.NewKey));
 
-            var id = new LineEdit { Name = "MapId", PlaceholderText = "map_id", CustomMinimumSize = new Vector2(Ui.Px(220), 0) };
-            SpinBox columns = Side(12), rows = Side(10);
+            var id = new LineEdit { Name = "MapId", PlaceholderText = "map_id", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+            SpinBox columns = Side("Columns", 12), rows = Side("Rows", 10);
             Label why = Ui.Label(MapBuilderView.IdRuleKey);
+            why.AutowrapMode = TextServer.AutowrapMode.WordSmart;
             why.Visible = false;
 
-            var template = new OptionButton { Name = "Template" };
+            var template = new OptionButton { Name = "Template", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, ClipText = true, FitToLongestItem = false };
             foreach (string one in MapTemplates.Ids) template.AddItem(Ui.Say(MapTemplates.NameKey(one)));
             template.Selected = MapTemplates.Ids.ToList().IndexOf(MapTemplates.Standard);
 
@@ -117,18 +139,18 @@ namespace Game.Screens
                 rows.Value = drawn.Rows;
             };
 
-            var lives = new OptionButton { Name = "Lives" };
+            var lives = new OptionButton { Name = "Lives", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, ClipText = true, FitToLongestItem = false };
             lives.AddItem(Ui.Say(MapPlace.LibraryKey));
             foreach (var (campaign, _) in campaigns) lives.AddItem(Ui.Say(campaign.Manifest.NameKey));
             lives.Selected = 0;
 
-            page.AddChild(Ui.Row(10, Ui.Label(MapBuilderView.IdKey), id));
-            page.AddChild(Ui.Row(10, Ui.Label(MapBuilderView.ColumnsKey), columns, Ui.Label(MapBuilderView.RowsKey), rows));
-            page.AddChild(Ui.Row(10, Ui.Label(MapBuilderView.TemplateKey), template));
-            page.AddChild(Ui.Row(10, Ui.Label(MapBuilderView.LivesKey), lives));
+            page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.IdKey), id));
+            page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.ColumnsKey), columns, Ui.Label(MapBuilderView.RowsKey), rows));
+            page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.TemplateKey), template));
+            page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.LivesKey), lives));
             page.AddChild(why);
 
-            Button make = Ui.Button(MapBuilderView.NewKey, () =>
+            Button make = Ui.Button(MapBuilderView.MakeKey, () =>
             {
                 string name = id.Text.Trim();
                 MapPlace place = lives.Selected <= 0 ? Library : campaigns[lives.Selected - 1].Place;
@@ -144,20 +166,21 @@ namespace Game.Screens
                 if (why.Visible) return;
 
                 Build(launch, new MapBuilderView(
-                    MapBuilderView.Fresh((int)columns.Value, (int)rows.Value, MapTemplates.Ids[Mathf.Max(0, template.Selected)]),
+                    MapBuilderView.Fresh((int)columns.Value, (int)rows.Value, MapTemplates.Ids[Math.Max(0, template.Selected)]),
                     place, name));
             });
             make.Name = "MakeMap";
-            make.CustomMinimumSize = new Vector2(Ui.Px(260), Ui.Px(48));
             page.AddChild(make);
         }
 
-        static SpinBox Side(int value) => new SpinBox
+        static SpinBox Side(string name, int value) => new SpinBox
         {
+            Name = name,
             MinValue = MapBuilderView.MinSide,
             MaxValue = MapDraft.MaxSide,
             Value = value,
             Rounded = true,
+            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
         };
 
         // one of a place's maps, in the builder at the table

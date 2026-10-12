@@ -112,9 +112,13 @@ namespace Game.Screens
         }
 
         // a line of the contents: its words as a plain text button, and a dotted leader to the page's edge
-        Control Entry(ContentsEntry entry, CampaignBook book)
+        Control Entry(ContentsEntry entry, CampaignBook book) =>
+            Leader(Ui.Button(entry.NameKey, () => Open(entry, book)), entry.ToString());
+
+        // A LINE WRITTEN ON A PAGE, as the contents writes them: a plain text button and a dotted leader to the page's
+        // edge. Any book page's list can be lines like these (the map builder's maps, cc_task_l)
+        internal static Control Leader(Button name, string rowName)
         {
-            Button name = Ui.Button(entry.NameKey, () => Open(entry, book));
             name.Flat = true;
             name.Alignment = HorizontalAlignment.Left;
 
@@ -127,7 +131,7 @@ namespace Game.Screens
                 Modulate = new Color(1f, 1f, 1f, 0.55f),
             };
 
-            var row = new HBoxContainer { Name = entry.ToString() };
+            var row = new HBoxContainer { Name = rowName };
             row.AddThemeConstantOverride("separation", 6);
             row.AddChild(name);
             row.AddChild(leader);
@@ -157,8 +161,13 @@ namespace Game.Screens
             }, () => ShowBookPanel(new CampaignBook(GameState.Manifests, GameState.Saves), p.Id));
         }
 
-        // the open book with words on its pages; too small to read, and fallback() shows the panels instead
-        void Spread(Action<VBoxContainer, VBoxContainer> fill, Action fallback)
+        // whether a page can be written on the open book (BookPages), or goes on a panel over it: no book on the
+        // table, or the pages already came out too small to read (or `--book-overlay`)
+        internal bool CanSpread => _book != null && !OverlayBook;
+
+        // the open book with words on its pages; too small to read, and fallback() shows the panels instead. The
+        // contents, a campaign's two pages and a book page of its own (the map builder's) all write this way
+        internal void Spread(Action<VBoxContainer, VBoxContainer> fill, Action fallback)
         {
             Clear();
             _book.Open();

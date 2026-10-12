@@ -2133,6 +2133,7 @@ ui.map.line_door,Door
 ui.map.line_wall,Wall
 ui.map.lives,Keep it in
 ui.map.looks,Ground
+ui.map.make,Make the map
 ui.map.my_maps,My maps
 ui.map.new,A new map
 ui.map.no_campaigns,There are no campaign folders to keep a map in.

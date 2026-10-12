@@ -102,6 +102,7 @@ namespace Content.Screens
 
         public static readonly string TitleKey = K("title");
         public static readonly string NewKey = K("new");
+        public static readonly string MakeKey = K("make");
         public static readonly string OpenKey = K("open");
         public static readonly string CampaignKey = K("campaign");
         public static readonly string CampaignMapsKey = K("campaign_maps");
@@ -149,7 +150,7 @@ namespace Content.Screens
         public static IEnumerable<string> Keys() =>
             new[]
             {
-                TitleKey, NewKey, OpenKey, CampaignKey, CampaignMapsKey, IdKey, IdRuleKey, ColumnsKey, RowsKey, TemplateKey,
+                TitleKey, NewKey, MakeKey, OpenKey, CampaignKey, CampaignMapsKey, IdKey, IdRuleKey, ColumnsKey, RowsKey, TemplateKey,
                 LivesKey, NoCampaignsKey, NoMapsKey, SaveKey, SaveAsKey, CopyToKey, TakenKey, RenameKey, ReplaceKey,
                 CancelKey, CopiedKey, SavedCleanKey, SavedWithProblemsKey, CouldNotSaveKey, UndoKey, RedoKey, RotateKey,
                 TopDownKey, ProblemsKey, NoProblemsKey, SpawnKey, LeaveKey, UnsavedKey, LeaveAnywayKey, StayKey,

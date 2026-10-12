@@ -116,7 +116,7 @@ namespace Game.Dev
 
         void OpenFromMyMaps()
         {
-            Button mine = Nodes.Under<HFlowContainer>(Launch).FirstOrDefault(f => f.Name == "MyMaps")?
+            Button mine = Nodes.Under<HBoxContainer>(Launch).FirstOrDefault(r => r.Name == "MyMap_" + MapId)?
                                .GetChildren().OfType<Button>().FirstOrDefault(b => b.Text == MapId);
 
             Expect(mine != null, $"My maps on the book's page lists {MapId}");

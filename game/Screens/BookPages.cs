@@ -100,8 +100,11 @@ namespace Game.Screens
             page.Visible = true;
         }
 
+        // a name box or a number box written on a page (the map builder's new map) is written at the page's size too
         IEnumerable<Control> Words() =>
-            Nodes.Under<Control>(Left).Concat(Nodes.Under<Control>(Right)).Where(c => c is Label or Button);
+            Nodes.Under<Control>(Left).Concat(Nodes.Under<Control>(Right))
+                 .Select(c => c is SpinBox spin ? spin.GetLineEdit() : c)
+                 .Where(c => c is Label or Button or LineEdit);
 
         // the largest letters both pages hold: every line down the page, a long one wrapped where it may wrap,
         // and nothing that may not wrap wider than the page
