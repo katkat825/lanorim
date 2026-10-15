@@ -14,13 +14,14 @@ namespace Game.Screens
         public static IReadOnlyList<IBookPage> Make() => new IBookPage[]
         {
             new TutorialsPage(),
+            new Game.Workshop.WorkshopPage(),
             new MapBuilderPage(),
             new SettingsPage(),
             new CreditsPage(),
         };
 
-        // their lines in the contents
+        // their lines in the contents: the Workshop where the Map builder was (cc_task_m 1.1), which it now opens
         public static IEnumerable<ContentsEntry> Entries(IEnumerable<IBookPage> pages) =>
-            pages.Select(p => ContentsEntry.ForPage(p.Id, p.NameKey));
+            pages.Where(p => p.InContents).Select(p => ContentsEntry.ForPage(p.Id, p.NameKey));
     }
 }

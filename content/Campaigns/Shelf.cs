@@ -39,11 +39,18 @@ namespace Content.Campaigns
             // ids this pack asked for that nothing on the shelf provides
             public IReadOnlyList<string> Missing { get; }
 
-            public bool InPlay => Package.Sound && Missing.Count == 0;
+            // THE FOLDER OF AN EARLIER PACK WITH THIS ONE'S ID (cc_task_m 2.2): the roots are read in order (the game's own
+            // campaigns first, then My campaigns), the first one keeps the id, and this one isn't loaded. null when it's
+            // the only one
+            public string ShadowedBy { get; internal set; }
+
+            public bool InPlay => Package.Sound && Missing.Count == 0 && ShadowedBy == null;
 
             public override string ToString() =>
                 Missing.Count > 0
                     ? $"{Package} - NOT LOADED, it needs {string.Join(", ", Missing)}"
+                : ShadowedBy != null
+                    ? $"{Package} - NOT LOADED, '{ShadowedBy}' has its id"
                     : Package.ToString();
         }
 
@@ -118,11 +125,13 @@ namespace Content.Campaigns
 
                 if (seen.TryGetValue(entry.Id, out Entry already))
                 {
+                    entry.ShadowedBy = already.Package.Folder;
+
                     _problems.Add(new ContentProblem(
                         entry.Package.Folder, "id",
                         $"'{entry.Id}' is also the id of the pack in '{already.Package.Folder}' - " +
                         "two packs cannot share an id, because the id is how every key in them is " +
-                        "spelled. Rename one, folder and id together"));
+                        "spelled, so this one is not loaded. Rename one, folder and id together"));
                     continue;
                 }
 

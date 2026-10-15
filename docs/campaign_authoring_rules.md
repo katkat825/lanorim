@@ -205,3 +205,26 @@ blocks the view as any door does.
 **A prop can cover more than one square** (a cottage is 2 x 2, a barn 4 x 4); its size is the palette's, so the map file
 only says where its top-left square is and how it's turned. A prop that blocks can't share a square with another that
 blocks, or cover the start or a spawn, and a campaign won't load a map where one runs off the edge.
+
+## 11. Campaigns made in the Workshop
+
+*Added by cc_task_m (2026-10-12).* The Workshop writes the same files as a hand-made campaign; nothing here is a second
+format, and a hand-made campaign opens in the Workshop too.
+
+- **Where they live.** My campaigns are in `user://campaigns/<id>/` (on Windows
+  `%APPDATA%\Godot\app_userdata\Lanorim\campaigns`), a campaign root read after the game's own `campaigns/`. A campaign
+  whose id the game's own already has isn't loaded, and its Workshop card says so with a Rename button.
+- **The id** is made from the name (lowercase, a run of anything else an underscore, a number added when it's taken).
+  It names the folder and every key, so a rename changes the folder, `pack.json`'s `id` and the locale's
+  `campaign.<id>.*`, `quest.<id>.*` and story-line keys together. Saves made under the old id don't follow it.
+- **Mature content** is the tag `"mature"` in `tags` (the wizard's tick box). Steam's mature flag (task R) reads it.
+- **The cover** is `preview.png` (640 x 360), named by `pack.json`'s `"preview"`. With none, the GM screen's picture is
+  used.
+- **`workshop.json`** holds what only the Workshop reads: each character's note to self and portrait
+  (`assets/portraits/<id>.png`). The game never loads it; a campaign plays the same without it.
+  `{ "characters": [ { "id": "oda", "note": "...", "portrait": "assets/portraits/oda.png" } ] }`
+- **Characters** are the locale's `actor.<id>.name` rows; their ids are the story's speakers.
+- **Dot-folders are the Workshop's.** `.draft/` in a campaign is its autosave and `user://campaigns/.deleted/` is
+  Recently deleted (kept 30 days). The loader skips any folder whose name starts with a dot.
+- **A chapter with no map yet** doesn't load (the check refuses it), but the Workshop still opens it with everything on
+  its forms, so it can be finished there.

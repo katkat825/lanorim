@@ -16,11 +16,12 @@ namespace Game.Campaigns
     // refuses everywhere else. `Package` is public; ask it.
     public sealed class Loaded
     {
-        public Loaded(Package package, int strings, IReadOnlyList<string> missing = null)
+        public Loaded(Package package, int strings, IReadOnlyList<string> missing = null, string shadowedBy = null)
         {
             Package = package ?? throw new ArgumentNullException(nameof(package));
             Strings = strings;
             Missing = missing ?? Array.Empty<string>();
+            ShadowedBy = shadowedBy;
         }
 
         public Package Package { get; }
@@ -41,7 +42,12 @@ namespace Game.Campaigns
 
         public bool Waiting => !Failed && Missing.Count > 0;
 
-        public bool InPlay => !Failed && !Waiting;
+        // an earlier root's campaign has its id, so this one isn't loaded (Shelf.Entry.ShadowedBy, cc_task_m 2.2)
+        public string ShadowedBy { get; }
+
+        public bool Shadowed => ShadowedBy != null;
+
+        public bool InPlay => !Failed && !Waiting && !Shadowed;
 
         // how many localized strings its locale/ folder put on the TranslationServer
         public int Strings { get; }
@@ -59,6 +65,7 @@ namespace Game.Campaigns
         public override string ToString() =>
             Failed ? Package.ToString()
           : Waiting ? $"{Package} - NOT LOADED, it needs {string.Join(", ", Missing)}"
+          : Shadowed ? $"{Package} - NOT LOADED, '{ShadowedBy}' has its id"
           : $"{Package}, {Strings} strings";
     }
 }

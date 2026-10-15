@@ -125,6 +125,19 @@ namespace Game.Campaigns
             return added;
         }
 
+        // A CAMPAIGN'S WORDS TAKEN BACK OFF THE SERVER (cc_task_m): the Workshop changed them, and Register is idempotent,
+        // so they're forgotten and the next Library.Load registers them as they are now
+        public static void Forget(string campaignFolder)
+        {
+            string key = Key(campaignFolder);
+
+            if (key == null || !Registered.TryGetValue(key, out Shelf shelf)) return;
+
+            foreach (Translation translation in shelf.Translations) TranslationServer.RemoveTranslation(translation);
+
+            Registered.Remove(key);
+        }
+
         public static IReadOnlyCollection<string> Files =>
             Registered.Values.SelectMany(s => s.Files).ToArray();
     }

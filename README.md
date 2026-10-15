@@ -48,7 +48,9 @@ content/      pure C# too. the data, and everything built on top of the rules.
   Creation/   the character creator, as logic
   Inventory/  forty slots, stacking, equipping, the merchant, loot into the pack
   Maps/       the map builder's model: paint, props, spawns, undo, save
-  Campaigns/  the campaign package: manifest, loader, the shelf, the demo edition
+  Campaigns/  the campaign package: manifest (read and written), loader, the shelf, the demo edition
+  Workshop/   the Workshop as logic: a campaign's draft and its files, the wizard, undo, autosave, Recently deleted,
+              problems in plain words
   Dialogue/   YarnSpinner conversations, barks, hints, and the commands a story sends the table
   Encounters/ Loot/   readers for a campaign's encounter and loot tables
   Saves/      save games and heroes, as ids and what happened
@@ -59,7 +61,8 @@ game/         the Godot 4 / .NET project. the only thing that touches Godot. see
   Board/      the map, its tiles, and the minis standing on it
   Table/      the table, the camera, and the ten lines that join dice to rules
   Dev/        the probes, the demonstration table, the picture and the flag registry - not in a release build
-  Campaigns/  finding campaign folders on disk and loading their locale
+  Campaigns/  finding campaign folders on disk (the game's own, then My campaigns) and loading their locale
+  Workshop/   the book's Workshop: the hub, the new-campaign wizard, a campaign's page and its problems panel
   audio/ Access/ Localization/ shaders/
 tools/        the palette bake, the model puller, the impact slicer, the duplicate finder, the bark importer
 checks/       the check scripts, and _common.ps1, what they share
@@ -130,6 +133,7 @@ These need Godot, and find it themselves under `C:\Godot` (or `$env:GODOT_ROOT`)
 .\checks\check-controls.ps1  # every act on the Controls page, and Change rebinds
 .\checks\check-creation.ps1  # creation: no hover text, a description under each list, cantrips and spells apart, the scroll kept
 .\checks\check-layout.ps1    # every screen at six window sizes: nothing off screen or squeezed, no HUD overlaps
+.\checks\check-workshop.ps1   # the Workshop, driven: a campaign through the wizard, a chapter and a map, saved, in the book, played to its line
 .\checks\check-mapbuilder.ps1 # the map builder, driven: paint, walls, a prop, start, spawn, undo, save; the file loads in its campaign
 .\checks\check-export.ps1    # export the Windows Release preset, run it headless to the book, print its size (-Dev: the dev preset)
 ```
@@ -179,6 +183,9 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--tool <tool>` | in the map builder |  | the builder opens with that tool in hand (select, paint, fill, wall, prop...) |
 | `--trial-panel` | in the map builder |  | the builder opens its Play this map panel |
 | `--prop-icons` | launch.tscn |  | renders every prop's palette thumbnail into game/ui/prop_icons/ and quits; not headless |
+| `--mine <folder>` | launch.tscn |  | My campaigns and My maps kept in <folder>/campaigns and <folder>/maps, not the player's |
+| `--wizard <page>` | launch.tscn |  | with --show workshop, the new-campaign wizard at that page (about, rules, first_chapter), filled in |
+| `--tab <tab>` | launch.tscn |  | with --show workshop --open <campaign>, the campaign's page at that tab (about, chapters, characters) |
 
 *Play*
 
@@ -236,6 +243,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--controls` | launch.tscn |  | every act on the Controls page, and Change rebinds (check-controls) |
 | `--creation` | launch.tscn |  | character creation, driven (check-creation) |
 | `--map-probe` | launch.tscn |  | the map builder driven: a map from each template in My maps, ground, walls, a building, a scatter of trees, undo, save, reopen, copy to a campaign, and play it (check-mapbuilder; with --auto) |
+| `--workshop-probe` | launch.tscn |  | the Workshop driven: a campaign made through the wizard, a chapter and a map added, saved, found in the book, and played to its one line (check-workshop; with --auto) |
 | `--layout` | wherever it applies |  | every launch screen, or the table's HUD, pause menu, sheet and pack, at six window sizes (check-layout) |
 | `--prone-probe` | at the table, in a campaign |  | in a fight, Prone lies down in its square and Stand Up stands it up (check-play) |
 | `--access-probe` | at the table, in a campaign |  | presses F2, F1, Tab, Shift+Tab and F3 at the table (check-controls) |

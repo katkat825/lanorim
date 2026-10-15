@@ -62,12 +62,6 @@ namespace Content.Maps
 
         // the first id like this one that no map in the place has: mill_yard_2, mill_yard_3. what "rename" offers when
         // a copy's id is taken
-        public static string FreeId(MapPlace place, string id)
-        {
-            if (!Has(place, id)) return id;
-
-            for (int n = 2; ; n++)
-                if (!Has(place, $"{id}_{n}")) return $"{id}_{n}";
-        }
+        public static string FreeId(MapPlace place, string id) => ContentId.Free(id, taken => Has(place, taken));
     }
 }

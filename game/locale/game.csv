@@ -1781,8 +1781,8 @@ ui.act.paste_selection.name,Map builder: paste it where the pointer is: {0}
 ui.act.reach_back.name,Move back to the last one: {0}
 ui.act.reach_next.name,Move to the next thing on the table: {0}
 ui.act.read_aloud.name,"Read the table aloud, on and off: {0}"
-ui.act.redo_edit.name,Map builder: redo: {0}
-ui.act.save_map.name,Map builder: save the map: {0}
+ui.act.redo_edit.name,Map builder and Workshop: redo: {0}
+ui.act.save_map.name,Map builder and Workshop: save: {0}
 ui.act.throw_dice.name,Throw the dice: {0}
 ui.act.toggle_log.name,Open or close the fight log: {0}
 ui.act.touch.name,Press what you are on: {0}
@@ -1790,7 +1790,7 @@ ui.act.turn_left.name,Turn the table a quarter to the left: {0}
 ui.act.turn_prop.name,Map builder: turn the prop a quarter: {0}
 ui.act.turn_prop_back.name,Map builder: turn the prop back a quarter: {0}
 ui.act.turn_right.name,Turn the table a quarter to the right: {0}
-ui.act.undo_edit.name,Map builder: undo: {0}
+ui.act.undo_edit.name,Map builder and Workshop: undo: {0}
 ui.act.waiting,press a key
 ui.act.where_are_we.name,Ask where you are and what you were doing: {0}
 ui.act.zoom_in.name,Lean in: {0}
@@ -1824,6 +1824,7 @@ ui.book.settings,Settings
 ui.book.slots_full,All five characters are in use. Delete one to start another.
 ui.book.test_campaign,Test campaign
 ui.book.tutorials,Tutorials
+ui.book.workshop,Workshop
 ui.caption.behind.name,Something is rolled behind the screen. You are not shown it.
 ui.caption.busy.name,"Pages, a pencil, dice going back in the cup."
 ui.caption.dice.name,The dice go up.
@@ -2343,3 +2344,192 @@ ui.where.round,"A fight, round {0}."
 ui.where.story,The story goes on between fights.
 ui.where.their_turn,It is the {0}'s turn.
 ui.where.your_turn,It is your turn.
+ui.workshop.add,Add
+ui.workshop.add_chapter,Add a chapter
+ui.workshop.add_from_my_maps,Add from My maps
+ui.workshop.add_person,Add a character
+ui.workshop.add_tag,Add
+ui.workshop.advanced,Advanced
+ui.workshop.always_speak,The GM and your companion
+ui.workshop.author,Author
+ui.workshop.author_hint,"Your name, as you want it shown."
+ui.workshop.back,Back
+ui.workshop.cancel,Cancel
+ui.workshop.chapter_placeholder,The chapter's title
+ui.workshop.chapter_title,First chapter's title
+ui.workshop.chapter_title_hint,"You can rename it, and add more chapters, later."
+ui.workshop.chapters_hint,"Chapters play in this order. Drag one to move it, or use Up and Down."
+ui.workshop.chapters_many,{0} chapters
+ui.workshop.chapters_one,1 chapter
+ui.workshop.characters,Character slots
+ui.workshop.characters_hint,How many heroes a player can keep in this campaign at once.
+ui.workshop.consequences,Lucky and unlucky rolls
+ui.workshop.consequences_add,"The game's, plus mine"
+ui.workshop.consequences_hint,"What a natural 1 or 20 can bring: the game's, with yours added, or yours alone."
+ui.workshop.consequences_replace,Only mine
+ui.workshop.copy_of,Copy of {0}
+ui.workshop.could_not,That didn't work: {0}
+ui.workshop.cover,Cover
+ui.workshop.cover_default,Use the GM screen's picture
+ui.workshop.cover_hint,"A PNG or JPG picture, copied in at a fixed size. With none, the GM screen's picture is the cover."
+ui.workshop.days_left_many,{0} days left
+ui.workshop.days_left_one,1 day left
+ui.workshop.defeat,When the hero falls
+ui.workshop.defeat_continues,The story goes on (they're knocked out)
+ui.workshop.defeat_death,They die (reload a save)
+ui.workshop.defeat_hint,What losing a fight means. A fight can say otherwise for itself.
+ui.workshop.delete,Delete
+ui.workshop.delete_chapter_question,Delete this chapter? Its maps stay in the campaign.
+ui.workshop.delete_forever,Delete forever
+ui.workshop.delete_person_question,Delete {0}?
+ui.workshop.delete_question,Move {0} to Recently deleted? You can bring it back for 30 days.
+ui.workshop.delete_used_chapter_question,"The story uses this chapter. Delete it anyway? Its maps stay in the campaign."
+ui.workshop.description,Description
+ui.workshop.description_hint,"One paragraph: what it's about, and how long it takes to play."
+ui.workshop.down,Down
+ui.workshop.draft_question,You have unsaved changes from last time.
+ui.workshop.duplicate,Duplicate
+ui.workshop.edited,Last edited {0}
+ui.workshop.error,Error
+ui.workshop.finish,Finish
+ui.workshop.first_map,First map
+ui.workshop.first_map_hint,"A new map opens in the map builder when you finish. A picked map is copied into the campaign."
+ui.workshop.first_map_make,Make a new map
+ui.workshop.first_map_pick,Pick from My maps
+ui.workshop.forever_question,Delete {0} forever? This can't be undone.
+ui.workshop.game_campaigns,Game campaigns
+ui.workshop.game_campaigns_hint,"The game's own campaigns. You can change them here because this is the editor build."
+ui.workshop.gm_blank,Plain
+ui.workshop.gm_cave,Cave
+ui.workshop.gm_dead_forest,Dead forest
+ui.workshop.gm_plains,Plains
+ui.workshop.gm_screen,GM screen
+ui.workshop.gm_screen_hint,The screen the GM stands behind at the table.
+ui.workshop.gm_snowy_mountains,Snowy mountains
+ui.workshop.go_there,Go there
+ui.workshop.group_about,About
+ui.workshop.group_fights,Fights
+ui.workshop.group_maps,Maps
+ui.workshop.group_story,Story
+ui.workshop.group_tables,Tables
+ui.workshop.id,Id
+ui.workshop.id_hint,"Made from the name. It names the campaign's folder and files; change it only if two campaigns clash."
+ui.workshop.json,What this tab writes
+ui.workshop.keep,Keep
+ui.workshop.keep_them,Keep them
+ui.workshop.leveling,Levelling up
+ui.workshop.leveling_hint,Experience points come from fights won and from the story.
+ui.workshop.leveling_milestone,When the story says so
+ui.workshop.leveling_xp,By experience points
+ui.workshop.make_map,Make a new map
+ui.workshop.map_name,New map's name
+ui.workshop.maps,Maps
+ui.workshop.mature,Mature content
+ui.workshop.mature_hint,"Tick this if it has graphic violence, sexual content or other adult themes. On Steam, mature items are hidden from anyone who hasn't chosen to see them."
+ui.workshop.my_campaigns,My campaigns
+ui.workshop.name,Name
+ui.workshop.name_hint,What players see in the book.
+ui.workshop.new_campaign,New campaign
+ui.workshop.new_map,New map
+ui.workshop.next,Next
+ui.workshop.no_campaigns,No campaigns of your own yet. New campaign starts one.
+ui.workshop.no_maps_in_chapter,No maps yet. Add one below.
+ui.workshop.no_my_maps,You have no maps of your own yet.
+ui.workshop.no_portrait,No picture
+ui.workshop.no_problems,No problems found.
+ui.workshop.open,Open
+ui.workshop.open_in_builder,Open in the builder
+ui.workshop.own_tag,Your own tag
+ui.workshop.page_about,Name and blurb
+ui.workshop.page_first_chapter,First chapter
+ui.workshop.page_rules,How it plays
+ui.workshop.people_hint,The named people who speak or appear. The GM and your companion are always there to speak too.
+ui.workshop.person_name,Name
+ui.workshop.person_note,Note to self
+ui.workshop.person_note_hint,Only you see this.
+ui.workshop.person_placeholder,Their name
+ui.workshop.pick_picture,Pick a picture
+ui.workshop.portrait,Portrait
+ui.workshop.problem_about_engine,This campaign needs a newer version of the game.
+ui.workshop.problem_about_folder_id,The campaign's folder and its id don't match.
+ui.workshop.problem_about_format,This campaign is written for a different version of the game's files.
+ui.workshop.problem_about_gm_screen,The campaign asks for a GM screen the game doesn't have.
+ui.workshop.problem_about_no_pack,"This folder has no pack.json, so the game can't read it as a campaign."
+ui.workshop.problem_about_not_json,"The campaign's pack.json has a typing mistake in it, so the game can't read it."
+ui.workshop.problem_about_rule,One of the campaign's play rules isn't one the game knows.
+ui.workshop.problem_about_tag,This tag isn't a single word: {0}.
+ui.workshop.problem_about_unnamed,The campaign has no name yet.
+ui.workshop.problem_about_written_name,"The campaign's name or description is written in pack.json. It belongs in the campaign's words, where the About tab writes it."
+ui.workshop.problem_armory_unworn,"An armory has {0}, which nobody wears or holds, so nobody can take it."
+ui.workshop.problem_armory_used_up,"An armory lends {0}, which gets used up. An armory only lends gear."
+ui.workshop.problem_chapter_empty,Chapter {0} has no maps.
+ui.workshop.problem_chapter_untitled,Chapter {0} has no title yet.
+ui.workshop.problem_chapters_none,"The campaign has no chapters, so there's nothing to play."
+ui.workshop.problem_defined_twice,Two things in {0} have the same id: {1}.
+ui.workshop.problem_fight_loot,A fight leaves loot from a table the campaign doesn't have: {0}.
+ui.workshop.problem_fight_map,A fight is played on a map the campaign doesn't have: {0}.
+ui.workshop.problem_fight_monster,A fight calls for a monster the game doesn't have: {0}.
+ui.workshop.problem_fight_no_level,"The fight {0} doesn't say what level it's for, so how hard it is can't be checked."
+ui.workshop.problem_fight_too_hard,The fight {0} may be too hard for one hero of its level.
+ui.workshop.problem_fight_too_many,The fight {0} has more enemies than one hero of its level should face.
+ui.workshop.problem_folder_not_loaded,"The {0} folder is for something the game doesn't load yet, so what's in it is ignored for now."
+ui.workshop.problem_loot_item,A loot table gives an item the game doesn't have: {0}.
+ui.workshop.problem_loot_table,A loot table rolls on another table the campaign doesn't have: {0}.
+ui.workshop.problem_map_missing,Chapter {0} is played on a map the campaign doesn't have: {1}.
+ui.workshop.problem_map_stand_in,"The map {0} has a prop the game doesn't have, so the table shows a stand-in for it."
+ui.workshop.problem_map_unplayable,The map {0} can't be played yet. Open it in the builder to see why.
+ui.workshop.problem_needs_pack,This campaign needs another pack that isn't installed: {0}.
+ui.workshop.problem_roll_one_sided,"Only your own lucky and unlucky rolls are used, and you have none of one kind."
+ui.workshop.problem_roll_taken,One of your lucky or unlucky rolls has the same id as one of the game's.
+ui.workshop.problem_same_id,"Another campaign already uses this name, so this one isn't loaded."
+ui.workshop.problem_shop_item,A shop sells an item the game doesn't have: {0}.
+ui.workshop.problem_start_missing,The campaign starts at a chapter it doesn't have.
+ui.workshop.problem_story_barks,One of the companion's lines has a problem.
+ui.workshop.problem_story_hero_variable,The story tries to change something about the hero that it can only read.
+ui.workshop.problem_story_missing_node,The story jumps to a part that doesn't exist.
+ui.workshop.problem_story_no_speaker,Nobody is speaking in {0}. Say who talks there.
+ui.workshop.problem_story_two_keys,"In {0}, a check has no way past a fail: a hero who fails it is stuck. Give it a second way through."
+ui.workshop.problem_story_untagged_line,"A line of the story has no name tag, so its translations would be lost the next time it's edited."
+ui.workshop.problem_unknown_folder,There's a folder in the campaign the game doesn't know: {0}.
+ui.workshop.problems,Problems
+ui.workshop.recently_deleted,Recently deleted
+ui.workshop.remove,Remove
+ui.workshop.rename,Rename
+ui.workshop.restore,Restore
+ui.workshop.same_id,"Another campaign already uses this name, so this one isn't in the book. Rename gives it one of its own."
+ui.workshop.saved,Saved.
+ui.workshop.saved_with_problems,"Saved. It has problems that stop it loading yet, listed under Problems."
+ui.workshop.start_here,Start here
+ui.workshop.starting_shop,Shop before the story starts
+ui.workshop.starting_shop_hint,A new hero spends their gold before the first scene.
+ui.workshop.starts_here,Starts here
+ui.workshop.story_starts,Your story starts here.
+ui.workshop.subscribed,Subscribed
+ui.workshop.subscribed_empty,Campaigns you subscribe to will be here once Workshop sharing arrives.
+ui.workshop.tab_about,About
+ui.workshop.tab_chapters,Chapters and maps
+ui.workshop.tab_characters,Characters
+ui.workshop.tag_beginner_friendly,Beginner-friendly
+ui.workshop.tag_combat_heavy,Combat-heavy
+ui.workshop.tag_comedy,Comedy
+ui.workshop.tag_horror,Horror
+ui.workshop.tag_long,Long
+ui.workshop.tag_mystery,Mystery
+ui.workshop.tag_short,Short
+ui.workshop.tag_story_heavy,Story-heavy
+ui.workshop.tags,Tags
+ui.workshop.tags_hint,"Pick any that fit, or type your own and press Add."
+ui.workshop.template_hint,What the new map starts as.
+ui.workshop.throw_away,Throw them away
+ui.workshop.title,Workshop
+ui.workshop.unnamed,(no name yet)
+ui.workshop.unsaved,Unsaved changes
+ui.workshop.up,Up
+ui.workshop.warning,Warning
+ui.workshop.wizard_needs_chapter,Give the first chapter a title.
+ui.workshop.wizard_needs_map,"Pick one of your maps, or make a new one."
+ui.workshop.wizard_needs_name,Give it a name first.
+ui.workshop.wizard_step,Step {0} of 3: {1}
+ui.workshop.wizard_title,New campaign
+ui.workshop.wont_load_many,Won't load yet: {0} problems
+ui.workshop.wont_load_one,Won't load yet: 1 problem

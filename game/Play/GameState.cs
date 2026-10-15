@@ -236,6 +236,24 @@ namespace Game.Play
             _campaigns = null;
         }
 
+        // --- the Workshop (cc_task_m) -----------------------------------------------------------------------------------
+
+        // the book page the launch screen opens on when the table goes back to it: the Workshop, when the builder was
+        // opened from there. null opens the launch screen's own first screen
+        public static string BackTo { get; set; }
+
+        // the campaign open on the Workshop's campaign page while one of its maps is in the builder: the page comes back
+        // to it as it was, unsaved changes and undo stack and all
+        public static Content.Workshop.CampaignEditor Editing { get; set; }
+
+        // a campaign's files changed under the game (the Workshop saved, made, renamed, restored or deleted one): its
+        // words are taken off the TranslationServer, and every campaign is found again the next time anything asks
+        public static void CampaignsChanged(string folder = null)
+        {
+            if (folder != null) Game.Campaigns.CampaignLocale.Forget(folder);
+            _campaigns = null;
+        }
+
         // --- a map being tried (cc_task_l Part 5, "Play this map") ------------------------------------------------------
 
         // the builder a trial fight goes back to when it ends, the map in it as it was; null when nothing is being tried

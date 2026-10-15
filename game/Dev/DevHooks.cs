@@ -51,6 +51,9 @@ namespace Game.Dev
             new("--tool", "<tool>", Where.Builder, false, "the builder opens with that tool in hand (select, paint, fill, wall, prop...)"),
             new("--trial-panel", "", Where.Builder, false, "the builder opens its Play this map panel"),
             new("--prop-icons", "", Where.Launch, false, "renders every prop's palette thumbnail into game/ui/prop_icons/ and quits; not headless"),
+            new("--mine", "<folder>", Where.Launch, false, "My campaigns and My maps kept in <folder>/campaigns and <folder>/maps, not the player's"),
+            new("--wizard", "<page>", Where.Launch, false, "with --show workshop, the new-campaign wizard at that page (about, rules, first_chapter), filled in"),
+            new("--tab", "<tab>", Where.Launch, false, "with --show workshop --open <campaign>, the campaign's page at that tab (about, chapters, characters)"),
 
             // play
             new("--auto", "", Where.Play, true, "plays itself to the end: first choices, the AutoPlayer in fights, dice thrown when asked (check-play)"),
@@ -93,6 +96,7 @@ namespace Game.Dev
             new("--controls", "", Where.Launch, false, "every act on the Controls page, and Change rebinds (check-controls)"),
             new("--creation", "", Where.Launch, false, "character creation, driven (check-creation)"),
             new("--map-probe", "", Where.Launch, false, "the map builder driven: a map from each template in My maps, ground, walls, a building, a scatter of trees, undo, save, reopen, copy to a campaign, and play it (check-mapbuilder; with --auto)"),
+            new("--workshop-probe", "", Where.Launch, false, "the Workshop driven: a campaign made through the wizard, a chapter and a map added, saved, found in the book, and played to its one line (check-workshop; with --auto)"),
             new("--layout", "", Where.Any, false, "every launch screen, or the table's HUD, pause menu, sheet and pack, at six window sizes (check-layout)"),
             new("--prone-probe", "", Where.Play, false, "in a fight, Prone lies down in its square and Stand Up stands it up (check-play)"),
             new("--access-probe", "", Where.Play, false, "presses F2, F1, Tab, Shift+Tab and F3 at the table (check-controls)"),
@@ -130,6 +134,19 @@ namespace Game.Dev
                 return true;
             }
 
+            // a My campaigns and a My maps of their own, never the player's (screenshots, the Workshop's probe)
+            if (DevArgs.Mine is { } mine)
+            {
+                Game.Campaigns.CampaignFolders.MineFolder = System.IO.Path.Combine(mine, "campaigns");
+                MapBuilderPage.LibraryFolder = System.IO.Path.Combine(mine, "maps");
+            }
+
+            if (DevArgs.WorkshopProbe)
+            {
+                WorkshopProbe.AtLaunch(launch);
+                return true;
+            }
+
             if (QuickStart.Building(launch)) return true;
 
             if (DevArgs.Begin != null)
@@ -147,6 +164,9 @@ namespace Game.Dev
             if (screen == "controls") QuickStart.Controls(launch);
             else if (screen == "create") QuickStart.Creating(launch, DevArgs.Page, DevArgs.Class);
             else launch.ShowFirst(screen, DevArgs.Open);
+
+            // the wizard at a page, or a campaign's page at a tab (pictures of them)
+            if (screen == Game.Workshop.WorkshopPage.PageId) QuickStart.Workshop(launch, DevArgs.Wizard, DevArgs.Tab);
 
             // the question asked (it asks; nothing is deleted)
             if (screen == "book" && DevArgs.AskDelete)
@@ -199,6 +219,8 @@ namespace Game.Dev
 
         public static void AtPlay(PlayDirector director)
         {
+            if (DevArgs.WorkshopProbe) WorkshopProbe.AtPlay(director);
+
             if (DevArgs.ProneProbe) director.AddChild(new ProneProbe { Name = "ProneProbe", Combat = director.Combat });
 
             if (DevArgs.LayoutProbe) director.AddChild(Layouts.OfPlay(director));
@@ -206,6 +228,8 @@ namespace Game.Dev
 
         public static void AtBuilder(MapBuilder builder)
         {
+            if (DevArgs.WorkshopProbe) builder.AddChild(new WorkshopProbe { Name = "WorkshopProbe", Builder = builder });
+
             if (DevArgs.MapProbe) builder.AddChild(new MapBuilderProbe { Name = "MapBuilderProbe", Builder = builder });
 
             if (DevArgs.Tool != null && Core.Words.EnumWords.TryName(DevArgs.Tool, out Content.Maps.MapTool tool))

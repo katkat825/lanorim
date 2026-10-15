@@ -14,8 +14,18 @@ namespace Game.Campaigns
 
             Add(roots, Local());
 
+            // MY CAMPAIGNS (cc_task_m Part 2.1): the Workshop's, after the game's own, so a campaign made there is on the
+            // book's shelf and plays like any other. A later one with an earlier one's id isn't loaded (Shelf.Entry.ShadowedBy)
+            Add(roots, Mine());
+
             return roots;
         }
+
+        // where My campaigns live: user://campaigns, the player's own space, in the editor and in an exported build alike.
+        // the Workshop's probe keeps one of its own (check-workshop), never the player's
+        public static string MineFolder { get; set; } = "user://campaigns";
+
+        public static string Mine() => ProjectSettings.GlobalizePath(MineFolder);
 
         public static string Local() =>
             OS.HasFeature("editor")
@@ -33,19 +43,8 @@ namespace Game.Campaigns
             roots.Add(root);
         }
 
-        // sorted because filesystem enumeration order is otherwise unstable
-        public static IReadOnlyList<string> In(string root)
-        {
-            var folders = new List<string>();
-
-            if (string.IsNullOrWhiteSpace(root) || !Directory.Exists(root)) return folders;
-
-            foreach (string folder in Directory.EnumerateDirectories(root))
-                folders.Add(folder);
-
-            folders.Sort(System.StringComparer.Ordinal);
-
-            return folders;
-        }
+        // sorted because filesystem enumeration order is otherwise unstable; a dot-folder (Recently deleted) is the
+        // Workshop's and not a campaign
+        public static IReadOnlyList<string> In(string root) => Content.Schema.PackFolder.Folders(root);
     }
 }

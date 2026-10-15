@@ -61,6 +61,14 @@ namespace Game.Screens
         // the screen the game opens on: the title, the book (open at a campaign's pages), or one of the book's pages
         internal void ShowFirst(string screen, string open)
         {
+            // back from the table to the page that sent it there: the map builder opened from the Workshop goes back to it
+            if (GameState.BackTo is { } back && PageCalled(back) is { } from)
+            {
+                GameState.BackTo = null;
+                from.Open(this);
+                return;
+            }
+
             if (screen == "book") ShowBook(open);
             else if (PageCalled(screen) is { } page) page.Open(this, open);
             else ShowTitle();

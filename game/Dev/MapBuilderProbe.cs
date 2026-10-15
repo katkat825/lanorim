@@ -41,7 +41,7 @@ namespace Game.Dev
         static int _template;
         static string _root;
         static string _saved;
-        static readonly List<string> Failed = new();
+        static readonly ProbeLog Said = new("mapprobe");
 
         static readonly System.Diagnostics.Stopwatch Clock = System.Diagnostics.Stopwatch.StartNew();
 
@@ -342,17 +342,12 @@ namespace Game.Dev
 
             GameState.ForgetProbeSaves();
 
-            if (Failed.Count == 0) GD.Print("mapprobe passed");
-            else GD.PrintErr("mapprobe FAILED - " + string.Join("; ", Failed));
+            Said.Verdict();
 
-            GetTree().Quit(Failed.Count == 0 ? 0 : 1);
+            GetTree().Quit(Said.Passed ? 0 : 1);
         }
 
-        static void Expect(bool held, string what)
-        {
-            GD.Print($"mapprobe {(held ? "ok  " : "NOT ")} {what}");
-            if (!held) Failed.Add(what);
-        }
+        static void Expect(bool held, string what) => Said.Expect(held, what);
 
         // --- the author's hands -------------------------------------------------------------------------------------
 

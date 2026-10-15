@@ -39,5 +39,34 @@ namespace Content.Campaigns
         }
 
         public static string ActorName(string id) => KeyConventions.ActorName(id);
+
+        // AN ID MADE FROM A NAME (cc_task_m 3.1; WORKSHOP_DESIGN.md principle 2, "ids are made from names"): lowercase,
+        // accents dropped, every run of anything else one underscore, none at either end; `otherwise` when nothing is left
+        public static string From(string name, string otherwise)
+        {
+            var id = new System.Text.StringBuilder();
+
+            foreach (char c in (name ?? "").Normalize(System.Text.NormalizationForm.FormD).ToLowerInvariant())
+            {
+                if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) == System.Globalization.UnicodeCategory.NonSpacingMark) continue;
+
+                if ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')) id.Append(c);
+                else if (id.Length > 0 && id[^1] != '_') id.Append('_');
+            }
+
+            string made = id.ToString().TrimEnd('_');
+
+            return made.Length > 0 ? made : otherwise;
+        }
+
+        // THE FIRST FREE ONE: the id itself, else id_2, id_3... - what a copy, a new campaign or a new chapter is called
+        // when its name is taken (MapFiles.FreeId, the wizard, the chapter list)
+        public static string Free(string id, Func<string, bool> taken)
+        {
+            if (!taken(id)) return id;
+
+            for (int n = 2; ; n++)
+                if (!taken($"{id}_{n}")) return $"{id}_{n}";
+        }
     }
 }

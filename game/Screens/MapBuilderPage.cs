@@ -24,6 +24,12 @@ namespace Game.Screens
 
         public string NameKey => CampaignBook.MapBuilderKey;
 
+        // reached from the Workshop (cc_task_m 1.1), not the contents
+        public bool InContents => false;
+
+        // back to the Workshop, which opened this page
+        static void Back(Launch launch) => launch.PageCalled(Game.Workshop.WorkshopPage.PageId)?.Open(launch);
+
         // "MY MAPS", the maps that belong to no campaign: user://maps, the player's own space, in the editor and in an
         // exported build alike. On Windows that is %APPDATA%\Godot\app_userdata\Lanorim\maps (project.godot sets no
         // custom user folder)
@@ -55,7 +61,7 @@ namespace Game.Screens
                 NewMap(launch, left, campaigns);
 
                 Lists(launch, right, campaigns);
-                right.AddChild(Ui.Button(CampaignBook.ContentsKey, launch.ShowBook));
+                right.AddChild(Ui.Button(Content.Workshop.WorkshopWords.TitleKey, () => Back(launch)));
             }, () => OnPanel(launch, campaigns));
         }
 
@@ -66,7 +72,7 @@ namespace Game.Screens
 
             NewMap(launch, page, campaigns);
             Lists(launch, page, campaigns);
-            page.AddChild(Ui.Button(ScreenWords.Back, launch.ShowBook));
+            page.AddChild(Ui.Button(Content.Workshop.WorkshopWords.TitleKey, () => Back(launch)));
 
             launch.Show(Ui.Panel(Ui.Scroll(page, 560)));
         }
@@ -202,6 +208,9 @@ namespace Game.Screens
         public static void Build(Launch launch, MapBuilderView view)
         {
             GameState.Build(view);
+
+            // leaving the builder comes back to the Workshop, where every way into it starts
+            GameState.BackTo = Game.Workshop.WorkshopPage.PageId;
             Scenes.Go(launch.GetTree(), Scenes.Table);
         }
     }

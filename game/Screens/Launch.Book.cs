@@ -251,7 +251,7 @@ namespace Game.Screens
             if (book.CanContinue)
                 top.AddChild(Ui.Button(CampaignBook.ContinueKey, () => Load(book.Continue)));
 
-            foreach (IBookPage one in _pages)
+            foreach (IBookPage one in _pages.Where(p => p.InContents))
             {
                 IBookPage turned = one;
                 top.AddChild(Ui.Button(turned.NameKey, () => turned.Open(this)));

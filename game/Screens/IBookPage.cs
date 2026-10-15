@@ -14,5 +14,9 @@ namespace Game.Screens
 
         // turned to, on the launch screen. `open` is what `--open` named (a campaign), when anything did
         void Open(Launch launch, string open = null);
+
+        // a line in the contents. The map builder's page isn't one since the Workshop (cc_task_m 1.1): it's reached from
+        // there, and is still a page `--show builder` opens and the layout check lays out
+        bool InContents => true;
     }
 }

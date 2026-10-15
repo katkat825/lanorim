@@ -87,6 +87,17 @@ namespace Game
         // `--prop-icons`: the palette's thumbnails rendered into game/ui/prop_icons/, then quit (not headless)
         public static bool PropIcons => Has("--prop-icons");
 
+        // --- the Workshop (cc_task_m) ----------------------------------------------------------------------------------
+
+        // `--mine <folder>`: My campaigns and My maps kept in <folder>/campaigns and <folder>/maps, not the player's
+        public static string Mine => Value("--mine");
+
+        // `--show workshop --wizard <page>`: the new-campaign wizard at that page (about, rules, first_chapter), filled in
+        public static string Wizard => Value("--wizard");
+
+        // `--show workshop --open <campaign> --tab <tab>`: the campaign's page at that tab (about, chapters, characters)
+        public static string Tab => Value("--tab");
+
         // --- the probes and the checks -------------------------------------------------------------------------------
 
         public static bool ControlsProbe => Has("--controls");
@@ -94,6 +105,8 @@ namespace Game
         public static bool CreationProbe => Has("--creation");
 
         public static bool MapProbe => Has("--map-probe");
+
+        public static bool WorkshopProbe => Has("--workshop-probe");
 
         public static bool LayoutProbe => Has("--layout");
 

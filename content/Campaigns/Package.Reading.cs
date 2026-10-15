@@ -181,6 +181,8 @@ namespace Content.Campaigns
             {
                 string name = new DirectoryInfo(each).Name;
 
+                if (PackFolder.IsHidden(name)) continue;
+
                 if (Folders.Contains(name, StringComparer.Ordinal))
                 {
                     if (NotLoadedYet.Contains(name, StringComparer.Ordinal) &&

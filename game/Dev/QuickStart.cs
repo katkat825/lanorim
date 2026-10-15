@@ -116,6 +116,35 @@ namespace Game.Dev
             }
         }
 
+        // `--show workshop --wizard <page>`: the new-campaign wizard at that page, filled in as an author would; `--tab <tab>`
+        // (with `--open <campaign>`): the campaign's page at that tab. Pictures of them, and the layout check's
+        public static void Workshop(Launch launch, string wizard, string tab)
+        {
+            if (wizard != null && Core.Words.EnumWords.TryParse(wizard, out Content.Workshop.WizardPage page)) Wizard(launch, page);
+
+            if (tab != null && Core.Words.EnumWords.TryParse(tab, out Content.Workshop.WorkshopTab at))
+                Game.Workshop.CampaignScreen.Current?.GoThere(at);
+        }
+
+        // the wizard, its first pages filled in with an example (developer text, exempt from localization), at a page
+        public static Game.Workshop.WizardScreen Wizard(Launch launch, Content.Workshop.WizardPage page)
+        {
+            var screen = Game.Workshop.WizardScreen.Begin(launch);
+            Content.Workshop.CampaignWizard wizard = screen.Wizard;
+
+            wizard.Draft.Name = "The Salt Road";
+            wizard.Draft.Description = "A toll house on a cliff road, a keeper who lies, and a wreck that won't stay sunk. Two evenings.";
+            wizard.Draft.Author = "Kathleen";
+            wizard.Tag("mystery", true);
+            wizard.Tag("story_heavy", true);
+            wizard.ChapterTitle = "The Toll House";
+
+            while (wizard.Page < page && wizard.Next()) { }
+
+            screen.Show();
+            return screen;
+        }
+
         // `--build <campaign|mine> [map]`: that map opened in the builder (mine: My maps), or a new one called `probe_map`
         // (`--template`: from that template), for a picture of the builder; `--map-probe`: the builder driven
         // (checks/check-mapbuilder.ps1), from the book's own page. true when either

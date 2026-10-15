@@ -37,6 +37,7 @@ namespace Content.Screens
                 .Concat(MapBuilderView.Keys())
                 .Concat(Maps.MapTrial.Keys())
                 .Concat(CreditsView.Keys())
+                .Concat(Workshop.WorkshopWords.Keys())
                 .Concat(Maps.PropCatalogue.Srd().Keys())
                 .Distinct();
     }

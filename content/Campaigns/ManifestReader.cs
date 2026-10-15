@@ -27,8 +27,11 @@ namespace Content.Campaigns
         // best first; Package looks in this order and complains if a folder has both
         public static readonly string[] FileNames = { PackFileName, FileName };
 
-        // folder null skips the folder-matches-id check (a loose file has no folder)
-        public static Read<Manifest> Parse(string json, string file, string folder = null)
+        // folder null skips the folder-matches-id check (a loose file has no folder). `lenient` (the Workshop's,
+        // cc_task_m): a manifest with problems is still handed back as far as it was read, beside them, so a form can
+        // open a campaign that doesn't load yet (a chapter with no map in it yet) and the author can fix it there.
+        // The loader never asks for that: to it, a manifest with a problem is no manifest
+        public static Read<Manifest> Parse(string json, string file, string folder = null, bool lenient = false)
         {
             var problems = new List<ContentProblem>();
 
@@ -63,15 +66,15 @@ namespace Content.Campaigns
 
                 Unknown(root, file, problems);
 
-                if (problems.Count > 0) return Read<Manifest>.Bad(problems);
+                if (problems.Count > 0 && !lenient) return Read<Manifest>.Bad(problems);
 
-                return Read<Manifest>.Good(
-                    new Manifest(id, kind, format, engine, author, tags, preview, needs,
-                                 chapters, start)
-                    {
-                        GmScreen = screen,
-                        Rules = rules,
-                    });
+                var manifest = new Manifest(id ?? folder ?? "", kind, format, engine, author, tags, preview, needs, chapters, start)
+                {
+                    GmScreen = Manifest.GmScreens.Contains(screen) ? screen : Manifest.GmScreens[0],
+                    Rules = rules,
+                };
+
+                return problems.Count > 0 ? Read<Manifest>.Partial(manifest, problems) : Read<Manifest>.Good(manifest);
             }
         }
 

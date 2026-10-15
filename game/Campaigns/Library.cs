@@ -42,7 +42,7 @@ namespace Game.Campaigns
         public IEnumerable<Loaded> InPlay => Campaigns.Where(c => c.InPlay);
 
         public Loaded Campaign(string id) =>
-            id == null ? null : Campaigns.FirstOrDefault(c => c.Id == id);
+            id == null ? null : Campaigns.FirstOrDefault(c => c.Id == id && !c.Shadowed) ?? Campaigns.FirstOrDefault(c => c.Id == id);
 
         public bool Has(string id) => Campaign(id) != null;
 
@@ -76,7 +76,7 @@ namespace Game.Campaigns
             {
                 int strings = entry.InPlay ? CampaignLocale.Register(entry.Package.Folder) : 0;
 
-                loaded.Add(new Loaded(entry.Package, strings, entry.Missing));
+                loaded.Add(new Loaded(entry.Package, strings, entry.Missing, entry.ShadowedBy));
 
                 if (entry.InPlay) content = content.With(entry.Package);
             }

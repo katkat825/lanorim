@@ -62,7 +62,7 @@ namespace Content.Schema
 
         // RFC 4180 enough for Godot: quote when the value holds a comma, a quote or a newline,
         // and double an inner quote
-        static string Quote(string value)
+        internal static string Quote(string value)
         {
             value ??= "";
 
@@ -71,7 +71,7 @@ namespace Content.Schema
             return "\"" + value.Replace("\"", "\"\"") + "\"";
         }
 
-        static List<string[]> Rows(string csv)
+        internal static List<string[]> Rows(string csv)
         {
             var rows = new List<string[]>();
             var row = new List<string>();

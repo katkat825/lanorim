@@ -10,11 +10,12 @@ namespace Content.Tests
     // left page, the rest on the right
     public partial class ScreenTests
     {
-        // the game's four, as game/Screens/BookPages.cs lists them
+        // the game's four, as game/Screens/BookMenu.cs lists them: the Workshop where the Map builder was (cc_task_m 1.1),
+        // which is reached from the Workshop now
         static readonly ContentsEntry[] OtherPages =
         {
             ContentsEntry.ForPage("tutorials", CampaignBook.TutorialsKey),
-            ContentsEntry.ForPage("builder", CampaignBook.MapBuilderKey),
+            ContentsEntry.ForPage("workshop", Workshop.WorkshopWords.BookKey),
             ContentsEntry.ForPage("settings", CampaignBook.SettingsKey),
             ContentsEntry.ForPage("credits", CampaignBook.CreditsKey),
         };
@@ -35,9 +36,9 @@ namespace Content.Tests
                 ContentsKind.Page, ContentsKind.Page, ContentsKind.Page, ContentsKind.Page, ContentsKind.Quit,
             }, contents.Entries.Select(e => e.Kind));
 
-            Assert.Equal(new[] { "tutorials", "builder", "settings", "credits" },
+            Assert.Equal(new[] { "tutorials", "workshop", "settings", "credits" },
                          contents.Entries.Where(e => e.Kind == ContentsKind.Page).Select(e => e.PageId));
-            Assert.Equal(new[] { CampaignBook.TutorialsKey, CampaignBook.MapBuilderKey, CampaignBook.SettingsKey, CampaignBook.CreditsKey },
+            Assert.Equal(new[] { CampaignBook.TutorialsKey, Workshop.WorkshopWords.BookKey, CampaignBook.SettingsKey, CampaignBook.CreditsKey },
                          contents.Entries.Where(e => e.Kind == ContentsKind.Page).Select(e => e.NameKey));
 
             Assert.Equal(new[] { "the_goat", "long_road", "sample" },

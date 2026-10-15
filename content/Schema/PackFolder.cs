@@ -11,6 +11,19 @@ namespace Content.Schema
     // (cc_task_dedupe-methods.md #4: this was six loops)
     public static class PackFolder
     {
+        // A DOT-FOLDER IS THE WORKSHOP'S, NOT CONTENT (cc_task_m Part 2.3, Part 6): My campaigns' .deleted/ (Recently
+        // deleted) and a campaign's .draft/ (its autosave). A campaign root's walk and a pack's own folders skip them
+        public static bool IsHidden(string folder) => Path.GetFileName((folder ?? "").TrimEnd('/', '\\')).StartsWith('.');
+
+        // THE FOLDERS IN A ROOT, the campaigns in a campaign root: in name order, so the walk is the same every run, and
+        // with no dot-folder among them. none when there's no root
+        public static IReadOnlyList<string> Folders(string root)
+        {
+            if (string.IsNullOrWhiteSpace(root) || !Directory.Exists(root)) return Array.Empty<string>();
+
+            return Directory.EnumerateDirectories(root).Where(f => !IsHidden(f)).OrderBy(f => f, StringComparer.Ordinal).ToList();
+        }
+
         // `shownAs` is how a problem names the folder: "monsters" makes "monsters/goblin.json", and
         // null leaves the file's own name. no folder, or none there, is no files
         public static IEnumerable<(string File, string Path, string Text)> Read(

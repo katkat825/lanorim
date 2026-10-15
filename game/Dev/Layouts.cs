@@ -25,6 +25,25 @@ namespace Game.Dev
                 probe.Screens.Add((one.Id, () => one.Open(launch)));
             }
 
+            // the Workshop's own screens past its hub (cc_task_m): the wizard's three pages, and a campaign's page at each tab
+            // (the game's sample, opened and never saved)
+            foreach (Content.Workshop.WizardPage page in System.Enum.GetValues<Content.Workshop.WizardPage>())
+            {
+                Content.Workshop.WizardPage one = page;
+                probe.Screens.Add(($"wizard {Core.Words.EnumWords.Id(one)}", () => QuickStart.Wizard(launch, one)));
+            }
+
+            foreach (Content.Workshop.WorkshopTab tab in System.Enum.GetValues<Content.Workshop.WorkshopTab>())
+            {
+                Content.Workshop.WorkshopTab one = tab;
+                probe.Screens.Add(($"campaign {Core.Words.EnumWords.Id(one)}", () =>
+                {
+                    string folder = System.IO.Path.Combine(Game.Campaigns.CampaignFolders.Local(), "sample_millbrook");
+                    Game.Workshop.CampaignScreen.Show(launch, Content.Workshop.CampaignEditor.Open(folder), one, fresh: false);
+                    GameState.Editing = null;
+                }));
+            }
+
             probe.Screens.Add(("create", () => QuickStart.Creating(launch, "class", null)));
             probe.Screens.Add(("spells", () => QuickStart.Creating(launch, "spells", "mage")));
             probe.Screens.Add(("abilities", () => QuickStart.Creating(launch, "abilities", "mage")));
