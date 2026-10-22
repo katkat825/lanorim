@@ -83,10 +83,14 @@ namespace Content.Workshop
         // it plays whether or not the builder ever saves it; the id it's under, or null and why not
         public string MakeMap(string name, string template, out string problem)
         {
-            string id = MapFiles.FreeId(Maps, ContentId.From(name, "map"));
+            string id = MapName.IdIn(Maps, name);
             MapDraft drawn = MapTemplates.Read(template) ?? MapTemplates.Read(MapTemplates.Standard);
+            MapDraft made = MapTemplates.Make(template, drawn.Columns, drawn.Rows);
 
-            problem = MapFiles.Write(Maps, id, MapTemplates.Make(template, drawn.Columns, drawn.Rows), replace: false);
+            // the name as typed, the id made from it (cc_task_m2 Part 7)
+            made.Name = name?.Trim() ?? "";
+
+            problem = MapFiles.Write(Maps, id, made, replace: false);
 
             return problem == null ? id : null;
         }

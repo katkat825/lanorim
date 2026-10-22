@@ -33,6 +33,8 @@ namespace Game.Screens
         void Clear()
         {
             _onTitle = false;
+
+            if (_book != null) _book.Hidden = false;
             Ui.Clear(_body);
             _layer?.QueueFree();
             _layer = null;

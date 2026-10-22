@@ -18,11 +18,29 @@ namespace Game.Workshop
     public static class Forms
     {
         // a field: its name, the control, and what it's for
-        public static VBoxContainer Field(string labelKey, Control control, string hintKey)
+        public static VBoxContainer Field(string labelKey, Control control, string hintKey, Control under = null)
         {
             control.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
 
-            return Ui.Column(2, Ui.Label(labelKey), control, hintKey == null ? null : Hint(hintKey));
+            return Ui.Column(2, Ui.Label(labelKey), control, under, hintKey == null ? null : Hint(hintKey));
+        }
+
+        // A NAME'S RULE, IN RED, DIRECTLY UNDER ITS BOX (cc_task_m2 Part 7): "Only letters, numbers, dashes, spaces and
+        // underscores are allowed", shown while what's typed breaks it. A map's name and a campaign's (MapName)
+        public static readonly Color Wrong = new Color(0.72f, 0.1f, 0.07f);
+
+        public static Label NameRule(LineEdit box)
+        {
+            Label rule = Ui.Label(Content.Maps.MapName.RuleKey);
+            rule.Name = "NameRule";
+            rule.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+            rule.AddThemeColorOverride("font_color", Wrong);
+
+            void Judge(string typed) => rule.Visible = typed.Length > 0 && !Content.Maps.MapName.Allowed(typed);
+
+            Judge(box.Text);
+            box.TextChanged += Judge;
+            return rule;
         }
 
         public static Label Hint(string key, params object[] args)
@@ -86,7 +104,8 @@ namespace Game.Workshop
         // the wizard's, which can be typed over (typed), or a campaign's, which can't (typed null)
         public static void About(VBoxContainer page, CampaignDraft draft, DraftEdit edit, bool advanced, string id, Action<string> typed)
         {
-            page.AddChild(Field(WorkshopWords.NameKey, Line("Name", draft.Name, t => edit("about.name", d => d.Name = t, true)), WorkshopWords.NameHintKey));
+            LineEdit name = Line("Name", draft.Name, t => edit("about.name", d => d.Name = t, true));
+            page.AddChild(Field(WorkshopWords.NameKey, name, WorkshopWords.NameHintKey, NameRule(name)));
             page.AddChild(Field(WorkshopWords.DescriptionKey, Paragraph("Description", draft.Description, t => edit("about.description", d => d.Description = t, true)),
                                 WorkshopWords.DescriptionHintKey));
             page.AddChild(Field(WorkshopWords.AuthorKey, Line("Author", draft.Author, t => edit("about.author", d => d.Author = t, true)), WorkshopWords.AuthorHintKey));

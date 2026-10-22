@@ -127,6 +127,36 @@
       "note": "the hero minis by class are KayKit Adventurers 2.0's characters (two modified by Kathleen) with their weapons, posed with KayKit Character Animations 1.1's Rig_Medium clips; rogue_v3's cape is KayKit Skeletons 1.1's Skeleton_Rogue"
     },
     {
+      "id": "moraazul",
+      "kind": "asset",
+      "name": "MoraAzul",
+      "role": "models",
+      "licence": "cc_by",
+      "url": "https://moraazul.itch.io/animal-plushies",
+      "packs": [
+        "Animal Plushies"
+      ],
+      "files": [
+        "models/minis/plushies/"
+      ],
+      "note": "the Beastfolk's minis: the cat, the dog, the bunny and the bear (CC BY, attribution required; cc_task_m2)"
+    },
+    {
+      "id": "devmops",
+      "kind": "asset",
+      "name": "DevMops",
+      "role": "models",
+      "licence": "cc0",
+      "url": "https://opengameart.org/content/angel-wing",
+      "packs": [
+        "Angel Wing"
+      ],
+      "files": [
+        "models/minis/wings/"
+      ],
+      "note": "the Fairy's wings (cc_task_m2)"
+    },
+    {
       "id": "ambientcg",
       "kind": "asset",
       "name": "ambientCG",

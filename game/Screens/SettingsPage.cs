@@ -11,6 +11,6 @@ namespace Game.Screens
         public string NameKey => CampaignBook.SettingsKey;
 
         public void Open(Launch launch, string open = null) =>
-            launch.Show(Ui.Panel(SettingsPanel.Scrolled(launch.ShowBook, 560)));
+            launch.Show(Ui.Panel(SettingsPanel.Scrolled(launch.ShowBook, 560, Content.Screens.CampaignBook.ContentsKey)));
     }
 }

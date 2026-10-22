@@ -348,7 +348,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `action_or_bonus` | flag | an action or a bonus action, not both, and one attack (Slow) | | sway | existing |
 | `limited_action` | flag | one extra action for a weapon attack, Dash, Disengage or Hide (Haste) | | sway | existing |
 | `speed_change` | feet (signed), or `double`, `half`, `zero` | walking speed changed: feet added or taken (Ray of Frost's -10), or doubled, halved or made 0 | `speed` (feet) on a boon | sway | `speed` means a creature's walking speed everywhere else (leftovers #12) |
-| `fly_speed` | feet | a fly speed while it lasts (Fly) | | sway | existing |
+| `fly_speed` | feet | a fly speed while it lasts (Fly); on a `flight` feature's one boon, how far one flight goes (the Fairy's Flutter, worn only for that move) | | sway, species | existing |
 | `death_ward` | flag | the first drop to 0 is 1 instead (Death Ward) | | sway | existing |
 | `eases_per_long_rest` | number | a penalty that shrinks each long rest (Raise Dead) | | sway | existing |
 | `decoys` | number | illusory duplicates that may take a hit (Mirror Image) | | sway | existing |
@@ -397,7 +397,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | key | type / values | meaning in plain words | replaces (old keys) | used by | why not an existing key |
 |---|---|---|---|---|---|
 | `id` | id | the feature's id | | class, species | existing |
-| `trait` | trait | what kind of feature it is. **Left out, the feature is a shared one**: an entry of only `id` and `level` names a feature written once in `content/srd/features/shared.json` (Extra Attack, Weapon Mastery, Expertise, Darkvision), read at that level. **`narrate`** means the feature isn't played in v1 fights yet: it is on the sheet and the level-up screen, for a campaign to use, and its `note` says only what the SRD feature does | | class, species | existing |
+| `trait` | trait | what kind of feature it is. **Left out, the feature is a shared one**: an entry of only `id` and `level` names a feature written once in `content/srd/features/shared.json` (Extra Attack, Weapon Mastery, Expertise, Darkvision), read at that level. **`narrate`** means the feature isn't played in v1 fights yet: it is on the sheet and the level-up screen, for a campaign to use, and its `note` says only what the SRD feature does. **`flight`** is a short flight on the move (the Fairy's Flutter, cc_task_m2): its one boon is the Flying status (`fly_speed`), worn for that move only | | class, species | existing |
 | `level` | level | the level it arrives at | | class, species | existing |
 | `note` | text | for authors | | class, species | existing |
 | `tags` | list of words | what owning it makes the creature (`evasion`, `sleepless`) | | class, species | existing |
@@ -476,6 +476,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `uses` | number | how many times it can be used | | reserved: comes with `casts` | existing |
 | `vanishes` | `long_rest` | it goes at the next long rest (Goodberry) | | item | existing |
 | `use_time` | `action`, `bonus_action` | what using it takes out of the turn | | reserved: every usable item is the default, a bonus action | existing (a feature's too, leftovers #13) |
+| `not_in_srd` | flag | Lanorim's own, not an SRD 5.2.1 item (the signet ring and common clothes in `content/srd/items/lanorim.json`) | | item | the background's and the spell's word for the same idea, reused (cc_task_m2 Part 4) |
 
 ### `item.weapon`: an item's attack (the `attack` keys) and what a weapon has besides
 
@@ -513,6 +514,8 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `lineages` | list of species ids | its lineages, picked in the creator | | species | existing |
 | `lineage_of` | species id | the species this is a lineage of | | species | existing |
 | `sizes` | list of sizes | the sizes it may be, the first the default; two is a choice in the creator (Human, Tiefling: Medium or Small) | | species | a monster's `size` is one word; a species can offer two, so a list (2026-10-05, task E 1.3) |
+| `tags` | list of words | what kind of creature it is, the word a statblock's `tags` carry: `humanoid` when unsaid (the SRD's seven), `fey` for the Fairy. Hold Person and Charm Person read it | | species | a statblock's word for the same idea, reused (cc_task_m2 Part 4); a feature's `tags` are what owning the feature makes it, not what it is |
+| `not_in_srd` | flag | Lanorim's own, not an SRD 5.2.1 species (the Fairy and the Beastfolk, in `content/srd/species/lanorim.json`) | | species | the background's and the spell's word for the same idea, reused (cc_task_m2 Part 4) |
 
 ### `background`
 
@@ -525,6 +528,8 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `gold` | number | the gold it starts with | | background | existing |
 | `gold_instead` | number | the gold taken instead of its gear (50 GP, SRD 5.2.1 p.83) | | background | as the class's (2026-10-05, task E 1.4) |
 | `not_in_srd` | flag | Lanorim's own, not an SRD 5.2.1 background (Recluse, in `content/srd/backgrounds/lanorim.json`) | | background | a spell's word for the same idea, reused (2026-09-28) |
+| `skill_picks` | number | how many more skills the player picks, in the creator's Traits step; its `skills` and these make two (Kathleen's Trader and Gentry) | | background | the class's word for the same choice, reused (cc_task_m2 Part 4) |
+| `skill_choices` | list of skills | the skills those picks come from; none listed is any skill (the Gentry's "pick any") | | background | the class's word for the same choice, reused (cc_task_m2 Part 4) |
 
 ### `consequence`: one entry in the nat-1 / nat-20 pool
 

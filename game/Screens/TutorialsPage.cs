@@ -35,7 +35,7 @@ namespace Game.Screens
                 }
             }
 
-            list.AddChild(Ui.Button(ScreenWords.Back, launch.ShowBook));
+            list.AddChild(Ui.Button(Content.Screens.CampaignBook.ContentsKey, launch.ShowBook));
 
             launch.Show(Ui.Panel(list));
         }

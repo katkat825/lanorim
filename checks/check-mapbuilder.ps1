@@ -32,7 +32,7 @@ Remove-Item $log -ErrorAction SilentlyContinue
 Write-Host ''
 
 if ($said -match 'mapprobe passed') {
-    Pass 'five templates made in My maps; ground, fill, fence, a building and a scatter of trees; undo, save, reopen, copy to a campaign (asked when taken), and played to the end and back in the builder'
+    Pass 'six templates made and named in My maps; the menu bar and the bottom bar; ground, fill, fence, a barrel placed once and selected, a building placed with Ctrl held, Esc in its order, a scatter of trees; undo, save, reopen by name, copy to a campaign (asked when taken), and played to the end and back in the builder'
 }
 
 Fail

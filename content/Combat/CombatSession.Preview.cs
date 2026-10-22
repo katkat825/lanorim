@@ -25,6 +25,8 @@ namespace Content.Combat
 
             if (Selected.Kind == OptionKind.Attack) return AttackPreview(first);
 
+            if (Selected.Feature?.Flight != null) return FlightPreview(square);
+
             return Selected.Spell == null ? new Preview { Legal = true } : SpellPreview(Selected.Spell, targets, square);
         }
 

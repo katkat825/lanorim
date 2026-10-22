@@ -13,23 +13,27 @@ using Godot;
 
 namespace Game.Dev
 {
-    // THE MAP BUILDER, DRIVEN AS AN AUTHOR WOULD (checks/check-mapbuilder.ps1; cc_task_f Part 2, cc_task_l):
+    // THE MAP BUILDER, DRIVEN AS AN AUTHOR WOULD (checks/check-mapbuilder.ps1; cc_task_f Part 2, cc_task_l, cc_task_m2):
     //
     //   godot --headless --path game res://launch.tscn -- --map-probe --auto
     //
-    // From the book's own Map builder page, through the builder's own buttons, mouse and keys:
-    //   1. a map in My maps from each template, saved, and the builder left;
-    //   2. a dungeon room: rough ground dragged, the floor filled with grass, a fence run, a barrel, a two-by-two
-    //      building, a Shift-drag scatter of pines, the start, two spawns and an undo, saved;
-    //   3. reopened from the page's My maps list and found identical; copied to a campaign (twice: the second asks, and
-    //      Rename makes it _2) and that campaign loads it;
-    //   4. played: Play this map, a level 3 fighter against a goblin a spawn, fought to the end (--auto);
+    // From the Map builder page, through the builder's own menus, bars, mouse and keys:
+    //   1. a map in My maps from each template (Blank first), named, saved from the File menu, and the builder left;
+    //   2. a dungeon room called "Probe Crypt": the menu bar opened with Alt; rough ground dragged and the floor filled
+    //      with grass (Terrain); a fence run (Walls and doors, its pop-up shut with Esc); a barrel from the Props picker,
+    //      placed once and selected; a two-by-two cottage from the Buildings picker, Ctrl held so the hand keeps it, then
+    //      Esc to put it down; a Shift-drag scatter of pines; the start and two spawns (Spawn); an undo; saved;
+    //   3. reopened by its name from the page's My maps and found identical; copied to a campaign (twice: the second
+    //      asks, and Rename makes it _2) and that campaign loads it;
+    //   4. played: Play this map from the File menu, a level 3 fighter against a goblin a spawn, fought to the end;
     //   5. and back in the builder with the map as it was.
     // A library and a campaign of its own in user://map_probe_<pid>, never the player's, gone when it's done.
     // Prints "mapprobe passed" or "mapprobe FAILED". THE STAGES ARE STATIC: each scene change makes a new probe
     public partial class MapBuilderProbe : Node
     {
         public const string MapId = "probe_crypt";
+
+        const string MapName = "Probe Crypt";
 
         public MapBuilder Builder { get; set; }
 
@@ -57,7 +61,7 @@ namespace Game.Dev
 
         static MapPlace CampaignPlace => MapPlace.OfCampaign(Campaign, null);
 
-        // the first thing: a library and a campaign of the probe's own, and the book's Map builder page
+        // the first thing: a library and a campaign of the probe's own, and the Map builder page
         public static void AtLaunch(Launch launch)
         {
             if (_root == null)
@@ -98,48 +102,24 @@ namespace Game.Dev
         Action[] AtBook() => _stage switch
         {
             Stage.Templates when _template < MapTemplates.Ids.Count => new Action[] { OpenPage, () => NewMap(MapTemplates.Ids[_template], $"probe_{MapTemplates.Ids[_template]}") },
-            Stage.Templates or Stage.Editing => new Action[] { OpenPage, () => { _stage = Stage.Editing; NewMap("dungeon_room", MapId); } },
+            Stage.Templates or Stage.Editing => new Action[] { OpenPage, NameRule, () => { _stage = Stage.Editing; NewMap("dungeon_room", MapName); } },
             Stage.Reopening => new Action[] { OpenPage, OpenFromMyMaps },
             _ => new Action[] { Finish },
         };
-
-        void OpenPage() => Launch.PageCalled("builder")?.Open(Launch);
-
-        // the page's New map: a name, the template, My maps, and the big button
-        void NewMap(string template, string id)
-        {
-            Find<LineEdit>("MapId").Text = id;
-            Choose(Find<OptionButton>("Template"), MapTemplates.Ids.ToList().IndexOf(template));
-            Choose(Find<OptionButton>("Lives"), 0);
-            Find<Button>("MakeMap")?.EmitSignal(BaseButton.SignalName.Pressed);
-        }
-
-        void OpenFromMyMaps()
-        {
-            Button mine = Nodes.Under<HBoxContainer>(Launch).FirstOrDefault(r => r.Name == "MyMap_" + MapId)?
-                               .GetChildren().OfType<Button>().FirstOrDefault(b => b.Text == MapId);
-
-            Expect(mine != null, $"My maps on the book's page lists {MapId}");
-            mine?.EmitSignal(BaseButton.SignalName.Pressed);
-        }
-
-        T Find<T>(string name) where T : Node => Nodes.Under<T>(Launch).FirstOrDefault(n => n.Name == name);
-
-        static void Choose(OptionButton list, int index)
-        {
-            if (list == null) return;
-            list.Selected = index;
-            list.EmitSignal(OptionButton.SignalName.ItemSelected, index);
-        }
 
         // --- in the builder -----------------------------------------------------------------------------------------
 
         MapDraft Draft => Builder.View.Draft;
 
+        MapEditor Editor => Builder.Editor;
+
         Action[] InBuilder() => _stage switch
         {
-            Stage.Templates => new Action[] { CheckTemplate, Save, Leave },
-            Stage.Editing => new Action[] { Paint, Fill, Fence, Barrel, Building, Scatter, Start, Spawns, Undo, Save, Remember, Leave },
+            Stage.Templates => new Action[] { CheckTemplate, SaveFromMenu, Leave },
+            Stage.Editing => new Action[]
+            {
+                CheckScreen, Menus, Paint, Fill, Fence, Barrel, Building, Scatter, Start, Spawns, Undo, Save, Remember, Leave,
+            },
             Stage.Reopening => new Action[] { CheckReopened, CopyToCampaign, CopyAgain, CheckCampaign, PlayIt, Fight },
             Stage.Fighting => new Action[] { CheckBack, Leave },
             _ => new Action[] { Finish },
@@ -150,24 +130,50 @@ namespace Game.Dev
             string template = MapTemplates.Ids[_template];
 
             Expect(Builder.View.Place.IsLibrary && Builder.View.Id == $"probe_{template}", $"{template}: a new map in My maps");
+            Expect(Draft.Name == $"probe_{template}", $"{template}: named as typed");
             Expect(Builder.Panels.Title.StartsWith(Ui.Say(MapPlace.LibraryKey)), $"{template}: the title says where it lives ({Builder.Panels.Title})");
+
+            string name = Draft.Name;
+            Draft.Name = "";
             Expect(Draft.Save() == MapTemplates.Read(template).Save(), $"{template}: the map is the template, at its own size");
+            Draft.Name = name;
 
             _template++;
         }
 
+        // the screen: two bars and no GM screen; the problems folded to a button; the name in the title
+        void CheckScreen()
+        {
+            Expect(Builder.View.Id == MapId && Draft.Name == MapName, $"the name is {MapName} and its id {MapId}");
+            Expect(Builder.Panels.Title.Contains(MapName), $"the title says its name ({Builder.Panels.Title})");
+            Expect(Builder.Table.GmScreen == null || !Builder.Table.GmScreen.Visible, "the GM screen isn't on the table");
+            Expect(Named<MenuBar>("Menus") != null && Named<Control>("Bar") != null, "a menu bar along the top and a bar along the bottom");
+            Expect(Named<Button>("ProblemsButton") != null, "the problems folded to a button");
+        }
+
+        // Alt opens the menu bar on File; the arrows and Enter are the PopupMenu's own
+        void Menus()
+        {
+            Key(Godot.Key.Alt, ctrl: false);
+            PopupMenu file = Named<MenuBar>("Menus")?.GetMenuPopup(0);
+            Expect(file?.Visible == true, "Alt opened the File menu");
+            file?.Hide();
+        }
+
         void Paint()
         {
-            Press(MapEditor.ToolKey(MapTool.Paint));
-            Press(MapBuilderView.RuleKey(Tile.Rough));
+            Key(Godot.Key.B, ctrl: false);
+            Expect(Editor.Tool == MapTool.Paint, "B took up Paint");
+            Menu("Terrain", MapBuilderView.RuleKey(Tile.Rough));
             Drag(Centre(new Cell(4, 4)), Centre(new Cell(5, 5)));
             Expect(Draft.At(new Cell(4, 4)) == Tile.Rough && Draft.At(new Cell(5, 5)) == Tile.Rough, "the drag painted the rough");
         }
 
         void Fill()
         {
-            Press(MapEditor.ToolKey(MapTool.Fill));
-            Press(MapBuilderView.GroundKey(Ground.Grass));
+            Menu("Terrain", MapEditor.ToolKey(MapTool.Fill));
+            Menu("Terrain", MapBuilderView.GroundKey(Ground.Grass));
+            Expect(Editor.Tool == MapTool.Fill, "Terrain's Fill, and grass, keeps Fill in hand");
             Click(Centre(new Cell(1, 1)));
             Expect(Draft.GroundAt(new Cell(10, 8)) == Ground.Grass && Draft.At(new Cell(10, 8)) == Tile.Floor, "the fill laid grass up to the walls");
             Expect(Draft.GroundAt(new Cell(4, 4)) == Ground.Stone, "and not over the rough, which is another ground's square");
@@ -175,34 +181,56 @@ namespace Game.Dev
 
         void Fence()
         {
-            Press(MapEditor.ToolKey(MapTool.Wall));
+            Bar("WallsAndDoors");
+            Expect(Builder.Panels.OpenName == MapBuilderUi.WallsPanel, "Walls and doors opened its pop-up");
             Press(MapBuilderView.LineKey(Edge.Wall));
             Press(MapBuilderView.StyleKey(WallStyle.Fence));
+            Expect(Editor.Tool == MapTool.Wall, "a style picked took up the wall");
             Drag(Line(new Border(new Cell(7, 2), true)), Line(new Border(new Cell(7, 4), true)));
             Expect(Enumerable.Range(2, 3).All(y => Draft.StyleAt(new Border(new Cell(7, y), true)) == WallStyle.Fence), "the drag laid a run of fence");
             Expect(Draft.Layout().At(new Border(new Cell(7, 3), true)) == Edge.Bars, "which the rules see through");
+
+            Key(Godot.Key.Escape, ctrl: false);
+            Expect(Builder.Panels.Open == null, "Esc shut the pop-up");
         }
 
+        // one placed, and selected: the next click picks, it doesn't place another
         void Barrel()
         {
-            PickProp("barrel");
+            PickProp("barrel", buildings: false);
+            Expect(Builder.Panels.Open == null, "choosing it closed the picker");
             Click(Centre(new Cell(2, 6)));
-            Expect(Draft.Props.Any(p => p.Id == "barrel" && p.Cell == new Cell(2, 6)), "the barrel stands where it was clicked");
+            Expect(Draft.Props.Count(p => p.Id == "barrel") == 1 && Draft.Props.Any(p => p.Id == "barrel" && p.Cell == new Cell(2, 6)),
+                   "the barrel stands where it was clicked");
+            Expect(!Editor.InHand && Editor.Tool == MapTool.Select && Editor.Picked?.Id == "barrel", "and is selected, the hand empty");
+            Expect(Named<Control>("Context")?.GetChildren().OfType<Button>().Any(b => b.Text == Ui.Say(MapBuilderView.CopyKey)) == true,
+                   "the selection shows Copy, Paste, Delete and Turn");
+
+            Click(Centre(new Cell(9, 2)));
+            Expect(Draft.Props.Count(p => p.Id == "barrel") == 1, "a second click placed no second barrel");
+
+            Key(Godot.Key.Escape, ctrl: false);
+            Expect(Editor.Chosen == null, "Esc let the selection go");
         }
 
+        // Ctrl held: the hand keeps it; Esc puts it down
         void Building()
         {
-            PickProp("cottage");
+            PickProp("cottage", buildings: true);
 
-            Click(Centre(new Cell(5, 6)));
+            Click(Centre(new Cell(5, 6)), ctrl: true);
             Expect(Draft.Props.Any(p => p.Id == "cottage" && p.Cell == new Cell(5, 6)), "the cottage stands where it was clicked");
             Expect(Draft.IsBlocked(new Cell(6, 7)), "over all four of its squares");
+            Expect(Editor.InHand && Editor.PropId == "cottage", "Ctrl held: the cottage still in hand");
+
+            Key(Godot.Key.Escape, ctrl: false);
+            Expect(!Editor.InHand, "Esc put it down");
         }
 
         // Shift held along a row: a pine every other square
         void Scatter()
         {
-            PickProp("pine_1");
+            PickProp("pine_1", buildings: false);
 
             Vector2 from = Centre(new Cell(4, 8)), to = Centre(new Cell(11, 8));
             Mouse(from, true, shift: true);
@@ -219,21 +247,22 @@ namespace Game.Dev
             int pines = Draft.Props.Count(p => p.Id == "pine_1");
             Expect(pines >= 3, $"the Shift-drag scattered pines along the row ({pines})");
             Expect(Draft.Props.Where(p => p.Id == "pine_1").Select(p => p.Turn).Distinct().Count() > 1, "each at a turn of its own");
+
+            Key(Godot.Key.Escape, ctrl: false);
         }
 
         void Start()
         {
-            Press(MapEditor.ToolKey(MapTool.Start));
+            Menu("Spawn", MapEditor.ToolKey(MapTool.Start));
             Click(Centre(new Cell(3, 3)));
             Expect(Draft.Start == new Cell(3, 3), $"the start moved (it is on {Draft.Start})");
         }
 
         void Spawns()
         {
-            Press(MapEditor.ToolKey(MapTool.Spawn));
-            Press(MapBuilderView.SpawnKey, 1);
+            Menu("Spawn", MapBuilderView.SpawnKey, 1);
             Click(Centre(new Cell(9, 5)));
-            Press(MapBuilderView.SpawnKey, 2);
+            Menu("Spawn", MapBuilderView.SpawnKey, 2);
             Click(Centre(new Cell(10, 6)));
             Expect(Draft.Spawns.TryGetValue(2, out Cell at) && at == new Cell(10, 6), "spawn 2 is where it was clicked");
         }
@@ -248,8 +277,14 @@ namespace Game.Dev
         void Save()
         {
             Key(Godot.Key.S, ctrl: true);
-            Expect(!Builder.Editor.Unsaved, $"Ctrl+S saved {Builder.View.Id}");
+            Expect(!Editor.Unsaved, $"Ctrl+S saved {Builder.View.Id}");
             Expect(MapFiles.Has(MapBuilderPage.Library, Builder.View.Id), $"into My maps");
+        }
+
+        void SaveFromMenu()
+        {
+            MenuItem("File", MapBuilderView.SaveKey);
+            Expect(!Editor.Unsaved, $"File, Save saved {Builder.View.Id}");
         }
 
         void Remember()
@@ -259,29 +294,31 @@ namespace Game.Dev
             _stage = Stage.Reopening;
         }
 
-        void Leave() => Press(MapBuilderView.LeaveKey);
+        void Leave() => Bar("Leave");
 
         void CheckReopened()
         {
             Expect(Builder.View.Id == MapId && Builder.View.Place.IsLibrary, "reopened from My maps");
             Expect(Draft.Save() == _saved, "the reopened map is the one saved");
+            Expect(Draft.Name == MapName, "with its name");
         }
 
         void CopyToCampaign()
         {
-            Press(MapBuilderView.CopyToKey);
-            Expect(Builder.Panels.Asking, "Copy to campaign asks where");
-            Builder.Panels.Write(copy: true, CampaignPlace, MapId, replace: false);
+            Key(Godot.Key.C, ctrl: true, shift: true);
+            Expect(Builder.Panels.Asking, "Ctrl+Shift+C, Copy to campaign, asks where");
+            Builder.Panels.Write(copy: true, CampaignPlace, MapId, replace: false, MapName);
             Expect(MapFiles.Has(CampaignPlace, MapId), "copied into the campaign");
+            Expect(Content.Maps.MapName.Of(CampaignPlace, MapId) == MapName, "under its name");
             Expect(Builder.View.Place.IsLibrary, "and the map open is still My maps'");
         }
 
         void CopyAgain()
         {
-            Builder.Panels.Write(copy: true, CampaignPlace, MapId, replace: false);
+            Builder.Panels.Write(copy: true, CampaignPlace, MapId, replace: false, MapName);
             Expect(Builder.Panels.Asking, "a second copy asks: the name is taken");
             Press(MapBuilderView.RenameKey);
-            Expect(MapFiles.Has(CampaignPlace, MapId + "_2"), "Rename copied it as the next free name");
+            Expect(MapFiles.Has(CampaignPlace, MapId + "_2"), "Rename copied it as the next free id");
         }
 
         void CheckCampaign()
@@ -295,10 +332,10 @@ namespace Game.Dev
 
         void PlayIt()
         {
-            Press(MapTrial.PlayKey);
+            MenuItem("File", MapTrial.PlayKey);
 
             TrialPanel trial = Builder.Panels.Trial;
-            Expect(trial != null, "Play this map opens its panel");
+            Expect(trial != null, "File, Play this map opens its panel");
             if (trial == null) return;
 
             Choose(Nodes.Under<OptionButton>(trial).FirstOrDefault(o => o.Name == "TrialClass"), trial.Classes.ToList().IndexOf("fighter"));
@@ -348,65 +385,5 @@ namespace Game.Dev
         }
 
         static void Expect(bool held, string what) => Said.Expect(held, what);
-
-        // --- the author's hands -------------------------------------------------------------------------------------
-
-        // the panels' button with these words, pressed
-        void Press(string key, params object[] args)
-        {
-            string words = Ui.Say(key, args);
-            Button button = Nodes.Under<Button>(Builder).FirstOrDefault(b => b.Text == words && b.IsVisibleInTree());
-
-            if (button == null)
-            {
-                Expect(false, $"a button saying '{words}'");
-                return;
-            }
-
-            button.EmitSignal(BaseButton.SignalName.Pressed);
-        }
-
-        // the Props tool, the prop's thumbnail found by its search
-        void PickProp(string id)
-        {
-            Press(MapEditor.ToolKey(MapTool.Prop));
-
-            LineEdit search = Nodes.Under<LineEdit>(Builder).FirstOrDefault(l => l.Name == "Search");
-            if (search != null)
-            {
-                search.Text = Ui.Say(Builder.Editor.Palette.Find(id).NameKey);
-                search.EmitSignal(LineEdit.SignalName.TextChanged, search.Text);
-            }
-
-            Press(Builder.Editor.Palette.Find(id).NameKey);
-            Expect(Builder.Editor.PropId == id, $"the palette chose the {id}");
-        }
-
-        Vector2 Centre(Cell cell) => OnScreen(Builder.Table.Board.Where(cell));
-
-        Vector2 Line(Border line) => OnScreen(Builder.Table.Board.Metrics.Centre(line));
-
-        Vector2 OnScreen(Vector3 local) =>
-            GetViewport().GetCamera3D().UnprojectPosition(Builder.Table.Board.ToGlobal(local));
-
-        // in the viewport's own coordinates (true): pushed as the window's, they are scaled from the window to the
-        // 1920x1080 canvas, and a headless window is small
-        void Click(Vector2 at) => Drag(at, at);
-
-        void Drag(Vector2 from, Vector2 to)
-        {
-            Mouse(from, true);
-            GetViewport().PushInput(new InputEventMouseMotion { Position = to, GlobalPosition = to, ButtonMask = MouseButtonMask.Left }, true);
-            Mouse(to, false);
-        }
-
-        void Mouse(Vector2 at, bool down, bool shift = false) =>
-            GetViewport().PushInput(new InputEventMouseButton
-            {
-                ButtonIndex = MouseButton.Left, Pressed = down, Position = at, GlobalPosition = at, ShiftPressed = shift,
-            }, true);
-
-        void Key(Key key, bool ctrl) =>
-            GetViewport().PushInput(new InputEventKey { Keycode = key, PhysicalKeycode = key, Pressed = true, CtrlPressed = ctrl });
     }
 }

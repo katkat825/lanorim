@@ -79,6 +79,60 @@
     {
       "id": "thieves_tools", "kind": "tool", "cost": 25
     },
+
+    {
+      "id": "carpenters_tools", "kind": "tool", "cost": 8,
+      "_": "SRD 5.2.1 p.93. a tool the story can ask for (has_item), as rope and thieves' tools are: there's no crafting in v1"
+    },
+    {
+      "id": "healers_kit", "kind": "tool", "cost": 5,
+      "_": "SRD 5.2.1 p.97: stabilizes an Unconscious creature at 0 HP without a Medicine check. v1's hero fights alone, so the stabilizing is the story's (has_item: a wounded stranger)"
+    },
+    {
+      "id": "shovel", "kind": "tool", "cost": 2,
+      "_": "SRD 5.2.1 p.99: digs a 5-foot hole in an hour. the story's (has_item), as rope is"
+    },
+    {
+      "id": "hooded_lantern", "kind": "tool", "cost": 5,
+      "_": "SRD 5.2.1 p.98: light, burning oil. gives light the way the torch does: the story asks (has_item), since v1's board has no light model"
+    },
+    {
+      "id": "oil", "kind": "tool", "cost": 0.1, "stackable": true,
+      "_": "SRD 5.2.1 p.99: a flask, fuel for a lantern. the story's, as the lantern and the torch are"
+    },
+    {
+      "id": "tinderbox", "kind": "tool", "cost": 0.5,
+      "_": "SRD 5.2.1 p.100: lights a torch or a fire. the story's (has_item)"
+    },
+
+    {
+      "id": "iron_pot", "kind": "quest", "cost": 2,
+      "_": "SRD 5.2.1 p.99. flavour: a quest item takes no slot and isn't sold (inventory_decisions.md)"
+    },
+    {
+      "id": "travelers_clothes", "kind": "quest", "cost": 2,
+      "_": "SRD 5.2.1 p.95. flavour, like every outfit: v1 has no clothing slot"
+    },
+    {
+      "id": "fine_clothes", "kind": "quest", "cost": 15,
+      "_": "SRD 5.2.1 p.95. flavour"
+    },
+    {
+      "id": "backpack", "kind": "quest", "cost": 2,
+      "_": "SRD 5.2.1 p.94. flavour: the pack's forty slots are the hero's whatever they carry it in"
+    },
+    {
+      "id": "bedroll", "kind": "quest", "cost": 1,
+      "_": "SRD 5.2.1 p.94. flavour: v1 has no extreme cold"
+    },
+    {
+      "id": "perfume", "kind": "quest", "cost": 5,
+      "_": "SRD 5.2.1 p.99: Advantage on Persuasion to influence an Indifferent Humanoid for an hour. flavour in v1 (no item gives a boon when used yet)"
+    },
+    {
+      "id": "pouch", "kind": "quest", "cost": 0.5,
+      "_": "SRD 5.2.1 p.99. flavour"
+    },
     {
       "id": "holy_symbol", "kind": "trinket", "cost": 5, "slot": "trinket",
       "classes": ["cleric", "paladin"]

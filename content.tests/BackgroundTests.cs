@@ -14,7 +14,8 @@ namespace Content.Tests
         [Fact]
         public void TheFourSrdBackgroundsAndRecluseAreAllThereIs()
         {
-            Assert.Equal(new[] { "acolyte", "criminal", "recluse", "sage", "soldier" },
+            Assert.Equal(new[] { "acolyte", "criminal", "explorer", "gentry", "gravedigger", "homesteader", "recluse", "sage",
+                                 "soldier", "trader" },
                          Srd.Backgrounds.Select(b => b.Id).OrderBy(i => i));
         }
 
@@ -29,7 +30,9 @@ namespace Content.Tests
             Assert.Equal(new[] { "quarterstaff" }, recluse.Gear);
             Assert.Equal(16, recluse.Gold);
 
-            Assert.All(Srd.Backgrounds.Where(b => b.Id != "recluse"), b => Assert.False(b.NotInSrd));
+            // the SRD's four are the SRD's; Recluse and Kathleen's five (cc_task_m2 Part 4) are Lanorim's
+            Assert.Equal(new[] { "acolyte", "criminal", "sage", "soldier" },
+                         Srd.Backgrounds.Where(b => !b.NotInSrd).Select(b => b.Id).OrderBy(i => i));
         }
 
         [Fact]

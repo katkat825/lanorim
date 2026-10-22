@@ -143,3 +143,9 @@
       rest, and so on): a `First Time` pool with one line per event and companion. The importer warns on the folder
       until the engine reads it; the file shape is suggested in `_design_docs/RUN_LOG_2026-10-12_i.md`.
 
+
+- deferred by cc_task_m2 (2026-10-22, `_design_docs/RUN_LOG_2026-10-22_m2.md`):
+    - **[DEFER]** **The Beastfolk's plushies stand in their bind pose.** Animal Plushies (MoraAzul) carry a humanoid skeleton but no clips, so each stands in a T. What it would take: a pose made in Blender (arms down) and exported with the model, or the KayKit `Rig_Medium` clips retargeted to the plushies' bones (their names differ: `CatHips`, `TedibearHub001`). Kathleen's (#5).
+    - **[DEFER]** **The board framed between the builder's two bars.** The table camera has no inset; with the side panels gone only a thin top bar and a centred bottom bar stand at the edges, so the map is clear at the default zoom. A camera inset (a `TableCamera` margin read from `BuilderLayout`) would keep it so at any zoom.
+    - **[DEFER]** **A species' languages.** Kathleen's species say "Common + 1"; no species' languages are modelled in v1, so they're the story's.
+    - **[DEFER]** **Perfume's and the healer's kit's own uses.** Perfume (SRD: Advantage on Persuasion for an hour) is a flavour item, since no item gives a boon when used yet; the healer's kit stabilizes only in the story (`has_item`), since v1's hero fights alone.

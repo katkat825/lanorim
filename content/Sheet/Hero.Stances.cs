@@ -92,6 +92,10 @@ namespace Content.Sheet
                     Actor.Health.GrantTemporary(Actor.ProficiencyBonus);
                     break;
 
+                // the Fairy's Flutter: the flight is the fight's (CombatSession.DoFlight), and this spends the use
+                case Trait.Flight:
+                    break;
+
                 default:
                     return false;
             }

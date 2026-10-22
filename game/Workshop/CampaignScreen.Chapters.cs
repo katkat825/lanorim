@@ -88,7 +88,7 @@ namespace Game.Workshop
         // one of a chapter's maps: its name, open it, move it, take it off the chapter (its file stays)
         HBoxContainer Map(string chapter, int at, string map, int count)
         {
-            Label name = Ui.Plain(map);
+            Label name = Ui.Plain(MapName.Of(Editor.Maps, map));
             name.SizeFlagsHorizontal = SizeFlags.ExpandFill;
 
             var row = Ui.Row(8, name,
@@ -107,7 +107,7 @@ namespace Game.Workshop
             var mine = MapFiles.Ids(library);
 
             var list = new OptionButton { Name = "MyMaps_" + chapter, ClipText = true, FitToLongestItem = false, SizeFlagsHorizontal = SizeFlags.ExpandFill };
-            foreach (string id in mine) list.AddItem(id);
+            foreach (string id in mine) list.AddItem(MapName.Of(library, id));
             if (mine.Count == 0) list.AddItem(Ui.Say(WorkshopWords.NoMyMapsKey));
             list.Disabled = mine.Count == 0;
 
@@ -132,10 +132,11 @@ namespace Game.Workshop
         }
 
         // A NEW MAP: named, from a template, written into maps/, put on the chapter, and opened in the builder
-        HBoxContainer NewMap(string chapter)
+        VBoxContainer NewMap(string chapter)
         {
             LineEdit name = Forms.Line("NewMapName_" + chapter, "", _ => { }, WorkshopWords.MapNameKey);
             name.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+            Label rule = Forms.NameRule(name);
 
             string template = MapTemplates.Standard;
             OptionButton templates = Forms.Choice("NewMapTemplate_" + chapter, MapTemplates.Ids, template, MapTemplates.NameKey, v => template = v);
@@ -143,7 +144,11 @@ namespace Game.Workshop
 
             Button make = Ui.Button(WorkshopWords.MakeMapKey, () =>
             {
-                if (string.IsNullOrWhiteSpace(name.Text)) return;
+                if (!MapName.Allowed(name.Text))
+                {
+                    rule.Visible = name.Text.Length > 0;
+                    return;
+                }
 
                 string made = Editor.MakeMap(name.Text, template, out string problem);
 
@@ -158,7 +163,7 @@ namespace Game.Workshop
             });
             make.Name = "MakeMap_" + chapter;
 
-            return Ui.Row(8, name, templates, make);
+            return Ui.Column(2, Ui.Row(8, name, templates, make), rule);
         }
 
         // the builder, on one of the campaign's maps; leaving it comes back to this page as it was (GameState.Editing)

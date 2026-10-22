@@ -42,6 +42,13 @@ namespace Content.Classes
         // Lanorim's own, not the SRD's (Recluse): the word a spell that isn't the SRD's carries
         public bool NotInSrd { get; init; }
 
+        // ITS SKILLS TO PICK (cc_task_m2 Part 4, Kathleen's Trader and Gentry): how many more the player picks, in the
+        // creator's Traits step as the Human's Skillful is, and from which - none listed is any skill. The class's two
+        // words for the same choice (skill_picks, skill_choices)
+        public int SkillPicks { get; init; }
+
+        public IReadOnlyList<Skill> SkillChoices { get; init; } = Array.Empty<Skill>();
+
         public string NameKey => KeyConventions.BackgroundName(Id);
 
         public string DescriptionKey =>
@@ -113,7 +120,10 @@ namespace Content.Classes
     public static class BackgroundReader
     {
         // every key a background takes
-        public static readonly IReadOnlyList<string> Keys = new[] { "id", "skills", "abilities", "gear", "gold", "gold_instead", "not_in_srd" };
+        public static readonly IReadOnlyList<string> Keys = new[]
+        {
+            "id", "skills", "abilities", "gear", "gold", "gold_instead", "not_in_srd", "skill_picks", "skill_choices",
+        };
 
         // the file: { "backgrounds": [ ... ] }, each entry read by ReadOne (EntryList)
         public static readonly EntryList<Background> Entries =
@@ -126,9 +136,10 @@ namespace Content.Classes
         static Background ReadOne(JsonElement entry, string id, List<string> problems)
         {
             var skills = entry.SkillList("skills", problems, id).ToList();
+            int picks = entry.Number("skill_picks");
 
-            if (skills.Count != 2)
-                problems.Add($"{id}: {skills.Count} skills - SRD gives a background two");
+            if (skills.Count + picks != 2)
+                problems.Add($"{id}: {skills.Count} skills and {picks} to pick - SRD gives a background two");
 
             var abilities = entry.AbilityList("abilities", problems, id).ToList();
 
@@ -140,6 +151,8 @@ namespace Content.Classes
             {
                 NotInSrd = entry.Flag("not_in_srd"),
                 GoldInstead = entry.Number("gold_instead"),
+                SkillPicks = picks,
+                SkillChoices = entry.SkillList("skill_choices", problems, id).ToList(),
             };
         }
     }

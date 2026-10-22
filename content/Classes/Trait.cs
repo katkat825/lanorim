@@ -56,5 +56,9 @@ namespace Content.Classes
         // lets a bonus action be spent on Dash, Disengage or Hide. the Rogue's Cunning Action -
         // what the bonus action can do, not how many there are
         Nimble,
+
+        // a short flight on the move, so many times a rest: the Fairy's Flutter. its one boon is the Flying status (a
+        // 'fly_speed'), worn only for the move it's used on (Encounter.Fly); the flight's feet are the boon's
+        Flight,
     }
 }

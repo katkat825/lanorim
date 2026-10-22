@@ -68,6 +68,7 @@ namespace Content.Workshop
                 chapter.Title = sheet.Get(Manifest.ChapterTitle(draft.Id, chapter.Id));
 
             WorkshopNotes notes = WorkshopNotes.Read(folder, problems);
+            draft.BasedOn = notes.BasedOn;
 
             draft.People = Actors(sheet).Concat(notes.People.Keys).Distinct().OrderBy(a => a, StringComparer.Ordinal)
                 .Select(actor => new Person

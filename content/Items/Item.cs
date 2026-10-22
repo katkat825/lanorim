@@ -113,6 +113,9 @@ namespace Content.Items
         // gone from the pack at the next long rest: Goodberry's berries (24 hours)
         public bool Vanishes { get; init; }
 
+        // Lanorim's own, not an SRD 5.2.1 item (the signet ring, common clothes): the word a background carries
+        public bool NotInSrd { get; init; }
+
         // what using it costs in a fight: SRD 5.2.1 drinks a potion as a bonus action, and eats
         // a goodberry the same way
         public Core.Combat.Spend UseTime { get; init; } = Core.Combat.Spend.Bonus;

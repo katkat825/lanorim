@@ -57,6 +57,9 @@ namespace Game
         // the demonstration hero's class, and a creation page's
         public static string Class => Word("--class");
 
+        // the demonstration hero's species or lineage ("fairy", "beastfolk_feline"), and a creation page's
+        public static string Species => Word("--species");
+
         public static bool BookOverlay => Has("--book-overlay");
 
         public static bool AskDelete => Has("--ask-delete");
@@ -80,6 +83,9 @@ namespace Game
 
         // `--tool <tool>`: the builder opens with that tool in hand (a picture of the palette, the walls...)
         public static string Tool => Value("--tool");
+
+        // `--picker buildings|props|walls|problems`: the builder opens with that picker or pop-up open (a picture of it)
+        public static string Picker => Value("--picker");
 
         // `--trial-panel`: the builder opens its Play this map panel (a picture of it)
         public static bool TrialPanel => Has("--trial-panel");

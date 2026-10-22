@@ -46,7 +46,10 @@ namespace Game.Dev
             var making = new Content.Creation.Creation(srd, srd.Backgrounds);
 
             making.Pick(srd.Class(DevArgs.Class ?? "rogue"));
-            making.Pick(srd.Kind("halfling"));
+            // `--species fairy` or a lineage, `--species beastfolk_feline`: its species, then it
+            Content.Species.Kind kind = srd.Kind(DevArgs.Species ?? "halfling") ?? srd.Kind("halfling");
+            making.Pick(kind.IsLineage ? srd.Kind(kind.LineageOf) : kind);
+            if (kind.IsLineage) making.PickLineage(kind);
             making.Pick(srd.Background("criminal"));
             making.SuggestTraits();
 

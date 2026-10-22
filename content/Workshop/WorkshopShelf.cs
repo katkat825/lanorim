@@ -85,11 +85,21 @@ namespace Content.Workshop
 
         // DUPLICATE: a copy beside it under the next free id (Recently deleted and the autosave left behind), named
         // `name` (the screen's "Copy of ..."). Where the copy is, or null and why not
-        public static string Duplicate(string folder, Func<string, bool> taken, string name, out string problem)
+        public static string Duplicate(string folder, Func<string, bool> taken, string name, out string problem) =>
+            Duplicate(folder, taken, name, null, null, out problem);
+
+        // MAKE AN EDITABLE COPY of one of the game's own campaigns (cc_task_m2 Part 6): Duplicate, into My campaigns
+        // (`mine`), under a free id, with based_on its own id. The game's campaign itself is never written to
+        public static string EditableCopy(string folder, string mine, Func<string, bool> taken, string name, out string problem) =>
+            Duplicate(folder, taken, name, mine, new DirectoryInfo(folder).Name, out problem);
+
+        // a copy into `into` (null: beside the original), based on `basedOn` (null: whatever the original was based on)
+        static string Duplicate(string folder, Func<string, bool> taken, string name, string into, string basedOn,
+                                out string problem)
         {
             problem = null;
             string old = new DirectoryInfo(folder).Name;
-            string root = Path.GetDirectoryName(Path.GetFullPath(folder).TrimEnd('/', '\\')) ?? "";
+            string root = into ?? Path.GetDirectoryName(Path.GetFullPath(folder).TrimEnd('/', '\\')) ?? "";
             string id = ContentId.Free(old, one => taken(one) || Directory.Exists(Path.Combine(root, one)));
             string target = Path.Combine(root, id);
 
@@ -101,6 +111,7 @@ namespace Content.Workshop
                 List<ContentProblem> read = new();
                 CampaignDraft copy = CampaignFiles.Open(target, read);
                 copy.Name = name ?? copy.Name;
+                if (basedOn != null) copy.BasedOn = basedOn;
                 problem = CampaignFiles.Save(copy, target);
 
                 return problem == null ? target : null;

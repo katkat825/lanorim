@@ -26,6 +26,18 @@ the mechanics ship regardless.
 | **Halfling** | Sm, 30 | Brave; Halfling Nimbleness; Luck; Naturally Stealthy | Ship, but **redesign *Luck*** so it doesn't erase the nat-1 consequence loop: once per rest, reroll one die showing a 1 **or** downgrade a consequence to a cosmetic one. |
 | **Orc** | Med, 30 | Adrenaline Rush; Darkvision 120; Relentless Endurance | Ship. *Relentless Endurance* maps directly to the death/stay-up mechanic: at 0 HP, spend the use to stay up at a fixed small HP. Validates a broadly reusable "death-intercept" system. |
 
+## Lanorim's own species (Kathleen, 2026-10-15; built in cc_task_m2 Part 4)
+
+Two first-party species from Kathleen's vault (`campaign_authoring/Non-Campaign Authoring/Playable Species.md`), not SRD
+and not WotC's, in `content/srd/species/lanorim.json` with `not_in_srd`, beside the seven.
+
+| Species | Size / Speed | Traits | v1 handling |
+|---|---|---|---|
+| **Fairy** | Sm, 30; **Fey**, not Humanoid | Fey Resilience; Fairy Flutter; Fey Magic | *Fey Resilience* is the Elf's Fey Ancestry boon. *Fairy Flutter* is the Flying status (Fly's and Gaseous Form's) worn for one move: up to 20 ft, no further than the move has left, difficult ground costs nothing extra, it provokes as walking does, proficiency-bonus uses a Long Rest (a `flight` feature, `Encounter.Fly`). *Fey Magic*: Druidcraft at 1, Faerie Fire at 3 once a Long Rest without a slot, as the Tiefling's spells are given. |
+| **Beastfolk** | Sm/Med, 30 | Darkvision 60; Keen Senses; Natural Agility; Instinctive Awareness | Four kinds (Feline, Canine, Rodent, Ursine) are **lineages with no features**: a look, picked in the creator's Lineage step, and the mini follows it. *Keen Senses*: Perception. *Natural Agility*: Athletics or Acrobatics, picked in the Traits step. *Instinctive Awareness*: the `advantage_on_initiative` boon the Champion already has. |
+
+Languages ("Common + 1") are the story's, as every species' are: v1 doesn't model languages.
+
 ## Deferred species
 
 | Species | Why deferred | If added later |

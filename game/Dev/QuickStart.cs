@@ -82,13 +82,23 @@ namespace Game.Dev
         {
             launch.ShowCreation(GameState.Manifests.FirstOrDefault()?.Id ?? "");
 
-            if (page == null || !Core.Words.EnumWords.TryName(page, out Step step)) return;
-
             CreationScreen creation = Nodes.Under<CreationScreen>(launch).FirstOrDefault();
             if (creation == null) return;
 
-            Defaults(creation.Making, cls ?? "mage", learn: false);
-            creation.Open(step);
+            Step step = Step.Class;
+            bool paged = page != null && Core.Words.EnumWords.TryName(page, out step);
+
+            if (paged) Defaults(creation.Making, cls ?? "mage", learn: false);
+            else if (cls != null) creation.Making.Pick(GameState.Content.Class(cls));
+
+            // `--species elf` or a lineage, `--species beastfolk_ursine` (the mini in the picture, cc_task_m2)
+            if (DevArgs.Species is { } asked && GameState.Content.Kind(asked) is { } kind)
+            {
+                creation.Making.Pick(kind.IsLineage ? GameState.Content.Kind(kind.LineageOf) : kind);
+                if (kind.IsLineage) creation.Making.PickLineage(kind);
+            }
+
+            if (paged || cls != null || DevArgs.Species != null) creation.Open(step);
         }
 
         // `--show controls`: the settings page scrolled down to its Controls, for a picture of them

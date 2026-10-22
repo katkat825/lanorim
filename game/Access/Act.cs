@@ -70,6 +70,45 @@ namespace Game.Access
         PasteSelection,
 
         DeleteSelection,
+
+        // THE MAP BUILDER'S MENUS AND BARS (cc_task_m2 Part 8): every menu item and bar button has a key. The File menu's
+        // Save as, Copy to campaign, Play this map and Main menu; the bottom bar's tools and pickers, and Leave; the View
+        // menu's two views; the problems; and the menu bar itself (F10, and a bare Alt, which the builder answers too)
+        SaveMapAs,
+
+        CopyMapTo,
+
+        PlayMap,
+
+        BuilderToMainMenu,
+
+        SelectTool,
+
+        TerrainTool,
+
+        FillTool,
+
+        StartTool,
+
+        SpawnTool,
+
+        EraseTool,
+
+        BuildingsPicker,
+
+        WallsAndDoors,
+
+        PropsPicker,
+
+        LeaveBuilder,
+
+        ViewFromAbove,
+
+        PlayersView,
+
+        BuilderProblems,
+
+        BuilderMenus,
     }
 
     public static class Acts
@@ -126,6 +165,26 @@ namespace Game.Access
             Act.PasteSelection => Key.V,
             Act.DeleteSelection => Key.Delete,
 
+            // the builder's menus and bars: a letter for each that says it where one can, and Ctrl for the File menu's
+            Act.SaveMapAs => Key.S,
+            Act.CopyMapTo => Key.C,
+            Act.PlayMap => Key.P,
+            Act.BuilderToMainMenu => Key.M,
+            Act.SelectTool => Key.A,
+            Act.TerrainTool => Key.B,
+            Act.FillTool => Key.G,
+            Act.StartTool => Key.H,
+            Act.SpawnTool => Key.M,
+            Act.EraseTool => Key.X,
+            Act.BuildingsPicker => Key.U,
+            Act.WallsAndDoors => Key.W,
+            Act.PropsPicker => Key.P,
+            Act.LeaveBuilder => Key.W,
+            Act.ViewFromAbove => Key.T,
+            Act.PlayersView => Key.T,
+            Act.BuilderProblems => Key.I,
+            Act.BuilderMenus => Key.F10,
+
             _ => Key.None,
         };
 
@@ -140,11 +199,13 @@ namespace Game.Access
         };
 
         // reaching backward is the one that shares a key, the way it does everywhere; turning a prop back the other
-        public static bool Shifted(this Act act) => act is Act.ReachBack or Act.TurnPropBack;
+        public static bool Shifted(this Act act) =>
+            act is Act.ReachBack or Act.TurnPropBack or Act.SaveMapAs or Act.CopyMapTo or Act.PlayersView;
 
         // held with Ctrl: an editor's undo, copy and save (cc_task_l Part 4.7)
         public static bool Ctrled(this Act act) =>
-            act is Act.UndoEdit or Act.RedoEdit or Act.SaveMap or Act.CopySelection or Act.PasteSelection;
+            act is Act.UndoEdit or Act.RedoEdit or Act.SaveMap or Act.CopySelection or Act.PasteSelection or
+                   Act.SaveMapAs or Act.CopyMapTo or Act.PlayMap or Act.BuilderToMainMenu or Act.LeaveBuilder;
 
         // a binding's whole default: the key, and what's held with it
         public static Bindings.Bound Default(this Act act) => new(act.Standard(), act.Shifted(), act.Ctrled());

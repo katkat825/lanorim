@@ -66,6 +66,23 @@ namespace Game.Workshop
             return null;
         }
 
-        public static void OpenCampaign(Launch launch, string folder) => CampaignScreen.Show(launch, CampaignEditor.Open(folder));
+        // THE ONE DOOR INTO A CAMPAIGN'S PAGE. The game's own campaign is never opened for editing in a release build
+        // (cc_task_m2 Part 6): it gets the hub, where its card offers Make an editable copy
+        public static void OpenCampaign(Launch launch, string folder)
+        {
+            if (!EditorBuild && IsTheGames(folder))
+            {
+                GD.PushWarning($"workshop: {folder} is one of the game's own campaigns - copy it to edit it");
+                Hub.Show(launch);
+                return;
+            }
+
+            CampaignScreen.Show(launch, CampaignEditor.Open(folder));
+        }
+
+        // whether a folder is one of the game's own campaigns (under the game's campaigns/, not My campaigns)
+        public static bool IsTheGames(string folder) =>
+            Path.GetFullPath(folder).StartsWith(Path.GetFullPath(CampaignFolders.Local()).TrimEnd('/', '\\') + Path.DirectorySeparatorChar,
+                                                System.StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -67,6 +67,9 @@ namespace Game.Screens
 
             (Rect2 left, Rect2 right) = pages;
 
+            // the right page's words as far in from the crease as the left's are from its edge (BookTable.Mirrored)
+            right = _book.Mirrored(left, right, Lean(left, _book.PageTilt));
+
             int size = Fit(left, right);
 
             if (size != FontSize)
@@ -91,7 +94,7 @@ namespace Game.Screens
         {
             // turned, a column leans out at its foot; narrowed by half that lean on its outer side so its lines
             // stay on the page
-            float lean = on.Size.Y * Mathf.Abs(Mathf.Sin(Mathf.DegToRad(tilt))) * 0.5f;
+            float lean = Lean(on, tilt);
 
             page.Position = on.Position + new Vector2(tilt >= 0f ? lean : 0f, 0f);
             page.Size = on.Size - new Vector2(lean, 0f);
@@ -99,6 +102,8 @@ namespace Game.Screens
             page.RotationDegrees = tilt;
             page.Visible = true;
         }
+
+        static float Lean(Rect2 on, float tilt) => on.Size.Y * Mathf.Abs(Mathf.Sin(Mathf.DegToRad(tilt))) * 0.5f;
 
         // a name box or a number box written on a page (the map builder's new map) is written at the page's size too
         IEnumerable<Control> Words() =>

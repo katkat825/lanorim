@@ -115,11 +115,15 @@ namespace Game.Dev
         {
             Launch.PageCalled(WorkshopPage.PageId)?.Open(Launch);
 
-            Button first = Nodes.Under<Button>(Launch).FirstOrDefault(b => b.IsVisibleInTree());
-            Expect(first?.Name == "NewCampaign", $"New campaign is the hub's first button ({first?.Name})");
+            // New campaign at the top of My campaigns (cc_task_m2 Part 6): the first button after the way back
+            Button first = Nodes.Under<Button>(Launch).Where(b => b.IsVisibleInTree()).Skip(1).FirstOrDefault();
+            Expect(first?.Name == "NewCampaign", $"New campaign is the first thing in My campaigns ({first?.Name})");
             Expect(Has<Label>(l => l.Text == Ui.Say(WorkshopWords.SubscribedEmptyKey)), "Subscribed says it fills when sharing arrives");
-            Expect(!WorkshopPage.EditorBuild || Has<PanelContainer>(p => Nodes.Under<HBoxContainer>(p).Any(r => r.Name == "Card_sample_millbrook")),
-                   "the editor build shows the game's own campaigns");
+            Expect(Has<PanelContainer>(p => Nodes.Under<HBoxContainer>(p).Any(r => r.Name == "Card_sample_millbrook")),
+                   "the game's own campaigns are on the hub");
+            Expect(Has<Button>(b => b.Name == "Copy_sample_millbrook"), "each with Make an editable copy");
+            Expect(Has<Button>(b => b.Name == "Open_sample_millbrook") == WorkshopPage.EditorBuild,
+                   "and Open the original only in the editor build");
             Expect(Has<HBoxContainer>(r => r.Name == "MyMap_" + MyMap), "My maps lists the probe's map");
         }
 
@@ -177,8 +181,14 @@ namespace Game.Dev
         {
             Expect(!Builder.View.Place.IsLibrary && Builder.View.Place.Id == CampaignId && Builder.View.Id == "first_steps",
                    $"Make opened the first map in the builder, living in the campaign ({Builder.View.Place}, {Builder.View.Id})");
-            Expect(Builder.View.Draft.Save() == MapTemplates.Make("empty_field", MapTemplates.Read("empty_field").Columns,
-                                                                 MapTemplates.Read("empty_field").Rows).Save(), "made from the template asked for");
+            // made from the template asked for, and called what its chapter is (cc_task_m2 Part 7)
+            MapDraft drawn = Builder.View.Draft;
+            string name = drawn.Name;
+            drawn.Name = "";
+            Expect(drawn.Save() == MapTemplates.Make("empty_field", MapTemplates.Read("empty_field").Columns,
+                                                     MapTemplates.Read("empty_field").Rows).Save(), "made from the template asked for");
+            drawn.Name = name;
+            Expect(name.Length > 0, $"and named after its chapter ({name})");
         }
 
         void LeaveBuilder()

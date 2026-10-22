@@ -42,9 +42,13 @@ namespace Game.Screens
             }
 
             Vector2 size = _begin.GetCombinedMinimumSize();
+            float y = cover.Position.Y + cover.Size.Y * _book.BeginAt;
+
+            // centred under the title, on its middle line (Kathleen, 2026-10-22), not on the whole cover's
+            float x = _book.TitleMiddleAt(y) ?? cover.GetCenter().X;
+
             _begin.Size = size;
-            _begin.Position = new Vector2(cover.GetCenter().X - size.X * 0.5f,
-                                          cover.Position.Y + cover.Size.Y * _book.BeginAt - size.Y * 0.5f);
+            _begin.Position = new Vector2(x - size.X * 0.5f, y - size.Y * 0.5f);
             _begin.Visible = true;
         }
     }

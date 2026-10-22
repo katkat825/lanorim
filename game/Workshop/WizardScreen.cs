@@ -141,7 +141,7 @@ namespace Game.Workshop
             var list = new OptionButton { Name = "Picked", ClipText = true, FitToLongestItem = false };
             for (int i = 0; i < mine.Count; i++)
             {
-                list.AddItem(mine[i], i);
+                list.AddItem(MapName.Of(MapBuilderPage.Library, mine[i]), i);
                 if (mine[i] == Wizard.Picked) list.Selected = i;
             }
             list.ItemSelected += i => { Wizard.Picked = mine[(int)i]; Refresh(); };

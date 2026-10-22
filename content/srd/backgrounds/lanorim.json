@@ -1,8 +1,23 @@
 {
-  "_": "Lanorim's own backgrounds - first-party, NOT SRD 5.2.1 and not WotC's; covered by the repo's LICENSE (all rights reserved). Each carries not_in_srd, the word a spell that isn't the SRD's carries. Recluse replaces the 2024 PHB's Hermit (Kathleen, REVIEW_backgrounds.md, 2026-09-25).",
+  "_": "Lanorim's own backgrounds - first-party, NOT SRD 5.2.1 and not WotC's; covered by the repo's LICENSE (all rights reserved). Each carries not_in_srd, the word a spell that isn't the SRD's carries. Recluse replaces the 2024 PHB's Hermit (Kathleen, REVIEW_backgrounds.md, 2026-09-25). Homesteader, Trader, Gravedigger, Explorer and Gentry are Kathleen's, from her vault's Backgrounds.md (cc_task_m2 Part 4): a 'choice of' or 'pick any' skill is skill_picks (from skill_choices, or any), picked in the creator's Traits step; each kit is hers, or 50 GP instead. Her flavour items are quest items (no slot, inventory_decisions.md), and the kit's gold is hers.",
 
   "backgrounds": [
     { "id": "recluse", "skills": ["medicine", "nature"], "abilities": ["con", "wis", "int"],
-      "gear": ["quarterstaff"], "gold": 16, "gold_instead": 50, "not_in_srd": true }
+      "gear": ["quarterstaff"], "gold": 16, "gold_instead": 50, "not_in_srd": true },
+    { "id": "homesteader", "skills": ["survival", "medicine"], "abilities": ["str", "con", "wis"],
+      "gear": ["carpenters_tools", "healers_kit", "iron_pot", "shovel", "travelers_clothes", "rope"],
+      "gold": 0, "gold_instead": 50, "not_in_srd": true },
+    { "id": "trader", "skills": ["persuasion"], "skill_picks": 1,
+      "skill_choices": ["deception", "performance", "animal_handling", "history", "investigation", "insight", "perception"],
+      "abilities": ["cha", "wis", "int"],
+      "gear": ["travelers_clothes", "rope", "torch", "torch"], "gold": 25, "gold_instead": 50, "not_in_srd": true },
+    { "id": "gravedigger", "skills": ["athletics", "religion"], "abilities": ["str", "con", "wis"],
+      "gear": ["shovel", "hooded_lantern", "oil", "oil", "oil", "common_clothes"], "gold": 18, "gold_instead": 50,
+      "not_in_srd": true },
+    { "id": "explorer", "skills": ["survival", "perception"], "abilities": ["dex", "wis", "int"],
+      "gear": ["quarterstaff", "backpack", "bedroll", "rope", "tinderbox"], "gold": 12, "gold_instead": 50,
+      "not_in_srd": true },
+    { "id": "gentry", "skills": ["persuasion"], "skill_picks": 1, "abilities": ["int", "wis", "cha"],
+      "gear": ["fine_clothes", "signet_ring", "perfume", "pouch"], "gold": 25, "gold_instead": 50, "not_in_srd": true }
   ]
 }

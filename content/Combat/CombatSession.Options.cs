@@ -231,7 +231,8 @@ namespace Content.Combat
         {
             foreach (Feature feature in Hero.Activatable.Where(f => f.Trait == Trait.Stance ||
                                                                     f.Trait == Trait.Recovery ||
-                                                                    f.Trait == Trait.Boost))
+                                                                    f.Trait == Trait.Boost ||
+                                                                    f.Trait == Trait.Flight))
             {
                 bool uses = Hero.UsesLeft(feature) > 0;
 
@@ -246,6 +247,8 @@ namespace Content.Combat
                     NameKey = feature.NameKey,
                     Cost = feature.UseTime,
                     Feature = feature,
+                    // a flight is aimed at the square it lands on
+                    Targeting = feature.Trait == Trait.Flight ? Targeting.Square : Targeting.None,
                     Enabled = uses && paid,
                     WhyNotKey = !uses ? Why("no_uses")
                               : !paid ? Why(feature.UseTime == Spend.Bonus ? "no_bonus" : "no_action")

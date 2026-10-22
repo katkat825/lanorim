@@ -175,12 +175,14 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--ask-delete` | launch.tscn |  | with --show book, the first character's Delete pressed, for a picture of the question |
 | `--page <step>` | launch.tscn |  | with --show create, that creation page, part filled in |
 | `--class <class>` | wherever it applies |  | with --show create, that class (mage otherwise); on the demonstration table, the hero's class (rogue otherwise) |
+| `--species <species|lineage>` | wherever it applies |  | with --show create, that species (and lineage) picked; on the demonstration table, the hero's (halfling otherwise) |
 | `--begin <campaign> [class]` | launch.tscn |  | a character with every default (fighter otherwise), straight to the table; probe saves are kept apart |
 | `--learn <spell,spell>` | launch.tscn |  | with --begin, those spells learned first |
 | `--gold` | launch.tscn |  | with --begin, the gold instead of the gear, so the run opens in the starting shop |
 | `--build <campaign|mine> [map]` | launch.tscn |  | that map, or a new one called probe_map, in the map builder; mine is My maps |
 | `--template <id>` | launch.tscn |  | with --build, a new map starts as that template (dungeon_room otherwise) |
 | `--tool <tool>` | in the map builder |  | the builder opens with that tool in hand (select, paint, fill, wall, prop...) |
+| `--picker <picker>` | in the map builder |  | the builder opens with that picker or pop-up open: buildings, props, walls, problems |
 | `--trial-panel` | in the map builder |  | the builder opens its Play this map panel |
 | `--prop-icons` | launch.tscn |  | renders every prop's palette thumbnail into game/ui/prop_icons/ and quits; not headless |
 | `--mine <folder>` | launch.tscn |  | My campaigns and My maps kept in <folder>/campaigns and <folder>/maps, not the player's |

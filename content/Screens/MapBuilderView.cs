@@ -59,19 +59,40 @@ namespace Content.Screens
             MapFiles.Has(place, id) && !(place.Same(Place) && id == Id);
 
         // SAVE AS: this map written there, and from now on it is that file. `replace` says the author was asked
-        public Said SaveAs(MapPlace place, string id, bool replace = false)
+        // (`name`: what it's called from now on, cc_task_m2 Part 7; its id is made from it by the caller, MapName)
+        public Said SaveAs(MapPlace place, string id, bool replace = false, string name = null)
         {
+            string was = Draft.Name;
+            if (name != null) Draft.Name = name;
+
             Said refused = Write(place, id, replace, keep: true);
 
-            if (refused != null) return refused;
+            if (refused != null)
+            {
+                Draft.Name = was;
+                return refused;
+            }
 
             Place = place;
             Id = id;
             return null;
         }
 
-        // COPY TO A CAMPAIGN (or anywhere): this map written there too; the one open stays the one open
-        public Said CopyTo(MapPlace place, string id, bool replace = false) => Write(place, id, replace, keep: false);
+        // COPY TO A CAMPAIGN (or anywhere): this map written there too, under `name` if one's given; the one open stays the
+        // one open, called what it was
+        public Said CopyTo(MapPlace place, string id, bool replace = false, string name = null)
+        {
+            string was = Draft.Name;
+            if (name != null) Draft.Name = name;
+
+            Said refused = Write(place, id, replace, keep: false);
+
+            Draft.Name = was;
+            return refused;
+        }
+
+        // what the map is called on the screen: its name, or its id when it has none (MapName)
+        public string Name => MapName.Shown(Draft.Name, Id);
 
         Said Write(MapPlace place, string id, bool replace, bool keep)
         {
@@ -147,6 +168,20 @@ namespace Content.Screens
         public static readonly string ScatterHintKey = K("scatter_hint");
         public static readonly string SelectHintKey = K("select_hint");
 
+        // the menus and bars (cc_task_m2 Part 8)
+        public static readonly string MenuFileKey = K("menu_file");
+        public static readonly string MenuEditKey = K("menu_edit");
+        public static readonly string MenuViewKey = K("menu_view");
+        public static readonly string PlayersViewKey = K("players_view");
+        public static readonly string TerrainKey = K("terrain");
+        public static readonly string SpawnMenuKey = K("spawn_menu");
+        public static readonly string BuildingsKey = K("buildings");
+        public static readonly string ProblemsCountKey = K("problems_count");
+        public static readonly string PageKey = K("page");
+        public static readonly string PageBackKey = K("page_back");
+        public static readonly string PageOnKey = K("page_on");
+        public static readonly string SearchBuildingsKey = K("search_buildings");
+
         public static IEnumerable<string> Keys() =>
             new[]
             {
@@ -154,7 +189,8 @@ namespace Content.Screens
                 LivesKey, NoCampaignsKey, NoMapsKey, SaveKey, SaveAsKey, CopyToKey, TakenKey, RenameKey, ReplaceKey,
                 CancelKey, CopiedKey, SavedCleanKey, SavedWithProblemsKey, CouldNotSaveKey, UndoKey, RedoKey, RotateKey,
                 TopDownKey, ProblemsKey, NoProblemsKey, SpawnKey, LeaveKey, UnsavedKey, LeaveAnywayKey, StayKey,
-                AllPropsKey, SearchKey, LooksKey, RulesKey, StylesKey, CopyKey, PasteKey, DeleteKey, ScatterHintKey, SelectHintKey,
+                AllPropsKey, SearchKey, LooksKey, RulesKey, StylesKey, CopyKey, PasteKey, DeleteKey, ScatterHintKey, SelectHintKey, MenuFileKey, MenuEditKey, MenuViewKey, PlayersViewKey, TerrainKey, SpawnMenuKey,
+                BuildingsKey, ProblemsCountKey, PageKey, PageBackKey, PageOnKey, SearchBuildingsKey,
                 MapPlace.LibraryKey,
             }
             .Concat(Looks.Select(GroundKey))

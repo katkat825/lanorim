@@ -1,7 +1,9 @@
 [gd_resource type="Theme" load_steps=30 format=3]
 
-[ext_resource type="FontFile" path="res://fonts/AlegreyaSC-Regular.ttf" id="1_ui"]
-[ext_resource type="FontFile" path="res://fonts/AlegreyaSC-Bold.ttf" id="2_ui_bold"]
+; THE UI FONT AND ITS BOLD (cc_task_m2 Part 3): 1_ui and 2_ui_bold, EB Garamond Regular and SemiBold since 2026-10-22
+; (Alegreya SC before; its file and OFL text stay in fonts/). Another font is these two paths, and BookTable.TitleFontPath
+[ext_resource type="FontFile" path="res://fonts/EBGaramond-Regular.ttf" id="1_ui"]
+[ext_resource type="FontFile" path="res://fonts/EBGaramond-SemiBold.ttf" id="2_ui_bold"]
 [ext_resource type="FontFile" path="res://fonts/EBGaramond-Regular.ttf" id="3_card"]
 [ext_resource type="FontFile" path="res://fonts/EBGaramond-SemiBold.ttf" id="4_card_bold"]
 [ext_resource type="FontFile" path="res://fonts/CormorantUpright-Regular.ttf" id="5_story"]
@@ -180,7 +182,9 @@ CheckBox/icons/checked = ExtResource("13_check_on")
 CheckBox/icons/unchecked = ExtResource("14_check_off")
 CheckBox/styles/focus = SubResource("Focus")
 Label/colors/font_color = Color(0.2, 0.13, 0.08, 1)
+LineEdit/colors/caret_color = Color(0.16, 0.09, 0.04, 1)
 LineEdit/colors/font_color = Color(0.2, 0.13, 0.08, 1)
+LineEdit/constants/caret_width = 2
 LineEdit/styles/focus = SubResource("Focus")
 LineEdit/styles/normal = SubResource("PanelBorder")
 OptionButton/colors/font_color = Color(0.22, 0.13, 0.07, 1)
@@ -196,6 +200,11 @@ Panel/styles/panel = SubResource("Panel")
 PanelContainer/styles/panel = SubResource("Panel")
 ProgressBar/styles/background = SubResource("BarBack")
 ProgressBar/styles/fill = SubResource("Bar")
+TextEdit/colors/caret_color = Color(0.16, 0.09, 0.04, 1)
+TextEdit/colors/font_color = Color(0.2, 0.13, 0.08, 1)
+TextEdit/constants/caret_width = 2
+TextEdit/styles/focus = SubResource("Focus")
+TextEdit/styles/normal = SubResource("PanelBorder")
 RichTextLabel/colors/default_color = Color(0.2, 0.13, 0.08, 1)
 RichTextLabel/fonts/normal_font = ExtResource("5_story")
 VScrollBar/styles/grabber = SubResource("Scroll")

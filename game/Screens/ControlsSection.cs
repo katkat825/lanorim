@@ -37,10 +37,17 @@ namespace Game.Screens
         public static readonly string MouseTrayKey = K("mouse_tray");
         public static readonly string BeginKey = K("begin");
 
+        // the map builder's own (cc_task_m2 Part 8): Escape's order, and the mouse with a prop in hand
+        public static readonly string BuilderEscapeKey = K("builder_escape");
+        public static readonly string MouseBuilderPlaceKey = K("mouse_builder_place");
+        public static readonly string MouseBuilderMoreKey = K("mouse_builder_more");
+        public static readonly string MouseBuilderScatterKey = K("mouse_builder_scatter");
+
         public static IEnumerable<string> Keys() => new[]
         {
             TitleKey, KeyboardKey, MouseKey, ChangeKey, TakenKey, ReservedKey, HotkeysKey, GoOnKey,
             CancelKey, MousePickKey, MouseCancelKey, MouseWheelKey, MousePinchKey, MouseHoverKey, MouseTrayKey, BeginKey,
+            BuilderEscapeKey, MouseBuilderPlaceKey, MouseBuilderMoreKey, MouseBuilderScatterKey,
         };
 
         // every act is answered since 2026-10-03: Tab, Shift+Tab, F1, F2 and F3 by Game.Access.AccessDesk
@@ -83,12 +90,14 @@ namespace Game.Screens
             AddChild(Line(Ui.Say(GoOnKey, Keyboard.Named(Act.ThrowDice.Id()))));
             AddChild(Line(Ui.Say(CancelKey, Keyboard.Named("ui_cancel"))));
             AddChild(Line(Ui.Say(BeginKey, string.Join(" / ", Keyboard.Keys("ui_accept").Distinct()))));
+            AddChild(Line(Ui.Say(BuilderEscapeKey)));
 
             if (_said != "") AddChild(Ui.Plain(_said));
 
             AddChild(Ui.Label(MouseKey));
 
-            foreach (string key in new[] { MousePickKey, MouseCancelKey, MouseWheelKey, MousePinchKey, MouseHoverKey, MouseTrayKey })
+            foreach (string key in new[] { MousePickKey, MouseCancelKey, MouseWheelKey, MousePinchKey, MouseHoverKey, MouseTrayKey,
+                                           MouseBuilderPlaceKey, MouseBuilderMoreKey, MouseBuilderScatterKey })
                 AddChild(Line(Ui.Say(key)));
         }
 

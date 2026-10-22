@@ -12,6 +12,14 @@ namespace Game.Workshop
     {
         void About(VBoxContainer page)
         {
+            // a copy of one of the game's own campaigns says so (cc_task_m2 Part 6): "Based on Millbrook (Lanorim)"
+            if (Draft.BasedOn.Length > 0)
+            {
+                Label based = Ui.Label(WorkshopWords.BasedOnKey, Hub.Named(CampaignFiles.NameKey(Draft.BasedOn), Draft.BasedOn));
+                based.Name = "BasedOn";
+                page.AddChild(based);
+            }
+
             page.AddChild(Ui.Column(4, Ui.Label(WorkshopWords.CoverKey),
                 Pictures.CoverOf(Draft.Preview.Length > 0 ? Path.Combine(Editor.Folder, Draft.Preview) : null, Draft.GmScreen,
                                  new Vector2(Ui.Px(240), Ui.Px(135))),

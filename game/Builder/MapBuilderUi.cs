@@ -8,28 +8,25 @@ using Godot;
 
 namespace Game.Builder
 {
-    // THE MAP BUILDER'S PANELS (cc_task_f Part 2; cc_task_l), built plain from the Ui helpers and the theme, every number in
-    // BuilderLayout: down the left the file's buttons, the tools and what the tool in hand lays (MapBuilderUi.Options.cs);
-    // down the right the problems, live, each a button that shows where; and the questions (MapBuilderUi.Files.cs) and
-    // the Play this map panel (TrialPanel) over the middle. How it looks is Kathleen's (#5): lay it out as you like
+    // THE MAP BUILDER'S SCREEN (cc_task_f Part 2; cc_task_l; cc_task_m2 Part 8, reorganised so nothing covers the map).
+    // A thin MENU BAR along the top - File, Edit, View - with where the map lives and its name, and the problems folded
+    // to a button with their count; a BAR along the bottom like the combat HUD's - Select, Terrain, Spawn, Buildings,
+    // Walls and doors, Props, Leave (MapBuilderUi.Bars.cs); and above the bar, only while it's wanted, a picker of
+    // buildings or props, the walls-and-doors pop-up or the problems (MapBuilderUi.Pickers.cs), and the questions over
+    // the middle (MapBuilderUi.Files.cs, TrialPanel). Every menu item and bar button is also a key (MapBuilder.Do).
+    // Built plain from the Ui helpers and the theme, every number in BuilderLayout: how it looks is Kathleen's (#5)
     public partial class MapBuilderUi : Control
     {
         public MapBuilder Builder { get; set; }
 
         MapEditor Editor => Builder.Editor;
 
-        // the tools as many to a row as fit, so what the tool in hand lays has the height (cc_task_l: eight tools now);
-        // a flow keeps to the panel's width, where a grid of two pushed the panel out over the board
-        HFlowContainer _tools;
-        VBoxContainer _options;
-        VBoxContainer _problems;
         Label _title;
         Label _notice;
         Control _asking;
 
-        // what each button checks to show itself pressed: the panel's own, and the options page's, which go with it
+        // what each button checks to show itself pressed or greyed
         readonly List<Action> _updates = new();
-        readonly List<Action> _optionUpdates = new();
 
         double _noticeLeft;
 
@@ -38,17 +35,10 @@ namespace Game.Builder
             SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
             MouseFilter = MouseFilterEnum.Ignore;
 
+            AddChild(TopBar());
+            AddChild(BottomBar());
+
             BuilderLayout layout = BuilderLayout.Current;
-
-            AddChild(Side(left: true, layout.ToolsWidth, Ui.Column(layout.Gap,
-                _title = Ui.Title(MapBuilderView.TitleKey),
-                Files(),
-                _tools = Ui.Flow(layout.Gap / 2),
-                Ui.Scroll(_options = Ui.Column(layout.Gap / 2)))));
-
-            AddChild(Side(left: false, layout.ProblemsWidth, Ui.Column(layout.Gap,
-                Ui.Title(MapBuilderView.ProblemsKey),
-                Ui.Scroll(_problems = Ui.Column(layout.Gap / 2)))));
 
             _notice = new Label
             {
@@ -61,108 +51,29 @@ namespace Game.Builder
                 AnchorBottom = 1,
                 OffsetLeft = -360,
                 OffsetRight = 360,
-                OffsetTop = -layout.EdgeMargin - 80,
-                OffsetBottom = -layout.EdgeMargin,
+                OffsetTop = -layout.BottomBarHeight - layout.EdgeMargin - 80,
+                OffsetBottom = -layout.BottomBarHeight - layout.EdgeMargin,
                 Visible = false,
             };
             AddChild(_notice);
 
-            Tools();
             Refresh();
-        }
-
-        // a panel the height of the screen on one side
-        Control Side(bool left, int width, Control content)
-        {
-            int margin = BuilderLayout.Current.EdgeMargin;
-            PanelContainer panel = Ui.Panel(content);
-
-            panel.AnchorLeft = left ? 0 : 1;
-            panel.AnchorRight = left ? 0 : 1;
-            panel.AnchorBottom = 1;
-            panel.OffsetLeft = left ? margin : -width - margin;
-            panel.OffsetRight = left ? margin + width : -margin;
-            panel.OffsetTop = margin;
-            panel.OffsetBottom = -margin;
-
-            return panel;
-        }
-
-        Control Files()
-        {
-            HFlowContainer row = Ui.Flow(BuilderLayout.Current.Gap);
-
-            row.AddChild(Ui.Button(MapBuilderView.SaveKey, Builder.Save));
-            row.AddChild(Ui.Button(MapBuilderView.SaveAsKey, () => AskWhere(copy: false)));
-            row.AddChild(Ui.Button(MapBuilderView.CopyToKey, () => AskWhere(copy: true)));
-            row.AddChild(Ui.Button(MapBuilderView.UndoKey, Builder.Undo));
-            row.AddChild(Ui.Button(MapBuilderView.RedoKey, Builder.Redo));
-            row.AddChild(Toggle(Ui.Say(MapBuilderView.TopDownKey), () => Builder.ToggleTopDown(), () => Builder.TopDown));
-            row.AddChild(Ui.Button(MapTrial.PlayKey, ShowTrial));
-            row.AddChild(Ui.Button(MapBuilderView.LeaveKey, () => Builder.Leave()));
-
-            return row;
-        }
-
-        // the tools, one pressed
-        void Tools()
-        {
-            foreach (MapTool tool in MapEditor.Tools)
-            {
-                MapTool one = tool;
-                _tools.AddChild(Toggle(Ui.Say(MapEditor.ToolKey(one)), () =>
-                {
-                    Editor.Tool = one;
-                    if (one != MapTool.Select) Editor.Deselect();
-                    Builder.Chose();
-                }, () => Editor.Tool == one));
-            }
-        }
-
-        // a button that stays pressed while `chosen` is true
-        Button Toggle(string words, Action pick, Func<bool> chosen)
-        {
-            Button button = Ui.Button(words, pick, true);
-            button.ToggleMode = true;
-            _updates.Add(() => button.SetPressedNoSignal(chosen()));
-            return button;
-        }
-
-        // --- the problems, live -------------------------------------------------------------------------------------
-
-        void Problems()
-        {
-            Ui.Clear(_problems);
-
-            IReadOnlyList<MapProblem> problems = Builder.View.Problems;
-
-            if (problems.Count == 0) _problems.AddChild(Ui.Label(MapBuilderView.NoProblemsKey));
-
-            foreach (MapProblem problem in problems)
-            {
-                MapProblem one = problem;
-                Button button = Ui.Button(Game.Access.AccessDesk.Words(one.Said), () => Builder.Show(one), true);
-                button.Alignment = HorizontalAlignment.Left;
-                button.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-                button.Disabled = one.At == null;
-                _problems.AddChild(button);
-            }
         }
 
         // --- the whole screen, again --------------------------------------------------------------------------------
 
-        // "My maps / mill_yard •": where it lives, its name, and a dot while there are changes not saved
+        // "My maps / Mill Yard •": where it lives, its name, and a dot while there are changes not saved
         public string Title =>
-            $"{Ui.Say(Builder.View.Place.NameKey ?? Builder.View.Place.Id ?? "")} / {Builder.View.Id}{(Editor.Unsaved ? " •" : "")}";
+            $"{Ui.Say(Builder.View.Place.NameKey ?? Builder.View.Place.Id ?? "")} / {Builder.View.Name}{(Editor.Unsaved ? " •" : "")}";
 
         public void Refresh()
         {
-            Options();
-            Problems();
-
             _title.Text = Title;
 
-            foreach (Action update in _updates.Concat(_optionUpdates)) update();
+            Problems();
+            Context();
+
+            foreach (Action update in _updates.Concat(_openUpdates)) update();
         }
 
         public void Notice(string words)
@@ -186,6 +97,7 @@ namespace Game.Builder
         void Ask(Control question, string name)
         {
             Dismiss();
+            Close();
 
             _asking = question;
             _asking.Name = name;
@@ -201,13 +113,13 @@ namespace Game.Builder
             Callable.From(() => { if (IsInstanceValid(asking)) Ui.FocusFirst(asking); }).CallDeferred();
         }
 
-        // "this map has changes that aren't saved": leave anyway, or stay
-        public void AskToLeave() =>
+        // "this map has changes that aren't saved": leave anyway, or stay. `toMainMenu` says where leaving goes
+        public void AskToLeave(bool toMainMenu = false) =>
             Ask(Ui.Panel(Ui.Column(BuilderLayout.Current.Gap,
                 Ui.Label(MapBuilderView.UnsavedKey),
                 Ui.Row(BuilderLayout.Current.Gap,
                     Ui.Button(MapBuilderView.SaveKey, () => { Builder.Save(); Dismiss(); }),
-                    Ui.Button(MapBuilderView.LeaveAnywayKey, () => Builder.Leave(anyway: true)),
+                    Ui.Button(MapBuilderView.LeaveAnywayKey, () => Builder.Leave(anyway: true, toMainMenu)),
                     Ui.Button(MapBuilderView.StayKey, Dismiss)))), "Unsaved");
 
         // PLAY THIS MAP: the hero, the spawns and the budget, over the middle (TrialPanel)
@@ -227,5 +139,20 @@ namespace Game.Builder
         public bool Asking => _asking != null && IsInstanceValid(_asking);
 
         public TrialPanel Trial => _asking as TrialPanel;
+
+        // ESCAPE'S SECOND STEP (MapEditor.Escape): a question, a picker or a pop-up is open
+        public bool AnythingOpen => Asking || Open != null;
+
+        // and closes it
+        public void CloseWhatsOpen()
+        {
+            if (Asking)
+            {
+                Dismiss();
+                return;
+            }
+
+            Close();
+        }
     }
 }

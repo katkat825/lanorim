@@ -12,6 +12,10 @@ namespace Game.Builder
     // that one, or cancel. Nothing writes over a map without asking
     public partial class MapBuilderUi
     {
+        public void AskSaveAs() => AskWhere(copy: false);
+
+        public void AskCopyTo() => AskWhere(copy: true);
+
         void AskWhere(bool copy)
         {
             int gap = BuilderLayout.Current.Gap;
@@ -26,30 +30,43 @@ namespace Game.Builder
                 return;
             }
 
-            var name = new LineEdit { Name = "WhereId", Text = Builder.View.Id, CustomMinimumSize = new Vector2(Ui.Px(220), 0) };
+            var name = new LineEdit { Name = "WhereId", Text = Builder.View.Name, CustomMinimumSize = new Vector2(Ui.Px(220), 0) };
+            Label rule = Game.Workshop.Forms.NameRule(name);
             var where = new OptionButton { Name = "WherePlace" };
             foreach (MapPlace place in places) where.AddItem(Ui.Say(place.NameKey ?? place.Id));
 
             Ask(Ui.Panel(Ui.Column(gap,
                 Ui.Title(copy ? MapBuilderView.CopyToKey : MapBuilderView.SaveAsKey),
                 Ui.Row(gap, Ui.Label(MapBuilderView.IdKey), name),
+                rule,
                 Ui.Row(gap, Ui.Label(MapBuilderView.LivesKey), where),
                 Ui.Row(gap,
-                    Ui.Button(copy ? MapBuilderView.CopyToKey : MapBuilderView.SaveAsKey,
-                        () => Write(copy, places[System.Math.Max(0, where.Selected)], name.Text.Trim(), replace: false)),
+                    Ui.Button(copy ? MapBuilderView.CopyToKey : MapBuilderView.SaveAsKey, () =>
+                    {
+                        string typed = name.Text.Trim();
+
+                        if (!MapName.Allowed(typed))
+                        {
+                            rule.Visible = true;
+                            return;
+                        }
+
+                        Write(copy, places[System.Math.Max(0, where.Selected)], MapName.IdOf(typed), replace: false, typed);
+                    }),
                     Ui.Button(MapBuilderView.CancelKey, Dismiss)))), copy ? "CopyTo" : "SaveAs");
         }
 
         // written there, or the question when the name is taken
-        public void Write(bool copy, MapPlace place, string id, bool replace)
+        // `name`: what it's called there (null keeps what it's called); `id` the file it's written as, made from the name
+        public void Write(bool copy, MapPlace place, string id, bool replace, string name = null)
         {
             if (!replace && Builder.View.Taken(place, id))
             {
-                AskTaken(copy, place, id);
+                AskTaken(copy, place, id, name);
                 return;
             }
 
-            Said refused = copy ? Builder.View.CopyTo(place, id, replace) : Builder.View.SaveAs(place, id, replace);
+            Said refused = copy ? Builder.View.CopyTo(place, id, replace, name) : Builder.View.SaveAs(place, id, replace, name);
 
             Dismiss();
 
@@ -61,15 +78,15 @@ namespace Game.Builder
         }
 
         // "there's already a map called mill_yard there": rename, replace or cancel
-        void AskTaken(bool copy, MapPlace place, string id)
+        void AskTaken(bool copy, MapPlace place, string id, string name)
         {
             int gap = BuilderLayout.Current.Gap;
 
             Ask(Ui.Panel(Ui.Column(gap,
                 Ui.Label(MapBuilderView.TakenKey, id),
                 Ui.Row(gap,
-                    Ui.Button(MapBuilderView.RenameKey, () => Write(copy, place, MapFiles.FreeId(place, id), replace: false)),
-                    Ui.Button(MapBuilderView.ReplaceKey, () => Write(copy, place, id, replace: true)),
+                    Ui.Button(MapBuilderView.RenameKey, () => Write(copy, place, MapFiles.FreeId(place, id), replace: false, name)),
+                    Ui.Button(MapBuilderView.ReplaceKey, () => Write(copy, place, id, replace: true, name)),
                     Ui.Button(MapBuilderView.CancelKey, Dismiss)))), "Taken");
         }
     }

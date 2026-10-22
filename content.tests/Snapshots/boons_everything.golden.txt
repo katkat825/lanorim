@@ -11,6 +11,8 @@
 == feature paladin/aura_of_courage immune frightened=yes
 == feature paladin/paladin_fighting_style ac=15
 == feature druid/natures_ward defense poison=Resistant immune poisoned=yes
+== feature fairy/fey_resilience save against charmed=advantage
+== feature beastfolk/instinctive_awareness initiative advantage=True
 == feature elf/fey_ancestry save against charmed=advantage
 == feature dragonborn_acid/draconic_resistance defense acid=Resistant
 == feature dragonborn_cold/draconic_resistance defense cold=Resistant

@@ -189,6 +189,7 @@ Windows `%APPDATA%\Godot\app_userdata\Lanorim\maps`), and the builder's **Copy t
 
 | Key | What it is |
 |---|---|
+| `name` | the map's name as its author typed it ("Mill Yard - North"): letters, numbers, spaces, dashes and underscores. The file's name is its id, made from the name (lowercase, a space or a dash an underscore) and free where it lives. Left out, the map is called by its id (cc_task_m2, 2026-10-22) |
 | `map` | the squares and the lines between them, one glyph each: `.` floor, `~` difficult, `#` rock, `_` deep water or a chasm (seen across, never crossed), `@` the start, `1`-`9` spawns; `\|` `-` a wall, `x` a door |
 | `ground` | one letter a square, a row of letters a row of squares: `s` stone, `p` wood planks, `g` grass, `d` dirt, `c` cobblestone, `a` sand, `n` snow, `w` shallow water. Left out when the whole map is stone |
 | `walls` | the `map`'s own shape, a letter on each wall or door that isn't the dungeon's stone: `t` timber, `p` plaster and beam, `f` fieldstone, `e` wooden fence, `h` hedge. Left out when every wall is stone |

@@ -84,6 +84,17 @@ namespace Content.Maps
                             p.Id.Contains(words.Trim().Replace(' ', '_'), StringComparison.OrdinalIgnoreCase) ||
                             (named?.Invoke(p) ?? "").Contains(words.Trim(), StringComparison.OrdinalIgnoreCase));
 
+        // BUILDINGS APART FROM PROPS (cc_task_m2 Part 8): the builder's bottom bar has a picker for each. The buildings are
+        // L's multi-square buildings, the one category of that name; the props are every other category
+        public const string BuildingsCategory = "buildings";
+
+        public IReadOnlyList<string> CategoriesOn(bool buildings) =>
+            Categories.Where(c => (c == BuildingsCategory) == buildings).ToList();
+
+        // the picker's matches: on one shelf, in one of its categories (null: the whole shelf)
+        public IEnumerable<PropEntry> Matching(string words, Func<PropEntry, string> named, string category, bool buildings) =>
+            Matching(words, named, category).Where(p => (p.Category == BuildingsCategory) == buildings);
+
         public static string CategoryKey(string category) =>
             KeyConventions.Key(KeyConventions.UiNs, "map", "category_" + category);
 

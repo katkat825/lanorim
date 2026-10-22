@@ -6,11 +6,15 @@
 ; inspector. Colours, fonts and panel padding are ui/lanorim_theme.tres's.
 [resource]
 script = ExtResource("1_builder")
-ToolsWidth = 380
-ProblemsWidth = 420
+TopBarHeight = 48
+BottomBarHeight = 120
+PickerWidth = 960
+PickerRows = 2
+PopupHeight = 360
 EdgeMargin = 16
 Gap = 8
-PaletteHeight = 360
+ThumbColumns = 8
+ThumbFontSize = 18
 NoticeSeconds = 4.0
 HoverColour = Color(0.95, 0.85, 0.4, 0.6)
 LineColour = Color(0.95, 0.85, 0.4, 0.9)

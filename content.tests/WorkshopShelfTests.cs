@@ -140,6 +140,41 @@ namespace Content.Tests
             Assert.Equal("Salt Road", CampaignFiles.Sheet(salt, "salt_road").Get("campaign.salt_road.name"));
         }
 
+        // cc_task_m2 Part 6: one of the game's own campaigns, copied into My campaigns to be edited - a new id, based on
+        // the original, and the original left exactly as it was
+        [Fact]
+        public void AnEditableCopyOfAGameCampaignIsMineAndBasedOnIt()
+        {
+            string original = Path.Combine(Game, "sample_millbrook");
+            WorkshopTests.Copy(SampleCampaignTests.Folder, original);
+            string before = string.Join("\n", Directory.EnumerateFiles(original, "*", SearchOption.AllDirectories)
+                                                       .OrderBy(f => f).Select(File.ReadAllText));
+
+            string copy = WorkshopShelf.EditableCopy(original, Mine, id => id == "sample_millbrook",
+                                                     "Copy of Millbrook", out string problem);
+
+            Assert.Null(problem);
+            Assert.Equal(Path.Combine(Mine, "sample_millbrook_2"), copy);
+
+            Package pack = Package.Read(copy);
+            Assert.True(pack.Sound, string.Join("\n", pack.Problems));
+            Assert.Equal("sample_millbrook_2", pack.Id);
+
+            CampaignEditor editor = CampaignEditor.Open(copy);
+            Assert.Equal("sample_millbrook", editor.Draft.BasedOn);
+            Assert.Equal("Copy of Millbrook", editor.Draft.Name);
+            Assert.Contains("\"based_on\": \"sample_millbrook\"", File.ReadAllText(Path.Combine(copy, WorkshopNotes.FileName)));
+
+            // saved again, it's still based on it
+            editor.Edit("about", d => d.Description = "mine now");
+            Assert.Null(editor.Save());
+            Assert.Equal("sample_millbrook", CampaignEditor.Open(copy).Draft.BasedOn);
+
+            string after = string.Join("\n", Directory.EnumerateFiles(original, "*", SearchOption.AllDirectories)
+                                                      .OrderBy(f => f).Select(File.ReadAllText));
+            Assert.Equal(before, after);
+        }
+
         [Fact]
         public void ARenameRespellsOnlyTheKeysSpelledWithTheCampaign()
         {

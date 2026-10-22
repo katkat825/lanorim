@@ -8,13 +8,13 @@ using Godot;
 
 namespace Game.Screens
 {
-    // THE BOOK'S "MAP BUILDER" (cc_task_f Part 2; cc_task_l Part 1), WRITTEN ON THE OPEN BOOK the way the contents and a
-    // campaign's pages are (Launch.Spread, BookPages): a new map on the left page (a name, a size, a starting template,
-    // and where it lives: "My maps", the default, or a campaign), and on the right My maps and a campaign's maps, each
-    // a line of the contents that opens it, then Contents to go back. When the pages are too small to read, the same
-    // on a panel over the book, as the menu does. The table comes up as the builder (GameState.Building). A map is saved
-    // where it lives (MapFiles): a campaign's loads in that campaign with no conversion.
-    // `--build` and `--map-probe` are the dev registry's (Dev/DevHooks.cs)
+    // THE MAP BUILDER'S PAGE (cc_task_f Part 2; cc_task_l Part 1; cc_task_m2 Part 7), reached from the Workshop's My
+    // maps: a new map (its name, a size, a starting template - Blank first - and where it lives: "My maps", the default,
+    // or a campaign), then My maps and a campaign's maps, each a line that opens it, then the Workshop to go back. In a
+    // straight box like the Workshop's hub and the new-campaign wizard, not written on the book's pages. A map's name is
+    // what its author types; its id, the file's name, is made from it and shows only under Advanced (MapName). The table
+    // comes up as the builder (GameState.Building). A map is saved where it lives (MapFiles): a campaign's loads in that
+    // campaign with no conversion. `--build` and `--map-probe` are the dev registry's (Dev/DevHooks.cs)
     public sealed class MapBuilderPage : IBookPage
     {
         // the campaign whose maps are listed, kept while the book is open
@@ -49,32 +49,14 @@ namespace Game.Screens
             var campaigns = Campaigns;
             _shown = campaign ?? _shown ?? campaigns.FirstOrDefault().Campaign?.Id;
 
-            if (!launch.CanSpread)
-            {
-                OnPanel(launch, campaigns);
-                return;
-            }
-
-            launch.Spread((left, right) =>
-            {
-                left.AddChild(Ui.Title(MapBuilderView.TitleKey));
-                NewMap(launch, left, campaigns);
-
-                Lists(launch, right, campaigns);
-                right.AddChild(Ui.Button(Content.Workshop.WorkshopWords.TitleKey, () => Back(launch)));
-            }, () => OnPanel(launch, campaigns));
-        }
-
-        // the pages too small to read: the same, on a panel over the book
-        void OnPanel(Launch launch, IReadOnlyList<(Game.Campaigns.Loaded Campaign, MapPlace Place)> campaigns)
-        {
             var page = Ui.Column(10, Ui.Title(MapBuilderView.TitleKey));
+            page.Name = "MapBuilderPage";
 
             NewMap(launch, page, campaigns);
             Lists(launch, page, campaigns);
             page.AddChild(Ui.Button(Content.Workshop.WorkshopWords.TitleKey, () => Back(launch)));
 
-            launch.Show(Ui.Panel(Ui.Scroll(page, 560)));
+            launch.Show(Ui.Panel(Ui.Scroll(page, 560)), 1040);
         }
 
         // My maps, then a campaign's maps: the campaign chosen, and its maps
@@ -106,31 +88,31 @@ namespace Game.Screens
             if (shown.Place != null) Maps(launch, page, shown.Place);
         }
 
-        // a place's maps, each a line of the contents that opens it
+        // a place's maps, each a line that opens it, by its name (its id when it has none)
         static void Maps(Launch launch, VBoxContainer page, MapPlace place)
         {
             var ids = MapFiles.Ids(place);
 
-            if (ids.Count == 0) page.AddChild(Ui.Label(MapBuilderView.NoMapsKey));
+            if (ids.Count == 0)
+                page.AddChild(Ui.Label(place.IsLibrary ? Content.Workshop.WorkshopWords.NoMyMapsKey : MapBuilderView.NoMapsKey));
 
             foreach (string id in ids)
             {
                 string one = id;
-                page.AddChild(Launch.Leader(Ui.Button(one, () => OpenMap(launch, place, one), true),
+                page.AddChild(Launch.Leader(Ui.Button(MapName.Of(place, one), () => OpenMap(launch, place, one), true),
                                             (place.IsLibrary ? "MyMap_" : "CampaignMap_") + one));
             }
         }
 
-        // A NEW ONE: its name (the file's), its size, what it starts as, where it lives, and the button
+        // A NEW ONE: its name, its size, what it starts as, where it lives, and the button. The name's rule is said in red
+        // directly under its box while it's broken; Advanced shows the id it will have there
         static void NewMap(Launch launch, VBoxContainer page, IReadOnlyList<(Game.Campaigns.Loaded Campaign, MapPlace Place)> campaigns)
         {
             page.AddChild(Ui.Label(MapBuilderView.NewKey));
 
-            var id = new LineEdit { Name = "MapId", PlaceholderText = "map_id", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+            var name = new LineEdit { Name = "MapName", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+            Label rule = Game.Workshop.Forms.NameRule(name);
             SpinBox columns = Side("Columns", 12), rows = Side("Rows", 10);
-            Label why = Ui.Label(MapBuilderView.IdRuleKey);
-            why.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-            why.Visible = false;
 
             var template = new OptionButton { Name = "Template", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, ClipText = true, FitToLongestItem = false };
             foreach (string one in MapTemplates.Ids) template.AddItem(Ui.Say(MapTemplates.NameKey(one)));
@@ -150,30 +132,43 @@ namespace Game.Screens
             foreach (var (campaign, _) in campaigns) lives.AddItem(Ui.Say(campaign.Manifest.NameKey));
             lives.Selected = 0;
 
-            page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.IdKey), id));
+            MapPlace Place() => lives.Selected <= 0 ? Library : campaigns[lives.Selected - 1].Place;
+
+            // ADVANCED: the id the name makes, free where the map will live
+            Label id = Ui.Plain("");
+            id.Name = "MapId";
+            id.Visible = false;
+            void ShowId() => id.Text = MapName.Allowed(name.Text) ? MapName.IdIn(Place(), name.Text) : "";
+            CheckBox advanced = Game.Workshop.Forms.Tick("Advanced", Content.Workshop.WorkshopWords.AdvancedKey, false, on => id.Visible = on);
+            name.TextChanged += _ => ShowId();
+            lives.ItemSelected += _ => ShowId();
+
+            page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.IdKey), name));
+            page.AddChild(rule);
             page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.ColumnsKey), columns, Ui.Label(MapBuilderView.RowsKey), rows));
             page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.TemplateKey), template));
             page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.LivesKey), lives));
-            page.AddChild(why);
+            page.AddChild(Ui.Row(8, advanced, id));
 
             Button make = Ui.Button(MapBuilderView.MakeKey, () =>
             {
-                string name = id.Text.Trim();
-                MapPlace place = lives.Selected <= 0 ? Library : campaigns[lives.Selected - 1].Place;
+                string typed = name.Text.Trim();
 
-                // a name that's taken opens that map rather than writing over it
-                if (MapFiles.Has(place, name))
+                if (!MapName.Allowed(typed))
                 {
-                    OpenMap(launch, place, name);
+                    rule.Visible = true;
+                    name.GrabFocus();
                     return;
                 }
 
-                why.Visible = !Content.Campaigns.ContentId.IsLocal(name);
-                if (why.Visible) return;
-
-                Build(launch, new MapBuilderView(
+                // a name whose id is taken there gets the next free id: two maps may share a name, never a file
+                MapPlace place = Place();
+                var view = new MapBuilderView(
                     MapBuilderView.Fresh((int)columns.Value, (int)rows.Value, MapTemplates.Ids[Math.Max(0, template.Selected)]),
-                    place, name));
+                    place, MapName.IdIn(place, typed));
+                view.Draft.Name = typed;
+
+                Build(launch, view);
             });
             make.Name = "MakeMap";
             page.AddChild(make);

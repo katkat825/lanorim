@@ -71,7 +71,7 @@ namespace Game.Play
             Board.FigureFor = actor => battle.StatblockOf(actor) is { } monster
                 ? Game.Board.MiniModels.For(monster.Mini)
                 : GameState.Run?.Hero is { } hero && ReferenceEquals(hero.Actor, actor)
-                    ? Game.Board.HeroMinis.For(hero.Class.Id, hero.Figure)
+                    ? Game.Board.HeroMinis.For(hero)
                     : null;
 
             _hud.ClearLog();

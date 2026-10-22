@@ -74,6 +74,10 @@ namespace Content.Workshop
 
         public List<Person> People { get; set; } = new();
 
+        // THE GAME'S CAMPAIGN THIS ONE IS A COPY OF (cc_task_m2 Part 6, Make an editable copy): its id, "" for one of the
+        // author's own. Kept in workshop.json, which the game never reads; the About tab says "Based on ... (Lanorim)"
+        public string BasedOn { get; set; } = "";
+
         // --- what the Workshop keeps as it found it -----------------------------------------------------------------
 
         public PackKind Kind { get; set; } = PackKind.Campaign;

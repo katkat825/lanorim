@@ -37,7 +37,7 @@ namespace Game.Dev
         public void Figure(Content.Sheet.Hero hero)
         {
             _board.FigureFor = actor => ReferenceEquals(actor, hero.Actor)
-                ? HeroMinis.For(hero.Class.Id, hero.Figure)
+                ? HeroMinis.For(hero)
                 : _minis.TryGetValue(actor, out string mini) ? MiniModels.For(mini) : null;
         }
 

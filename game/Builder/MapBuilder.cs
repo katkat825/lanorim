@@ -50,6 +50,10 @@ namespace Game.Builder
 
             _tablePitch = Table.Camera?.Pitch ?? 45f;
 
+            // the GM screen isn't on the table while a map is built (cc_task_m2 Part 8): it's the play's, and it stood
+            // where an author is looking
+            if (Table.GmScreen != null) Table.GmScreen.Visible = false;
+
             var laying = System.Diagnostics.Stopwatch.StartNew();
             Lay();
             GD.Print($"builder {View.Id} in {View.Place}: {View.Draft}, laid in {laying.ElapsedMilliseconds} ms");
@@ -148,7 +152,8 @@ namespace Game.Builder
                 return;
             }
 
-            bool changed = Editor.Apply(from, Aim(click.Position)) > 0;
+            // a prop in hand places one and is selected; with Ctrl held, more of the same (cc_task_m2 Part 8)
+            bool changed = Editor.Apply(from, Aim(click.Position), more: click.CtrlPressed || click.MetaPressed) > 0;
 
             if (changed) Changed();
             else if (Editor.Tool == MapTool.Select) Chose();
@@ -172,22 +177,12 @@ namespace Game.Builder
             _marks.Lines(lines);
         }
 
-        // THE BUILDER'S ACTS (game/Access, rebindable on the controls page): Ctrl+Z, Ctrl+Y, Ctrl+S, R and Shift+R to turn,
-        // Ctrl+C, Ctrl+V and Delete for the Select tool; Escape lets go of what's chosen. Ctrl+Shift+Z still redoes, the
-        // other way every editor spells it
+        // THE BUILDER'S ACTS (game/Access, rebindable on the controls page): every menu item and bar button, the prop's
+        // turn and the selection's copy, paste and clear (Do). Escape is its own (Escape), a bare Alt opens the menu bar
+        // as F10 does, and Ctrl+Shift+Z still redoes, the other way every editor spells it
         bool Keyed(InputEventKey key)
         {
-            switch (Keyboard.Pressed(key))
-            {
-                case Act.UndoEdit: Undo(); return true;
-                case Act.RedoEdit: Redo(); return true;
-                case Act.SaveMap: Save(); return true;
-                case Act.TurnProp: Rotate(1); return true;
-                case Act.TurnPropBack: Rotate(-1); return true;
-                case Act.CopySelection: Copy(); return true;
-                case Act.PasteSelection: Paste(); return true;
-                case Act.DeleteSelection: Delete(); return true;
-            }
+            if (Keyboard.Pressed(key) is Act act && Do(act)) return true;
 
             if ((key.CtrlPressed || key.MetaPressed) && key.ShiftPressed && key.Keycode == Key.Z)
             {
@@ -195,14 +190,80 @@ namespace Game.Builder
                 return true;
             }
 
-            if (key.Keycode == Key.Escape && Editor.Chosen != null)
+            if (key.Keycode == Key.Escape) return Escape();
+
+            if (key.Keycode == Key.Alt && !key.CtrlPressed && !key.ShiftPressed)
             {
-                Editor.Deselect();
-                Chose();
+                _ui.OpenMenus();
                 return true;
             }
 
             return false;
+        }
+
+        // EVERY MENU ITEM, BAR BUTTON AND KEY, ONE PLACE (cc_task_m2 Part 8): true when it was the builder's
+        public bool Do(Act act)
+        {
+            switch (act)
+            {
+                case Act.UndoEdit: Undo(); return true;
+                case Act.RedoEdit: Redo(); return true;
+                case Act.SaveMap: Save(); return true;
+                case Act.SaveMapAs: _ui.AskSaveAs(); return true;
+                case Act.CopyMapTo: _ui.AskCopyTo(); return true;
+                case Act.PlayMap: ShowTrial(); return true;
+                case Act.BuilderToMainMenu: Leave(toMainMenu: true); return true;
+                case Act.LeaveBuilder: Leave(); return true;
+                case Act.TurnProp: Rotate(1); return true;
+                case Act.TurnPropBack: Rotate(-1); return true;
+                case Act.CopySelection: Copy(); return true;
+                case Act.PasteSelection: Paste(); return true;
+                case Act.DeleteSelection: Delete(); return true;
+                case Act.SelectTool: Take(MapTool.Select); return true;
+                case Act.TerrainTool: Take(MapTool.Paint); return true;
+                case Act.FillTool: Take(MapTool.Fill); return true;
+                case Act.StartTool: Take(MapTool.Start); return true;
+                case Act.SpawnTool: Take(MapTool.Spawn); return true;
+                case Act.EraseTool: Take(MapTool.Erase); return true;
+                case Act.BuildingsPicker: _ui.Toggle(MapBuilderUi.BuildingsPicker); return true;
+                case Act.PropsPicker: _ui.Toggle(MapBuilderUi.PropsPicker); return true;
+                case Act.WallsAndDoors: _ui.Toggle(MapBuilderUi.WallsPanel); return true;
+                case Act.BuilderProblems: _ui.Toggle(MapBuilderUi.ProblemsPanel); return true;
+                case Act.ViewFromAbove: Look(fromAbove: true); return true;
+                case Act.PlayersView: Look(fromAbove: false); return true;
+                case Act.BuilderMenus: _ui.OpenMenus(); return true;
+                default: return false;
+            }
+        }
+
+        // a tool taken up: whatever was in hand put down, the selection let go, any picker closed
+        public void Take(MapTool tool)
+        {
+            Editor.Escape(open: false);
+            Editor.Tool = tool;
+            if (tool != MapTool.Select) Editor.Deselect();
+            _ui.Close();
+            Chose();
+        }
+
+        // ESCAPE, one step a press (MapEditor.Escape): what's in hand put down, then the open picker, pop-up or question
+        // closed, then the selection let go. False when there was nothing to do
+        public bool Escape()
+        {
+            switch (Editor.Escape(_ui.AnythingOpen))
+            {
+                case MapEscape.Dropped:
+                case MapEscape.Cleared:
+                    Chose();
+                    return true;
+
+                case MapEscape.Close:
+                    _ui.CloseWhatsOpen();
+                    return true;
+
+                default:
+                    return false;
+            }
         }
 
         // --- the verbs the panels and the keys share ------------------------------------------------------------------
@@ -252,15 +313,19 @@ namespace Game.Builder
             _ui.Refresh();
         }
 
-        // straight down for drawing, and back to the table's own angle
+        // straight down for drawing (View from above), and back to the table's own angle (Player's view)
         public bool TopDown { get; private set; }
 
-        public void ToggleTopDown()
+        public void Look(bool fromAbove)
         {
-            TopDown = !TopDown;
+            TopDown = fromAbove;
 
             if (Table.Camera != null) Table.Camera.Pitch = TopDown ? BuilderLayout.Current.TopDownPitch : _tablePitch;
+
+            _ui.Refresh();
         }
+
+        public void ToggleTopDown() => Look(!TopDown);
 
         // a problem with a place: the camera goes to it and the square pulses
         public void Show(MapProblem problem)
@@ -271,13 +336,20 @@ namespace Game.Builder
             Table.Camera.Following = Table.Board.ToGlobal(Table.Board.Where(at));
         }
 
-        // back to the book; the panels ask first when there are changes not saved
-        public void Leave(bool anyway = false)
+        // LEAVE, back to the Workshop that opened it, or (File, Main menu) to the book's main menu; asked first when there
+        // are changes not saved
+        public void Leave(bool anyway = false, bool toMainMenu = false)
         {
             if (Editor.Unsaved && !anyway)
             {
-                _ui.AskToLeave();
+                _ui.AskToLeave(toMainMenu);
                 return;
+            }
+
+            if (toMainMenu)
+            {
+                GameState.BackTo = Launch.MainMenu;
+                GameState.Editing = null;
             }
 
             GameState.StopBuilding();

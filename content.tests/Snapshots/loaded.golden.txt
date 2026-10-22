@@ -1,9 +1,9 @@
 spells 125
 classes 7
 class features 123
-species 15
-species features 36
-items 63
+species 21
+species features 43
+items 78
 items with boons 2
 monsters 23
 monster actions 1

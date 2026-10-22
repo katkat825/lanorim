@@ -36,6 +36,9 @@ namespace Content.Screens
         [Word("cc_by_4")] CcBy4,
         [Word("cc_by_3")] CcBy3,
 
+        // Creative Commons Attribution with no version given (MoraAzul's Animal Plushies, cc_task_m2)
+        [Word("cc_by")] CcBy,
+
         // the Quaternius Asset License
         Qal,
 

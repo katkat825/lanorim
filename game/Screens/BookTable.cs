@@ -58,12 +58,12 @@ namespace Game.Screens
 
         [Export] public float OpenSeconds { get; set; } = 0.45f;
 
-        // THE TITLE ON THE COVER: how much of the cover's width it spans, how far down the cover its middle
-        // is (0 the top edge, 1 the bottom: turned a quarter, the KayKit book's two straps cross the cover, and
-        // the title sits in the band between them), its colour, and its outline
-        [Export(PropertyHint.Range, "0.2,1,0.01")] public float TitleWidth { get; set; } = 0.62f;
+        // THE TITLE ON THE COVER (cc_task_m2 Part 2: centred on the red, not on the whole book): how much of the red's
+        // width it spans, how far down the red band between the straps its middle is (0 the top strap, 1 the bottom;
+        // 0.5 the middle), its colour, and its outline
+        [Export(PropertyHint.Range, "0.2,1,0.01")] public float TitleWidth { get; set; } = 0.74f;
 
-        [Export(PropertyHint.Range, "0,1,0.01")] public float TitleAt { get; set; } = 0.55f;
+        [Export(PropertyHint.Range, "0,1,0.01")] public float TitleAt { get; set; } = 0.5f;
 
         [Export] public Color TitleColour { get; set; } = new Color(0.95f, 0.82f, 0.48f);
 
@@ -71,10 +71,11 @@ namespace Game.Screens
 
         [Export] public int TitleOutlineSize { get; set; } = 10;
 
-        // none takes the theme's title font (AlegreyaSC-Bold)
+        // none takes the title font: EB Garamond SemiBold since cc_task_m2 Part 3 (it was Alegreya SC Bold; the theme's
+        // UI fonts are 1_ui and 2_ui_bold in ui/lanorim_theme.tres, and this one constant is the cover's)
         [Export] public Font TitleFont { get; set; }
 
-        const string TitleFontPath = "res://fonts/AlegreyaSC-Bold.ttf";
+        const string TitleFontPath = "res://fonts/EBGaramond-SemiBold.ttf";
 
         // where the Begin button's middle is down the cover as it stands on the screen (BookCover): under the
         // lower strap
@@ -163,6 +164,7 @@ namespace Game.Screens
             if (_closed == null) return null;
 
             Aabb cover = Here(_closed);
+            Rect2 red = RedOnTheTable();
             string words = Ui.Say(ScreenWords.GameTitle);
             TitleFont ??= GD.Load<Font>(TitleFontPath);
 
@@ -176,13 +178,12 @@ namespace Game.Screens
                 OutlineModulate = TitleOutline,
                 OutlineSize = TitleOutlineSize,
                 RotationDegrees = new Vector3(-90f, 0f, 0f),
-                Position = new Vector3(cover.GetCenter().X, cover.End.Y + 0.002f,
-                                       cover.Position.Z + cover.Size.Z * TitleAt),
+                Position = new Vector3(red.GetCenter().X, RedHeight() + 0.002f, red.Position.Y + red.Size.Y * TitleAt),
                 DoubleSided = false,
             };
 
             float wide = TitleFont?.GetStringSize(words, HorizontalAlignment.Left, -1, title.FontSize).X ?? 0f;
-            if (wide > 0f) title.PixelSize = cover.Size.X * TitleWidth / wide;
+            if (wide > 0f) title.PixelSize = red.Size.X * TitleWidth / wide;
 
             AddChild(title);
             return title;
@@ -192,6 +193,20 @@ namespace Game.Screens
 
         public void Close() => Set(false);
 
+        // OFF THE TABLE WHILE A CHARACTER IS MADE (cc_task_m2 Part 1.2): the creation screen stands on the bare
+        // table, and the book comes back when it's left. The table, the lamp and the camera stay
+        public bool Hidden
+        {
+            get => _hidden;
+            set
+            {
+                _hidden = value;
+                ShowModels();
+            }
+        }
+
+        bool _hidden;
+
         void Set(bool open)
         {
             if (open == _isOpen) return;
@@ -200,9 +215,14 @@ namespace Game.Screens
             _opening = 0f;
             _framed = false;
 
-            if (_closed != null) _closed.Visible = !open;
-            if (_open != null) _open.Visible = open;
-            if (_title != null) _title.Visible = !open;
+            ShowModels();
+        }
+
+        void ShowModels()
+        {
+            if (_closed != null) _closed.Visible = !_isOpen && !_hidden;
+            if (_open != null) _open.Visible = _isOpen && !_hidden;
+            if (_title != null) _title.Visible = !_isOpen && !_hidden;
         }
 
         public override void _Process(double delta)
@@ -307,6 +327,21 @@ namespace Game.Screens
 
             Aabb cover = Here(_closed);
             return Outer(Top(cover, 0f, 0f));
+        }
+
+        // where the title's middle line, carried down the cover, crosses the screen at y (canvas pixels): what the Begin
+        // button stands centred on (BookCover), so the two line up whatever the camera's slant. Null with no title
+        public float? TitleMiddleAt(float y)
+        {
+            if (_title == null || _closed == null || _camera == null || _isOpen) return null;
+
+            Aabb cover = Here(_closed);
+            float x = _title.Position.X, height = _title.Position.Y;
+
+            Vector2 far = _camera.UnprojectPosition(ToGlobal(new Vector3(x, height, cover.Position.Z)));
+            Vector2 near = _camera.UnprojectPosition(ToGlobal(new Vector3(x, height, cover.End.Z)));
+
+            return EdgeAt(far, near, y);
         }
 
         // the open pages' words' room on the screen: the left half and the right half of the open book's top,

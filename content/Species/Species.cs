@@ -54,6 +54,15 @@ namespace Content.Species
 
         public bool ChoosesSize => Sizes.Count > 1;
 
+        // WHAT KIND OF CREATURE IT IS, the word a statblock's 'tags' carry: SRD 5.2.1's species are all Humanoid (what
+        // Hold Person and Charm Person read), Lanorim's Fairy is Fey (cc_task_m2 Part 4). Humanoid when unsaid
+        public IReadOnlyList<string> Tags { get; init; } = Humanoid;
+
+        internal static readonly IReadOnlyList<string> Humanoid = new[] { "humanoid" };
+
+        // Lanorim's own, not the SRD's (the Fairy, the Beastfolk): the word a background and a spell carry
+        public bool NotInSrd { get; init; }
+
         public string NameKey => KeyConventions.SpeciesName(Id);
 
         public string DescriptionKey => KeyConventions.SpeciesDescription(Id);
@@ -94,7 +103,7 @@ namespace Content.Species
         // every key a species takes (its features' are FeatureReader.Keys)
         public static readonly IReadOnlyList<string> Keys = new[]
         {
-            "id", "speed", "bumps", "features", "lineages", "lineage_of", "sizes",
+            "id", "speed", "bumps", "features", "lineages", "lineage_of", "sizes", "tags", "not_in_srd",
         };
 
         // the file: { "species": [ ... ] }, each entry read by ReadOne (EntryList)
@@ -125,8 +134,14 @@ namespace Content.Species
                 if (feature != null) features.Add(feature);
             }
 
+            IReadOnlyList<string> tags = entry.Strings("tags");
+
             return new Kind(id, entry.WalkingSpeed(id, problems), bumps, features,
-                            entry.Strings("lineages"), entry.Text("lineage_of"), entry.SizeList("sizes", problems, id));
+                            entry.Strings("lineages"), entry.Text("lineage_of"), entry.SizeList("sizes", problems, id))
+            {
+                Tags = tags.Count > 0 ? tags : Kind.Humanoid,
+                NotInSrd = entry.Flag("not_in_srd"),
+            };
         }
     }
 }

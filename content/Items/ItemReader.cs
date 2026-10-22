@@ -18,7 +18,7 @@ namespace Content.Items
         public static readonly IReadOnlyList<string> Keys = new[]
         {
             "id", "kind", "cost", "stackable", "sell_percent", "slot", "weapon", "armor", "classes",
-            "minimum_level", "boons", "heals", "casts", "uses", "vanishes", "use_time",
+            "minimum_level", "boons", "heals", "casts", "uses", "vanishes", "use_time", "not_in_srd",
         };
 
         // the file: { "items": [ ... ] }, each entry read by ReadOne (EntryList)
@@ -71,6 +71,7 @@ namespace Content.Items
                                 entry.Number("uses"))
             {
                 Vanishes = entry.Text("vanishes") == "long_rest",
+                NotInSrd = entry.Flag("not_in_srd"),
                 UseTime = EnumWords.TryParse(entry.Text("use_time", "bonus_action"), out Core.Combat.Spend use) &&
                           use == Core.Combat.Spend.Action
                     ? Core.Combat.Spend.Action

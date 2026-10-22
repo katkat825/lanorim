@@ -87,6 +87,7 @@ namespace Content.Workshop
         public string Missing(WizardPage page) => page switch
         {
             WizardPage.About when string.IsNullOrWhiteSpace(Draft.Name) => NeedsNameKey,
+            WizardPage.About when !Maps.MapName.Allowed(Draft.Name) => Maps.MapName.RuleKey,
             WizardPage.FirstChapter when string.IsNullOrWhiteSpace(ChapterTitle) => NeedsChapterKey,
             WizardPage.FirstChapter when FirstMap == FirstMap.Pick && string.IsNullOrEmpty(Picked) => NeedsMapKey,
             _ => null,
@@ -179,7 +180,12 @@ namespace Content.Workshop
             }
 
             MapDraft drawn = MapTemplates.Read(Template) ?? MapTemplates.Read(MapTemplates.Standard);
-            return MapFiles.Write(campaign, MapId, MapTemplates.Make(Template, drawn.Columns, drawn.Rows));
+            MapDraft made = MapTemplates.Make(Template, drawn.Columns, drawn.Rows);
+
+            // a made map is called what its chapter is, when the title keeps the name rule (cc_task_m2 Part 7, MapName)
+            made.Name = MapName.Allowed(ChapterTitle) ? ChapterTitle.Trim() : "";
+
+            return MapFiles.Write(campaign, MapId, made);
         }
 
         // the story's one node: the first chapter's, one GM line, then the end

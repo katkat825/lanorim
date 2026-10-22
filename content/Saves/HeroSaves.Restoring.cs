@@ -207,7 +207,11 @@ namespace Content.Saves
                 spells.Add(spell);
             }
 
-            if (spells.Count > 0 && !hero.Class.Casts)
+            // a species' own spells (a Tiefling's Fire Bolt, a Fairy's Druidcraft) are saved with the rest and come back
+            // with the species whatever the class; only the others say a class that doesn't cast (cc_task_m2 Part 4)
+            var species = new HashSet<string>(hero.Features.SelectMany(f => f.SpellsAt(hero.Level)), StringComparer.Ordinal);
+
+            if (spells.Any(s => !species.Contains(s.Id)) && !hero.Class.Casts)
                 found.Add(ContentProblem.Caution(file, "hero.known",
                     $"a {hero.Class.Id} does not cast, so the spells in this save are left off"));
 

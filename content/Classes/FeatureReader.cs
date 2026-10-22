@@ -323,6 +323,12 @@ namespace Content.Classes
                         problems.Add($"{where}: a stance that touches no roll");
                     break;
 
+                case Trait.Flight:
+                    if (feature.Boons.Count != 1 || feature.Boons[0].FlySpeed <= 0)
+                        problems.Add($"{where}: a flight puts on one boon, the Flying status - 'boons' holds exactly " +
+                                     "one, with a 'fly_speed' in feet");
+                    break;
+
                 case Trait.DeathIntercept:
                     if (feature.StaysUpAt == null)
                         problems.Add($"{where}: a death intercept says what it 'stays_up_at'");

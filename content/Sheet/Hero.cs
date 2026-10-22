@@ -36,9 +36,9 @@ namespace Content.Sheet
 
             Actor = new Actor(Id(name), level, scores ?? new AbilityScores(), Allegiance.Hero);
 
-            // SRD 5.2.1: every playable species is a Humanoid - what Hold Person and Charm Person
-            // read
-            Actor.Tag("humanoid");
+            // what kind of creature it is - SRD 5.2.1's species are all Humanoid, what Hold Person and Charm Person
+            // read; Lanorim's Fairy is Fey (Kind.Tags)
+            foreach (string tag in Species.Tags) Actor.Tag(tag);
 
             // and what kind: "elf" is what a Ghoul's claw reads
             Actor.Tag(Species.Id);

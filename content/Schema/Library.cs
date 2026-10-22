@@ -240,10 +240,10 @@ namespace Content.Schema
             "barbarian", "fighter", "rogue", "mage", "cleric", "paladin", "druid",
         };
 
-        // v1_species_roster.md
+        // v1_species_roster.md: the SRD's seven, then Lanorim's own two (cc_task_m2 Part 4)
         public static readonly IReadOnlyList<string> Species = new[]
         {
-            "human", "elf", "dragonborn", "tiefling", "dwarf", "halfling", "orc",
+            "human", "elf", "dragonborn", "tiefling", "dwarf", "halfling", "orc", "fairy", "beastfolk",
         };
     }
 }

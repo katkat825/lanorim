@@ -113,6 +113,8 @@ namespace Content.Combat
         // where a square-aimed option may be put
         public IReadOnlyList<Cell> LegalSquares()
         {
+            if (Selected?.Feature?.Flight != null) return FlightSquares().Keys.ToList();
+
             if (Selected?.Spell == null || !MyTurn || !(Fight.Field.Where(Hero.Actor) is Cell here))
                 return Array.Empty<Cell>();
 

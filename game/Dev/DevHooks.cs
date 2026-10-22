@@ -43,12 +43,14 @@ namespace Game.Dev
             new("--ask-delete", "", Where.Launch, false, "with --show book, the first character's Delete pressed, for a picture of the question"),
             new("--page", "<step>", Where.Launch, false, "with --show create, that creation page, part filled in"),
             new("--class", "<class>", Where.Any, false, "with --show create, that class (mage otherwise); on the demonstration table, the hero's class (rogue otherwise)"),
+            new("--species", "<species|lineage>", Where.Any, false, "with --show create, that species (and lineage) picked; on the demonstration table, the hero's (halfling otherwise)"),
             new("--begin", "<campaign> [class]", Where.Launch, false, "a character with every default (fighter otherwise), straight to the table; probe saves are kept apart"),
             new("--learn", "<spell,spell>", Where.Launch, false, "with --begin, those spells learned first"),
             new("--gold", "", Where.Launch, false, "with --begin, the gold instead of the gear, so the run opens in the starting shop"),
             new("--build", "<campaign|mine> [map]", Where.Launch, false, "that map, or a new one called probe_map, in the map builder; mine is My maps"),
             new("--template", "<id>", Where.Launch, false, "with --build, a new map starts as that template (dungeon_room otherwise)"),
             new("--tool", "<tool>", Where.Builder, false, "the builder opens with that tool in hand (select, paint, fill, wall, prop...)"),
+            new("--picker", "<picker>", Where.Builder, false, "the builder opens with that picker or pop-up open: buildings, props, walls, problems"),
             new("--trial-panel", "", Where.Builder, false, "the builder opens its Play this map panel"),
             new("--prop-icons", "", Where.Launch, false, "renders every prop's palette thumbnail into game/ui/prop_icons/ and quits; not headless"),
             new("--mine", "<folder>", Where.Launch, false, "My campaigns and My maps kept in <folder>/campaigns and <folder>/maps, not the player's"),
@@ -239,6 +241,18 @@ namespace Game.Dev
             }
 
             if (DevArgs.TrialPanel) builder.CallDeferred(MapBuilder.MethodName.ShowTrial);
+
+            // `--picker`: the bar's button for it, pressed (cc_task_m2 Part 8)
+            Access.Act? picker = DevArgs.Picker switch
+            {
+                "buildings" => Access.Act.BuildingsPicker,
+                "props" => Access.Act.PropsPicker,
+                "walls" => Access.Act.WallsAndDoors,
+                "problems" => Access.Act.BuilderProblems,
+                _ => null,
+            };
+
+            if (picker is Access.Act act) Callable.From(() => builder.Do(act)).CallDeferred();
         }
 
         public static void AtAccessDesk(AccessDesk desk)

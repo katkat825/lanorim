@@ -38,6 +38,7 @@ namespace Content.Screens
                 .Concat(Maps.MapTrial.Keys())
                 .Concat(CreditsView.Keys())
                 .Concat(Workshop.WorkshopWords.Keys())
+                .Concat(Creation.Creation.TitleKeys())
                 .Concat(Maps.PropCatalogue.Srd().Keys())
                 .Distinct();
     }

@@ -10,10 +10,11 @@ using Godot;
 
 namespace Game.Workshop
 {
-    // THE WORKSHOP'S HUB (cc_task_m Part 1): New campaign first, then the shelves - My campaigns (each a card: its cover,
-    // name, chapters and when it was last changed, Open, Duplicate and Delete, and what's wrong with it), Recently
-    // deleted when anything is, My maps (L's library; each opens the builder), Subscribed (empty until task R), and in the
-    // editor build the game's own campaigns. On a panel over the open book; the look is Kathleen's (#5)
+    // THE WORKSHOP'S HUB (cc_task_m Part 1, cc_task_m2 Part 6): the shelves - My campaigns, New campaign at the top of it
+    // (each a card: its cover, name, chapters and when it was last changed, Open, Duplicate and Delete, and what's wrong
+    // with it), Recently deleted when anything is, My maps (L's library; each opens the builder), Subscribed (empty until
+    // task R), and the game's own campaigns: Make an editable copy in every build, Open the original only in the editor
+    // build. On a panel over the open book; the look is Kathleen's (#5)
     public static class Hub
     {
         // `problem`: what went wrong with the last thing asked of it, said under the buttons (the disk's own words)
@@ -32,14 +33,11 @@ namespace Game.Workshop
             shelves.AddChild(Ui.Title(WorkshopWords.SubscribedKey));
             shelves.AddChild(Forms.Hint(WorkshopWords.SubscribedEmptyKey));
 
-            if (WorkshopPage.EditorBuild) GameCampaigns(launch, shelves);
-
-            Button make = Ui.Button(WorkshopWords.NewCampaignKey, () => WizardScreen.Begin(launch));
-            make.Name = "NewCampaign";
+            GameCampaigns(launch, shelves);
 
             var page = Ui.Column(12,
                 Ui.Title(WorkshopWords.TitleKey),
-                Ui.Row(12, make, Ui.Button(CampaignBook.ContentsKey, launch.ShowBook)),
+                Ui.Row(12, Ui.Button(CampaignBook.ContentsKey, launch.ShowBook)),
                 problem == null ? null : Forms.Hint(WorkshopWords.CouldNotKey, problem),
                 Ui.Scroll(shelves, 520));
             page.Name = "WorkshopHub";
@@ -53,6 +51,11 @@ namespace Game.Workshop
         {
             shelves.AddChild(Ui.Title(WorkshopWords.MyCampaignsKey));
 
+            // New campaign, at the top of My campaigns (cc_task_m2 Part 6)
+            Button make = Ui.Button(WorkshopWords.NewCampaignKey, () => WizardScreen.Begin(launch));
+            make.Name = "NewCampaign";
+            shelves.AddChild(Ui.Row(8, make));
+
             var cards = WorkshopShelf.Cards(WorkshopPage.Mine, WorkshopShelf.Ids(new[] { CampaignFolders.Local() }));
 
             if (cards.Count == 0) shelves.AddChild(Forms.Hint(WorkshopWords.NoCampaignsKey));
@@ -60,7 +63,8 @@ namespace Game.Workshop
             foreach (CampaignCard card in cards) shelves.AddChild(Card(launch, card, mine: true));
         }
 
-        // A CARD: the cover, its name, its chapters and when it was last changed, what's wrong, and what to do with it
+        // A CARD: the cover, its name, its chapters and when it was last changed, what's wrong, and what to do with it.
+        // One of the game's own (mine false) is copied to be edited, and opened as it is only in the editor build
         static Control Card(Launch launch, CampaignCard card, bool mine)
         {
             Label name = Ui.Plain(Named(card.NameKey, card.Name));
@@ -85,9 +89,21 @@ namespace Game.Workshop
             buttons.Name = "Buttons";
             about.AddChild(buttons);
 
-            Button open = Ui.Button(WorkshopWords.OpenKey, () => WorkshopPage.OpenCampaign(launch, card.Folder));
-            open.Name = "Open_" + card.Id;
-            buttons.AddChild(open);
+            if (!mine)
+            {
+                Button copy = Ui.Button(WorkshopWords.MakeCopyKey, () => EditableCopy(launch, card));
+                copy.Name = "Copy_" + card.Id;
+                buttons.AddChild(copy);
+            }
+
+            // a game campaign is never opened for editing in a release build
+            if (mine || WorkshopPage.EditorBuild)
+            {
+                Button open = Ui.Button(mine ? WorkshopWords.OpenKey : WorkshopWords.OpenOriginalKey,
+                                        () => WorkshopPage.OpenCampaign(launch, card.Folder));
+                open.Name = "Open_" + card.Id;
+                buttons.AddChild(open);
+            }
 
             if (mine)
             {
@@ -123,6 +139,22 @@ namespace Game.Workshop
             string copy = WorkshopShelf.Duplicate(card.Folder, WorkshopPage.Taken,
                                                   Ui.Say(WorkshopWords.CopyOfKey, Named(card.NameKey, card.Name)), out string problem);
             Done(launch, copy, copy, problem);
+        }
+
+        // MAKE AN EDITABLE COPY of the game's own: into My campaigns under a free id, based on it, and opened there
+        static void EditableCopy(Launch launch, CampaignCard card)
+        {
+            string copy = WorkshopShelf.EditableCopy(card.Folder, WorkshopPage.Mine, WorkshopPage.Taken,
+                                                     Ui.Say(WorkshopWords.CopyOfKey, Named(card.NameKey, card.Name)), out string problem);
+
+            if (copy == null)
+            {
+                Done(launch, card.Folder, null, problem);
+                return;
+            }
+
+            GameState.CampaignsChanged(copy);
+            WorkshopPage.OpenCampaign(launch, copy);
         }
 
         // DELETE, asked first: the row becomes the question, with Keep (the safe answer) focused
@@ -219,7 +251,8 @@ namespace Game.Workshop
             foreach (string id in ids)
             {
                 string one = id;
-                shelves.AddChild(Launch.Leader(Ui.Button(one, () => MapBuilderPage.OpenMap(launch, library, one), true), "MyMap_" + one));
+                shelves.AddChild(Launch.Leader(Ui.Button(MapName.Of(library, one), () => MapBuilderPage.OpenMap(launch, library, one), true),
+                                               "MyMap_" + one));
             }
 
             Button make = Ui.Button(WorkshopWords.NewMapKey, () => launch.PageCalled("builder")?.Open(launch));

@@ -87,7 +87,9 @@ SFX) or supplement it (paper props, map decor). Each keeps its own licence. (Tra
 | Asset | Source | Licence | For |
 |---|---|---|---|
 | Dragon Bodyparts Bundle v1.0.5 (nimbuspawtales) | [itch](https://nimbuspawtales.itch.io/blender-dragon-bodyparts-bundle) | Free commercial & non-commercial; may ship in games; **no reselling/repackaging raw assets**; credit optional. DL 2026-09-21. | Kitbash kit — dragons, owlbears, drakes, beasts. |
-| KittyCatGames — Books & Papers (`Meshes.zip`) | [itch](https://kittycatgames.itch.io/books-papers) | Custom — 100% free personal/commercial, **no attribution required**. `.fbx` → convert to `.glb`. | Paper props — character sheet, campaign book. |
+| KittyCatGames — Books & Papers (`Meshes.zip`) | [itch](https://kittycatgames.itch.io/books-papers) | Custom — 100% free personal/commercial, **no attribution required**. `.fbx` → convert to `.glb`. *Re-read on the page 2026-10-22: "100% free to use in personal or commercial projects"; the zip has no licence file.* | Paper props — character sheet, campaign book. |
+| Animal Plushies (MoraAzul, `Animal Plushies.zip`) | [itch](https://moraazul.itch.io/animal-plushies) | **CC BY — attribution REQUIRED** ("Creative Commons Attribution (CC BY)" on the page, no version given; read 2026-10-22, the zip has no licence file). Credit MoraAzul. Four rigged animals as `.fbx` (Bear, Bunny, Cat, Dog) and a `.unitypackage`. | **The Beastfolk's minis** (Kathleen, cc_task_m2 Part 4): one figure per kind. |
+| Angel Wing (DevMops, `angel_wing_low_poly.zip`) | [OpenGameArt](https://opengameart.org/content/angel-wing) | **CC0** (on the page, read 2026-10-22; the zip has no licence file). Credit optional. One `.fbx` wing and its colour, mask and normal maps. | **The Fairy's wings** on a KayKit hero body (cc_task_m2 Part 4). |
 
 **UI, icons & sounds** (Quaternius makes none of these)
 
@@ -111,6 +113,41 @@ SFX) or supplement it (paper props, map decor). Each keeps its own licence. (Tra
 
 **2D GM-screen art:** Admurin parallax backgrounds — detailed in the *3D models* section below (custom
 licence, Workshop caveat).
+
+**Kathleen's new-assets list, checked 2026-10-22 (cc_task_m2 Part 5).** Each pack on `_design_docs/new third party
+assets.md`, its licence as the zip or its page says it, what credit it needs, and what it's for (hers):
+
+| Asset | Creator | Source | Licence (where it was read) | Attribution | For |
+|---|---|---|---|---|---|
+| Parallax Backgrounds: Dock, Dead Forest, Snowy Mountains, Plains, Caves | Admurin | the five itch pages in the Admurin section below | custom: any game project, commercial fine; **not** resold or redistributed as an asset; no NFTs; no AI training (the Dock page, re-read 2026-10-22; the zips have no licence file) | optional ("credit not necessary but appreciated") | the GM screen's player-facing art |
+| Books & Papers | KittyCatGames | [itch](https://kittycatgames.itch.io/books-papers) | free for personal or commercial use (the page; no file in the zip) | none | paper and books: the character sheet, the campaign book |
+| KayKit Forest Nature Pack 1.0 | Kay Lousberg | [itch](https://kaylousberg.itch.io/kaykit-forest) | CC0 (`License.txt` in the zip) | optional | map decor |
+| KayKit Halloween Bits 1.0 | Kay Lousberg | [itch](https://kaylousberg.itch.io/halloween-bits) | CC0 (`License.txt` in the zip) | optional | map decor |
+| Ultimate Animated Animals | Quaternius | [quaternius.com](https://quaternius.com/packs/ultimateanimatedanimals.html) | as the Quaternius row above. **The zip isn't in `assets/` any more** (`Ultimate Animated Animals - July 2021-…zip` is on her list but not on disk); `game/models/minis/wolf.gltf` came from it | none needed (credited on goodwill) | companions (now Ultimate Monsters), the wolf mini |
+| Fantasy UI Borders | Kenney | [kenney.nl](https://kenney.nl/assets/fantasy-ui-borders) | CC0 (`License.txt`) | optional | map, grid and UI borders |
+| UI Pack: RPG Expansion, UI Pack: Adventure | Kenney | [kenney.nl](https://kenney.nl/assets/ui-pack-rpg-expansion), [kenney.nl](https://kenney.nl/assets/ui-pack-adventure) | CC0 (`license.txt` / `License.txt`) | optional | UI |
+| Interface Sounds | Kenney | [kenney.nl](https://kenney.nl/assets/interface-sounds) | CC0 (`License.txt`) | optional | UI sounds, a trial fit |
+| game-icons.net SVG bundle | the authors listed in the bundle | [game-icons.net](https://game-icons.net/) | **CC BY 3.0**, CC0 for the authors marked so (`icons/license.txt`) | **required, per icon author**: "Icons made by {author}". The credits screen must name the authors of the icons actually used; none ships yet | condition and other icons |
+| Atkinson Hyperlegible Mono, Cormorant Upright, Alegreya SC, EB Garamond | their project authors | Google Fonts | SIL OFL 1.1 (`OFL.txt` in each zip; all four in `game/fonts/` with their OFL texts) | the copyright line (already on the credits page) | narration, UI, cards |
+| Animal Plushies | MoraAzul | [itch](https://moraazul.itch.io/animal-plushies) | **CC BY** (the page) | **required**: MoraAzul | the Beastfolk's minis |
+| Angel Wing | DevMops | [OpenGameArt](https://opengameart.org/content/angel-wing) | CC0 (the page) | optional | the Fairy's wings |
+
+Nothing on the list is "licence to confirm": every pack's licence was in its zip or on its page.
+
+### Adventures Kathleen downloaded: NOT assets
+
+Five adventure PDFs on her list, for campaigns. **None is copied into the repo, and none is an asset.** The content
+policy says no copyrighted adventures in what ships; each of these is openly licensed, but **turning any of them into a
+Lanorim campaign needs its licence to allow adaptation and redistribution, and every condition below kept.** Read on
+each page, 2026-10-22:
+
+| Adventure | Creator | Source | Licence as stated | What adapting it would need |
+|---|---|---|---|---|
+| The Old Blood (`old_blood.pdf`) | Doomed Zone | [itch](https://doomedzone.itch.io/the-old-blood) | CC0 for "all original writing, layout, and design"; referenced mechanics (Shadowdark RPG) under their own licences (a LICENSE file on the page). Its background art was made with AI tools (the page says so) | the writing is free to adapt. Leave out Shadowdark's own mechanics and the art; the AI art matters to the Steam AI disclosure if any of it were used |
+| The Terror of Dunmoor (`terror_of_dunmoor.pdf`, `dunmoor_player_maps.zip`) | Doomed Zone | [itch](https://doomedzone.itch.io/terror-of-dunmoor) | CC0 for the original writing, layout and design; **cover images excluded**; Shadowdark mechanics separate | the writing is free to adapt; not the covers, not Shadowdark's mechanics. The player maps' licence isn't stated apart from the PDF's: confirm before using them |
+| The Mist Beyond Manerton (`mist_beyond_manerton.pdf`) | Doomed Zone | [itch](https://doomedzone.itch.io/the-mist-beyond-manerton) | CC0 for the original writing, layout and design; **cover and background images excluded**; Shadowdark mechanics separate | as Dunmoor |
+| The Whispered Caverns of June Serin (`The Whispered Cavern of June Serin.pdf`) | Pandion Games | [itch](https://pandiongames.itch.io/the-whispered-caverns-of-june-serin) | **CC BY 4.0**; it uses the Quest Creators Resource (The Adventure Guild, CC BY 4.0), and its town map is from Watabou's generator | adaptation allowed with credit to Pandion Games (and The Adventure Guild for the Quest material), a link to the licence, and the changes said. Watabou's map has its own terms |
+| Crimson Bones (`CrimsonBones-1.1.pdf`) | Tombs & Treachery | [itch](https://tombs-and-treachery.itch.io/crimson-bones) | **CC BY 4.0** | adaptation allowed with credit, a link to the licence, and the changes said |
 
 **Planned (not yet purchased):** individual **Downrain DC** ([itch](https://downraindc3d.itch.io/)) animated
 creatures for **companion** minis — verify each licence at purchase and add its row. Going with what we have

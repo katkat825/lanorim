@@ -17,19 +17,24 @@ namespace Game.Builder
         public static BuilderLayout Current =>
             _current ??= (ResourceLoader.Exists(Path) ? GD.Load<BuilderLayout>(Path) : null) ?? new BuilderLayout();
 
-        // the tools and what they lay, down the left
-        [Export] public int ToolsWidth { get; set; } = 380;
+        // THE TWO BARS (cc_task_m2 Part 8): the menu bar's height along the top, and how much of the screen's foot the
+        // bottom bar and what's chosen take, so a notice stands clear of them
+        [Export] public int TopBarHeight { get; set; } = 48;
 
-        // the problems, down the right
-        [Export] public int ProblemsWidth { get; set; } = 420;
+        [Export] public int BottomBarHeight { get; set; } = 120;
 
-        // the panels keep this far off the screen's edges
+        // a picker or pop-up over the bottom bar: its width, the picker's rows of thumbnails a page, and how tall the
+        // problems' list is before it scrolls
+        [Export] public int PickerWidth { get; set; } = 960;
+
+        [Export] public int PickerRows { get; set; } = 2;
+
+        [Export] public int PopupHeight { get; set; } = 360;
+
+        // the bars keep this far off the screen's edges
         [Export] public int EdgeMargin { get; set; } = 16;
 
         [Export] public int Gap { get; set; } = 8;
-
-        // how tall the prop palette's list is before it scrolls
-        [Export] public int PaletteHeight { get; set; } = 360;
 
         // how long "Saved." and the like stay up, in seconds
         [Export] public float NoticeSeconds { get; set; } = 4f;
@@ -45,7 +50,10 @@ namespace Game.Builder
         // the prop palette's thumbnails, a side, and how many to a row (cc_task_l Part 4.1)
         [Export] public int ThumbSize { get; set; } = 96;
 
-        [Export] public int ThumbColumns { get; set; } = 3;
+        [Export] public int ThumbColumns { get; set; } = 8;
+
+        // the size of a thumbnail's name under it, small enough that a word fits across one (cc_task_m2 Part 8)
+        [Export] public int ThumbFontSize { get; set; } = 18;
 
         // a line's highlight, as a share of a square: how thick and how tall
         [Export] public float LineThickness { get; set; } = 0.12f;

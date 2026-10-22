@@ -1,0 +1,45 @@
+{
+  "_": "Lanorim's own species - first-party, NOT SRD 5.2.1 and not WotC's; covered by the repo's LICENSE (all rights reserved). Each carries not_in_srd, the word a background, a spell and a statblock that isn't the SRD's carries. From Kathleen's vault, campaign_authoring/Non-Campaign Authoring/Playable Species.md (cc_task_m2 Part 4). Languages aren't modelled in v1 (no species' are), so 'Common + 1' is the story's. The Beastfolk's four kinds are a look, not rules: lineages with no features of their own, so the creator's Lineage step picks the kind and the mini follows it.",
+
+  "species": [
+    {
+      "id": "fairy",
+      "speed": 30,
+      "sizes": ["small"],
+      "tags": ["fey"],
+      "not_in_srd": true,
+      "features": [
+        { "id": "fey_resilience", "trait": "narrate", "level": 1, "boons": [{"leans": "advantage_on_saves", "against": "charmed"}],
+          "note": "Advantage on saving throws against being Charmed (the Elf's Fey Ancestry, under the Fairy's own name)" },
+        { "id": "fairy_flutter", "trait": "flight", "level": 1, "use_time": "free", "boons": [{"fly_speed": 20}],
+          "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "long_rest",
+          "note": "fly up to 20 feet as part of the move, using its movement, ending on a square that holds you; proficiency-bonus uses a Long Rest. the Flying status for one move (Encounter.Fly): difficult ground costs nothing extra, and it provokes as walking does" },
+        { "id": "fey_magic", "trait": "narrate", "level": 1,
+          "spells": {"1": ["druidcraft"], "3": ["faerie_fire"]}, "free_casts": {"faerie_fire": 1},
+          "spell_abilities": ["int", "wis", "cha"],
+          "note": "Druidcraft known; at level 3, Faerie Fire once a Long Rest without a slot - the way the Tiefling's and the Elf lineages' spells are given" }
+      ]
+    },
+
+    {
+      "id": "beastfolk",
+      "speed": 30,
+      "sizes": ["medium", "small"],
+      "not_in_srd": true,
+      "lineages": ["beastfolk_feline", "beastfolk_canine", "beastfolk_rodent", "beastfolk_ursine"],
+      "features": [
+        { "id": "darkvision_60", "level": 1 },
+        { "id": "beastfolk_keen_senses", "trait": "training", "level": 1, "skills": ["perception"],
+          "note": "proficiency in Perception" },
+        { "id": "natural_agility", "trait": "training", "level": 1, "skills": ["athletics", "acrobatics"], "skill_picks": 1,
+          "note": "Athletics or Acrobatics, picked in the creator's Traits step" },
+        { "id": "instinctive_awareness", "trait": "narrate", "level": 1, "boons": [{"leans": "advantage_on_initiative"}],
+          "note": "Advantage on Initiative rolls (the Champion's boon)" }
+      ]
+    },
+    { "id": "beastfolk_feline", "lineage_of": "beastfolk", "speed": 30, "not_in_srd": true },
+    { "id": "beastfolk_canine", "lineage_of": "beastfolk", "speed": 30, "not_in_srd": true },
+    { "id": "beastfolk_rodent", "lineage_of": "beastfolk", "speed": 30, "not_in_srd": true },
+    { "id": "beastfolk_ursine", "lineage_of": "beastfolk", "speed": 30, "not_in_srd": true }
+  ]
+}

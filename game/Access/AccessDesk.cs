@@ -52,6 +52,9 @@ namespace Game.Access
             Instance = this;
             ProcessMode = ProcessModeEnum.Always;
 
+            // every text box's caret blinks, in every scene (Game.Screens.Carets, cc_task_m2 Part 3)
+            Game.Screens.Carets.Watch(GetTree());
+
             Narrator = new Narrator { Name = "Narrator", Aloud = GameState.Settings.ReadAloud };
             AddChild(Narrator);
 

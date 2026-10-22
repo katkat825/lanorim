@@ -11,16 +11,21 @@ namespace Content.Workshop
     // portrait. The game doesn't load it (a campaign plays the same without it) and a hand-made campaign has none, so
     // it's written only when there's something in it, and taken away when there isn't.
     //
-    //   { "characters": [ { "id": "oda", "note": "the miller; owes Hesk", "portrait": "assets/portraits/oda.png" } ] }
+    //   { "based_on": "sample_millbrook",
+    //     "characters": [ { "id": "oda", "note": "the miller; owes Hesk", "portrait": "assets/portraits/oda.png" } ] }
+    //
+    // based_on (cc_task_m2 Part 6): the game's own campaign this one was copied from, by id; said on its About tab
     public sealed class WorkshopNotes
     {
         public const string FileName = "workshop.json";
 
-        static readonly string[] Fields = { "characters" };
+        static readonly string[] Fields = { "based_on", "characters" };
 
         static readonly string[] CharacterFields = { "id", "note", "portrait" };
 
         public Dictionary<string, (string Note, string Portrait)> People { get; } = new(StringComparer.Ordinal);
+
+        public string BasedOn { get; set; } = "";
 
         public string Note(string id) => People.TryGetValue(id, out var person) ? person.Note : "";
 
@@ -28,7 +33,7 @@ namespace Content.Workshop
 
         public static WorkshopNotes Of(CampaignDraft draft)
         {
-            var notes = new WorkshopNotes();
+            var notes = new WorkshopNotes { BasedOn = draft.BasedOn ?? "" };
 
             foreach (Person person in draft.People.Where(p => p.Note.Length > 0 || p.Portrait.Length > 0))
                 notes.People[person.Id] = (person.Note, person.Portrait);
@@ -57,6 +62,10 @@ namespace Content.Workshop
                 foreach (JsonProperty field in document.RootElement.EnumerateObject().Where(f => !Fields.Contains(f.Name)))
                     problems.Add(ContentProblem.Caution(FileName, field.Name, $"the Workshop's notes have no '{field.Name}' - they have {Vocabulary.Offer(Fields)}"));
 
+                if (document.RootElement.TryGetProperty("based_on", out JsonElement based) &&
+                    based.ValueKind == JsonValueKind.String && Campaigns.ContentId.IsLocal(based.GetString()))
+                    notes.BasedOn = based.GetString();
+
                 if (!PackJson.OptionalList(document.RootElement, "characters", FileName, "characters is a list of { \"id\", \"note\", \"portrait\" }",
                                            problems, out JsonElement list))
                     return notes;
@@ -83,7 +92,7 @@ namespace Content.Workshop
         {
             string file = Path.Combine(folder, FileName);
 
-            if (People.Count == 0)
+            if (People.Count == 0 && BasedOn.Length == 0)
             {
                 if (File.Exists(file)) File.Delete(file);
                 return;
@@ -98,7 +107,13 @@ namespace Content.Workshop
             var characters = People.OrderBy(p => p.Key, StringComparer.Ordinal)
                                    .Select(p => new Dictionary<string, string> { ["id"] = p.Key, ["note"] = p.Value.Note, ["portrait"] = p.Value.Portrait });
 
-            return JsonSerializer.Serialize(new Dictionary<string, object> { ["characters"] = characters },
+            var file = new Dictionary<string, object>();
+
+            if (BasedOn.Length > 0) file["based_on"] = BasedOn;
+
+            file["characters"] = characters;
+
+            return JsonSerializer.Serialize(file,
                                             new JsonSerializerOptions { WriteIndented = true }).Replace("\r\n", "\n") + "\n";
         }
     }

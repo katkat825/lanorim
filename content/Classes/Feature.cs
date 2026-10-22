@@ -259,7 +259,7 @@ namespace Content.Classes
         // a feature that does something when the player asks, rather than sitting on the sheet
         public bool IsActive =>
             Trait == Trait.Stance || Trait == Trait.Recovery || Trait == Trait.Shape || Trait == Trait.Boost ||
-            (Trait == Trait.Rider && When == When.WhenSpent);
+            Trait == Trait.Flight || (Trait == Trait.Rider && When == When.WhenSpent);
 
         public DiceRoll AmountAt(int level)
         {
@@ -276,6 +276,12 @@ namespace Content.Classes
                                 Amount.Modifier + PerLevel.Modifier * steps);
         }
 
+        // a stance's boon and a flight's are worn only while they're used, never for good
+        public bool PutsBoonsOnWhenUsed => Trait == Trait.Stance || Trait == Trait.Flight;
+
+        // the flight a Flight feature takes (its one boon: the Flying status), or null
+        public BoonSpec Flight => Trait == Trait.Flight && Boons.Count == 1 ? Boons[0] : null;
+
         // the passive half: everything a feature does the moment it is owned
         public void Grant(Actor actor, int level)
         {
@@ -289,8 +295,8 @@ namespace Content.Classes
 
             if (ArmoredArmorClass != 0) actor.ArmoredArmorClassBonus += ArmoredArmorClass;
 
-            // a feature's boons, for good - a stance's go on when it is switched on (BoonFor)
-            if (Trait != Trait.Stance)
+            // a feature's boons, for good - a stance's go on when it is switched on (BoonFor), a flight's for one move
+            if (!PutsBoonsOnWhenUsed)
                 for (int i = 0; i < Boons.Count; i++)
                     actor.Boons.Add(Core.Characters.Boon.Of(Boons[i] with { Duration = Duration.Permanent },
                                                             Boons.Count == 1 ? Id : $"{Id}.{i + 1}", Source));

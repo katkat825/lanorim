@@ -38,7 +38,7 @@ namespace Game.Screens
                 foreach (Credit credit in lines) page.AddChild(Line(credit));
             }
 
-            page.AddChild(Ui.Button(ScreenWords.Back, launch.ShowBook));
+            page.AddChild(Ui.Button(Content.Screens.CampaignBook.ContentsKey, launch.ShowBook));
 
             launch.Show(Ui.Panel(Ui.Scroll(page, 560)), 860);
         }

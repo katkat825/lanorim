@@ -51,6 +51,12 @@ namespace Content.Workshop
         public static readonly string GameCampaignsHintKey = K("game_campaigns_hint");
         public static readonly string CouldNotKey = K("could_not");
 
+        // the game's own campaigns, in every build (cc_task_m2 Part 6): copied to edit, and opened as they are only in the
+        // editor build; a copy says what it's based on
+        public static readonly string MakeCopyKey = K("make_copy");
+        public static readonly string OpenOriginalKey = K("open_original");
+        public static readonly string BasedOnKey = K("based_on");
+
         // --- the wizard -----------------------------------------------------------------------------------------------
 
         public static readonly string WizardTitleKey = K("wizard_title");
@@ -173,7 +179,7 @@ namespace Content.Workshop
                 OpenKey, DuplicateKey, DeleteKey, KeepKey, RenameKey, CopyOfKey, UnnamedKey, SameIdKey, WontLoadOneKey,
                 WontLoadManyKey, DeleteQuestionKey, RecentlyDeletedKey, DaysLeftOneKey, DaysLeftManyKey, RestoreKey,
                 DeleteForeverKey, ForeverQuestionKey, NewMapKey, NoMyMapsKey, SubscribedKey, SubscribedEmptyKey,
-                GameCampaignsKey, GameCampaignsHintKey, CouldNotKey,
+                GameCampaignsKey, GameCampaignsHintKey, CouldNotKey, MakeCopyKey, OpenOriginalKey, BasedOnKey,
                 WizardTitleKey, StepKey, NextKey, BackKey, FinishKey, CancelKey, AdvancedKey, NameKey, NameHintKey,
                 DescriptionKey, DescriptionHintKey, AuthorKey, AuthorHintKey, TagsKey, TagsHintKey, OwnTagKey, AddTagKey,
                 MatureKey, MatureHintKey, IdKey, IdHintKey, DefeatKey, DefeatHintKey, LevelingKey, LevelingHintKey,

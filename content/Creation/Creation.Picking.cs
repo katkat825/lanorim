@@ -88,8 +88,8 @@ namespace Content.Creation
             Background = background;
             _backgroundSpend.Clear();
 
-            // a species skill the new background trains anyway is picked again
-            _traitSkills.RemoveAll(background.Skills.Contains);
+            // a species skill the new background trains anyway is picked again, and so is one the old background offered
+            RefitTraitSkills();
 
             // the default spend is +2 to the class's first priority and +1 to the second, if the
             // background raises them; otherwise the first two it does raise

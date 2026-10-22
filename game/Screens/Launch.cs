@@ -59,8 +59,18 @@ namespace Game.Screens
         public const string BookScene = "res://book.tscn";
 
         // the screen the game opens on: the title, the book (open at a campaign's pages), or one of the book's pages
+        // what GameState.BackTo says for the book's main menu (the map builder's File, Main menu)
+        public const string MainMenu = "book";
+
         internal void ShowFirst(string screen, string open)
         {
+            if (GameState.BackTo == MainMenu)
+            {
+                GameState.BackTo = null;
+                ShowBook();
+                return;
+            }
+
             // back from the table to the page that sent it there: the map builder opened from the Workshop goes back to it
             if (GameState.BackTo is { } back && PageCalled(back) is { } from)
             {
@@ -102,7 +112,10 @@ namespace Game.Screens
             creation.Cancelled += () => ShowBook(campaign);
             creation.Finished += hero => Play(pack, hero, slot);
 
-            Show(Ui.Panel(creation), 760);
+            Show(Ui.Panel(creation), 900);
+
+            // the book goes while a character is made, and Clear brings it back (cc_task_m2 Part 1)
+            if (_book != null) _book.Hidden = true;
         }
 
         internal void Play(Package pack, Hero hero, int slot)

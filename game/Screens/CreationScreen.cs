@@ -52,6 +52,7 @@ namespace Game.Screens
         ScrollContainer _scroll;
         VBoxContainer _body;
         Label _count;
+        Label _title;
         Label _about;
         Label _held;
         Button _next;
@@ -114,7 +115,9 @@ namespace Game.Screens
 
             Step step = _pages[_at];
 
-            AddChild(Ui.Title(ScreenWords.CreateTitle));
+            // who you're making (Creation.Title): "A new Elf Fighter"
+            _title = Ui.Title(ScreenWords.CreateTitle);
+            AddChild(_title);
             AddChild(Ui.Label(ScreenWords.StepKey(step)));
 
             _count = Ui.Plain("");
@@ -142,10 +145,19 @@ namespace Game.Screens
             }
 
             _scroll = Ui.Scroll(_body, 300);
-            AddChild(_scroll);
 
-            // the class page's two figures, under the list where they're seen without scrolling
-            if (step == Step.Class) AddChild(Figures());
+            // the class, species and lineage pages: the mini, turning to the right of the list, and on the class page
+            // the two figures under it, where they're seen without scrolling (Figure.cs)
+            if (ShowsTheMini(step))
+            {
+                _scroll.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+
+                VBoxContainer side = Ui.Column(8, TheMini());
+                if (step == Step.Class) side.AddChild(Figures());
+
+                AddChild(Ui.Row(16, _scroll, side));
+            }
+            else AddChild(_scroll);
 
             // THE DESCRIPTION AREA: what the selected choice is, under the list rather than on hover
             _about = Ui.Plain("");
@@ -173,6 +185,9 @@ namespace Game.Screens
         void Update()
         {
             foreach (Action update in _updates) update();
+
+            (string title, IReadOnlyList<string> names) = _making.Title;
+            _title.Text = Ui.Say(title, names.Select(n => (object)Ui.Say(n)).ToArray());
 
             Step step = _pages[_at];
 

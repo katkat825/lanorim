@@ -16,6 +16,10 @@ namespace Content.Maps
         // before reads unchanged
         public static readonly FormatVersion Format = new FormatVersion(1, 2);
 
+        // THE MAP'S NAME, as its author typed it ("Mill Yard - North"), apart from its id, the file's name (cc_task_m2
+        // Part 7, MapName). Format 2 writes it as "name" when there is one; a map without one shows its id
+        public string Name { get; set; } = "";
+
         // what a campaign ships: the map as the same text MapReader reads, plus the props beside
         // it. one file, and the map part stays hand-editable, which is what makes a Workshop
         // author's text editor a usable tool
@@ -24,6 +28,7 @@ namespace Content.Maps
             var json = new StringBuilder();
 
             json.Append("{\n  \"format\": ").Append(Format.Current)
+                .Append(Name.Length > 0 ? ",\n  \"name\": " + JsonSerializer.Serialize(Name) : "")
                 .Append(",\n  \"columns\": ").Append(Columns)
                 .Append(",\n  \"rows\": ").Append(Rows)
                 .Append(",\n  \"map\": ")
@@ -95,6 +100,7 @@ namespace Content.Maps
                     draft.SetEdge(border, map.At(border));
 
                 draft.Start = map.Start;
+                draft.Name = root.Text("name");
 
                 foreach (KeyValuePair<int, Cell> spawn in map.Spawns)
                     draft._spawns[spawn.Key] = spawn.Value;

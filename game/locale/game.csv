@@ -15,12 +15,22 @@ background.acolyte.description,"Trained in Insight and Religion; +2 and +1 to sp
 background.acolyte.name,Acolyte
 background.criminal.description,"Trained in Sleight of Hand and Stealth; +2 and +1 to spend on Dexterity, Constitution, Intelligence; 16 gold to start."
 background.criminal.name,Criminal
+background.explorer.description,"You've traveled through unfamiliar lands and ventured where roads and maps offer little assistance. Whether guiding travelers or charting wilderness, you've learned to read the land and recognize danger."
+background.explorer.name,Explorer
+background.gentry.description,"Raised among wealth and influence, you learned the importance of reputation, social etiquette, and carefully chosen words. Whether born into minor nobility or a prosperous family, your upbringing opened doors for you. What you do with those privileges is up to you."
+background.gentry.name,Gentry
+background.gravedigger.description,"The dead have always been part of your livelihood. Whether in cemeteries or ancient crypts, years of hard labor taught you endurance and familiarity with burial customs. You've learned that the dead rarely cause as much trouble as the living."
+background.gravedigger.name,Gravedigger
+background.homesteader.description,"You know the value of a hard day's work. Whether you grew crops, tended livestock, or helped maintain a family holding, your early life was shaped by the rhythms of the land and the changing seasons. You learned to make do with what you had and mend what was broken. The work was rarely easy, but you learned patience and the satisfaction of a job well done."
+background.homesteader.name,Homesteader
 background.recluse.description,"You spent a substantial amount of your life in the deep wilderness. Perhaps you tended a shrine far from any settlements or studied the natural world in the quiet solitude. Life away from the bustle of civilization has taught you the signs of illness and injury and led to a deeper understanding of the natural world around you."
 background.recluse.name,Recluse
 background.sage.description,"Trained in Arcana and History; +2 and +1 to spend on Constitution, Intelligence, Wisdom; 8 gold to start."
 background.sage.name,Sage
 background.soldier.description,"Trained in Athletics and Intimidation; +2 and +1 to spend on Strength, Dexterity, Constitution; 14 gold to start."
 background.soldier.name,Soldier
+background.trader.description,In your misspent youth you spent time on the road with a trader learning the joys of economics. You have traveled extensively and spent time bargaining on both sides of the transaction: buying and selling.
+background.trader.name,Trader
 class.barbarian.description,"Hit die d12; saves with Strength and Constitution; trained in light, medium armor and shields; 2 skills of your choosing."
 class.barbarian.name,Barbarian
 class.champion.name,Champion
@@ -724,6 +734,8 @@ feature.barbarian_unarmored_defense.description,"With no armor on, your Armor Cl
 feature.barbarian_unarmored_defense.name,Barbarian Unarmored Defense
 feature.beast_spells.description,Cast spells while in a wild shape.
 feature.beast_spells.name,Beast Spells
+feature.beastfolk_keen_senses.description,You are trained in Perception.
+feature.beastfolk_keen_senses.name,Keen Senses
 feature.blessed_healer.description,Healing another creature with a slot heals you 2 plus the slot's level.
 feature.blessed_healer.name,Blessed Healer
 feature.brave.description,Advantage on saving throws against being Frightened.
@@ -790,6 +802,8 @@ feature.expertise.description,Double your proficiency on 2 skills.
 feature.expertise.name,Expertise
 feature.extra_attack.description,An extra action every round.
 feature.extra_attack.name,Extra Attack
+feature.fairy_flutter.description,"Fly up to 20 feet as part of your move, using your movement, and land on ground that holds you. Uses equal your proficiency bonus; back on a long rest."
+feature.fairy_flutter.name,Fairy Flutter
 feature.faithful_steed.description,A steed answers your call.
 feature.faithful_steed.name,Faithful Steed
 feature.fast_hands.description,"Pick a lock, disarm a trap or use an item with your bonus action."
@@ -800,6 +814,10 @@ feature.feral_instinct.description,Advantage on initiative.
 feature.feral_instinct.name,Feral Instinct
 feature.fey_ancestry.description,Advantage on saving throws against being Charmed.
 feature.fey_ancestry.name,Fey Ancestry
+feature.fey_magic.description,"You know the Druidcraft cantrip. From level 3, you can cast Faerie Fire once a long rest without a spell slot."
+feature.fey_magic.name,Fey Magic
+feature.fey_resilience.description,Advantage on saving throws against being Charmed.
+feature.fey_resilience.name,Fey Resilience
 feature.fighter_weapon_mastery.description,The mastery properties of three kinds of weapon you use.
 feature.fighter_weapon_mastery.name,Weapon Mastery
 feature.fighting_style.description,Defense: +1 to Armor Class while you wear armor.
@@ -834,6 +852,8 @@ feature.indomitable_might.description,A Strength check or save that totals less 
 feature.indomitable_might.name,Indomitable Might
 feature.infernal_legacy.description,"Fire damage is halved. Fire Bolt; Hellish Rebuke at 3rd level and Darkness at 5th, each once a day without a slot."
 feature.infernal_legacy.name,Infernal Legacy
+feature.instinctive_awareness.description,Advantage on Initiative rolls.
+feature.instinctive_awareness.name,Instinctive Awareness
 feature.instinctive_pounce.description,"When you rage, you can move up to half your speed."
 feature.instinctive_pounce.name,Instinctive Pounce
 feature.intimidating_presence.description,Your fury can frighten the creatures around you.
@@ -850,6 +870,8 @@ feature.memorize_spell.description,Swap a spell on a short rest.
 feature.memorize_spell.name,Memorize Spell
 feature.mindless_rage.description,"While raging, you cannot be charmed or frightened."
 feature.mindless_rage.name,Mindless Rage
+feature.natural_agility.description,"You are trained in Athletics or Acrobatics, your choice."
+feature.natural_agility.name,Natural Agility
 feature.natural_recovery.description,"Once a day, cast a circle spell without a slot, and recover some spell slots on a short rest. Told by the narrator for now."
 feature.natural_recovery.name,Natural Recovery
 feature.naturally_stealthy.description,You can hide behind a bigger creature. The narrator decides what it allows.
@@ -1000,13 +1022,19 @@ item.armor_heavy.name,Heavy
 item.armor_light.name,Light
 item.armor_medium.name,Medium
 item.armor_none.name,None
+item.backpack.description,Takes no room in your pack.
+item.backpack.name,Backpack
 item.battleaxe.description,"1d8 slashing damage, 1d10 with both hands. 10 gold."
 item.battleaxe.name,Battleaxe
 item.bear_rend.name,Rend
+item.bedroll.description,Takes no room in your pack.
+item.bedroll.name,Bedroll
 item.blowgun.description,"1 piercing damage, range 5. 10 gold."
 item.blowgun.name,Blowgun
 item.breastplate.description,"Armor Class 14, up to +2 Dexterity. 400 gold."
 item.breastplate.name,Breastplate
+item.carpenters_tools.description,8 gold.
+item.carpenters_tools.name,Carpenter's Tools
 item.cat_scratch.name,Scratch
 item.chain_mail.description,"Armor Class 16, no Dexterity; noisy: Stealth is at disadvantage. 75 gold."
 item.chain_mail.name,Chain Mail
@@ -1016,12 +1044,16 @@ item.cloak_of_the_quiet_step.description,+2 to Stealth checks. 800 gold.
 item.cloak_of_the_quiet_step.name,Cloak of the Quiet Step
 item.club.description,"1d4 bludgeoning damage, light. 1 gold."
 item.club.name,Club
+item.common_clothes.description,Takes no room in your pack.
+item.common_clothes.name,Common Clothes
 item.dagger.description,"1d4 piercing damage, finesse, light, thrown, range 4. 2 gold."
 item.dagger.name,Dagger
 item.dart.description,"1d4 piercing damage, finesse, thrown, range 4. 1 gold."
 item.dart.name,Dart
 item.druidic_focus.description,For a Druid. 10 gold.
 item.druidic_focus.name,Druidic Focus
+item.fine_clothes.description,Takes no room in your pack.
+item.fine_clothes.name,Fine Clothes
 item.flail.description,1d8 bludgeoning damage. 10 gold.
 item.flail.name,Flail
 item.gemstone.description,50 gold.
@@ -1046,13 +1078,19 @@ item.hand_crossbow.description,"1d6 piercing damage, light, range 6. 75 gold."
 item.hand_crossbow.name,Hand Crossbow
 item.handaxe.description,"1d6 slashing damage, light, thrown, range 4. 5 gold."
 item.handaxe.name,Handaxe
+item.healers_kit.description,Steadies someone who is dying. 5 gold.
+item.healers_kit.name,Healer's Kit
 item.heavy_crossbow.description,"1d10 piercing damage, two-handed, heavy, range 20. 50 gold."
 item.heavy_crossbow.name,Heavy Crossbow
 item.hide_armor.description,"Armor Class 12, up to +2 Dexterity. 10 gold."
 item.hide_armor.name,Hide Armor
 item.holy_symbol.description,For a Cleric or Paladin. 5 gold.
 item.holy_symbol.name,Holy Symbol
+item.hooded_lantern.description,"Light, burning oil. 5 gold."
+item.hooded_lantern.name,Hooded Lantern
 item.horse_hooves.name,Hooves
+item.iron_pot.description,Takes no room in your pack.
+item.iron_pot.name,Iron Pot
 item.javelin.description,"1d6 piercing damage, thrown, range 6. 1 gold."
 item.javelin.name,Javelin
 item.keepsake.description,"Once a day, when you would fall, it holds you up."
@@ -1075,14 +1113,20 @@ item.maul.description,"2d6 bludgeoning damage, two-handed, heavy. 10 gold."
 item.maul.name,Maul
 item.morningstar.description,1d8 piercing damage. 15 gold.
 item.morningstar.name,Morningstar
+item.oil.description,Fuel for a lantern. 1 silver.
+item.oil.name,Flask of Oil
 item.padded_armor.description,"Armor Class 11, plus Dexterity; noisy: Stealth is at disadvantage. 5 gold."
 item.padded_armor.name,Padded Armor
+item.perfume.description,Takes no room in your pack.
+item.perfume.name,Perfume
 item.pike.description,"1d10 piercing damage, two-handed, heavy, reach. 5 gold."
 item.pike.name,Pike
 item.plate_armor.description,"Armor Class 18, no Dexterity; noisy: Stealth is at disadvantage. 1500 gold."
 item.plate_armor.name,Plate Armor
 item.potion_of_healing.description,Restores 2d4+2 hit points. 50 gold.
 item.potion_of_healing.name,Potion of Healing
+item.pouch.description,Takes no room in your pack.
+item.pouch.name,Pouch
 item.quarterstaff.description,"1d6 bludgeoning damage, 1d8 with both hands. 1 gold."
 item.quarterstaff.name,Quarterstaff
 item.rapier.description,"1d8 piercing damage, finesse. 25 gold."
@@ -1103,8 +1147,12 @@ item.shortbow.description,"1d6 piercing damage, two-handed, range 16. 25 gold."
 item.shortbow.name,Shortbow
 item.shortsword.description,"1d6 piercing damage, finesse, light. 10 gold."
 item.shortsword.name,Shortsword
+item.shovel.description,2 gold.
+item.shovel.name,Shovel
 item.sickle.description,"1d4 slashing damage, light. 1 gold."
 item.sickle.name,Sickle
+item.signet_ring.description,Takes no room in your pack.
+item.signet_ring.name,Signet Ring
 item.sling.description,"1d4 bludgeoning damage, range 6. 1 gold."
 item.sling.name,Sling
 item.spear.description,"1d6 piercing damage, 1d8 with both hands, thrown, range 4. 1 gold."
@@ -1116,8 +1164,12 @@ item.studded_leather_armor.description,"Armor Class 12, plus Dexterity. 45 gold.
 item.studded_leather_armor.name,Studded Leather Armor
 item.thieves_tools.description,For a Rogue. 25 gold.
 item.thieves_tools.name,Thieves Tools
+item.tinderbox.description,Lights a torch or a fire. 5 silver.
+item.tinderbox.name,Tinderbox
 item.torch.description,1 gold.
 item.torch.name,Torch
+item.travelers_clothes.description,Takes no room in your pack.
+item.travelers_clothes.name,Traveler's Clothes
 item.tray_gamblers.name,Gambler's tray
 item.tray_wood.name,Plain wooden tray
 item.trident.description,"1d8 piercing damage, 1d10 with both hands, thrown, range 4. 5 gold."
@@ -1475,6 +1527,16 @@ skill.religion.name,Religion
 skill.sleight_of_hand.name,Sleight of Hand
 skill.stealth.name,Stealth
 skill.survival.name,Survival
+species.beastfolk.description,"Medium humanoid animals with natural instincts. Beastfolk vary widely in appearance, from agile felines to powerful bears. Their keen senses and natural abilities make them capable adventurers. Small or Medium; speed 30 feet; Darkvision; Keen Senses; Natural Agility; Instinctive Awareness; choose a kind: Feline, Canine, Rodent, Ursine."
+species.beastfolk.name,Beastfolk
+species.beastfolk_canine.description,Dog-like Beastfolk. Every kind has the same traits; the kind is how you look.
+species.beastfolk_canine.name,Canine
+species.beastfolk_feline.description,Cat-like Beastfolk. Every kind has the same traits; the kind is how you look.
+species.beastfolk_feline.name,Feline
+species.beastfolk_rodent.description,Mouse-like Beastfolk. Every kind has the same traits; the kind is how you look.
+species.beastfolk_rodent.name,Rodent
+species.beastfolk_ursine.description,Bear-like Beastfolk. Every kind has the same traits; the kind is how you look.
+species.beastfolk_ursine.name,Ursine
 species.dragonborn.description,"Speed 30 feet; Dragonborn Darkvision; Draconic Flight; choose an ancestry: Acid, Cold, Fire, Lightning, Poison."
 species.dragonborn.name,Dragonborn
 species.dragonborn_acid.description,Speed 30 feet; a Black or Copper dragon forebear: acid Breath Weapon and Draconic Resistance.
@@ -1497,6 +1559,8 @@ species.elf_high.description,Speed 30 feet; High Elf Magic.
 species.elf_high.name,Elf High
 species.elf_wood.description,Speed 35 feet; Wood Elf Magic.
 species.elf_wood.name,Elf Wood
+species.fairy.description,"Small, magical beings with an innate connection to the natural world. Fairies vary widely in appearance. Though often underestimated because of their size, their natural magic and remarkable mobility make them capable adventurers. Small; speed 30 feet; Fey Resilience; Fairy Flutter; Fey Magic."
+species.fairy.name,Fairy
 species.halfling.description,Speed 30 feet; Brave; Halfling Nimbleness; Halfling Luck; Naturally Stealthy.
 species.halfling.name,Halfling
 species.human.description,Speed 30 feet; Resourceful; Skillful; Versatile.
@@ -1774,15 +1838,31 @@ ui.access.reading_on,Reading aloud.
 ui.access.tray,The dice tray: {0}.
 ui.access.tray_empty,"The dice tray, empty."
 ui.access.you,"You: {0} of {1} hit points."
+ui.act.builder_menus.name,Map builder: open the menu bar (Alt too): {0}
+ui.act.builder_problems.name,Map builder: show or hide the map's problems: {0}
+ui.act.builder_to_main_menu.name,Map builder: go to the main menu: {0}
+ui.act.buildings_picker.name,Map builder: open the buildings: {0}
+ui.act.copy_map_to.name,Map builder: copy to a campaign: {0}
 ui.act.copy_selection.name,Map builder: copy what's selected: {0}
 ui.act.delete_selection.name,Map builder: clear what's selected: {0}
+ui.act.erase_tool.name,Map builder: erase: {0}
+ui.act.fill_tool.name,Map builder: fill terrain: {0}
 ui.act.help.name,Open the rules: {0}
+ui.act.leave_builder.name,"Map builder: leave, back to the Workshop: {0}"
 ui.act.paste_selection.name,Map builder: paste it where the pointer is: {0}
+ui.act.play_map.name,Map builder: play this map: {0}
+ui.act.players_view.name,Map builder: the player's view: {0}
+ui.act.props_picker.name,Map builder: open the props: {0}
 ui.act.reach_back.name,Move back to the last one: {0}
 ui.act.reach_next.name,Move to the next thing on the table: {0}
 ui.act.read_aloud.name,"Read the table aloud, on and off: {0}"
 ui.act.redo_edit.name,Map builder and Workshop: redo: {0}
 ui.act.save_map.name,Map builder and Workshop: save: {0}
+ui.act.save_map_as.name,Map builder: save as: {0}
+ui.act.select_tool.name,Map builder: select: {0}
+ui.act.spawn_tool.name,Map builder: place a monster spawn: {0}
+ui.act.start_tool.name,Map builder: place the hero's start: {0}
+ui.act.terrain_tool.name,Map builder: paint terrain: {0}
 ui.act.throw_dice.name,Throw the dice: {0}
 ui.act.toggle_log.name,Open or close the fight log: {0}
 ui.act.touch.name,Press what you are on: {0}
@@ -1791,7 +1871,9 @@ ui.act.turn_prop.name,Map builder: turn the prop a quarter: {0}
 ui.act.turn_prop_back.name,Map builder: turn the prop back a quarter: {0}
 ui.act.turn_right.name,Turn the table a quarter to the right: {0}
 ui.act.undo_edit.name,Map builder and Workshop: undo: {0}
+ui.act.view_from_above.name,Map builder: view from above: {0}
 ui.act.waiting,press a key
+ui.act.walls_and_doors.name,Map builder: walls and doors: {0}
 ui.act.where_are_we.name,Ask where you are and what you were doing: {0}
 ui.act.zoom_in.name,Lean in: {0}
 ui.act.zoom_out.name,Sit back: {0}
@@ -1808,7 +1890,7 @@ ui.area.cone.name,{0}-foot cone
 ui.area.cube.name,{0}-foot cube
 ui.area.line.name,{0}-foot line
 ui.area.radius.name,{0}-foot radius
-ui.book.contents,Contents
+ui.book.contents,Main menu
 ui.book.continue,Continue
 ui.book.credits,Credits
 ui.book.delete,Delete
@@ -1927,12 +2009,16 @@ ui.combat_why.spent.name,Nothing left to cast it with.
 ui.combat_why.too_far.name,Too far to reach this turn.
 ui.combat_why.too_long.name,It takes too long to cast in a fight.
 ui.controls.begin,"On the closed book, Begin opens it: {0}, or a click on it"
+ui.controls.builder_escape,"Map builder: Esc puts down what's in hand, then shuts the open picker or pop-up, then lets go of what's selected"
 ui.controls.cancel,"Put back what you picked; with nothing picked, pause: {0}"
 ui.controls.change,Change
 ui.controls.go_on,"End your turn, or skip the rest of the enemies' turns: {0}"
 ui.controls.hotkeys,"Take an option on the action bar: 1 to 9, the buttons from the left, then the menus"
 ui.controls.keyboard,Keyboard
 ui.controls.mouse,Mouse and trackpad
+ui.controls.mouse_builder_more,Map builder: hold Ctrl as you click to keep placing more of the same
+ui.controls.mouse_builder_place,"Map builder: pick a prop or building, then click a square: one is placed, and selected"
+ui.controls.mouse_builder_scatter,Map builder: hold Shift and drag to scatter the prop in hand along the way
 ui.controls.mouse_cancel,Right-click to put back what you picked
 ui.controls.mouse_hover,"Point at a square to see the path, or at a creature to see your chance and the damage"
 ui.controls.mouse_pick,"Left-click an option to pick it, a lit square to walk there, or a target to aim at it"
@@ -1970,15 +2056,19 @@ ui.create.step_skills,Choose your skills
 ui.create.step_species,Choose a species
 ui.create.step_spellresource,How do you pay for spells?
 ui.create.step_spells,Choose your spells
-ui.create.step_traits,Your species' traits
+ui.create.step_traits,Your traits
 ui.create.take_suggested,Take the suggestion
 ui.create.title,A new character
+ui.create.title_class,A new {0}
+ui.create.title_species,A new {0}
+ui.create.title_species_class,A new {0} {1}
 ui.create.trait_size,Your size
-ui.create.trait_skill,A skill your species gives you
+ui.create.trait_skill,A skill your species or background gives you
 ui.create.trait_spell_ability,Your species' spells are cast with
 ui.credits.by,by {0}
 ui.credits.licence_bsd,BSD License
 ui.credits.licence_cc0,CC0
+ui.credits.licence_cc_by,CC BY
 ui.credits.licence_cc_by_3,CC BY 3.0
 ui.credits.licence_cc_by_4,CC BY 4.0
 ui.credits.licence_custom,Used under its own licence
@@ -2008,7 +2098,7 @@ ui.death.load,Load a save
 ui.death.no_save,There is no save to go back to.
 ui.death.reload,Try again
 ui.death.title,You have fallen
-ui.death.to_the_book,Back to the book
+ui.death.to_the_book,Main menu
 ui.dialogue.continue,Continue
 ui.duration.concentration.name,"Concentration, as long as you hold it"
 ui.duration.encounter.name,Until the fight ends
@@ -2043,7 +2133,7 @@ ui.launch.begin,Begin
 ui.launch.character,"{0}, level {1} {2}"
 ui.launch.next,Next
 ui.launch.no_saves,No saves yet.
-ui.launch.press_to_begin,Press any key to open the book.
+ui.launch.press_to_begin,Press any key to open the main menu.
 ui.launch.retire,Retire
 ui.launch.saves,Saves
 ui.launch.title,Lanorim
@@ -2097,6 +2187,7 @@ ui.log.surrendered.name,"With nowhere to run, the rest throw down their arms."
 ui.log.turn.name,{0}'s turn.
 ui.log.won.name,The fight is won.
 ui.map.all_props,All
+ui.map.buildings,Buildings
 ui.map.campaign,Campaign
 ui.map.campaign_maps,Campaign maps
 ui.map.cancel,Cancel
@@ -2126,8 +2217,8 @@ ui.map.ground_sand,Sand
 ui.map.ground_snow,Snow
 ui.map.ground_stone,Stone floor
 ui.map.ground_water,Shallow water
-ui.map.id,Map name (its file)
-ui.map.id_rule,"A map's name is its file's: lowercase letters, numbers and underscores."
+ui.map.id,Map name
+ui.map.id_rule,"Only letters, numbers, dashes, spaces and underscores are allowed"
 ui.map.leave,Leave
 ui.map.leave_anyway,Leave without saving
 ui.map.line_door,Door
@@ -2135,14 +2226,21 @@ ui.map.line_wall,Wall
 ui.map.lives,Keep it in
 ui.map.looks,Ground
 ui.map.make,Make the map
+ui.map.menu_edit,Edit
+ui.map.menu_file,File
+ui.map.menu_view,View
 ui.map.my_maps,My maps
 ui.map.new,A new map
 ui.map.no_campaigns,There are no campaign folders to keep a map in.
 ui.map.no_maps,This campaign has no maps yet.
 ui.map.no_problems,No problems: this map plays.
 ui.map.open,Open a map
+ui.map.page,Page {0} of {1}
+ui.map.page_back,Back
+ui.map.page_on,Next
 ui.map.paste,Paste
 ui.map.play,Play this map
+ui.map.players_view,Player's view
 ui.map.problem_nothing_painted,Nothing has been painted yet.
 ui.map.problem_prop_in_wall,A {0} is inside a wall.
 ui.map.problem_prop_off_map,A {0} runs off the edge of the map.
@@ -2153,6 +2251,7 @@ ui.map.problem_spawn_unreachable,"Spawn {0} can't be walked to from the start: a
 ui.map.problem_start_in_prop,The hero starts inside a prop that blocks. Move the start or the prop.
 ui.map.problem_start_on_rock,The hero starts on solid rock. Put the start somewhere you can stand.
 ui.map.problems,Problems
+ui.map.problems_count,Problems ({0})
 ui.map.redo,Redo
 ui.map.rename,Give it another name
 ui.map.replace,Replace that one
@@ -2167,10 +2266,12 @@ ui.map.save,Save
 ui.map.save_as,Save as...
 ui.map.saved,Saved.
 ui.map.saved_with_problems,"Saved. It has problems, so its campaign won't load it until they're fixed."
-ui.map.scatter_hint,Hold Shift and drag to scatter this prop.
+ui.map.scatter_hint,Ctrl and click to place more of the same; hold Shift and drag to scatter. Esc puts it down.
 ui.map.search,Search props
-ui.map.select_hint,"Drag a box to select, or click a prop to pick it up. Drag to move; R turns, Delete clears."
+ui.map.search_buildings,Search buildings
+ui.map.select_hint,"Drag a box to select, or click a prop to pick it up. Drag to move; R turns, Delete clears, Esc lets go."
 ui.map.spawn,Spawn {0}
+ui.map.spawn_menu,Spawn
 ui.map.stay,Stay
 ui.map.style_fence,Wooden fence
 ui.map.style_fieldstone,Fieldstone
@@ -2181,11 +2282,13 @@ ui.map.style_timber,Timber
 ui.map.styles,Made of
 ui.map.taken,There's already a map called {0} there.
 ui.map.template,Start from
+ui.map.template_blank,Blank
 ui.map.template_dungeon_room,Dungeon room
 ui.map.template_empty_field,Empty field
 ui.map.template_forest_clearing,Forest clearing
 ui.map.template_house_room,Room in a house
 ui.map.template_village_street,Village street
+ui.map.terrain,Terrain
 ui.map.title,Map builder
 ui.map.tool_erase,Erase
 ui.map.tool_fill,Fill
@@ -2195,7 +2298,7 @@ ui.map.tool_select,Select
 ui.map.tool_spawn,Monster spawn
 ui.map.tool_start,Hero start
 ui.map.tool_wall,Walls and doors
-ui.map.top_down,From above
+ui.map.top_down,View from above
 ui.map.trial,Play this map
 ui.map.trial_at_spawn,At spawn {0}
 ui.map.trial_could_not,Couldn't set up the fight: {0}
@@ -2248,7 +2351,7 @@ ui.pause.save,Save
 ui.pause.saved,Saved.
 ui.pause.sheet,Character sheet
 ui.pause.title,Paused
-ui.pause.to_the_book,Back to the book
+ui.pause.to_the_book,Main menu
 ui.range.feet.name,{0} feet
 ui.range.self.name,Self
 ui.range.touch.name,Touch
@@ -2336,7 +2439,7 @@ ui.tutorial.intermediate_blurb,"Reactions, spells and conditions, and reading a 
 ui.tutorial.not_yet,Not written yet.
 ui.tutorial.tests,Test campaigns
 ui.tutorial.title,Learn to play
-ui.where.book,"The campaign book: the contents, or a campaign's pages."
+ui.where.book,"The main menu, or a campaign's pages."
 ui.where.campaign,{0}.
 ui.where.foes,Enemies still standing: {0}.
 ui.where.health,{0} has {1} of {2} hit points.
@@ -2354,6 +2457,7 @@ ui.workshop.always_speak,The GM and your companion
 ui.workshop.author,Author
 ui.workshop.author_hint,"Your name, as you want it shown."
 ui.workshop.back,Back
+ui.workshop.based_on,Based on {0} (Lanorim)
 ui.workshop.cancel,Cancel
 ui.workshop.chapter_placeholder,The chapter's title
 ui.workshop.chapter_title,First chapter's title
@@ -2398,7 +2502,7 @@ ui.workshop.first_map_make,Make a new map
 ui.workshop.first_map_pick,Pick from My maps
 ui.workshop.forever_question,Delete {0} forever? This can't be undone.
 ui.workshop.game_campaigns,Game campaigns
-ui.workshop.game_campaigns_hint,"The game's own campaigns. You can change them here because this is the editor build."
+ui.workshop.game_campaigns_hint,You can make a copy of the game's own campaigns and edit them.
 ui.workshop.gm_blank,Plain
 ui.workshop.gm_cave,Cave
 ui.workshop.gm_dead_forest,Dead forest
@@ -2421,6 +2525,7 @@ ui.workshop.leveling,Levelling up
 ui.workshop.leveling_hint,Experience points come from fights won and from the story.
 ui.workshop.leveling_milestone,When the story says so
 ui.workshop.leveling_xp,By experience points
+ui.workshop.make_copy,Make an editable copy
 ui.workshop.make_map,Make a new map
 ui.workshop.map_name,New map's name
 ui.workshop.maps,Maps
@@ -2428,17 +2533,18 @@ ui.workshop.mature,Mature content
 ui.workshop.mature_hint,"Tick this if it has graphic violence, sexual content or other adult themes. On Steam, mature items are hidden from anyone who hasn't chosen to see them."
 ui.workshop.my_campaigns,My campaigns
 ui.workshop.name,Name
-ui.workshop.name_hint,What players see in the book.
+ui.workshop.name_hint,What players see in the main menu.
 ui.workshop.new_campaign,New campaign
 ui.workshop.new_map,New map
 ui.workshop.next,Next
-ui.workshop.no_campaigns,No campaigns of your own yet. New campaign starts one.
+ui.workshop.no_campaigns,You don't have any campaigns yet.
 ui.workshop.no_maps_in_chapter,No maps yet. Add one below.
-ui.workshop.no_my_maps,You have no maps of your own yet.
+ui.workshop.no_my_maps,You have no maps yet.
 ui.workshop.no_portrait,No picture
 ui.workshop.no_problems,No problems found.
 ui.workshop.open,Open
 ui.workshop.open_in_builder,Open in the builder
+ui.workshop.open_original,Open the original
 ui.workshop.own_tag,Your own tag
 ui.workshop.page_about,Name and blurb
 ui.workshop.page_first_chapter,First chapter
@@ -2496,7 +2602,7 @@ ui.workshop.recently_deleted,Recently deleted
 ui.workshop.remove,Remove
 ui.workshop.rename,Rename
 ui.workshop.restore,Restore
-ui.workshop.same_id,"Another campaign already uses this name, so this one isn't in the book. Rename gives it one of its own."
+ui.workshop.same_id,"Another campaign already uses this name, so this one isn't in the main menu. Rename gives it one of its own."
 ui.workshop.saved,Saved.
 ui.workshop.saved_with_problems,"Saved. It has problems that stop it loading yet, listed under Problems."
 ui.workshop.start_here,Start here
@@ -2505,7 +2611,7 @@ ui.workshop.starting_shop_hint,A new hero spends their gold before the first sce
 ui.workshop.starts_here,Starts here
 ui.workshop.story_starts,Your story starts here.
 ui.workshop.subscribed,Subscribed
-ui.workshop.subscribed_empty,Campaigns you subscribe to will be here once Workshop sharing arrives.
+ui.workshop.subscribed_empty,Campaigns you subscribe to will be here.
 ui.workshop.tab_about,About
 ui.workshop.tab_chapters,Chapters and maps
 ui.workshop.tab_characters,Characters

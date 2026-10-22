@@ -102,7 +102,7 @@ namespace Content.Tests
         [Fact]
         public void EveryTemplateMakesASoundMapAtAnySize()
         {
-            Assert.Equal(new[] { "empty_field", "dungeon_room", "forest_clearing", "village_street", "house_room" }, MapTemplates.Ids);
+            Assert.Equal(new[] { "blank", "empty_field", "dungeon_room", "forest_clearing", "village_street", "house_room" }, MapTemplates.Ids);
 
             foreach (string id in MapTemplates.Ids)
                 foreach ((int c, int r) in new[] { (3, 3), (12, 10), (20, 16), (64, 64) })

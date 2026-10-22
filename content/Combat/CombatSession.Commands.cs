@@ -73,6 +73,7 @@ namespace Content.Combat
             OptionKind.BreakFree => DoBreakFree(),
             OptionKind.Shake => DoShake(targets),
             OptionKind.Item => Done(Hero.Use(option.Item.Id, Fight.Resolver, Turn) >= 0, "no_bonus"),
+            OptionKind.Feature when option.Feature?.Trait == Trait.Flight => DoFlight(option.Feature, square),
             OptionKind.Feature => DoFeature(option.Feature),
             OptionKind.Shape => Done(Hero.Shift(option.Form, Turn), "no_uses"),
             OptionKind.Surge => Done(Turn.Surge(), "no_surge"),

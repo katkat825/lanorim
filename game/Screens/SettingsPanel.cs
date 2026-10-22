@@ -21,9 +21,12 @@ namespace Game.Screens
         public event Action Done;
 
         // the panel in a scroll, and what its Done goes back to: the book's page, or the pause card
-        public static Control Scrolled(Action done, int width)
+        // `back`: what its last button says - Back over the pause menu, Main menu on the book (cc_task_m2 Part 6)
+        string BackKey { get; init; } = ScreenWords.Back;
+
+        public static Control Scrolled(Action done, int width, string back = null)
         {
-            var panel = new SettingsPanel();
+            var panel = new SettingsPanel { BackKey = back ?? ScreenWords.Back };
             panel.Done += done;
             return Ui.Scroll(panel, width);
         }
@@ -92,7 +95,7 @@ namespace Game.Screens
 
             AddChild(new ControlsSection());
 
-            AddChild(Ui.Button(ScreenWords.Back, () => Done?.Invoke()));
+            AddChild(Ui.Button(BackKey, () => Done?.Invoke()));
         }
 
         // a reaction's name is its spell's, or the opportunity attack's own

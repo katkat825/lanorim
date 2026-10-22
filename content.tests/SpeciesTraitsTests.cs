@@ -48,7 +48,7 @@ namespace Content.Tests
             return making.Finish();
         }
 
-        static Hero RoundTrip(Hero hero)
+        internal static Hero RoundTrip(Hero hero)
         {
             var save = new SaveGame { Campaign = "ash_yard", Hero = HeroSaves.Capture(hero) };
             Read<SaveGame> read = SaveReader.Parse(SaveWriter.Write(save));

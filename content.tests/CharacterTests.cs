@@ -33,11 +33,15 @@ namespace Content.Tests
         [Fact]
         public void TheSevenSpeciesOfTheRosterAreAllThere()
         {
-            Assert.Equal(7, Roster.Species.Count);
+            // the SRD's seven, and Kathleen's Fairy and Beastfolk (cc_task_m2 Part 4)
+            Assert.Equal(9, Roster.Species.Count);
 
             foreach (string id in Roster.Species) Assert.NotNull(Srd.Kind(id));
 
-            Assert.Equal(7, Srd.Playable.Count());
+            Assert.Equal(9, Srd.Playable.Count());
+
+            Assert.Equal(new[] { "beastfolk", "fairy" },
+                         Srd.Playable.Where(k => k.NotInSrd).Select(k => k.Id).OrderBy(i => i));
         }
 
         [Fact]
@@ -107,7 +111,12 @@ namespace Content.Tests
             // SRD 5.2.1 p.84: ten dragons, five damage types - the colour is cosmetic
             Assert.Equal(5, Srd.LineagesOf("dragonborn").Count());
 
-            foreach (Kind kind in Srd.Playable.Where(k => k.Id != "elf" && k.Id != "dragonborn"))
+            // the Beastfolk's four kinds are a look, not rules: lineages with no features (cc_task_m2 Part 4)
+            Assert.Equal(new[] { "beastfolk_feline", "beastfolk_canine", "beastfolk_rodent", "beastfolk_ursine" },
+                         Srd.LineagesOf("beastfolk").Select(k => k.Id));
+            Assert.All(Srd.LineagesOf("beastfolk"), k => Assert.Empty(k.Features));
+
+            foreach (Kind kind in Srd.Playable.Where(k => k.Id is not ("elf" or "dragonborn" or "beastfolk")))
                 Assert.Empty(kind.Lineages);
         }
 
@@ -571,7 +580,7 @@ namespace Content.Tests
     {
         static readonly Library Srd = Library.Srd();
 
-        static Creation.Creation Fresh() => new Creation.Creation(Srd, Srd.Backgrounds);
+        internal static Creation.Creation Fresh() => new Creation.Creation(Srd, Srd.Backgrounds);
 
         [Fact]
         public void ItAsksForAClassFirst() => Assert.Equal(Step.Class, Fresh().Next);

@@ -1,0 +1,27 @@
+[gd_scene format=3]
+
+; THE FAIRY'S WINGS (cc_task_m2 Part 4): two of DevMops's Angel Wing (OpenGameArt, CC0), the left one mirrored,
+; swept back 35 degrees and set behind the chest of a KayKit hero body, on its chest bone (HeroMinis, HeldItems).
+; The FBX names no texture, so each wing wears the pack's base colour map here, which the painted shader reads.
+; A first pass from the numbers, for Kathleen to place by eye: size, spread, height and sweep are the two
+; transforms below (a KayKit body is about 2.2 units tall before the mini scales it).
+
+[ext_resource type="PackedScene" path="res://models/minis/wings/angel_wing.fbx" id="1_wing"]
+[ext_resource type="Texture2D" path="res://models/minis/wings/wing_lp_BaseMap.png" id="2_colour"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_wing"]
+albedo_texture = ExtResource("2_colour")
+
+[node name="AngelWings" type="Node3D"]
+
+[node name="Right" parent="." instance=ExtResource("1_wing")]
+transform = Transform3D(0.73724, 0, 0.51622, 0, 0.9, 0, -0.51622, 0, 0.73724, 0.1, 0.1, -0.32)
+
+[node name="Wing Low" parent="Right" index="0"]
+surface_material_override/0 = SubResource("Mat_wing")
+
+[node name="Left" parent="." instance=ExtResource("1_wing")]
+transform = Transform3D(-0.73724, 0, -0.51622, 0, 0.9, 0, -0.51622, 0, 0.73724, -0.1, 0.1, -0.32)
+
+[node name="Wing Low" parent="Left" index="0"]
+surface_material_override/0 = SubResource("Mat_wing")
