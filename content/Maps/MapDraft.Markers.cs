@@ -55,11 +55,11 @@ namespace Content.Maps
 
         // --- props -------------------------------------------------------------------------------
 
-        public bool PlaceProp(string id, Cell cell, int turn = 0)
+        public bool PlaceProp(string id, Cell cell, int turn = 0, string actor = null)
         {
             if (!Json.IsId(id)) return false;
 
-            var prop = new Prop(id, cell, turn);
+            var prop = new Prop(id, cell, turn, actor);
 
             if (!Fits(prop)) return false;
 
@@ -120,7 +120,7 @@ namespace Content.Maps
 
             if (at < 0) return null;
 
-            var moved = new Prop(prop.Id, to, turn);
+            var moved = new Prop(prop.Id, to, turn, prop.Actor);
 
             if (!Fits(moved, prop)) return null;
 
@@ -130,5 +130,20 @@ namespace Content.Maps
         }
 
         public Prop TurnProp(Prop prop, int quarters) => MoveProp(prop, prop?.Cell ?? default, (prop?.Turn ?? 0) + quarters);
+
+        // WHO A FIGURE IS (cc_task_m3 Part 10): one of the campaign's characters by its actor id, or "" for someone. A
+        // figure only; the prop it becomes, or null
+        public Prop NameProp(Prop prop, string actor)
+        {
+            int at = _props.IndexOf(prop);
+
+            if (at < 0 || !Palette.IsFigure(prop.Id) || actor != "" && !Json.IsId(actor)) return null;
+
+            Prop named = prop.Named(actor);
+
+            Do(() => _props[at] = named, () => _props[at] = prop);
+
+            return named;
+        }
     }
 }

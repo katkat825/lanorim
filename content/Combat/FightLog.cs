@@ -50,6 +50,7 @@ namespace Content.Combat
                     "death_save_dead", "won", "lost", "fled", "roll_table", "roll_hidden", "diverted",
                     "roll_attack", "roll_save", "roll_check", "roll_initiative", "cast", "cast_on" }
                 .Concat(Enum.GetValues<Stat>().Select(ChangedWord))
+                .Concat(Enum.GetValues<Core.Magic.Command>().Where(w => w != Core.Magic.Command.None).Select(ObeysWord))
                 .Select(K);
 
         // "changed_armor_class": what a spell changed, one key a number
@@ -176,6 +177,16 @@ namespace Content.Combat
             foreach (Change change in changes ?? Array.Empty<Change>())
                 Add(ChangedWord(change.What), change.Who, change.From, change.To, change.To - change.From);
         }
+
+        // "Green shoots push up through the stones at Pell's feet." - the narrator's line for a spell with nothing
+        // mechanical in it, after its cast line (cc_task_m3 Part 2). its own key, the spell's (Spell.NarrationKey)
+        public override void Narrated(Actor caster, string spellId, Cell? at) =>
+            Write(new LogLine(Core.Magic.Spell.NarrationKeyOf(spellId), caster));
+
+        // "Goblin grovels." - a Command's word, as the turn it decides begins (cc_task_m3 Part 2)
+        public override void Obeys(Actor actor, Core.Magic.Command word) => Add(ObeysWord(word), actor);
+
+        static string ObeysWord(Core.Magic.Command word) => "obeys_" + word.Id();
 
         public override void Opportunity(Actor attacker, Actor fleeing) =>
             Add("opportunity", attacker, fleeing);

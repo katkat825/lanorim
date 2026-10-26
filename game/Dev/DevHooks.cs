@@ -43,6 +43,7 @@ namespace Game.Dev
             new("--ask-delete", "", Where.Launch, false, "with --show book, the first character's Delete pressed, for a picture of the question"),
             new("--page", "<step>", Where.Launch, false, "with --show create, that creation page, part filled in"),
             new("--class", "<class>", Where.Any, false, "with --show create, that class (mage otherwise); on the demonstration table, the hero's class (rogue otherwise)"),
+            new("--longest", "", Where.Launch, false, "with --show create --page, the picks that make that page longest (equipment, traits, cantrips, spells; check-layout's worst case)"),
             new("--species", "<species|lineage>", Where.Any, false, "with --show create, that species (and lineage) picked; on the demonstration table, the hero's (halfling otherwise)"),
             new("--begin", "<campaign> [class]", Where.Launch, false, "a character with every default (fighter otherwise), straight to the table; probe saves are kept apart"),
             new("--learn", "<spell,spell>", Where.Launch, false, "with --begin, those spells learned first"),
@@ -50,7 +51,7 @@ namespace Game.Dev
             new("--build", "<campaign|mine> [map]", Where.Launch, false, "that map, or a new one called probe_map, in the map builder; mine is My maps"),
             new("--template", "<id>", Where.Launch, false, "with --build, a new map starts as that template (dungeon_room otherwise)"),
             new("--tool", "<tool>", Where.Builder, false, "the builder opens with that tool in hand (select, paint, fill, wall, prop...)"),
-            new("--picker", "<picker>", Where.Builder, false, "the builder opens with that picker or pop-up open: buildings, props, walls, problems"),
+            new("--picker", "<picker>", Where.Builder, false, "the builder opens with that picker or pop-up open: buildings, npcs, props, walls, problems"),
             new("--trial-panel", "", Where.Builder, false, "the builder opens its Play this map panel"),
             new("--prop-icons", "", Where.Launch, false, "renders every prop's palette thumbnail into game/ui/prop_icons/ and quits; not headless"),
             new("--mine", "<folder>", Where.Launch, false, "My campaigns and My maps kept in <folder>/campaigns and <folder>/maps, not the player's"),
@@ -72,6 +73,8 @@ namespace Game.Dev
             new("--tray-walls", "<0.4..3>", Where.Any, true, "the dice tray's walls, scaled"),
             new("--old-hero", "", Where.Any, true, "the board's own hero figure, not the class's mini"),
             new("--plain-pose", "", Where.Any, true, "every hero mini in Idle_A"),
+            new("--pose", "<clip>", Where.Any, true, "every hero mini held in that clip (Attack, Sword), for a picture mid-swing"),
+            new("--pose-at", "<seconds>", Where.Any, true, "with --pose, so far into the clip"),
             new("--empty-handed", "", Where.Any, true, "hero minis holding nothing"),
             new("--figure", "<0|1>", Where.Any, true, "the class's second figure"),
             new("--head", "<model>", Where.Any, true, "any head on the hero's body, its headgear off (kaykit/Mage.glb)"),
@@ -92,6 +95,7 @@ namespace Game.Dev
             new("--mood", "<mood>", Where.Table, false, "with --companion, it feels that (pleased, alert, quiet, watching)"),
             new("--mood-after", "<seconds>", Where.Table, false, "with --mood, so many seconds in (2 otherwise)"),
             new("--corners", "", Where.Table, false, "a cross of walls on the map, so every kind of wall post is on the table"),
+            new("--wall-styles", "", Where.Table, false, "every wall style in a row of its own, two walls, its door (where it has one), two more and a corner, on grass (cc_task_m3)"),
             new("--open-door", "", Where.Table, false, "the map's door swung open"),
 
             // the probes and the checks
@@ -100,6 +104,7 @@ namespace Game.Dev
             new("--map-probe", "", Where.Launch, false, "the map builder driven: a map from each template in My maps, ground, walls, a building, a scatter of trees, undo, save, reopen, copy to a campaign, and play it (check-mapbuilder; with --auto)"),
             new("--workshop-probe", "", Where.Launch, false, "the Workshop driven: a campaign made through the wizard, a chapter and a map added, saved, found in the book, and played to its one line (check-workshop; with --auto)"),
             new("--layout", "", Where.Any, false, "every launch screen, or the table's HUD, pause menu, sheet and pack, at six window sizes (check-layout)"),
+            new("--cast", "<spell[:mode]>", Where.Play, false, "in a fight, the hero casts that spell (with that mode) at the nearest foe or square, and the table is watched for its line, its sight, a Command's word obeyed (check-play)"),
             new("--prone-probe", "", Where.Play, false, "in a fight, Prone lies down in its square and Stand Up stands it up (check-play)"),
             new("--access-probe", "", Where.Play, false, "presses F2, F1, Tab, Shift+Tab and F3 at the table (check-controls)"),
             new("--locale", "", Where.Table, false, "does Godot have English for every key the engine emits (check-table)"),
@@ -163,6 +168,10 @@ namespace Game.Dev
 
             string screen = DevArgs.Show;
 
+            // creation needs a free character slot, which a player's own saves may have taken: the layout probe and a
+            // picture of creation keep saves of their own (cc_task_m3 Part 1: the creation pages were never checked here)
+            if (DevArgs.LayoutProbe || screen == "create") GameState.SaveProbesApart();
+
             if (screen == "controls") QuickStart.Controls(launch);
             else if (screen == "create") QuickStart.Creating(launch, DevArgs.Page, DevArgs.Class);
             else launch.ShowFirst(screen, DevArgs.Open);
@@ -225,6 +234,13 @@ namespace Game.Dev
 
             if (DevArgs.ProneProbe) director.AddChild(new ProneProbe { Name = "ProneProbe", Combat = director.Combat });
 
+            if (DevArgs.Cast is { } cast)
+                director.AddChild(new CastProbe
+                {
+                    Name = "CastProbe", Combat = director.Combat,
+                    Spell = cast.Split(':')[0], Mode = cast.Contains(':') ? cast.Split(':')[1] : null,
+                });
+
             if (DevArgs.LayoutProbe) director.AddChild(Layouts.OfPlay(director));
         }
 
@@ -246,6 +262,7 @@ namespace Game.Dev
             Access.Act? picker = DevArgs.Picker switch
             {
                 "buildings" => Access.Act.BuildingsPicker,
+                "npcs" => Access.Act.NpcsPicker,
                 "props" => Access.Act.PropsPicker,
                 "walls" => Access.Act.WallsAndDoors,
                 "problems" => Access.Act.BuilderProblems,

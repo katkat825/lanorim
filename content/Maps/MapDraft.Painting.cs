@@ -101,7 +101,8 @@ namespace Content.Maps
         public bool Wall(Border border, Edge edge, WallStyle style = WallStyle.Stone) => Wall(new[] { border }, edge, style) > 0;
 
         // the editor's drag along a run of lines: every one at once, one undo step for the lot (cc_task_f Part 2). a
-        // wall takes the style it's laid in; a door takes its wall's (DoorStyle), so a gate in a fence is a fence's
+        // wall takes the style it's laid in; a door takes its wall's (DoorStyle), so a gate in a fence is a fence's. A
+        // style with no door of its own takes none (WallStyles.HasDoor, cc_task_m3 Part 6)
         public int Wall(IEnumerable<Border> borders, Edge edge, WallStyle style = WallStyle.Stone)
         {
             var changed = new List<(Border Line, Edge Was, WallStyle Styled, WallStyle Now)>();
@@ -111,6 +112,8 @@ namespace Content.Maps
                 if (!Extent.Contains(border) || changed.Exists(c => c.Line == border)) continue;
 
                 WallStyle now = edge == Edge.None ? WallStyle.Stone : edge == Edge.Door ? DoorStyle(border, style) : style;
+
+                if (edge == Edge.Door && !now.HasDoor()) continue;
 
                 if (At(border) != edge || StyleAt(border) != now)
                     changed.Add((border, At(border), StyleAt(border), now));

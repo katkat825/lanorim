@@ -11,13 +11,34 @@ namespace Game.Dev
     {
         void OpenPage() => Launch.PageCalled("builder")?.Open(Launch);
 
-        // the page's New map: a name, the template, My maps, and the big button
+        // the page's New map: a name, the template, My maps, and the big button. Blank is made at a size of its own choosing
+        // (cc_task_m3 Part 3: picking Blank leaves the size boxes alone); the page has no Advanced box
         void NewMap(string template, string name)
         {
+            Expect(Find<Control>("Advanced") == null && Find<Control>("MapId") == null, "the page has no Advanced box and shows no id");
+
             Type(Find<LineEdit>("MapName"), name);
+
+            bool blank = MapTemplates.TakesTheSize(template);
+            if (blank) Size(BlankSize.X, BlankSize.Y);
+
             Choose(Find<OptionButton>("Template"), MapTemplates.Ids.ToList().IndexOf(template));
+
+            if (blank)
+                Expect(Find<SpinBox>("Columns")?.Value == BlankSize.X && Find<SpinBox>("Rows")?.Value == BlankSize.Y,
+                       "picking Blank left the size boxes as they were");
+
             Choose(Find<OptionButton>("Lives"), 0);
             Find<Button>("MakeMap")?.EmitSignal(BaseButton.SignalName.Pressed);
+        }
+
+        // the size Blank is made at
+        static readonly Vector2I BlankSize = new(20, 15);
+
+        void Size(int columns, int rows)
+        {
+            if (Find<SpinBox>("Columns") is { } across) across.Value = columns;
+            if (Find<SpinBox>("Rows") is { } deep) deep.Value = rows;
         }
 
         // the name's rule, said in red under its box while it's broken, and gone when it isn't (cc_task_m2 Part 7)

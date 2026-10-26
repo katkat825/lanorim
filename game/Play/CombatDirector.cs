@@ -51,6 +51,10 @@ namespace Game.Play
         // a line of the table's own in the fight's log: the companion's bark (cc_task_i 2.4)
         public void Write(string line) => _hud?.Write(line);
 
+        // what the log has shown this fight (CastProbe)
+        public System.Collections.Generic.IReadOnlyList<string> LogWritten =>
+            _hud?.Written ?? (System.Collections.Generic.IReadOnlyList<string>)Array.Empty<string>();
+
         public void Mount(Control ui)
         {
             _hud = new CombatHudUi(this);
@@ -60,6 +64,9 @@ namespace Game.Play
 
         // the rules made the battle; lay the map and stand everyone on it (main thread, rules idle
         // between BattleFor and Start - the positions are the starting ones)
+        // what stands on the map, for the named NPC under the pointer (cc_task_m3 Part 10)
+        List<Content.Maps.Prop> _props = new();
+
         public void Lay(Battle battle, IReadOnlyList<(Actor Actor, Cell At)> places,
                         IEnumerable<Content.Maps.Prop> props = null, Content.Maps.MapLook look = null)
         {
@@ -69,7 +76,7 @@ namespace Game.Play
             // a monster stands as its statblock's mini (v1_minis_map.md); the hero as its class's (HeroMinis,
             // task G), or the board's own when that's switched off
             Board.FigureFor = actor => battle.StatblockOf(actor) is { } monster
-                ? Game.Board.MiniModels.For(monster.Mini)
+                ? Game.Board.MiniModels.For(monster.Mini, actor.Id)
                 : GameState.Run?.Hero is { } hero && ReferenceEquals(hero.Actor, actor)
                     ? Game.Board.HeroMinis.For(hero)
                     : null;
@@ -79,6 +86,7 @@ namespace Game.Play
             Board.ClearAll();
             Board.Lay(battle.Fight.Field.Map, look);
             Board.Dress(props);
+            _props = props == null ? new List<Content.Maps.Prop>() : new List<Content.Maps.Prop>(props);
             Screen?.StandBehind(Board);
             Companion?.StandBy(Board, Screen);
 
@@ -232,6 +240,20 @@ namespace Game.Play
 
                 case "wobble":
                     if (!_skipping) Board.Wobble(step.Actor);
+                    break;
+
+                // a Command's word taking the turn (cc_task_m3 Part 2)
+                case "obey":
+                    if (!_skipping && Board.Of(step.Actor) != null)
+                    {
+                        Board.Wobble(step.Actor);
+                        if (Battle?.Fight.Field.Where(step.Actor) is Core.Space.Cell square) Board.Pulse(square);
+                    }
+                    break;
+
+                // what a narrated spell shows on its square (Board.Sight)
+                case "sight" when step.At is Core.Space.Cell at:
+                    if (!_skipping) Board.Sight(step.Spell, at);
                     break;
 
                 case "prone":

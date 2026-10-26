@@ -52,6 +52,14 @@ namespace Content.Saves
             {
                 lineage = library.Kind(saved.Lineage);
 
+                // a kind that was retired: the one that took it over, said once (cc_task_m3 Part 9)
+                if (lineage == null && library.Species.All.FirstOrDefault(k => k.Replaces.Contains(saved.Lineage)) is { } now)
+                {
+                    lineage = now;
+                    found.Add(ContentProblem.Caution(file, "hero.lineage",
+                        $"'{saved.Lineage}' is not a kind any more - this {saved.Species} is read as {now.Id}"));
+                }
+
                 if (lineage == null)
                     found.Add(ContentProblem.Caution(file, "hero.lineage",
                         $"'{saved.Lineage}' is not a lineage this build has - this " +

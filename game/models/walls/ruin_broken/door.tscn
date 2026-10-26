@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+; A DOOR IN A BROKEN RUINED WALL (cc_task_m3 Part 6): the Ruins pack's round arch (Wall_ArchRound) with its double doors
+; (Doors_RoundArch, "Ruined doors" in Ruins) hung in it. the door leaf is the child whose name ends in _door: BoardTiles
+; hangs it on a hinge at its edge (DoorPiece). First pass.
+
+[ext_resource type="Mesh" path="res://models/props/ultimate_modular_ruins_pack_aug_2021/Wall_ArchRound.obj" id="1_frame"]
+[ext_resource type="Mesh" path="res://models/props/ultimate_modular_ruins_pack_aug_2021/Doors_RoundArch.obj" id="2_leaf_door"]
+
+[node name="door" type="Node3D"]
+
+[node name="Frame" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.095)
+mesh = ExtResource("1_frame")
+
+[node name="Leaf_door" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = ExtResource("2_leaf_door")

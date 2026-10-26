@@ -101,11 +101,11 @@ namespace Content.Tests
         [Fact]
         public void ABeastfolkPicksAKindAndAnAgilityAndHasInitiativeAdvantage()
         {
-            Creation.Creation making = Making("fighter", "beastfolk", "beastfolk_ursine", "gentry");
+            Creation.Creation making = Making("fighter", "beastfolk", "beastfolk_selachian", "gentry");
 
             // the Beastfolk's kinds are its lineages, a look and nothing more
             Assert.True(making.NeedsLineage);
-            Assert.Empty(Srd.Kind("beastfolk_ursine").Features);
+            Assert.Empty(Srd.Kind("beastfolk_selachian").Features);
 
             // Natural Agility's one of two, and the Gentry's any: two picks, kept to their own lists
             Assert.Equal(2, making.TraitSkillPicks);
@@ -123,14 +123,39 @@ namespace Content.Tests
             Assert.True(Trained(hero, Skill.Arcana));
             Assert.True(Trained(hero, Skill.Persuasion));
             Assert.True(hero.Actor.Is("humanoid"));
-            Assert.Equal("beastfolk_ursine", hero.Lineage.Id);
+            Assert.Equal("beastfolk_selachian", hero.Lineage.Id);
             Assert.Contains(hero.Features, f => f.Id == "darkvision_60");
+        }
+
+        // cc_task_m3 Part 9: Feline, Canine, Rodent and Ursine are gone; a hero saved as one still loads, as a Vulpine, and
+        // the save says so once rather than being refused
+        [Theory]
+        [InlineData("beastfolk_feline")]
+        [InlineData("beastfolk_canine")]
+        [InlineData("beastfolk_rodent")]
+        [InlineData("beastfolk_ursine")]
+        public void AHeroSavedAsARetiredKindLoadsAsAVulpine(string retired)
+        {
+            Assert.Null(Srd.Kind(retired));
+
+            Hero hero = Finish(Suggested(Making("rogue", "beastfolk", "beastfolk_vulpine", "soldier")));
+            SavedHero saved = HeroSaves.Capture(hero);
+            saved.Lineage = retired;
+
+            Read<SaveGame> read = SaveReader.Parse(SaveWriter.Write(new SaveGame { Campaign = "ash_yard", Hero = saved }));
+            Assert.True(read.Ok, string.Join("; ", read.Problems));
+
+            Hero back = HeroSaves.Restore(read.Value.Hero, Srd, out var problems);
+
+            Assert.NotNull(back);
+            Assert.Equal("beastfolk_vulpine", back.Lineage?.Id);
+            Assert.Contains(problems, p => p.ToString().Contains(retired));
         }
 
         [Fact]
         public void InstinctiveAwarenessIsAdvantageOnInitiativeAndOnlyTheBeastfolkHaveIt()
         {
-            Hero beast = Finish(Suggested(Making("rogue", "beastfolk", "beastfolk_feline", "soldier")));
+            Hero beast = Finish(Suggested(Making("rogue", "beastfolk", "beastfolk_vulpine", "soldier")));
             Hero human = Finish(Suggested(Making("rogue", "human", null, "soldier")));
 
             Assert.True(beast.Actor.InitiativeAdvantage);

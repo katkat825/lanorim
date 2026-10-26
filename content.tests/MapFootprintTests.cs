@@ -121,7 +121,9 @@ namespace Content.Tests
         {
             PropCatalogue palette = PropCatalogue.Srd();
 
-            Assert.All(palette.In("buildings").Where(p => p.Blocks), p => Assert.True(p.Width * p.Depth >= 2, p.Id));
+            // the farm's chicken coop and water tower are one square (cc_task_m3 Part 5 moved them onto the shelf)
+            Assert.All(palette.In("buildings").Where(p => p.Blocks && p.Id is not ("chicken_coop" or "water_tower")),
+                       p => Assert.True(p.Width * p.Depth >= 2, p.Id));
             Assert.Equal((4, 4), (palette.Find("barn").Width, palette.Find("barn").Depth));
             Assert.False(PropCatalogue.TryRead(@"{ ""categories"": [""a""], ""props"": [
                 { ""id"": ""huge"", ""category"": ""a"", ""size"": [9, 1] },

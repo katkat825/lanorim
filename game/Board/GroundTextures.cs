@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Content.Maps;
 using Godot;
 
@@ -6,7 +7,11 @@ namespace Game.Board
 {
     // WHAT EACH GROUND LOOKS LIKE (cc_task_l Part 2.3), FIRST PASS: a small tiling picture per ground, made here from the
     // palette's colours (tools/palette.ps1) and seamless noise, so it costs no megabytes and the painted shader relights
-    // it like everything else. Stone is the bare mat, as the dungeon always was, and has none.
+    // it like everything else.
+    //
+    // cc_task_m3 Part 7: Cobble is a real picture now (cobble.png, the Medieval Village MegaKit's T_UnevenBrick, 512 px),
+    // and Stone floor has one (stone.png, the kit's T_Brick flags). Stone is still the bare mat on a map that is all
+    // stone, so a dungeon looks as it always did; painted among other grounds it shows its flags (StoneWhereAlone).
     //
     // KATHLEEN'S TO CHANGE: drop a tiling picture at res://textures/ground/<ground>.png (grass.png, planks.png...) and
     // it is used instead of the made one; or change the colours below. Nothing else needs touching
@@ -36,11 +41,20 @@ namespace Game.Board
 
         static readonly Dictionary<Ground, Texture2D> Made = new();
 
+        // KATHLEEN'S SWITCH: true draws stone.png on an all-stone map too (every dungeon), false keeps the bare mat there
+        public const bool StoneWhereAlone = false;
+
+        // Stone draws only from its picture; with none it is the bare mat
+        public static bool Draws(Ground ground, MapLook look) =>
+            ground != Ground.Stone || ResourceLoader.Exists(Folder + "stone.png") &&
+                                      (StoneWhereAlone || look.Grounds.Any(g => g != Ground.Stone));
+
         public static Texture2D For(Ground ground)
         {
-            if (ground == Ground.Stone) return null;
-
             if (Made.TryGetValue(ground, out Texture2D made)) return made;
+
+            if (ground == Ground.Stone)
+                return Made[ground] = ResourceLoader.Exists(Folder + "stone.png") ? GD.Load<Texture2D>(Folder + "stone.png") : null;
 
             string path = Folder + Core.Words.EnumWords.Name(ground) + ".png";
             Texture2D picture = ResourceLoader.Exists(path) ? GD.Load<Texture2D>(path) : Make(ground);

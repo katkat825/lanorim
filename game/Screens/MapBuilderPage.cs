@@ -12,7 +12,7 @@ namespace Game.Screens
     // maps: a new map (its name, a size, a starting template - Blank first - and where it lives: "My maps", the default,
     // or a campaign), then My maps and a campaign's maps, each a line that opens it, then the Workshop to go back. In a
     // straight box like the Workshop's hub and the new-campaign wizard, not written on the book's pages. A map's name is
-    // what its author types; its id, the file's name, is made from it and shows only under Advanced (MapName). The table
+    // what its author types; its id, the file's name, is made from it and never shown here (MapName). The table
     // comes up as the builder (GameState.Building). A map is saved where it lives (MapFiles): a campaign's loads in that
     // campaign with no conversion. `--build` and `--map-probe` are the dev registry's (Dev/DevHooks.cs)
     public sealed class MapBuilderPage : IBookPage
@@ -105,7 +105,8 @@ namespace Game.Screens
         }
 
         // A NEW ONE: its name, its size, what it starts as, where it lives, and the button. The name's rule is said in red
-        // directly under its box while it's broken; Advanced shows the id it will have there
+        // directly under its box while it's broken. The id it will have is never shown here (cc_task_m3 Part 3: Advanced
+        // is gone from this page; MapName makes the id)
         static void NewMap(Launch launch, VBoxContainer page, IReadOnlyList<(Game.Campaigns.Loaded Campaign, MapPlace Place)> campaigns)
         {
             page.AddChild(Ui.Label(MapBuilderView.NewKey));
@@ -118,10 +119,11 @@ namespace Game.Screens
             foreach (string one in MapTemplates.Ids) template.AddItem(Ui.Say(MapTemplates.NameKey(one)));
             template.Selected = MapTemplates.Ids.ToList().IndexOf(MapTemplates.Standard);
 
-            // a template's own size, when it's picked: the size boxes are only a starting point
+            // a template's own size, when it's picked: the size boxes are only a starting point. Blank has no size of its
+            // own: it takes the boxes' (cc_task_m3 Part 3)
             template.ItemSelected += i =>
             {
-                MapDraft drawn = MapTemplates.Read(MapTemplates.Ids[(int)i]);
+                MapDraft drawn = MapTemplates.TakesTheSize(MapTemplates.Ids[(int)i]) ? null : MapTemplates.Read(MapTemplates.Ids[(int)i]);
                 if (drawn == null) return;
                 columns.Value = drawn.Columns;
                 rows.Value = drawn.Rows;
@@ -134,21 +136,11 @@ namespace Game.Screens
 
             MapPlace Place() => lives.Selected <= 0 ? Library : campaigns[lives.Selected - 1].Place;
 
-            // ADVANCED: the id the name makes, free where the map will live
-            Label id = Ui.Plain("");
-            id.Name = "MapId";
-            id.Visible = false;
-            void ShowId() => id.Text = MapName.Allowed(name.Text) ? MapName.IdIn(Place(), name.Text) : "";
-            CheckBox advanced = Game.Workshop.Forms.Tick("Advanced", Content.Workshop.WorkshopWords.AdvancedKey, false, on => id.Visible = on);
-            name.TextChanged += _ => ShowId();
-            lives.ItemSelected += _ => ShowId();
-
             page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.IdKey), name));
             page.AddChild(rule);
             page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.ColumnsKey), columns, Ui.Label(MapBuilderView.RowsKey), rows));
             page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.TemplateKey), template));
             page.AddChild(Ui.Row(8, Ui.Label(MapBuilderView.LivesKey), lives));
-            page.AddChild(Ui.Row(8, advanced, id));
 
             Button make = Ui.Button(MapBuilderView.MakeKey, () =>
             {

@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+; AN IRON FENCE (cc_task_m3 Part 6): the Medieval Village MegaKit's Prop_MetalFence_Simple (Quaternius), which
+; stood in Props as "Iron fence". Railings: they stop a walker and not an eye (the rules see bars). First pass.
+
+[ext_resource type="PackedScene" path="res://models/props/medieval_village_megakit_standard/Prop_MetalFence_Simple.gltf" id="1_body"]
+
+[node name="wall" type="Node3D"]
+
+[node name="Body" parent="." instance=ExtResource("1_body")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

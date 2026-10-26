@@ -20,6 +20,10 @@ namespace Content.Maps
 
         public Screens.Said Said { get; }
 
+        // A WARNING, NOT A FAULT (cc_task_m3 Part 10): said in the list with Go there, and the map still plays. A figure
+        // standing where nobody could, or naming a character the campaign no longer has
+        public bool Warning { get; init; }
+
         // the square, or null for the map as a whole
         public Cell? At { get; }
 
@@ -31,7 +35,7 @@ namespace Content.Maps
         public static readonly IReadOnlyList<string> Names = new[]
         {
             "start_on_rock", "start_in_prop", "spawn_on_rock", "spawn_in_prop", "spawn_unreachable", "prop_in_wall",
-            "nothing_painted", "prop_off_map", "props_overlap",
+            "nothing_painted", "prop_off_map", "props_overlap", "npc_cant_stand", "npc_unknown_person",
         };
 
         public override string ToString() => Says;

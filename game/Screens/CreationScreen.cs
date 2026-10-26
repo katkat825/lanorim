@@ -54,6 +54,7 @@ namespace Game.Screens
         Label _count;
         Label _title;
         Label _about;
+        ScrollContainer _aboutScroll;
         Label _held;
         Button _next;
         Func<string> _describe;
@@ -62,7 +63,12 @@ namespace Game.Screens
         {
             AddThemeConstantOverride("separation", 12);
             Draw();
+
+            // a window made taller or shorter has more or less room for the list and the description (Fit.cs)
+            GetViewport().SizeChanged += Refit;
         }
+
+        public override void _ExitTree() => GetViewport().SizeChanged -= Refit;
 
         // steps that have nothing to ask for this character are passed over
         bool Asks(Step step) => step switch
@@ -144,7 +150,8 @@ namespace Game.Screens
                 case Step.Name: Naming(); break;
             }
 
-            _scroll = Ui.Scroll(_body, 300);
+            _scroll = Ui.Scroll(_body, ListHeight);
+            _body.MinimumSizeChanged += Refit;
 
             // the class, species and lineage pages: the mini, turning to the right of the list, and on the class page
             // the two figures under it, where they're seen without scrolling (Figure.cs)
@@ -159,11 +166,14 @@ namespace Game.Screens
             }
             else AddChild(_scroll);
 
-            // THE DESCRIPTION AREA: what the selected choice is, under the list rather than on hover
+            // THE DESCRIPTION AREA: what the selected choice is, under the list rather than on hover. It scrolls, as the list
+            // does, so neither can push Back and Next off the window (Fit.cs)
             _about = Ui.Plain("");
             _about.ThemeTypeVariation = "CardLabel";
-            _about.CustomMinimumSize = new Vector2(0, Ui.Px(HudLayout.Current.CreationAboutHeight));
-            AddChild(_about);
+            _about.MinimumSizeChanged += Refit;
+            _aboutScroll = Ui.Scroll(_about, AboutHeight);
+            _aboutScroll.SizeFlagsVertical = SizeFlags.Fill;
+            AddChild(_aboutScroll);
 
             Button back = Ui.Button(ScreenWords.Back, Back);
             _next = Ui.Button(ScreenWords.Next, Forward);
@@ -197,7 +207,8 @@ namespace Game.Screens
 
             string about = _describe?.Invoke() ?? "";
             _about.Text = about;
-            _about.Visible = _describe != null;
+            _aboutScroll.Visible = _describe != null;
+            _aboutScroll.ScrollVertical = 0;
 
             string held = Holds(step);
             bool last = NextPage(_at) < 0;

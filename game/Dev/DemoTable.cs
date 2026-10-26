@@ -46,7 +46,7 @@ namespace Game.Dev
             var making = new Content.Creation.Creation(srd, srd.Backgrounds);
 
             making.Pick(srd.Class(DevArgs.Class ?? "rogue"));
-            // `--species fairy` or a lineage, `--species beastfolk_feline`: its species, then it
+            // `--species fairy` or a lineage, `--species beastfolk_vulpine`: its species, then it
             Content.Species.Kind kind = srd.Kind(DevArgs.Species ?? "halfling") ?? srd.Kind("halfling");
             making.Pick(kind.IsLineage ? srd.Kind(kind.LineageOf) : kind);
             if (kind.IsLineage) making.PickLineage(kind);
@@ -97,6 +97,23 @@ namespace Game.Dev
             draft.Wall(new Border(new Cell(3, 3), false), Edge.Wall);
         }
 
+        // the demonstration room: floor, walls round, a little difficult ground and a wall to walk round, so the tiles
+        // have something to draw other than floor
+        static void Room(Content.Maps.MapDraft draft)
+        {
+            draft.Paint(new Cell(0, 0), new Cell(11, 9), Tile.Floor);
+            draft.Enclose();
+            draft.Paint(new Cell(5, 3), new Cell(6, 4), Tile.Rough);
+
+            for (int y = 0; y < 6; y++) draft.Wall(new Border(new Cell(7, y), true), Edge.Wall);
+
+            draft.Wall(new Border(new Cell(7, 4), true), Edge.Door);
+
+            if (DevArgs.Corners) Cross(draft);
+
+            draft.PlaceStart(new Cell(1, 5));
+        }
+
         void LayAMap(Hero hero)
         {
             Game.Board.Board board = Table.Board;
@@ -107,23 +124,12 @@ namespace Game.Dev
                 return;
             }
 
-            var draft = new Content.Maps.MapDraft(12, 10);
+            // `--wall-styles`: every wall style and its door, in place of the demonstration room (DemoTable.Styles.cs)
+            var draft = DevArgs.WallStyles ? StyleSampler() : new Content.Maps.MapDraft(12, 10);
 
-            draft.Paint(new Cell(0, 0), new Cell(11, 9), Tile.Floor);
-            draft.Enclose();
+            if (!DevArgs.WallStyles) Room(draft);
 
-            // a little difficult ground and a wall to walk round, so the tiles have something to
-            // draw other than floor
-            draft.Paint(new Cell(5, 3), new Cell(6, 4), Tile.Rough);
-
-            for (int y = 0; y < 6; y++) draft.Wall(new Border(new Cell(7, y), true), Edge.Wall);
-
-            draft.Wall(new Border(new Cell(7, 4), true), Edge.Door);
-
-            if (DevArgs.Corners) Cross(draft);
-
-            draft.PlaceStart(new Cell(1, 5));
-            draft.PlaceSpawn(1, new Cell(10, 1));
+            draft.PlaceSpawn(1, new Cell(draft.Columns - 2, 1));
 
             if (!draft.Sound)
             {
@@ -134,7 +140,7 @@ namespace Game.Dev
 
             MapLayout map = draft.Layout();
 
-            board.Lay(map);
+            board.Lay(map, draft.Look());
             Table.GmScreen?.StandBehind(board);
 
             _field = new Battlefield(map);

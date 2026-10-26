@@ -173,10 +173,27 @@ namespace Core.Magic
 
         public string DescriptionKey => KeyConventions.SpellDescription(Id);
 
+        // TOLD BY THE NARRATOR (cc_task_m3 Part 2): a spell with nothing mechanical in it (Druidcraft, Prestidigitation)
+        // still answers when it's cast, with a line of its own: "spell.druidcraft.narration"
+        public bool Narrates => Effects.Any(e => e.Handler.IsTold);
+
+        public string NarrationKey => NarrationKeyOf(Id);
+
+        public static string NarrationKeyOf(string id) => KeyConventions.Key(KeyConventions.SpellNs, id, "narration");
+
+        // what the caster picks between at the cast says on the bar: "spell.command.mode.grovel"
+        public string ModeKey(string mode) => KeyConventions.Key(KeyConventions.SpellNs, Id, "mode", mode);
+
         public IEnumerable<string> Keys()
         {
             yield return NameKey;
             yield return DescriptionKey;
+
+            if (Narrates) yield return NarrationKey;
+
+            // one mode is no choice, and never shows
+            if (Modes.Count > 1)
+                foreach (string mode in Modes) yield return ModeKey(mode);
         }
 
 

@@ -27,7 +27,7 @@ namespace Game.Builder
         // problems' list is before it scrolls
         [Export] public int PickerWidth { get; set; } = 960;
 
-        [Export] public int PickerRows { get; set; } = 2;
+        [Export] public int PickerRows { get; set; } = 1;
 
         [Export] public int PopupHeight { get; set; } = 360;
 
@@ -47,10 +47,16 @@ namespace Game.Builder
         // the Select tool's choice, outlined (cc_task_l Part 4.3)
         [Export] public Color ChosenColour { get; set; } = new Color(0.35f, 0.75f, 0.95f, 0.9f);
 
-        // the prop palette's thumbnails, a side, and how many to a row (cc_task_l Part 4.1)
+        // the prop palette's thumbnails, a side, and how many to a row (cc_task_l Part 4.1). A card is wider than its
+        // picture, so its name fits on one or two lines (cc_task_m3 Part 4: one row a page, wider cards)
         [Export] public int ThumbSize { get; set; } = 96;
 
-        [Export] public int ThumbColumns { get; set; } = 8;
+        [Export] public int ThumbWidth { get; set; } = 172;
+
+        [Export] public int ThumbColumns { get; set; } = 5;
+
+        // the category tabs' scroll arrows, when the tabs don't fit: so many times the theme's own (cc_task_m3 Part 4)
+        [Export] public float TabArrowScale { get; set; } = 3f;
 
         // the size of a thumbnail's name under it, small enough that a word fits across one (cc_task_m2 Part 8)
         [Export] public int ThumbFontSize { get; set; } = 18;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 using Content.Screens;
 
@@ -13,7 +14,7 @@ namespace Content.Tests
     {
         static readonly CreditsView Credits = CreditsView.Srd();
 
-        static string Game([CallerFilePath] string path = "") => Path.Combine(Path.GetDirectoryName(path), "..", "game");
+        internal static string Game([CallerFilePath] string path = "") => Path.Combine(Path.GetDirectoryName(path), "..", "game");
 
         // the folders of game/ that hold what someone else made, and the files in them that are art, sound or type -
         // not the scenes, materials and scripts that wrap them, which are ours
@@ -33,7 +34,21 @@ namespace Content.Tests
                           .Where(Directory.Exists)
                           .SelectMany(f => Directory.EnumerateFiles(f, "*", SearchOption.AllDirectories))
                           .Where(f => Kinds.Contains(Path.GetExtension(f)))
-                          .Select(f => Path.GetRelativePath(root, f).Replace('\\', '/'));
+                          .Select(f => Path.GetRelativePath(root, f).Replace('\\', '/'))
+                          .Where(f => !LeftOut(root).Any(r => r.IsMatch(f)));
+        }
+
+        // WHAT THE RELEASE BUILD LEAVES OUT (export_presets.cfg's first preset, its exclude_filter): not shipped, so owed no
+        // credit. The Animal Plushies stay in game/ for Kathleen to delete, left out of every build (cc_task_m3 Part 9)
+        static List<Regex> LeftOut(string root)
+        {
+            string line = File.ReadLines(Path.Combine(root, "export_presets.cfg"))
+                              .First(l => l.StartsWith("exclude_filter=", StringComparison.Ordinal));
+
+            return line["exclude_filter=".Length..].Trim('"')
+                       .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                       .Select(glob => new Regex("^" + Regex.Escape(glob).Replace("\\*", ".*") + "$"))
+                       .ToList();
         }
 
         [Fact]

@@ -56,7 +56,7 @@ namespace Content.Tests
             Package pack = Package.Read(CampaignFolder);
             Assert.True(pack.Maps.ContainsKey("mill_yard"), string.Join("; ", pack.Problems.Select(p => p.What)));
             Assert.Equal(Content.Maps.Ground.Cobble, pack.LookOn("mill_yard").At(new Cell(4, 5)));
-            Assert.Contains(pack.PropsOn("mill_yard"), p => p.Id == "cottage");
+            Assert.Contains(pack.PropsOn("mill_yard"), p => p.Id == "house_small");
         }
 
         [Fact]

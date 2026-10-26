@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+; A TOWN WALL (cc_task_m3 Part 6): the Ultimate Fantasy RTS pack's Wall_SecondAge (Quaternius), which stood in Props
+; as "Town wall". It has no door: its gate is the gatehouse, a building (WallStyles.HasDoor). First pass.
+
+[ext_resource type="PackedScene" path="res://models/props/ultimate_fantasy_rts_aug_2022/Wall_SecondAge.gltf" id="1_body"]
+
+[node name="wall" type="Node3D"]
+
+[node name="Body" parent="." instance=ExtResource("1_body")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

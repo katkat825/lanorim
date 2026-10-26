@@ -10,7 +10,7 @@ namespace Content.Tests
     public class MapEditorHandTests
     {
         // a floor to place on (a new draft is rock until it's painted), the start in a corner
-        static MapEditor Editor()
+        internal static MapEditor Editor()
         {
             var editor = new MapEditor(new MapDraft(10, 8));
             editor.Drag(new Cell(0, 0), new Cell(9, 7));
@@ -18,7 +18,7 @@ namespace Content.Tests
             return editor;
         }
 
-        static MapTarget At(int x, int y) => new MapTarget(new Cell(x, y), null);
+        internal static MapTarget At(int x, int y) => new MapTarget(new Cell(x, y), null);
 
         [Fact]
         public void AClickPlacesOneAndSelectsItAndTheHandIsEmpty()
@@ -112,11 +112,16 @@ namespace Content.Tests
 
             Assert.Equal(new[] { PropCatalogue.BuildingsCategory }, palette.CategoriesOn(buildings: true));
             Assert.DoesNotContain(PropCatalogue.BuildingsCategory, palette.CategoriesOn(buildings: false));
-            Assert.Equal(palette.Categories.Count, palette.CategoriesOn(true).Count + palette.CategoriesOn(false).Count);
+
+            // every category with something on offer is on one shelf; Walls & fences has nothing now (cc_task_m3 Part 6)
+            Assert.Equal(palette.Categories.Count(c => palette.In(c).Any(p => !p.Retired)),
+                         palette.CategoriesOn(true).Count + palette.CategoriesOn(false).Count + palette.CategoriesOn(PropShelf.People).Count);
+            Assert.DoesNotContain("walls_fences", palette.CategoriesOn(false));
 
             var buildings = palette.Matching("", p => p.Id, null, buildings: true).ToList();
             Assert.NotEmpty(buildings);
-            Assert.All(buildings, p => Assert.True(p.Width * p.Depth > 1, p.Id));
+            // bigger than a square, but for the farm's chicken coop and water tower (cc_task_m3 Part 5)
+            Assert.All(buildings.Where(p => p.Id is not ("chicken_coop" or "water_tower")), p => Assert.True(p.Width * p.Depth > 1, p.Id));
             Assert.DoesNotContain(palette.Matching("", p => p.Id, null, buildings: false),
                                   p => p.Category == PropCatalogue.BuildingsCategory);
         }

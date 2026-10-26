@@ -513,6 +513,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `features` | list of features | its traits | | species | existing |
 | `lineages` | list of species ids | its lineages, picked in the creator | | species | existing |
 | `lineage_of` | species id | the species this is a lineage of | | species | existing |
+| `replaces` | list of species ids | retired kinds an old save may name, read as this one (the Beastfolk's Feline, Canine, Rodent and Ursine as Vulpine) | | species | no key said that an id had moved; a save must not lose its kind (cc_task_m3 Part 9) |
 | `sizes` | list of sizes | the sizes it may be, the first the default; two is a choice in the creator (Human, Tiefling: Medium or Small) | | species | a monster's `size` is one word; a species can offer two, so a list (2026-10-05, task E 1.3) |
 | `tags` | list of words | what kind of creature it is, the word a statblock's `tags` carry: `humanoid` when unsaid (the SRD's seven), `fey` for the Fairy. Hold Person and Charm Person read it | | species | a statblock's word for the same idea, reused (cc_task_m2 Part 4); a feature's `tags` are what owning the feature makes it, not what it is |
 | `not_in_srd` | flag | Lanorim's own, not an SRD 5.2.1 species (the Fairy and the Beastfolk, in `content/srd/species/lanorim.json`) | | species | the background's and the spell's word for the same idea, reused (cc_task_m2 Part 4) |

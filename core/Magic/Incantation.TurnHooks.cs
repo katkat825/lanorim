@@ -188,6 +188,9 @@ namespace Core.Magic
             Actor me = turn.Actor;
             Actor caster = word.Caster?.Actor;
 
+            // said and seen before it moves: "The goblin grovels."
+            fight.Observer.Obeys(me, word.Command);
+
             switch (word.Command)
             {
                 // toward the caster by the shortest route, the turn over once within 5 feet

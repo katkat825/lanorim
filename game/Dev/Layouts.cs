@@ -48,6 +48,13 @@ namespace Game.Dev
             probe.Screens.Add(("spells", () => QuickStart.Creating(launch, "spells", "mage")));
             probe.Screens.Add(("abilities", () => QuickStart.Creating(launch, "abilities", "mage")));
 
+            // the pages that grow with what's picked, at their longest (cc_task_m3 Part 1)
+            foreach (Content.Creation.Step step in CreationWorst.Pages)
+            {
+                Content.Creation.Step one = step;
+                probe.Screens.Add(($"worst {Core.Words.EnumWords.Id(one)}", () => CreationWorst.Show(launch, one)));
+            }
+
             return probe;
         }
 

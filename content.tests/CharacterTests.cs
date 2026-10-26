@@ -112,7 +112,7 @@ namespace Content.Tests
             Assert.Equal(5, Srd.LineagesOf("dragonborn").Count());
 
             // the Beastfolk's four kinds are a look, not rules: lineages with no features (cc_task_m2 Part 4)
-            Assert.Equal(new[] { "beastfolk_feline", "beastfolk_canine", "beastfolk_rodent", "beastfolk_ursine" },
+            Assert.Equal(new[] { "beastfolk_vulpine", "beastfolk_selachian" },
                          Srd.LineagesOf("beastfolk").Select(k => k.Id));
             Assert.All(Srd.LineagesOf("beastfolk"), k => Assert.Empty(k.Features));
 

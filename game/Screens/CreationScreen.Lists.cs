@@ -155,7 +155,8 @@ namespace Game.Screens
 
         // THE STARTING EQUIPMENT (cc_task_e-shop-species-and-ui-notes.md 1.4): the class's gear or its gold, the background's
         // or its gold; under them, ONE list of everything the hero starts with, counts merged, and the gold (cc_task_f 1.4).
-        // every new hero visits the starting shop
+        // every new hero visits the starting shop. The list is in the page's scrolling list, under the choices, not in the
+        // description area, where a long kit pushed Back and Next off the screen (cc_task_m3 Part 1)
         void Equipment()
         {
             _body.AddChild(Ui.Label(ScreenWords.KitFromClass));
@@ -169,7 +170,9 @@ namespace Game.Screens
                         k => { _making.PickBackgroundKit(k); return true; });
             }
 
-            _describe = () =>
+            Label kit = Ui.Plain("");
+            kit.ThemeTypeVariation = "CardLabel";
+            _updates.Add(() =>
             {
                 IReadOnlyList<(string Item, int Count)> gear = _making.StartingGear;
                 var said = new List<string> { Ui.Say(ScreenWords.KitList) };
@@ -178,8 +181,9 @@ namespace Game.Screens
                 said.Add(Ui.Say(ScreenWords.KitStartsWith, Ui.Money(Coins.FromGold(_making.StartingGold))));
                 said.Add(Ui.Say(ScreenWords.KitShopFirst));
 
-                return string.Join("\n", said);
-            };
+                kit.Text = string.Join("\n", said);
+            });
+            _body.AddChild(kit);
         }
 
         static string Kit(KitChoice choice, int gold) =>

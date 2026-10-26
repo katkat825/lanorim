@@ -38,6 +38,13 @@ namespace Core.Combat
         // class, hit points regained, temporary hit points, speed)
         void Cast(Actor caster, string spellKey, IReadOnlyList<Change> changes) { }
 
+        // a spell the narrator tells (Spell.Narrates) was cast, at a square: told after Cast, so its line follows the
+        // cast's (cc_task_m3 Part 2). The square is where it was aimed, or where its creature stands
+        void Narrated(Actor caster, string spellId, Cell? at) { }
+
+        // a creature's turn is a Command's word: told as the turn starts, before the word moves it (cc_task_m3 Part 2)
+        void Obeys(Actor actor, Core.Magic.Command word) { }
+
         void Opportunity(Actor attacker, Actor fleeing);
 
         // somebody spent their reaction, on what, and at what moment. told before the reaction
@@ -111,6 +118,10 @@ namespace Core.Combat
 
         public virtual void Cast(Actor caster, string spellKey, IReadOnlyList<Change> changes) { }
 
+        public virtual void Narrated(Actor caster, string spellId, Cell? at) { }
+
+        public virtual void Obeys(Actor actor, Core.Magic.Command word) { }
+
         public virtual void Opportunity(Actor attacker, Actor fleeing) { }
 
         public virtual void Reacted(Actor reactor, string reaction, Moment moment) { }
@@ -160,6 +171,10 @@ namespace Core.Combat
         public void Casts(Actor caster, string spellKey, IReadOnlyList<Actor> at) => Each(w => w.Casts(caster, spellKey, at));
 
         public void Cast(Actor caster, string spellKey, IReadOnlyList<Change> changes) => Each(w => w.Cast(caster, spellKey, changes));
+
+        public void Narrated(Actor caster, string spellId, Cell? at) => Each(w => w.Narrated(caster, spellId, at));
+
+        public void Obeys(Actor actor, Core.Magic.Command word) => Each(w => w.Obeys(actor, word));
 
         public void Opportunity(Actor attacker, Actor fleeing) =>
             Each(w => w.Opportunity(attacker, fleeing));

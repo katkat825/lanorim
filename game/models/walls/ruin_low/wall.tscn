@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+; A LOW RUINED WALL (cc_task_m3 Part 6): the Ruins pack's Wall_Double_Broken (Quaternius, OBJ), "Ruined wall, low"
+; in Ruins. Waist high: it stops a walker and not an eye (bars), and has no door. First pass.
+
+[ext_resource type="Mesh" path="res://models/props/ultimate_modular_ruins_pack_aug_2021/Wall_Double_Broken.obj" id="1_body"]
+
+[node name="wall" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = ExtResource("1_body")

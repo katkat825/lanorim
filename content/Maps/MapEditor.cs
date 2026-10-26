@@ -58,10 +58,12 @@ namespace Content.Maps
         // what Paint and Fill lay: a ground, or a rule on its own
         public Brush Brush { get; set; } = Brush.Of(Tile.Floor);
 
-        public Edge Line { get; set; } = Edge.Wall;
+        // a wall or a door, and what it's made of: chosen through PickLine and PickStyle (MapEditor.Walls.cs), which keep
+        // the pair one the builder has (a door only in a style with one)
+        public Edge Line { get; private set; } = Edge.Wall;
 
         // what the Wall tool lays its walls in (a door takes its wall's)
-        public WallStyle Style { get; set; } = WallStyle.Stone;
+        public WallStyle Style { get; private set; } = WallStyle.Stone;
 
         public string Category { get; private set; }
 

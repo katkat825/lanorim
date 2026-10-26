@@ -15,6 +15,16 @@ namespace Content.Maps
         // the prop picked up, or null
         public Prop Picked { get; private set; }
 
+        // WHO THE PICKED FIGURE IS (cc_task_m3 Part 10): one of the campaign's characters by id, or "" for someone. false
+        // when what's picked isn't a figure
+        public bool NamePicked(string actor)
+        {
+            if (Picked == null || Draft.NameProp(Picked, actor ?? "") is not { } named) return false;
+
+            Picked = named;
+            return true;
+        }
+
         // what to outline on the board: the selection, or the squares the picked prop covers
         public CellBox? Chosen
         {

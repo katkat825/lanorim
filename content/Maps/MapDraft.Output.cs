@@ -98,6 +98,11 @@ namespace Content.Maps
 
                 if (covers.Any(c => !Contains(c)))
                     problems.Add(new MapProblem("prop_off_map", prop.Cell, $"the {prop.Id} at {prop.Cell} runs off the map", name));
+                else if (Palette.IsFigure(prop.Id) && !At(prop.Cell).IsPassable())
+                    problems.Add(new MapProblem("npc_cant_stand", prop.Cell, $"the {prop.Id} at {prop.Cell} stands where nobody could", name)
+                    {
+                        Warning = true,
+                    });
                 else if (covers.Any(c => !At(c).IsPassable()))
                     problems.Add(new MapProblem("prop_in_wall", prop.Cell, $"the {prop.Id} at {prop.Cell} is inside a wall", name));
 
@@ -118,8 +123,9 @@ namespace Content.Maps
         }
 
         // the same, in English, for the campaign loader's log
-        public IReadOnlyList<string> Problems() => Findings().Select(p => p.Says).ToList();
+        public IReadOnlyList<string> Problems() => Findings().Where(p => !p.Warning).Select(p => p.Says).ToList();
 
-        public bool Sound => Findings().Count == 0;
+        // a map plays with warnings, not with faults (MapProblem.Warning)
+        public bool Sound => Findings().All(p => p.Warning);
     }
 }

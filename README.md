@@ -175,6 +175,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--ask-delete` | launch.tscn |  | with --show book, the first character's Delete pressed, for a picture of the question |
 | `--page <step>` | launch.tscn |  | with --show create, that creation page, part filled in |
 | `--class <class>` | wherever it applies |  | with --show create, that class (mage otherwise); on the demonstration table, the hero's class (rogue otherwise) |
+| `--longest` | launch.tscn |  | with --show create --page, the picks that make that page longest (equipment, traits, cantrips, spells; check-layout's worst case) |
 | `--species <species|lineage>` | wherever it applies |  | with --show create, that species (and lineage) picked; on the demonstration table, the hero's (halfling otherwise) |
 | `--begin <campaign> [class]` | launch.tscn |  | a character with every default (fighter otherwise), straight to the table; probe saves are kept apart |
 | `--learn <spell,spell>` | launch.tscn |  | with --begin, those spells learned first |
@@ -182,7 +183,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--build <campaign|mine> [map]` | launch.tscn |  | that map, or a new one called probe_map, in the map builder; mine is My maps |
 | `--template <id>` | launch.tscn |  | with --build, a new map starts as that template (dungeon_room otherwise) |
 | `--tool <tool>` | in the map builder |  | the builder opens with that tool in hand (select, paint, fill, wall, prop...) |
-| `--picker <picker>` | in the map builder |  | the builder opens with that picker or pop-up open: buildings, props, walls, problems |
+| `--picker <picker>` | in the map builder |  | the builder opens with that picker or pop-up open: buildings, npcs, props, walls, problems |
 | `--trial-panel` | in the map builder |  | the builder opens its Play this map panel |
 | `--prop-icons` | launch.tscn |  | renders every prop's palette thumbnail into game/ui/prop_icons/ and quits; not headless |
 | `--mine <folder>` | launch.tscn |  | My campaigns and My maps kept in <folder>/campaigns and <folder>/maps, not the player's |
@@ -210,6 +211,8 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--tray-walls <0.4..3>` | wherever it applies | yes | the dice tray's walls, scaled |
 | `--old-hero` | wherever it applies | yes | the board's own hero figure, not the class's mini |
 | `--plain-pose` | wherever it applies | yes | every hero mini in Idle_A |
+| `--pose <clip>` | wherever it applies | yes | every hero mini held in that clip (Attack, Sword), for a picture mid-swing |
+| `--pose-at <seconds>` | wherever it applies | yes | with --pose, so far into the clip |
 | `--empty-handed` | wherever it applies | yes | hero minis holding nothing |
 | `--figure <0|1>` | wherever it applies | yes | the class's second figure |
 | `--head <model>` | wherever it applies | yes | any head on the hero's body, its headgear off (kaykit/Mage.glb) |
@@ -236,6 +239,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--mood <mood>` | table.tscn on its own |  | with --companion, it feels that (pleased, alert, quiet, watching) |
 | `--mood-after <seconds>` | table.tscn on its own |  | with --mood, so many seconds in (2 otherwise) |
 | `--corners` | table.tscn on its own |  | a cross of walls on the map, so every kind of wall post is on the table |
+| `--wall-styles` | table.tscn on its own |  | every wall style in a row of its own, two walls, its door (where it has one), two more and a corner, on grass (cc_task_m3) |
 | `--open-door` | table.tscn on its own |  | the map's door swung open |
 
 *The probes and the checks*
@@ -247,6 +251,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--map-probe` | launch.tscn |  | the map builder driven: a map from each template in My maps, ground, walls, a building, a scatter of trees, undo, save, reopen, copy to a campaign, and play it (check-mapbuilder; with --auto) |
 | `--workshop-probe` | launch.tscn |  | the Workshop driven: a campaign made through the wizard, a chapter and a map added, saved, found in the book, and played to its one line (check-workshop; with --auto) |
 | `--layout` | wherever it applies |  | every launch screen, or the table's HUD, pause menu, sheet and pack, at six window sizes (check-layout) |
+| `--cast <spell[:mode]>` | at the table, in a campaign |  | in a fight, the hero casts that spell (with that mode) at the nearest foe or square, and the table is watched for its line, its sight, a Command's word obeyed (check-play) |
 | `--prone-probe` | at the table, in a campaign |  | in a fight, Prone lies down in its square and Stand Up stands it up (check-play) |
 | `--access-probe` | at the table, in a campaign |  | presses F2, F1, Tab, Shift+Tab and F3 at the table (check-controls) |
 | `--locale` | table.tscn on its own |  | does Godot have English for every key the engine emits (check-table) |

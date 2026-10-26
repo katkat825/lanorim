@@ -16,12 +16,14 @@ namespace Game.Builder
         Node3D _lines;
         Node3D _chosen;
         Node3D _labels;
+        Node3D _who;
 
         public override void _Ready()
         {
             AddChild(_lines = new Node3D { Name = "Lines" });
             AddChild(_chosen = new Node3D { Name = "Chosen" });
             AddChild(_labels = new Node3D { Name = "Labels" });
+            AddChild(_who = new Node3D { Name = "Who" });
         }
 
         // a thin bar along each line, lifted off the mat
@@ -77,6 +79,22 @@ namespace Game.Builder
 
             _labels.AddChild(Label("Start", startWord, draft.Start, layout.StartColour, layout));
         }
+
+        // A NAMED NPC UNDER THE POINTER (cc_task_m3 Part 10): its name over its head while it's hovered, nothing otherwise
+        public void Who(string name, Cell at)
+        {
+            Clear(_who);
+
+            if (Board?.Map == null || string.IsNullOrEmpty(name)) return;
+
+            BuilderLayout layout = BuilderLayout.Current;
+            Label3D label = Label("Name", name, at, Colors.White, layout);
+            label.Position += new Vector3(0f, Board.Metrics.CellSize * 0.6f, 0f);
+            _who.AddChild(label);
+        }
+
+        // the name standing over the hovered figure, or "" (a probe)
+        public string WhoShown => _who?.GetChildren().OfType<Label3D>().FirstOrDefault(l => !l.IsQueuedForDeletion())?.Text ?? "";
 
         Label3D Label(string name, string text, Cell at, Color colour, BuilderLayout layout) => new Label3D
         {

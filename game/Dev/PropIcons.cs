@@ -8,8 +8,9 @@ using Godot;
 namespace Game.Dev
 {
     // THE PALETTE'S THUMBNAILS, RENDERED ONCE (cc_task_l Part 4.1): every prop in the palette, painted as the board paints
-    // it, alone in a small transparent viewport from three-quarters above, saved to game/ui/prop_icons/<id>.png. Run it
-    // again after props.json changes; the builder only ever loads the pictures (PropPalette), never renders them live.
+    // it, alone in a small transparent viewport from three-quarters above, saved to game/ui/prop_icons/<id>.png; and every
+    // wall style's wall and door, to prop_icons/walls/<style>_wall.png and _door.png (cc_task_m3 Part 6, WallPalette). Run
+    // it again after props.json changes; the builder only ever loads the pictures (PropPalette), never renders them live.
     //
     //   godot --path game res://launch.tscn -- --prop-icons          (not headless: it needs the renderer)
     //
@@ -30,6 +31,10 @@ namespace Game.Dev
         int _at = -1;
         int _waited;
         int _made;
+
+        // every picture to make: where it goes, and the model to stand for it
+        System.Collections.Generic.List<(string Path, System.Func<Node3D> Make)> _jobs;
+        string _path;
 
         public override void _Ready()
         {
@@ -71,6 +76,56 @@ namespace Game.Dev
             _view.AddChild(_camera);
 
             Directory.CreateDirectory(ProjectSettings.GlobalizePath(PropPalette.IconFolder));
+            Directory.CreateDirectory(ProjectSettings.GlobalizePath(WallPalette.IconFolder));
+
+            _jobs = PropCatalogue.Srd().Props
+                                 .Select(p => (PropPalette.IconFolder + p.Id + ".png",
+                                               (System.Func<Node3D>)(() => p.Figure ? Person(p) : PropModels.Make(p.Id))))
+                                 .ToList();
+
+            foreach (WallStyle style in System.Enum.GetValues<WallStyle>())
+            {
+                WallStyle one = style;
+                _jobs.Add((WallPalette.Picture(one, Core.Space.Edge.Wall), () => Instance(one == WallStyle.Stone ? StoneWall : WallLooks.Wall(one))));
+
+                if (one.HasDoor())
+                    _jobs.Add((WallPalette.Picture(one, Core.Space.Edge.Door), () => Instance(one == WallStyle.Stone ? StoneDoor : WallLooks.Door(one))));
+            }
+
+            // only the pictures not made yet (cc_task_m3): remaking every one churns every committed picture for nothing.
+            // Delete a picture to have it made again
+            int had = _jobs.Count;
+            _jobs.RemoveAll(j => File.Exists(ProjectSettings.GlobalizePath(j.Path)));
+            GD.Print($"prop icons: {had - _jobs.Count} pictures already made, kept");
+        }
+
+        // the dungeon's own, which the board holds (board.tscn) rather than WallLooks
+        static PackedScene StoneWall => GD.Load<PackedScene>("res://models/dungeon/wall.tscn");
+
+        static PackedScene StoneDoor => GD.Load<PackedScene>("res://models/dungeon/doorway.tscn");
+
+        static Node3D Instance(PackedScene scene) => scene?.Instantiate<Node3D>();
+
+        const string SkinMeta = "skin";
+
+        // a person (cc_task_m3 Part 10): the figure from game/models/minis/npcs/, held in a frame of its Idle as the board
+        // stands it
+        static Node3D Person(PropEntry entry)
+        {
+            string path = "res://models/minis/npcs/" + System.IO.Path.GetFileName(entry.Model);
+            Node3D figure = ResourceLoader.Exists(path) ? GD.Load<PackedScene>(path).Instantiate<Node3D>() : null;
+
+            if (figure?.GetNodeOrNull<AnimationPlayer>("AnimationPlayer") is { } player &&
+                player.GetAnimationList().FirstOrDefault(c => c.EndsWith("Idle")) is { } idle)
+            {
+                player.Play(idle);
+                player.Seek(Game.Board.Mini.RestingFrame, true);
+                player.Pause();
+            }
+
+            // the skin the board gives it (FigureSkins), put on after the paint (Stand)
+            figure?.SetMeta(SkinMeta, FigureSkins.For(entry.Id));
+            return figure;
         }
 
         public override void _Process(double delta)
@@ -82,36 +137,36 @@ namespace Game.Dev
 
             if (_stand != null) Take();
 
-            var props = PropCatalogue.Srd().Props;
-
-            if (++_at >= props.Count)
+            if (++_at >= _jobs.Count)
             {
-                GD.Print($"prop icons: {_made} of {props.Count} pictures in {PropPalette.IconFolder}");
+                GD.Print($"prop icons: {_made} of {_jobs.Count} pictures in {PropPalette.IconFolder}");
                 GetTree().Quit(0);
                 return;
             }
 
-            Stand(props[_at]);
+            Stand(_jobs[_at].Path, _jobs[_at].Make);
         }
 
-        // the prop alone, its middle on the origin, a unit across, and the camera framing it
-        void Stand(PropEntry prop)
+        // the model alone, its middle on the origin, a unit across, and the camera framing it
+        void Stand(string path, System.Func<Node3D> make)
         {
             _stand?.QueueFree();
             _stand = null;
             _waited = 0;
 
-            Node3D model = PropModels.Make(prop.Id);
+            Node3D model = make();
 
             if (model == null)
             {
-                GD.PushWarning($"prop icons: {prop.Id} has no model pulled");
+                GD.PushWarning($"prop icons: nothing to draw for {path}");
                 return;
             }
 
             if (_paint != null) PaintedModel.Paint(model, _paint, "prop");
+            if (model.HasMeta(SkinMeta)) PaintedModel.Recolour(model, "Skin", model.GetMeta(SkinMeta).AsColor());
 
-            _stand = new Node3D { Name = prop.Id };
+            _path = path;
+            _stand = new Node3D { Name = "Standing" };
             _stand.AddChild(model);
             _view.AddChild(_stand);
 
@@ -129,10 +184,9 @@ namespace Game.Dev
 
         void Take()
         {
-            string id = _stand.Name;
             Image picture = _view.GetTexture().GetImage();
 
-            picture.SavePng(ProjectSettings.GlobalizePath(PropPalette.IconFolder + id + ".png"));
+            picture.SavePng(ProjectSettings.GlobalizePath(_path));
             _made++;
 
             _stand.QueueFree();

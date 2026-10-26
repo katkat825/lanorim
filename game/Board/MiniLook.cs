@@ -17,7 +17,10 @@ namespace Game.Board
     //   Head    another model whose head this body wears instead of its own (FigureParts, task H): "kaykit/Mage.glb".
     //           null keeps its own. Only the head comes across, never its hat
     //   Leave   the parts left off, by the end of their name: "Hat", "Helmet", "HelmetVisor", "Cape"
+    //   Skin    the colour its surface called "Skin" is painted instead of its own (the map's people, FigureSkins). null
+    //           keeps the pack's
     public sealed record MiniLook(string File, float Height, string Pose = null, float At = Mini.RestingFrame,
                                   string Rig = null, IReadOnlyList<(string Bone, string Item)> Holds = null,
-                                  bool Crown = false, string Head = null, IReadOnlyList<string> Leave = null);
+                                  bool Crown = false, string Head = null, IReadOnlyList<string> Leave = null,
+                                  Godot.Color? Skin = null);
 }

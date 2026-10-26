@@ -63,11 +63,19 @@ namespace Game.Dev
         }
 
         // the Props or Buildings picker from the bar, the thing found by its search
-        void PickProp(string id, bool buildings)
+        void PickProp(string id, bool buildings) => PickProp(id, buildings ? PropShelf.Buildings : PropShelf.Props);
+
+        void PickProp(string id, PropShelf shelf)
         {
-            Bar(buildings ? "Buildings" : "Props");
-            Expect(Builder.Panels.OpenName == (buildings ? MapBuilderUi.BuildingsPicker : MapBuilderUi.PropsPicker),
-                   $"the {(buildings ? "Buildings" : "Props")} picker opened");
+            (string bar, string picker) = shelf switch
+            {
+                PropShelf.Buildings => ("Buildings", MapBuilderUi.BuildingsPicker),
+                PropShelf.People => ("Npcs", MapBuilderUi.NpcsPicker),
+                _ => ("Props", MapBuilderUi.PropsPicker),
+            };
+
+            Bar(bar);
+            Expect(Builder.Panels.OpenName == picker, $"the {bar} picker opened");
 
             LineEdit search = Nodes.Under<LineEdit>(Builder).FirstOrDefault(l => l.Name == "Search");
             if (search != null)
@@ -78,6 +86,34 @@ namespace Game.Dev
 
             Press(Editor.Palette.Find(id).NameKey);
             Expect(Editor.PropId == id && Editor.InHand, $"the picker put the {id} in hand");
+        }
+
+        // the Walls and doors picker's Wall and Door buttons that look pressed: "wall", "door", or both
+        string PressedLines() =>
+            string.Join(",", Nodes.Under<Button>(Builder).Where(b => b.Name.ToString().StartsWith("Line_") && b.ButtonPressed)
+                                  .Select(b => b.Name.ToString()["Line_".Length..]));
+
+        // every style card the Walls and doors picker offers, page by page, back on its first page after
+        System.Collections.Generic.List<string> StyleCards()
+        {
+            var seen = new System.Collections.Generic.List<string>();
+            CardPages cards = Nodes.Under<CardPages>(Builder).FirstOrDefault(c => c.Name == "Styles");
+            if (cards == null) return seen;
+
+            Button back = Nodes.Under<Button>(cards).First(b => b.Name == "PageBack");
+            Button on = Nodes.Under<Button>(cards).First(b => b.Name == "PageOn");
+
+            while (!back.Disabled) back.EmitSignal(BaseButton.SignalName.Pressed);
+
+            while (true)
+            {
+                seen.AddRange(cards.Showing.Select(b => b.Name.ToString()));
+                if (on.Disabled) break;
+                on.EmitSignal(BaseButton.SignalName.Pressed);
+            }
+
+            while (!back.Disabled) back.EmitSignal(BaseButton.SignalName.Pressed);
+            return seen;
         }
 
         Vector2 Centre(Cell cell) => OnScreen(Builder.Table.Board.Where(cell));

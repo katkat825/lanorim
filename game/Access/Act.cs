@@ -53,7 +53,8 @@ namespace Game.Access
         ToggleLog,
 
         // THE MAP BUILDER'S (cc_task_l Part 4.7), which were raw keys in MapBuilder before: undo, redo and save, the prop
-        // in hand (or picked up) turned either way, and the Select tool's copy, paste and clear. Only the builder
+        // in hand (or picked up) turned either way, and the Select tool's clear (its copy and paste went in cc_task_m3
+        // Part 8; a saved binding to either is passed over as an act that no longer exists). Only the builder
         // answers them, so they can share no key with the table's acts and needn't with anything else
         UndoEdit,
 
@@ -64,10 +65,6 @@ namespace Game.Access
         TurnProp,
 
         TurnPropBack,
-
-        CopySelection,
-
-        PasteSelection,
 
         DeleteSelection,
 
@@ -95,6 +92,9 @@ namespace Game.Access
         EraseTool,
 
         BuildingsPicker,
+
+        // the map's people (cc_task_m3 Part 10): N, between Spawn and Buildings on the bar
+        NpcsPicker,
 
         WallsAndDoors,
 
@@ -161,8 +161,6 @@ namespace Game.Access
             Act.SaveMap => Key.S,
             Act.TurnProp => Key.R,
             Act.TurnPropBack => Key.R,
-            Act.CopySelection => Key.C,
-            Act.PasteSelection => Key.V,
             Act.DeleteSelection => Key.Delete,
 
             // the builder's menus and bars: a letter for each that says it where one can, and Ctrl for the File menu's
@@ -177,6 +175,7 @@ namespace Game.Access
             Act.SpawnTool => Key.M,
             Act.EraseTool => Key.X,
             Act.BuildingsPicker => Key.U,
+            Act.NpcsPicker => Key.N,
             Act.WallsAndDoors => Key.W,
             Act.PropsPicker => Key.P,
             Act.LeaveBuilder => Key.W,
@@ -202,9 +201,9 @@ namespace Game.Access
         public static bool Shifted(this Act act) =>
             act is Act.ReachBack or Act.TurnPropBack or Act.SaveMapAs or Act.CopyMapTo or Act.PlayersView;
 
-        // held with Ctrl: an editor's undo, copy and save (cc_task_l Part 4.7)
+        // held with Ctrl: an editor's undo, redo and save (cc_task_l Part 4.7)
         public static bool Ctrled(this Act act) =>
-            act is Act.UndoEdit or Act.RedoEdit or Act.SaveMap or Act.CopySelection or Act.PasteSelection or
+            act is Act.UndoEdit or Act.RedoEdit or Act.SaveMap or
                    Act.SaveMapAs or Act.CopyMapTo or Act.PlayMap or Act.BuilderToMainMenu or Act.LeaveBuilder;
 
         // a binding's whole default: the key, and what's held with it

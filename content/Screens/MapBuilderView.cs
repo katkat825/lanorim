@@ -10,7 +10,7 @@ namespace Content.Screens
     // THE MAP BUILDER'S SCREEN, AS LOGIC (cc_task_f, Part 2; cc_task_l): a view over MapEditor the Godot screen binds to,
     // the way PackView is the pack's. The map, the tools, what they lay, the problems and where the file lives (the
     // "My maps" library or a campaign: MapPlace); every word a key
-    public sealed class MapBuilderView
+    public sealed partial class MapBuilderView
     {
         public MapBuilderView(MapEditor editor, MapPlace place, string id)
         {
@@ -47,7 +47,7 @@ namespace Content.Screens
 
         public static IEnumerable<int> SpawnSlots => Enumerable.Range(MapDraft.FirstSpawn, MapDraft.LastSpawn);
 
-        public IReadOnlyList<MapProblem> Problems => Draft.Findings();
+        public IReadOnlyList<MapProblem> Problems => Draft.Findings().Concat(PeopleFindings()).ToList();
 
         // SAVE, problems or not: a map with problems saves (an author mid-way through has a map that doesn't play yet),
         // and says so, since its campaign won't load it until they're fixed. null when it saved, or why not (the
@@ -117,7 +117,8 @@ namespace Content.Screens
 
         public static string LineKey(Edge line) => K("line_" + Core.Words.EnumWords.Name(line));
 
-        public static string StyleKey(WallStyle style) => K("style_" + Core.Words.EnumWords.Name(style));
+        // by the style's id: "style_iron_fence" (the one-word styles' keys are as they were)
+        public static string StyleKey(WallStyle style) => K("style_" + Core.Words.EnumWords.Id(style));
 
         static readonly Func<string, string> K = ScreenKeys.For("map");
 
@@ -162,8 +163,6 @@ namespace Content.Screens
         public static readonly string LooksKey = K("looks");
         public static readonly string RulesKey = K("rules");
         public static readonly string StylesKey = K("styles");
-        public static readonly string CopyKey = K("copy");
-        public static readonly string PasteKey = K("paste");
         public static readonly string DeleteKey = K("delete");
         public static readonly string ScatterHintKey = K("scatter_hint");
         public static readonly string SelectHintKey = K("select_hint");
@@ -189,7 +188,7 @@ namespace Content.Screens
                 LivesKey, NoCampaignsKey, NoMapsKey, SaveKey, SaveAsKey, CopyToKey, TakenKey, RenameKey, ReplaceKey,
                 CancelKey, CopiedKey, SavedCleanKey, SavedWithProblemsKey, CouldNotSaveKey, UndoKey, RedoKey, RotateKey,
                 TopDownKey, ProblemsKey, NoProblemsKey, SpawnKey, LeaveKey, UnsavedKey, LeaveAnywayKey, StayKey,
-                AllPropsKey, SearchKey, LooksKey, RulesKey, StylesKey, CopyKey, PasteKey, DeleteKey, ScatterHintKey, SelectHintKey, MenuFileKey, MenuEditKey, MenuViewKey, PlayersViewKey, TerrainKey, SpawnMenuKey,
+                AllPropsKey, SearchKey, LooksKey, RulesKey, StylesKey, DeleteKey, ScatterHintKey, SelectHintKey, MenuFileKey, MenuEditKey, MenuViewKey, PlayersViewKey, TerrainKey, SpawnMenuKey,
                 BuildingsKey, ProblemsCountKey, PageKey, PageBackKey, PageOnKey, SearchBuildingsKey,
                 MapPlace.LibraryKey,
             }
@@ -198,6 +197,7 @@ namespace Content.Screens
             .Concat(Lines.Select(LineKey))
             .Concat(Styles.Select(StyleKey))
             .Concat(MapTemplates.Keys())
-            .Concat(MapProblem.Names.Select(MapProblem.KeyFor));
+            .Concat(MapProblem.Names.Select(MapProblem.KeyFor))
+            .Concat(PeopleKeys());
     }
 }

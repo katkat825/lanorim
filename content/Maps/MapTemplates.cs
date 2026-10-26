@@ -39,6 +39,12 @@ namespace Content.Maps
         // the one a new map starts as when nobody chose: the room every map used to be
         public const string Standard = "dungeon_room";
 
+        // BLANK TAKES THE SIZE ASKED FOR (cc_task_m3 Part 3): it has no size of its own to offer, so picking it leaves the
+        // size boxes alone, and its start is the middle of whatever size that is. Every other template offers its own size
+        public const string Blank = "blank";
+
+        public static bool TakesTheSize(string id) => id == Blank;
+
         public static string NameKey(string id) => Screens.ScreenKeys.Key("map", "template_" + id);
 
         // the template as drawn, at its own size; null for one that isn't there
@@ -54,7 +60,7 @@ namespace Content.Maps
         // a new map from the template, at this size (3 to MapDraft.MaxSide a side)
         public static MapDraft Make(string id, int columns, int rows) =>
             Read(id)?.Fitted(Math.Clamp(columns, Screens.MapBuilderView.MinSide, MapDraft.MaxSide),
-                             Math.Clamp(rows, Screens.MapBuilderView.MinSide, MapDraft.MaxSide));
+                             Math.Clamp(rows, Screens.MapBuilderView.MinSide, MapDraft.MaxSide), middle: TakesTheSize(id));
 
         public static IEnumerable<string> Keys() => Ids.Select(NameKey);
     }

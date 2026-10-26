@@ -60,20 +60,16 @@ namespace Game.Board
             ["cleric"] = new[] { Cleric, Cleric.Wearing("kaykit/Knight.glb") },
         };
 
-        // THE SPECIES' OWN MINIS (cc_task_m2 Part 4, a first pass for Kathleen). The Beastfolk stand as their kind's
-        // Animal Plushie (MoraAzul, CC BY; THIRD_PARTY.md), whatever the class and either figure: Feline the cat,
-        // Canine the dog, Ursine the bear, and Rodent the bunny, the pack's nearest (it has no mouse). A plushie carries
-        // no clip and holds nothing: its hands are paws with no slot, and it stands in the T of its bind pose. Its height
-        // is measured to its head bone, and its head is a big round one above that: 125 mm to the bone stands it about
-        // as tall as a 230 mm KayKit hero (measured on the 2026-10-22 shots; Crown's skin measure misreads the FBX's
-        // turned skin and floats it off its base)
-        const float PlushTall = 0.125f;
+        // THE SPECIES' OWN MINIS (cc_task_m3 Part 9, a first pass for Kathleen; the Animal Plushies of cc_task_m2 are gone).
+        // The Beastfolk stand as their kind's figure, whatever the class and either figure: Vulpine as HeroTibo's Hooded
+        // Fox, Selachian as Quaternius's Sharky (the Pirate Kit's shark on two legs; its Characters_Shark only swims). Both
+        // are rigged and stand in a frame of their own Idle. The fox has its own sword in its paw, so holds nothing more.
+        // Sharky is measured to its top bone, as the bandit is; the fox, whose ears and hood stand above its top bone, crown
+        // to sole (Crown). Each about as tall as the bandit beside it on the 2026-10-23 shots
         static readonly Dictionary<string, MiniLook> ByLineage = new Dictionary<string, MiniLook>
         {
-            ["beastfolk_feline"] = new("plushies/cat.fbx", PlushTall),
-            ["beastfolk_canine"] = new("plushies/dog.fbx", PlushTall),
-            ["beastfolk_rodent"] = new("plushies/bunny.fbx", PlushTall),
-            ["beastfolk_ursine"] = new("plushies/bear.fbx", PlushTall),
+            ["beastfolk_vulpine"] = new("beastfolk/fox.glb", 0.29f, "Idle", Crown: true),
+            ["beastfolk_selachian"] = new("beastfolk/sharky.gltf", 0.225f, "Idle"),
         };
 
         // the Fairy is her class's two figures with a pair of angel wings (DevMops, CC0) on the chest bone, behind
@@ -123,6 +119,7 @@ namespace Game.Board
             if (look == null) return null;
 
             if (DevArgs.PlainPose) look = look with { Pose = PlainPose };
+            if (DevArgs.Pose is { } pose) look = look with { Pose = pose, At = DevArgs.PoseAt ?? look.At };
             if (DevArgs.EmptyHanded) look = look with { Holds = null };
             if (DevArgs.Head is { } head) look = look.Wearing(head);
 

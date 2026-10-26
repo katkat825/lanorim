@@ -1,0 +1,42 @@
+{
+  "_": "The map builder's people (cc_task_m3 Part 10): the Ultimate Animated Character Pack's figures an author can stand on a map, by category. Read as the props are (PropCatalogue, the same keys), each one square that blocks a walker and not an eye; the board stands each as a mini, from game/models/minis/npcs/<the model's file>, in its Idle.",
+
+  "categories": ["townsfolk", "guards", "travellers"],
+
+  "props": [
+    {"id": "npc_casual_male", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Casual_Male.gltf", "blocks": true},
+    {"id": "npc_casual_female", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Casual_Female.gltf", "blocks": true},
+    {"id": "npc_casual2_male", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Casual2_Male.gltf", "blocks": true},
+    {"id": "npc_casual2_female", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Casual2_Female.gltf", "blocks": true},
+    {"id": "npc_casual3_male", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Casual3_Male.gltf", "blocks": true},
+    {"id": "npc_casual3_female", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Casual3_Female.gltf", "blocks": true},
+    {"id": "npc_casual_bald", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Casual_Bald.gltf", "blocks": true},
+    {"id": "npc_chef_male", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Chef_Male.gltf", "blocks": true},
+    {"id": "npc_chef_female", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Chef_Female.gltf", "blocks": true},
+    {"id": "npc_doctor_male_old", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Doctor_Male_Old.gltf", "blocks": true},
+    {"id": "npc_doctor_female_old", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Doctor_Female_Old.gltf", "blocks": true},
+    {"id": "npc_doctor_male_young", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Doctor_Male_Young.gltf", "blocks": true},
+    {"id": "npc_doctor_female_young", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Doctor_Female_Young.gltf", "blocks": true},
+    {"id": "npc_worker_male", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Worker_Male.gltf", "blocks": true},
+    {"id": "npc_worker_female", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Worker_Female.gltf", "blocks": true},
+    {"id": "npc_oldclassy_male", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/OldClassy_Male.gltf", "blocks": true},
+    {"id": "npc_oldclassy_female", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/OldClassy_Female.gltf", "blocks": true},
+    {"id": "npc_wizard", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Wizard.gltf", "blocks": true},
+    {"id": "npc_witch", "category": "townsfolk", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Witch.gltf", "blocks": true},
+    {"id": "npc_soldier_male", "category": "guards", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Soldier_Male.gltf", "blocks": true},
+    {"id": "npc_soldier_female", "category": "guards", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Soldier_Female.gltf", "blocks": true},
+    {"id": "npc_bluesoldier_male", "category": "guards", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/BlueSoldier_Male.gltf", "blocks": true},
+    {"id": "npc_bluesoldier_female", "category": "guards", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/BlueSoldier_Female.gltf", "blocks": true},
+    {"id": "npc_knight_male", "category": "guards", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Knight_Male.gltf", "blocks": true},
+    {"id": "npc_knight_golden_male", "category": "guards", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Knight_Golden_Male.gltf", "blocks": true},
+    {"id": "npc_knight_golden_female", "category": "guards", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Knight_Golden_Female.gltf", "blocks": true},
+    {"id": "npc_viking_male", "category": "guards", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Viking_Male.gltf", "blocks": true},
+    {"id": "npc_viking_female", "category": "guards", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Viking_Female.gltf", "blocks": true},
+    {"id": "npc_pirate_male", "category": "travellers", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Pirate_Male.gltf", "blocks": true},
+    {"id": "npc_pirate_female", "category": "travellers", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Pirate_Female.gltf", "blocks": true},
+    {"id": "npc_ninja_male", "category": "travellers", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Ninja_Male.gltf", "blocks": true},
+    {"id": "npc_ninja_female", "category": "travellers", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Ninja_Female.gltf", "blocks": true},
+    {"id": "npc_ninja_sand", "category": "travellers", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Ninja_Sand.gltf", "blocks": true},
+    {"id": "npc_ninja_sand_female", "category": "travellers", "pack": "Ultimate Animated Character Pack - Nov 2019-20260921T174506Z-1-001.zip", "model": "Ultimate Animated Character Pack - Nov 2019/glTF/Ninja_Sand_Female.gltf", "blocks": true}
+  ]
+}

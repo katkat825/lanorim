@@ -21,7 +21,7 @@ namespace Game.Dev
     //   1. a map in My maps from each template (Blank first), named, saved from the File menu, and the builder left;
     //   2. a dungeon room called "Probe Crypt": the menu bar opened with Alt; rough ground dragged and the floor filled
     //      with grass (Terrain); a fence run (Walls and doors, its pop-up shut with Esc); a barrel from the Props picker,
-    //      placed once and selected; a two-by-two cottage from the Buildings picker, Ctrl held so the hand keeps it, then
+    //      placed once and selected; a two-by-two house from the Buildings picker, Ctrl held so the hand keeps it, then
     //      Esc to put it down; a Shift-drag scatter of pines; the start and two spawns (Spawn); an undo; saved;
     //   3. reopened by its name from the page's My maps and found identical; copied to a campaign (twice: the second
     //      asks, and Rename makes it _2) and that campaign loads it;
@@ -118,7 +118,7 @@ namespace Game.Dev
             Stage.Templates => new Action[] { CheckTemplate, SaveFromMenu, Leave },
             Stage.Editing => new Action[]
             {
-                CheckScreen, Menus, Paint, Fill, Fence, Barrel, Building, Scatter, Start, Spawns, Undo, Save, Remember, Leave,
+                CheckScreen, Menus, Paint, Fill, Fence, Barrel, Building, Person, Scatter, Start, Spawns, Undo, Save, Remember, Leave,
             },
             Stage.Reopening => new Action[] { CheckReopened, CopyToCampaign, CopyAgain, CheckCampaign, PlayIt, Fight },
             Stage.Fighting => new Action[] { CheckBack, Leave },
@@ -135,7 +135,12 @@ namespace Game.Dev
 
             string name = Draft.Name;
             Draft.Name = "";
-            Expect(Draft.Save() == MapTemplates.Read(template).Save(), $"{template}: the map is the template, at its own size");
+
+            if (MapTemplates.TakesTheSize(template))
+                Expect(Draft.Columns == BlankSize.X && Draft.Rows == BlankSize.Y && Draft.Start == new Cell(BlankSize.X / 2, BlankSize.Y / 2),
+                       $"{template}: at the size chosen, {Draft.Columns} x {Draft.Rows}, the start in the middle ({Draft.Start})");
+            else Expect(Draft.Save() == MapTemplates.Read(template).Save(), $"{template}: the map is the template, at its own size");
+
             Draft.Name = name;
 
             _template++;
@@ -179,21 +184,6 @@ namespace Game.Dev
             Expect(Draft.GroundAt(new Cell(4, 4)) == Ground.Stone, "and not over the rough, which is another ground's square");
         }
 
-        void Fence()
-        {
-            Bar("WallsAndDoors");
-            Expect(Builder.Panels.OpenName == MapBuilderUi.WallsPanel, "Walls and doors opened its pop-up");
-            Press(MapBuilderView.LineKey(Edge.Wall));
-            Press(MapBuilderView.StyleKey(WallStyle.Fence));
-            Expect(Editor.Tool == MapTool.Wall, "a style picked took up the wall");
-            Drag(Line(new Border(new Cell(7, 2), true)), Line(new Border(new Cell(7, 4), true)));
-            Expect(Enumerable.Range(2, 3).All(y => Draft.StyleAt(new Border(new Cell(7, y), true)) == WallStyle.Fence), "the drag laid a run of fence");
-            Expect(Draft.Layout().At(new Border(new Cell(7, 3), true)) == Edge.Bars, "which the rules see through");
-
-            Key(Godot.Key.Escape, ctrl: false);
-            Expect(Builder.Panels.Open == null, "Esc shut the pop-up");
-        }
-
         // one placed, and selected: the next click picks, it doesn't place another
         void Barrel()
         {
@@ -203,8 +193,10 @@ namespace Game.Dev
             Expect(Draft.Props.Count(p => p.Id == "barrel") == 1 && Draft.Props.Any(p => p.Id == "barrel" && p.Cell == new Cell(2, 6)),
                    "the barrel stands where it was clicked");
             Expect(!Editor.InHand && Editor.Tool == MapTool.Select && Editor.Picked?.Id == "barrel", "and is selected, the hand empty");
-            Expect(Named<Control>("Context")?.GetChildren().OfType<Button>().Any(b => b.Text == Ui.Say(MapBuilderView.CopyKey)) == true,
-                   "the selection shows Copy, Paste, Delete and Turn");
+            Expect(Named<Control>("Context")?.GetChildren().OfType<Button>().Select(b => b.Text).ToList() is { } verbs &&
+                   verbs.Contains(Ui.Say(MapBuilderView.DeleteKey)) && verbs.Contains(Ui.Say(MapBuilderView.RotateKey)) &&
+                   !verbs.Any(v => v == "Copy" || v == "Paste"),
+                   "the selection shows Delete and Turn, and no Copy or Paste (cc_task_m3 Part 8)");
 
             Click(Centre(new Cell(9, 2)));
             Expect(Draft.Props.Count(p => p.Id == "barrel") == 1, "a second click placed no second barrel");
@@ -216,12 +208,12 @@ namespace Game.Dev
         // Ctrl held: the hand keeps it; Esc puts it down
         void Building()
         {
-            PickProp("cottage", buildings: true);
+            PickProp("house_small", buildings: true);
 
             Click(Centre(new Cell(5, 6)), ctrl: true);
-            Expect(Draft.Props.Any(p => p.Id == "cottage" && p.Cell == new Cell(5, 6)), "the cottage stands where it was clicked");
+            Expect(Draft.Props.Any(p => p.Id == "house_small" && p.Cell == new Cell(5, 6)), "the house stands where it was clicked");
             Expect(Draft.IsBlocked(new Cell(6, 7)), "over all four of its squares");
-            Expect(Editor.InHand && Editor.PropId == "cottage", "Ctrl held: the cottage still in hand");
+            Expect(Editor.InHand && Editor.PropId == "house_small", "Ctrl held: the house still in hand");
 
             Key(Godot.Key.Escape, ctrl: false);
             Expect(!Editor.InHand, "Esc put it down");
@@ -326,7 +318,7 @@ namespace Game.Dev
             Package pack = Package.Read(Campaign);
 
             Expect(pack.Maps.ContainsKey(MapId), "its campaign loads it: " + string.Join("; ", pack.Problems.Select(p => p.What)));
-            Expect(pack.PropsOn(MapId).Any(p => p.Id == "cottage"), "with its cottage");
+            Expect(pack.PropsOn(MapId).Any(p => p.Id == "house_small"), "with its house");
             Expect(pack.LookOn(MapId)?.At(new Cell(1, 1)) == Ground.Grass, "and its grass");
         }
 

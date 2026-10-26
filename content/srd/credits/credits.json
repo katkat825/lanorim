@@ -46,7 +46,8 @@
         "Ultimate Fantasy RTS",
         "Ultimate House Interior Pack",
         "Ultimate Modular Ruins Pack",
-        "Survival Pack"
+        "Survival Pack",
+        "Pirate Kit"
       ],
       "files": [
         "models/minis/goblin_male.gltf",
@@ -66,9 +67,13 @@
         "models/props/ultimate_fantasy_rts_aug_2022/",
         "models/props/ultimate_house_interior_pack_june_2020/",
         "models/props/ultimate_modular_ruins_pack_aug_2021/",
-        "models/props/survival_pack_sept_2020/"
+        "models/props/survival_pack_sept_2020/",
+        "textures/ground/cobble.png",
+        "textures/ground/stone.png",
+        "models/minis/beastfolk/sharky",
+        "models/minis/npcs/"
       ],
-      "note": "QAL: no attribution required; credited on goodwill. rogue_v3's body rides the Ultimate Animated Character Pack's armature. Ultimate Animated Animals is the enemy wolf mini; its companions left the game on 2026-10-08"
+      "note": "QAL: no attribution required; credited on goodwill. rogue_v3's body rides the Ultimate Animated Character Pack's armature. Ultimate Animated Animals is the enemy wolf mini; its companions left the game on 2026-10-08. The cobble and stone-floor grounds are the Medieval Village MegaKit's T_UnevenBrick and T_Brick, scaled to 512 (cc_task_m3)"
     },
     {
       "id": "quaternius_monsters",
@@ -105,6 +110,21 @@
       "note": "this pack's own License.txt is CC0, not the QAL"
     },
     {
+      "id": "quaternius_village",
+      "kind": "asset",
+      "name": "Quaternius",
+      "role": "models",
+      "licence": "cc0",
+      "url": "https://quaternius.com",
+      "packs": [
+        "Medieval Village Pack"
+      ],
+      "files": [
+        "models/props/medieval_village_pack_dec_2020/"
+      ],
+      "note": "this pack's own License.txt is CC0 1.0, not the QAL: the map builder's ten village buildings (cc_task_m3)"
+    },
+    {
       "id": "kaykit",
       "kind": "asset",
       "name": "KayKit (Kay Lousberg)",
@@ -127,19 +147,20 @@
       "note": "the hero minis by class are KayKit Adventurers 2.0's characters (two modified by Kathleen) with their weapons, posed with KayKit Character Animations 1.1's Rig_Medium clips; rogue_v3's cape is KayKit Skeletons 1.1's Skeleton_Rogue"
     },
     {
-      "id": "moraazul",
+      "id": "heytibo",
       "kind": "asset",
-      "name": "MoraAzul",
+      "name": "Tibo (HeyTibo)",
       "role": "models",
-      "licence": "cc_by",
-      "url": "https://moraazul.itch.io/animal-plushies",
+      "licence": "cc_by_nd_4",
+      "url": "https://heytibo.itch.io/hooded-fox",
       "packs": [
-        "Animal Plushies"
+        "Hooded Fox"
       ],
       "files": [
-        "models/minis/plushies/"
+        "models/minis/beastfolk/fox"
       ],
-      "note": "the Beastfolk's minis: the cat, the dog, the bunny and the bear (CC BY, attribution required; cc_task_m2)"
+      "ships": false,
+      "note": "the Vulpine Beastfolk's mini (cc_task_m3). LICENCE TO CONFIRM: the page links CC BY-ND 4.0, and NoDerivatives may not allow the painted-miniature restyle; left out of every build (export_presets.cfg) until Kathleen confirms"
     },
     {
       "id": "devmops",

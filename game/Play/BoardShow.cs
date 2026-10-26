@@ -27,6 +27,8 @@ namespace Game.Play
             public LogLine Line;
             public bool Hero;
             public Border? Door;
+            public string Spell;
+            public Cell? At;
         }
 
         readonly ConcurrentQueue<Step> _steps;
@@ -94,6 +96,20 @@ namespace Game.Play
 
         // a broken enemy ran off the edge of the map (cc_task_h 3.4): its piece leaves the board
         public override void Left(Actor actor) => Add(new Step { What = "left", Actor = actor });
+
+        // a Command's word (cc_task_m3 Part 2): the creature startles on its square as its turn becomes the word's, then
+        // walks, lies down or stands as the word says; the log says which
+        public override void Obeys(Actor actor, Core.Magic.Command word) => Add(new Step { What = "obey", Actor = actor });
+
+        // a spell the narrator tells: its sight on the board, in its place (Board.Sight), and its line under the tray
+        // at once, as a cast's caption is (rules thread)
+        public event Action<Actor, string> Narrating;
+
+        public override void Narrated(Actor caster, string spellId, Cell? at)
+        {
+            Narrating?.Invoke(caster, spellId);
+            if (at.HasValue) Add(new Step { What = "sight", Actor = caster, Spell = spellId, At = at });
+        }
 
         public void Log(LogLine line) => Add(new Step { What = "log", Line = line });
 

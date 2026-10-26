@@ -175,6 +175,10 @@ namespace Game.Builder
             else Table.Board.Unflash();
 
             _marks.Lines(lines);
+
+            // a named NPC under the pointer says who it is (cc_task_m3 Part 10)
+            Prop figure = over.Square is Cell square ? Table.Board.FigureAt(square, View.Draft.Props) : null;
+            _marks.Who(View.NameOf(figure?.Actor), figure?.Cell ?? default);
         }
 
         // THE BUILDER'S ACTS (game/Access, rebindable on the controls page): every menu item and bar button, the prop's
@@ -216,8 +220,6 @@ namespace Game.Builder
                 case Act.LeaveBuilder: Leave(); return true;
                 case Act.TurnProp: Rotate(1); return true;
                 case Act.TurnPropBack: Rotate(-1); return true;
-                case Act.CopySelection: Copy(); return true;
-                case Act.PasteSelection: Paste(); return true;
                 case Act.DeleteSelection: Delete(); return true;
                 case Act.SelectTool: Take(MapTool.Select); return true;
                 case Act.TerrainTool: Take(MapTool.Paint); return true;
@@ -226,6 +228,7 @@ namespace Game.Builder
                 case Act.SpawnTool: Take(MapTool.Spawn); return true;
                 case Act.EraseTool: Take(MapTool.Erase); return true;
                 case Act.BuildingsPicker: _ui.Toggle(MapBuilderUi.BuildingsPicker); return true;
+                case Act.NpcsPicker: _ui.Toggle(MapBuilderUi.NpcsPicker); return true;
                 case Act.PropsPicker: _ui.Toggle(MapBuilderUi.PropsPicker); return true;
                 case Act.WallsAndDoors: _ui.Toggle(MapBuilderUi.WallsPanel); return true;
                 case Act.BuilderProblems: _ui.Toggle(MapBuilderUi.ProblemsPanel); return true;
@@ -287,21 +290,13 @@ namespace Game.Builder
             else _ui.Refresh();
         }
 
-        public void Copy()
-        {
-            if (Editor.Copy()) _ui.Notice(Ui.Say(MapBuilderView.CopyKey));
-        }
-
-        // where the pointer is, or where the selection is when the pointer is off the map
-        public void Paste()
-        {
-            Cell? at = _over.Square ?? Editor.Selection?.Min;
-
-            if (at is Cell here && Editor.Paste(here)) Changed();
-            else Chose();
-        }
-
         public void Delete() => Do(Editor.Delete());
+
+        // the picked figure is this character, or someone (cc_task_m3 Part 10)
+        public void Who(string actor)
+        {
+            if (Editor.NamePicked(actor)) Changed();
+        }
 
         public void Notice(string words) => _ui.Notice(words);
 

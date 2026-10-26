@@ -59,6 +59,10 @@ namespace Core.Magic
         // its data is a boon, whole (BoonSpec, read by BoonSpecReader): it takes every boon key
         bool CarriesABoon => false;
 
+        // IT IS THE NARRATOR'S: nothing mechanical happens, and the narrator says what does (Narrate). a spell that does
+        // this says its line when it's cast (Spell.NarrationKey, cc_task_m3 Part 2)
+        bool IsTold => false;
+
         // a common setting (SpellReader.CommonKeys) only some primitives may carry, by its vocabulary
         // word: "add_modifier" (damage, heal), the lands "each_turn" and "next_turn_end" (damage)
         bool Allows(string setting) => false;

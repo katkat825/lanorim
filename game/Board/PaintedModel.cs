@@ -73,6 +73,25 @@ namespace Game.Board
             return copy;
         }
 
+        // ONE SURFACE, ANOTHER COLOUR (cc_task_m3 follow-up: the map's people's skin): every surface whose own material is
+        // called `surface` wears `colour` under the paint, which relights it as it does any other colour. After Paint
+        public static void Recolour(Node node, string surface, Color colour)
+        {
+            foreach (MeshInstance3D mesh in Meshes(node))
+                for (int i = 0; i < mesh.Mesh.GetSurfaceCount(); i++)
+                {
+                    if (mesh.Mesh.SurfaceGetMaterial(i)?.ResourceName != surface) continue;
+
+                    if (mesh.GetSurfaceOverrideMaterial(i) is ShaderMaterial painted) painted.SetShaderParameter(TintParameter, colour);
+                    else if (mesh.Mesh.SurfaceGetMaterial(i) is BaseMaterial3D own)
+                    {
+                        var copy = (BaseMaterial3D)own.Duplicate();
+                        copy.AlbedoColor = colour;
+                        mesh.SetSurfaceOverrideMaterial(i, copy);
+                    }
+                }
+        }
+
         // matches the uniform in painted_miniature.gdshader
         const string TintParameter = "tint";
 

@@ -10,11 +10,12 @@ namespace Game.Builder
 {
     // ABOVE THE BOTTOM BAR, ONE AT A TIME (cc_task_m2 Part 8): the Buildings picker and the Props picker (PropPalette:
     // thumbnails, the search box, the categories as tabs, pages), each closing when an item is chosen or Esc is pressed;
-    // the Walls and doors pop-up (a wall or a door, and what it's made of); and the problems, unfolded, each one a button
-    // that shows where. Only while one is open does anything stand over the map
+    // the Walls and doors picker (WallPalette, cc_task_m3 Part 6: a wall or a door, then its styles as cards); and the
+    // problems, unfolded, each one a button that shows where. Only while one is open does anything stand over the map
     public partial class MapBuilderUi
     {
         public const string BuildingsPicker = "BuildingsPicker";
+        public const string NpcsPicker = "NpcsPicker";
         public const string PropsPicker = "PropsPicker";
         public const string WallsPanel = "WallsPanel";
         public const string ProblemsPanel = "ProblemsPanel";
@@ -40,8 +41,9 @@ namespace Game.Builder
 
             switch (name)
             {
-                case BuildingsPicker: Show(name, Picker(buildings: true)); break;
-                case PropsPicker: Show(name, Picker(buildings: false)); break;
+                case BuildingsPicker: Show(name, Picker(PropShelf.Buildings)); break;
+                case PropsPicker: Show(name, Picker(PropShelf.Props)); break;
+                case NpcsPicker: Show(name, Picker(PropShelf.People)); break;
                 case WallsPanel: Show(name, Walls()); break;
                 case ProblemsPanel: Show(name, ProblemsList()); break;
             }
@@ -80,13 +82,13 @@ namespace Game.Builder
 
         // A PICKER: the buildings, or every other prop. Choosing one puts it in hand and closes the picker; the next
         // click on the map places one and selects it (MapEditor.Apply), Ctrl held places more
-        Control Picker(bool buildings)
+        Control Picker(PropShelf shelf)
         {
             var palette = new PropPalette
             {
                 Name = "Palette",
                 Editor = Editor,
-                Buildings = buildings,
+                Shelf = shelf,
                 Picked = () =>
                 {
                     Close(refresh: false);
@@ -98,26 +100,25 @@ namespace Game.Builder
             return palette;
         }
 
-        // WALLS AND DOORS: a wall or a door, and what it's made of; either takes up the Wall tool
+        // WALLS AND DOORS (cc_task_m3 Part 6): a picker like the others, Wall or Door, then the styles as cards
+        // (WallPalette). Either takes up the Wall tool; a style chosen closes it
         Control Walls()
         {
-            int gap = BuilderLayout.Current.Gap;
-            var lines = Ui.Row(gap);
-            var styles = Ui.Flow(gap);
-
-            foreach (Edge line in MapBuilderView.Lines)
+            var palette = new WallPalette
             {
-                Edge one = line;
-                lines.AddChild(Choice(MapBuilderView.LineKey(one), () => { Editor.Line = one; Walling(); }, () => Editor.Line == one));
-            }
+                Name = "Palette",
+                Editor = Editor,
+                Chose = Walling,
+                Picked = () =>
+                {
+                    Close(refresh: false);
+                    Walling();
+                    Refresh();
+                },
+            };
 
-            foreach (WallStyle style in MapBuilderView.Styles)
-            {
-                WallStyle one = style;
-                styles.AddChild(Choice(MapBuilderView.StyleKey(one), () => { Editor.Style = one; Walling(); }, () => Editor.Style == one));
-            }
-
-            return Ui.Column(gap, Heading(MapEditor.ToolKey(MapTool.Wall)), lines, Light(Ui.Label(MapBuilderView.StylesKey)), styles);
+            _openUpdates.Add(palette.Update);
+            return palette;
         }
 
         void Walling()
@@ -129,15 +130,6 @@ namespace Game.Builder
                 Builder.Chose();
             }
             else Refresh();
-        }
-
-        Button Choice(string key, Action pick, Func<bool> chosen)
-        {
-            Button button = Ui.Button(key, pick);
-            button.ToggleMode = true;
-            button.ThemeTypeVariation = "HudButton";
-            _openUpdates.Add(() => button.SetPressedNoSignal(chosen()));
-            return button;
         }
 
         // THE PROBLEMS, UNFOLDED: each one a button that shows where it is

@@ -9,8 +9,8 @@ namespace Game.Board
     public sealed partial class BoardTiles
     {
         // HOW EACH SQUARE LOOKS (cc_task_l Part 2.3): the map's ground drawn as one mesh per kind of ground, a thin skin
-        // just above the mat and under the grid's lines, so the squares still read. Stone is the bare mat and draws
-        // nothing, so a dungeon looks as it always did. 64 x 64 squares is at most seven meshes, not four thousand nodes.
+        // just above the mat and under the grid's lines, so the squares still read. Stone is the bare mat on an all-stone
+        // map, so a dungeon looks as it always did; among other grounds it draws its flags (GroundTextures.Draws). 64 x 64 squares is at most seven meshes, not four thousand nodes.
         //
         // AT THE MAP'S EDGE the ground turns down onto the mat in a short darker lip (EdgeLip), so a field with no wall
         // round it ends like a printed tile laid on the table rather than stopping dead (Part 2.4, a first pass)
@@ -30,7 +30,7 @@ namespace Game.Board
         {
             if (Look == null) return;
 
-            foreach (Ground ground in Look.Grounds.Where(g => g != Ground.Stone))
+            foreach (Ground ground in Look.Grounds.Where(g => GroundTextures.Draws(g, Look)))
             {
                 List<Cell> cells = map.Cells.Where(c => Look.At(c) == ground && map.At(c) is Tile.Floor or Tile.Rough).ToList();
 

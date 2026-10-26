@@ -39,6 +39,9 @@ namespace Content.Screens
         // Creative Commons Attribution with no version given (MoraAzul's Animal Plushies, cc_task_m2)
         [Word("cc_by")] CcBy,
 
+        // Attribution-NoDerivatives 4.0 (HeyTibo's Hooded Fox, cc_task_m3): credit, and the work shared unchanged
+        [Word("cc_by_nd_4")] CcByNd4,
+
         // the Quaternius Asset License
         Qal,
 

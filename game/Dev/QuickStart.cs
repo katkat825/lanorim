@@ -88,10 +88,16 @@ namespace Game.Dev
             Step step = Step.Class;
             bool paged = page != null && Core.Words.EnumWords.TryName(page, out step);
 
+            if (paged && DevArgs.Longest && CreationWorst.Pages.Contains(step))
+            {
+                CreationWorst.Show(launch, step);
+                return;
+            }
+
             if (paged) Defaults(creation.Making, cls ?? "mage", learn: false);
             else if (cls != null) creation.Making.Pick(GameState.Content.Class(cls));
 
-            // `--species elf` or a lineage, `--species beastfolk_ursine` (the mini in the picture, cc_task_m2)
+            // `--species elf` or a lineage, `--species beastfolk_selachian` (the mini in the picture, cc_task_m2)
             if (DevArgs.Species is { } asked && GameState.Content.Kind(asked) is { } kind)
             {
                 creation.Making.Pick(kind.IsLineage ? GameState.Content.Kind(kind.LineageOf) : kind);

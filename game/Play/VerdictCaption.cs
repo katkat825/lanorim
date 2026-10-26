@@ -109,6 +109,17 @@ namespace Game.Play
             ShowPrompt();
         }
 
+        // A SPELL THE NARRATOR TELLS (cc_task_m3 Part 2): its line under the tray, in place of "You cast Druidcraft". Told
+        // after the cast's own caption, which it replaces when that said only the cast
+        public void Narration(Actor caster, string spellId)
+        {
+            if (Run?.Hero.Actor == null || !ReferenceEquals(caster, Run.Hero.Actor)) return;
+
+            _verdict = Ui.Say(Core.Magic.Spell.NarrationKeyOf(spellId), NameOf(caster));
+            _verdictUntil = Time.GetTicksMsec() + (ulong)(HudLayout.Current.VerdictSeconds * 1000);
+            ShowPrompt();
+        }
+
         string SaidOf(Change change) =>
             ReferenceEquals(change.Who, Run.Hero.Actor)
                 ? Ui.Say(ScreenWords.YouChanged(change.What), change.To, change.To - change.From)

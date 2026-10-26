@@ -57,8 +57,11 @@ namespace Game
         // the demonstration hero's class, and a creation page's
         public static string Class => Word("--class");
 
-        // the demonstration hero's species or lineage ("fairy", "beastfolk_feline"), and a creation page's
+        // the demonstration hero's species or lineage ("fairy", "beastfolk_vulpine"), and a creation page's
         public static string Species => Word("--species");
+
+        // `--show create --page equipment --longest`: the page with the picks that make it longest (cc_task_m3 Part 1)
+        public static bool Longest => Has("--longest");
 
         public static bool BookOverlay => Has("--book-overlay");
 
@@ -117,6 +120,15 @@ namespace Game
         public static bool LayoutProbe => Has("--layout");
 
         public static bool ProneProbe => Has("--prone-probe");
+
+        // `--pose Attack --pose-at 0.4`: every hero mini held in that clip, so far in (a picture mid-swing, cc_task_m3)
+        public static string Pose => Value("--pose");
+
+        public static float? PoseAt => float.TryParse(Value("--pose-at"), System.Globalization.NumberStyles.Float,
+                                                      System.Globalization.CultureInfo.InvariantCulture, out float at) ? at : null;
+
+        // `--cast command:grovel`: the hero's first turn casts it (CastProbe, cc_task_m3 Part 2)
+        public static string Cast => Value("--cast");
 
         public static bool AccessProbe => Has("--access-probe");
 
@@ -182,6 +194,9 @@ namespace Game
             double.TryParse(Word("--mood-after"), NumberStyles.Float, CultureInfo.InvariantCulture, out double s) ? s : 2.0;
 
         public static bool Corners => Has("--corners");
+
+        // every wall style with its door, on the demonstration table (cc_task_m3 Part 6)
+        public static bool WallStyles => Has("--wall-styles");
 
         public static bool OpenDoor => Has("--open-door");
 

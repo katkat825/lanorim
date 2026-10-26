@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+; A GATE IN AN IRON FENCE: the kit's ornamented fence panel ("Iron fence, ornate" in Props), hung as the gate. the
+; door leaf is the child whose name ends in _door: BoardTiles hangs it on a hinge at its edge (DoorPiece)
+
+[ext_resource type="PackedScene" path="res://models/props/medieval_village_megakit_standard/Prop_MetalFence_Ornament.gltf" id="1_gate_door"]
+
+[node name="door" type="Node3D"]
+
+[node name="Gate_door" parent="." instance=ExtResource("1_gate_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

@@ -21,7 +21,7 @@ namespace Content.Maps
                     clip.Lines[new Border(Local(line.Cell, box), line.Vertical)] = (At(line), StyleAt(line));
 
             foreach (Prop prop in _props.Where(p => box.Contains(p.Cell)))
-                clip.Props.Add(new Prop(prop.Id, Local(prop.Cell, box), prop.Turn));
+                clip.Props.Add(new Prop(prop.Id, Local(prop.Cell, box), prop.Turn, prop.Actor));
 
             foreach (KeyValuePair<int, Cell> spawn in _spawns.Where(s => box.Contains(s.Value)))
                 clip.Spawns[spawn.Key] = Local(spawn.Value, box);
@@ -67,7 +67,7 @@ namespace Content.Maps
                 }
 
                 foreach (Prop prop in clip.Props)
-                    PlaceProp(prop.Id, new Cell(at.X + prop.Cell.X, at.Y + prop.Cell.Y), prop.Turn);
+                    PlaceProp(prop.Id, new Cell(at.X + prop.Cell.X, at.Y + prop.Cell.Y), prop.Turn, prop.Actor);
 
                 foreach ((int slot, Cell local) in clip.Spawns)
                     PlaceSpawn(slot, new Cell(at.X + local.X, at.Y + local.Y));

@@ -51,9 +51,13 @@ namespace Content.Maps
 
             json.Append(",\n  \"props\": [");
 
-            for (int i = 0; i < _props.Count; i++)
+            // the people are a list of their own, written only when there's one (cc_task_m3 Part 10)
+            List<Prop> things = _props.Where(p => !Palette.IsFigure(p.Id)).ToList();
+            List<Prop> people = _props.Where(p => Palette.IsFigure(p.Id)).ToList();
+
+            for (int i = 0; i < things.Count; i++)
             {
-                Prop prop = _props[i];
+                Prop prop = things[i];
 
                 json.Append(i == 0 ? "\n    " : ",\n    ")
                     .Append("{ \"id\": ").Append(JsonSerializer.Serialize(prop.Id))
@@ -63,7 +67,16 @@ namespace Content.Maps
                     .Append(" }");
             }
 
-            return json.Append(_props.Count == 0 ? "]" : "\n  ]").Append("\n}\n").ToString();
+            json.Append(things.Count == 0 ? "]" : "\n  ]");
+
+            if (people.Count > 0)
+                json.Append(",\n  \"npcs\": [")
+                    .Append(string.Join(",", people.Select(p =>
+                        "\n    { \"figure\": " + JsonSerializer.Serialize(p.Id) + $", \"x\": {p.Cell.X}, \"y\": {p.Cell.Y}, \"turn\": {p.Turn}" +
+                        (p.Actor.Length > 0 ? ", \"actor\": " + JsonSerializer.Serialize(p.Actor) : "") + " }")))
+                    .Append("\n  ]");
+
+            return json.Append("\n}\n").ToString();
         }
 
         public static bool TryRead(string text, out MapDraft draft, out string problem)
@@ -171,6 +184,21 @@ namespace Content.Maps
                 }
 
                 _props.Add(new Prop(id, new Cell(raw.Number("x"), raw.Number("y")), raw.Number("turn")));
+            }
+
+            // THE PEOPLE (cc_task_m3 Part 10): a list of their own, each its figure, its square, its turn and who it is
+            foreach (JsonElement raw in root.Items("npcs"))
+            {
+                string figure = raw.Text("figure");
+                string actor = raw.Text("actor");
+
+                if (!Json.IsId(figure) || actor.Length > 0 && !Json.IsId(actor))
+                {
+                    problem = $"'{figure}' ({actor}) is not a figure, or not someone's id";
+                    return false;
+                }
+
+                _props.Add(new Prop(figure, new Cell(raw.Number("x"), raw.Number("y")), raw.Number("turn"), actor));
             }
 
             return true;

@@ -46,6 +46,9 @@ namespace Game.Dev
         // read, and photograph that - the moment the player reads the roll
         public bool WhenTrayUp { get; set; }
 
+        // a probe's moment (past --after): CastProbe holds the picture until the table shows the cast
+        public Func<bool> Until { get; set; }
+
         // `--frames 90`: that many pictures, one a frame, numbered beside Path (table_000.png...), for measuring what
         // changes frame to frame with nothing moving but the handheld drift (tools/flicker.ps1, cc_task_f 1.7)
         public int Frames { get; set; } = 1;
@@ -117,6 +120,8 @@ namespace Game.Dev
             if (_waited++ < After) return;
 
             if (WhenTrayUp && !TrayUpAndRead()) return;
+
+            if (Until != null && !Until()) return;
 
             Viewport viewport = GetViewport();
 

@@ -38,6 +38,9 @@ namespace Game.Screens
 
         readonly List<string> _lines = new List<string>();
 
+        // every line the log has shown this fight, oldest first (a probe reads it)
+        public IReadOnlyList<string> Written => _lines;
+
         static HudLayout Layout => HudLayout.Current;
 
         public CombatHudUi(CombatDirector director) => _director = director;
@@ -333,6 +336,21 @@ namespace Game.Screens
 
                 AddMenu(session, CombatHud.SpellsMenuKey, hud.Spells);
                 AddMenu(session, CombatHud.ManoeuvresMenuKey, hud.Manoeuvres);
+
+                // aiming a spell with a choice in it (Command's word, Enlarge or Reduce): the choice, first on the bar, the
+                // one it will cast pressed in (cc_task_m3 Part 2: Command was always Approach, never asked)
+                if (session.Selected is { Spell: { } spell, Modes.Count: > 1 } aimed)
+                    foreach (string mode in aimed.Modes.Reverse())
+                    {
+                        string one = mode;
+                        Button word = Ui.Button(Ui.Say(spell.ModeKey(one)), () => _director.PickMode(one), true);
+                        word.ThemeTypeVariation = "HudButton";
+                        word.ToggleMode = true;
+                        word.SetPressedNoSignal(session.Mode == one);
+                        if (session.Mode == one) word.Modulate = Chosen;
+                        _bar.AddChild(word);
+                        _bar.MoveChild(word, 0);
+                    }
 
                 // aiming a spell that can go on the hero: cast it on yourself without finding your mini
                 if (_director.CanAimAtSelf)

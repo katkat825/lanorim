@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using Content.Maps;
 using Content.Workshop;
 
@@ -100,6 +101,35 @@ namespace Content.Tests
             Assert.DoesNotContain("\"walls\"", blank.Save());
             Assert.DoesNotContain("\"ground\"", blank.Save());
             Assert.DoesNotContain("|", blank.Save());
+        }
+
+        // cc_task_m3 Part 3: Blank is the size the author chose, any size, the start in its middle; the others offer
+        // their own size and keep their start where they drew it
+        [Theory]
+        [InlineData(20, 15)]
+        [InlineData(5, 30)]
+        [InlineData(3, 3)]
+        public void BlankIsTheSizeChosenWithTheStartInTheMiddle(int columns, int rows)
+        {
+            Assert.True(MapTemplates.TakesTheSize("blank"));
+
+            MapDraft blank = MapTemplates.Make("blank", columns, rows);
+
+            Assert.Equal((columns, rows), (blank.Columns, blank.Rows));
+            Assert.Equal(new Core.Space.Cell(columns / 2, rows / 2), blank.Start);
+            Assert.Empty(blank.Props);
+            Assert.DoesNotContain("|", blank.Save());
+        }
+
+        [Fact]
+        public void EveryOtherTemplateOffersItsOwnSize()
+        {
+            foreach (string id in MapTemplates.Ids.Where(i => i != "blank"))
+            {
+                Assert.False(MapTemplates.TakesTheSize(id), id);
+                MapDraft drawn = MapTemplates.Read(id);
+                Assert.Equal(drawn.Start, MapTemplates.Make(id, drawn.Columns, drawn.Rows).Start);
+            }
         }
 
         [Fact]

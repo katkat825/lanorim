@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Content.Maps;
 using Content.Screens;
 using Game.Access;
@@ -123,6 +124,7 @@ namespace Game.Builder
                                   () => Editor.Tool == MapTool.Select, "Select"));
             bar.AddChild(Terrain());
             bar.AddChild(Spawns());
+            bar.AddChild(Pressing(MapBuilderView.NpcsKey, Act.NpcsPicker, () => OpenName == NpcsPicker, "Npcs"));
             bar.AddChild(Pressing(MapBuilderView.BuildingsKey, Act.BuildingsPicker, () => OpenName == BuildingsPicker, "Buildings"));
             bar.AddChild(Pressing(MapEditor.ToolKey(MapTool.Wall), Act.WallsAndDoors,
                                   () => Editor.Tool == MapTool.Wall || OpenName == WallsPanel, "WallsAndDoors"));
@@ -261,14 +263,14 @@ namespace Game.Builder
         {
             Ui.Clear(_context);
 
-            // the selection: Copy, Paste, Delete and Turn (cc_task_l's Select verbs, now the selection's own)
+            // the selection: Delete and Turn (cc_task_l's Select verbs, now the selection's own; Copy and Paste went in
+            // cc_task_m3 Part 8, "they don't seem to do anything")
             if (Editor.Tool == MapTool.Select && Editor.Chosen != null)
             {
-                _context.AddChild(Small(MapBuilderView.CopyKey, Builder.Copy));
-                _context.AddChild(Small(MapBuilderView.PasteKey, Builder.Paste));
                 _context.AddChild(Small(MapBuilderView.DeleteKey, Builder.Delete));
 
                 if (Editor.Picked != null) Turn(Editor.Picked.Turn);
+                if (Editor.Picked != null && Editor.Palette.IsFigure(Editor.Picked.Id)) Who(Editor.Picked);
                 return;
             }
 
@@ -290,6 +292,46 @@ namespace Game.Builder
 
             if (Editor.Tool == MapTool.Spawn)
                 _context.AddChild(Panelled(Ui.Plain(Ui.Say(MapBuilderView.SpawnKey, Editor.SpawnSlot))));
+        }
+
+        // WHO A PICKED FIGURE IS (cc_task_m3 Part 10): Someone, one of the campaign's characters, or New character...,
+        // which asks for a name here and adds them to the campaign's Characters tab. My maps offers only Someone
+        void Who(Prop figure)
+        {
+            var who = new OptionButton { Name = "Who", ThemeTypeVariation = "HudButton", FitToLongestItem = true };
+            var people = Builder.View.People;
+
+            who.AddItem(Ui.Say(MapBuilderView.SomeoneKey));
+            foreach ((string _, string name) in people) who.AddItem(name);
+            if (!Builder.View.Place.IsLibrary) who.AddItem(Ui.Say(MapBuilderView.NewPersonKey));
+
+            int at = people.ToList().FindIndex(p => p.Id == figure.Actor);
+            who.Selected = at < 0 ? 0 : at + 1;
+
+            who.ItemSelected += i =>
+            {
+                if (i == 0) Builder.Who("");
+                else if (i <= people.Count) Builder.Who(people[(int)i - 1].Id);
+                else NewPerson();
+            };
+
+            _context.AddChild(Panelled(Ui.Plain(Ui.Say(MapBuilderView.WhoKey))));
+            _context.AddChild(who);
+        }
+
+        // the name of someone new, typed here; Enter adds them to the campaign and makes the figure them
+        void NewPerson()
+        {
+            var name = new LineEdit { Name = "NewPerson", PlaceholderText = Ui.Say(MapBuilderView.NewPersonNameKey), CustomMinimumSize = new Vector2(240, 0) };
+
+            name.TextSubmitted += typed =>
+            {
+                if (Builder.View.AddPerson(typed) is { } id) Builder.Who(id);
+                else Refresh();
+            };
+
+            _context.AddChild(name);
+            Ui.FocusLater(name);
         }
 
         void Turn(int quarters)

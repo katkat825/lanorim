@@ -28,6 +28,14 @@ namespace Content.Maps
 
         public int Depth { get; init; } = 1;
 
+        // RETIRED (cc_task_m3 Part 5): no picker offers it any more, and a map that has one still loads and draws it.
+        // Nothing is ever deleted from the palette
+        public bool Retired { get; init; }
+
+        // A PERSON, NOT A THING (cc_task_m3 Part 10): one of the map's NPCs, from srd/npcs/npcs.json. The board stands it as a
+        // mini in its idle; the map file keeps it in its own "npcs" list, with who it is (Prop.Actor)
+        public bool Figure { get; init; }
+
         // the squares it covers anchored at `at` (the footprint's top-left) and turned a quarter `turn` times: an odd
         // turn swaps across and deep
         public IReadOnlyList<Core.Space.Cell> Footprint(Core.Space.Cell at, int turn)
@@ -55,6 +63,9 @@ namespace Content.Maps
 
         public const string File = "props/props.json";
 
+        // the people, read the same way (cc_task_m3 Part 10)
+        public const string FiguresFile = "npcs/npcs.json";
+
         PropCatalogue(IReadOnlyList<string> categories, IReadOnlyList<PropEntry> props)
         {
             Categories = categories;
@@ -77,9 +88,10 @@ namespace Content.Maps
             : Find(prop.Id)?.Footprint(prop.Cell, prop.Turn) ?? new[] { prop.Cell };
 
         // the palette's props whose name or id has these letters in it, for the builder's search box (cc_task_l Part
-        // 4.1): the screen passes each prop's name in the player's language
+        // 4.1): the screen passes each prop's name in the player's language. A retired prop is never offered
         public IEnumerable<PropEntry> Matching(string words, Func<PropEntry, string> named, string category = null) =>
             (category == null ? Props : In(category))
+                .Where(p => !p.Retired)
                 .Where(p => string.IsNullOrWhiteSpace(words) ||
                             p.Id.Contains(words.Trim().Replace(' ', '_'), StringComparison.OrdinalIgnoreCase) ||
                             (named?.Invoke(p) ?? "").Contains(words.Trim(), StringComparison.OrdinalIgnoreCase));
@@ -88,12 +100,23 @@ namespace Content.Maps
         // L's multi-square buildings, the one category of that name; the props are every other category
         public const string BuildingsCategory = "buildings";
 
-        public IReadOnlyList<string> CategoriesOn(bool buildings) =>
-            Categories.Where(c => (c == BuildingsCategory) == buildings).ToList();
+        // a category with nothing left to offer (Walls & fences, once its pieces became wall styles) has no tab
+        public IReadOnlyList<string> CategoriesOn(bool buildings) => CategoriesOn(buildings ? PropShelf.Buildings : PropShelf.Props);
+
+        public IReadOnlyList<string> CategoriesOn(PropShelf shelf) =>
+            Categories.Where(c => In(c).Any(p => !p.Retired && ShelfOf(p) == shelf)).ToList();
+
+        public static PropShelf ShelfOf(PropEntry prop) =>
+            prop.Figure ? PropShelf.People : prop.Category == BuildingsCategory ? PropShelf.Buildings : PropShelf.Props;
+
+        public bool IsFigure(string id) => Find(id)?.Figure == true;
 
         // the picker's matches: on one shelf, in one of its categories (null: the whole shelf)
         public IEnumerable<PropEntry> Matching(string words, Func<PropEntry, string> named, string category, bool buildings) =>
-            Matching(words, named, category).Where(p => (p.Category == BuildingsCategory) == buildings);
+            Matching(words, named, category, buildings ? PropShelf.Buildings : PropShelf.Props);
+
+        public IEnumerable<PropEntry> Matching(string words, Func<PropEntry, string> named, string category, PropShelf shelf) =>
+            Matching(words, named, category).Where(p => ShelfOf(p) == shelf);
 
         public static string CategoryKey(string category) =>
             KeyConventions.Key(KeyConventions.UiNs, "map", "category_" + category);
@@ -110,14 +133,26 @@ namespace Content.Maps
             if (!TryRead(Schema.Srd.Read(File), out PropCatalogue catalogue, out IReadOnlyList<string> problems))
                 throw new InvalidOperationException("the SRD prop palette does not read: " + string.Join("; ", problems));
 
-            return _srd = catalogue;
+            if (!TryRead(Schema.Srd.Read(FiguresFile), out PropCatalogue figures, out problems))
+                throw new InvalidOperationException("the SRD figures do not read: " + string.Join("; ", problems));
+
+            return _srd = With(catalogue, figures);
         }
+
+        // the palette and the people as one: a figure is found, covers its square and blocks as any prop does
+        static PropCatalogue With(PropCatalogue things, PropCatalogue people) =>
+            new(things.Categories.Concat(people.Categories).Distinct().ToList(),
+                things.Props.Concat(people.Props.Select(p => new PropEntry
+                {
+                    Id = p.Id, Category = p.Category, Pack = p.Pack, Model = p.Model, Blocks = p.Blocks,
+                    Width = p.Width, Depth = p.Depth, Retired = p.Retired, Figure = true,
+                })).ToList());
 
         // the biggest a prop can be, a side: a town's biggest building, not a map's worth
         public const int MaxSize = 8;
 
         // every key a palette entry takes
-        public static readonly IReadOnlyList<string> EntryKeys = new[] { "id", "category", "pack", "model", "blocks", "size" };
+        public static readonly IReadOnlyList<string> EntryKeys = new[] { "id", "category", "pack", "model", "blocks", "size", "retired" };
 
         public static bool TryRead(string text, out PropCatalogue catalogue, out IReadOnlyList<string> problems)
         {
@@ -166,6 +201,7 @@ namespace Content.Maps
                         Pack = raw.Text("pack"),
                         Model = raw.Text("model"),
                         Blocks = raw.Flag("blocks"),
+                        Retired = raw.Flag("retired"),
                         Width = size.Count == 2 ? Math.Clamp(size[0], 1, MaxSize) : 1,
                         Depth = size.Count == 2 ? Math.Clamp(size[1], 1, MaxSize) : 1,
                     });

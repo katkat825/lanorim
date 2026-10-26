@@ -115,6 +115,11 @@ namespace Core.Magic
 
             if (fight != null) fight.Observer.Cast(caster.Actor, spell.NameKey, Change.Since(before));
 
+            // the narrator says what a spell with nothing mechanical in it does (cc_task_m3 Part 2)
+            if (fight != null && spell.Narrates)
+                fight.Observer.Narrated(caster.Actor, spell.Id,
+                                        aim.Square ?? fight.Field.Where(aim.Creatures.FirstOrDefault() ?? caster.Actor));
+
             return new Casting(spell, caster.Actor, castAt, true, null, landings, squares,
                                covered.Distinct().ToList());
         }

@@ -84,6 +84,9 @@ namespace Game.Board
         // author left it
         Node3D Stand(Content.Maps.Prop prop)
         {
+            // a person is a mini, not a model fitted to its square (Board.Figures.cs)
+            if (Content.Maps.PropCatalogue.Srd().Find(prop.Id) is { Figure: true } person) return Figure(prop, person);
+
             Node3D model = PropModels.Make(prop.Id);
 
             if (model == null) return null;

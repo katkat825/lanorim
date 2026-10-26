@@ -26,7 +26,7 @@
       "speed": 30,
       "sizes": ["medium", "small"],
       "not_in_srd": true,
-      "lineages": ["beastfolk_feline", "beastfolk_canine", "beastfolk_rodent", "beastfolk_ursine"],
+      "lineages": ["beastfolk_vulpine", "beastfolk_selachian"],
       "features": [
         { "id": "darkvision_60", "level": 1 },
         { "id": "beastfolk_keen_senses", "trait": "training", "level": 1, "skills": ["perception"],
@@ -37,9 +37,8 @@
           "note": "Advantage on Initiative rolls (the Champion's boon)" }
       ]
     },
-    { "id": "beastfolk_feline", "lineage_of": "beastfolk", "speed": 30, "not_in_srd": true },
-    { "id": "beastfolk_canine", "lineage_of": "beastfolk", "speed": 30, "not_in_srd": true },
-    { "id": "beastfolk_rodent", "lineage_of": "beastfolk", "speed": 30, "not_in_srd": true },
-    { "id": "beastfolk_ursine", "lineage_of": "beastfolk", "speed": 30, "not_in_srd": true }
+    { "id": "beastfolk_vulpine", "lineage_of": "beastfolk", "speed": 30, "not_in_srd": true,
+      "replaces": ["beastfolk_feline", "beastfolk_canine", "beastfolk_rodent", "beastfolk_ursine"] },
+    { "id": "beastfolk_selachian", "lineage_of": "beastfolk", "speed": 30, "not_in_srd": true }
   ]
 }

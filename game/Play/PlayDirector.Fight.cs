@@ -30,6 +30,7 @@ namespace Game.Play
                 log.Wrote += show.Log;
                 show.Judging += (by, target, attempt) => MainQueue.Post(() => _caption.Verdict(by, target, attempt));
                 show.Casting += (caster, spell, at, changes) => MainQueue.Post(() => _caption.CastCaption(caster, spell, at, changes));
+                show.Narrating += (caster, spell) => MainQueue.Post(() => _caption.Narration(caster, spell));
 
                 Battle battle = Run.BattleFor(GameState.Resolver, chooser, new Observers(log, show, _mind));
 

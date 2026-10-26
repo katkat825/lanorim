@@ -63,14 +63,25 @@ namespace Game.Play
                 return;
             }
 
-            // and one whose only legal target is the hero goes on the hero (a party of one's Cure Wounds)
-            if (Session.OnlyTargetIsYou)
+            // and one whose only legal target is the hero goes on the hero (a party of one's Cure Wounds), unless there's a
+            // choice to make first (Lesser Restoration's condition): then "On yourself" casts it once it's made
+            if (Session.OnlyTargetIsYou && option.Modes.Count < 2)
             {
                 Actor me = Session.Hero.Actor;
                 Rules.Post(() => Session.Confirm(me), Refresh);
                 return;
             }
 
+            Refresh();
+        }
+
+        // A SPELL'S MODE, CHOSEN (cc_task_m3 Part 2): Command's word, Enlarge or Reduce. Picking a spell takes its first
+        // mode; while it's aimed, the bar offers the others (CombatHudUi), and this takes one
+        public void PickMode(string mode)
+        {
+            if (!HerosMove || Session.Selected == null || !Session.Selected.Modes.Contains(mode)) return;
+
+            Session.Select(Session.Selected, mode);
             Refresh();
         }
 
@@ -158,6 +169,9 @@ namespace Game.Play
                     Board.Flash(Session.PathTo(cell.Value), new Color(0.95f, 0.85f, 0.4f, 0.6f));
                     _hud?.Preview(Ui.Say(ScreenKeys.Key("combat", "path_cost"), cost));
                 }
+                // a named NPC says who it is (cc_task_m3 Part 10): the campaign's actor.<id>.name
+                else if (cell.HasValue && Board.FigureAt(cell.Value, _props) is { Actor.Length: > 0 } named)
+                    _hud?.Preview(Ui.Say(Core.Localization.KeyConventions.ActorName(named.Actor)));
                 else _hud?.Preview(null);
 
                 return;

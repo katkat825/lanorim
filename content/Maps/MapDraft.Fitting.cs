@@ -10,13 +10,15 @@ namespace Content.Maps
         // stays centred: a bigger map carries the edge squares on outward (the grass round a clearing goes on, a
         // room's floor grows and its walls move out with its edge), a smaller one is cut in from both sides and keeps
         // its outline. The start, the spawns and the props move with the middle; one that falls off is left out
-        public MapDraft Fitted(int columns, int rows)
+        // `middle`: the start in the middle of the new size, wherever it was (Blank, cc_task_m3 Part 3)
+        public MapDraft Fitted(int columns, int rows, bool middle = false)
         {
             var fitted = new MapDraft(columns, rows) { Palette = _palette };
 
             if (fitted.Columns == Columns && fitted.Rows == Rows)
             {
                 fitted.Restore(Save());
+                if (middle) fitted.Start = fitted.Middle;
                 fitted._undo.Clear();
                 return fitted;
             }
@@ -40,17 +42,19 @@ namespace Content.Maps
                     if (down.Line(y) is int line)
                         Copy(new Border(new Cell(across.Square(x), line), false), new Border(new Cell(x, y), false), fitted);
 
-            fitted.Start = new Cell(across.Moved(Start.X), down.Moved(Start.Y));
+            fitted.Start = middle ? fitted.Middle : new Cell(across.Moved(Start.X), down.Moved(Start.Y));
 
             foreach (KeyValuePair<int, Cell> spawn in _spawns)
                 fitted.PlaceSpawn(spawn.Key, new Cell(across.Moved(spawn.Value.X), down.Moved(spawn.Value.Y)));
 
             foreach (Prop prop in _props)
-                fitted.PlaceProp(prop.Id, new Cell(prop.Cell.X + across.Offset, prop.Cell.Y + down.Offset), prop.Turn);
+                fitted.PlaceProp(prop.Id, new Cell(prop.Cell.X + across.Offset, prop.Cell.Y + down.Offset), prop.Turn, prop.Actor);
 
             fitted._undo.Clear();
             return fitted;
         }
+
+        Cell Middle => new Cell(Columns / 2, Rows / 2);
 
         void Copy(Border from, Border to, MapDraft into)
         {

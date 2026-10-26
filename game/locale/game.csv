@@ -1262,10 +1262,12 @@ prop.bed_bunk.name,Bunk bed
 prop.bed_double.name,"Bed, double"
 prop.bed_single.name,"Bed, single"
 prop.bed_twin.name,"Bed, plain"
+prop.bell_tower.name,Bell tower
 prop.bench.name,Bench
 prop.birch_1.name,Birch
 prop.birch_2.name,"Birch, slim"
 prop.birch_3.name,"Birch, tall"
+prop.blacksmith.name,Blacksmith's forge
 prop.book_stand.name,Book stand
 prop.bookcase.name,Bookcase
 prop.bookshelf.name,Bookshelf
@@ -1364,6 +1366,7 @@ prop.house_tall.name,"House, tall"
 prop.houseplant.name,Potted plant
 prop.houseplant_tall.name,"Potted plant, tall"
 prop.hut.name,Hut
+prop.inn.name,Inn
 prop.keg.name,Keg
 prop.kerb.name,Kerbstones
 prop.kitchen_counter.name,Kitchen counter
@@ -1382,6 +1385,40 @@ prop.mill_stone.name,"Mill, stone"
 prop.mine_entrance.name,Mine entrance
 prop.mushrooms.name,Mushrooms
 prop.nightstand.name,Nightstand
+prop.npc_bluesoldier_female.name,Guard in blue 2
+prop.npc_bluesoldier_male.name,Guard in blue 1
+prop.npc_casual2_female.name,Villager in a jerkin 2
+prop.npc_casual2_male.name,Villager in a jerkin 1
+prop.npc_casual3_female.name,Villager in a tunic 2
+prop.npc_casual3_male.name,Villager in a tunic 1
+prop.npc_casual_bald.name,"Villager, bald"
+prop.npc_casual_female.name,Villager 2
+prop.npc_casual_male.name,Villager 1
+prop.npc_chef_female.name,Cook 2
+prop.npc_chef_male.name,Cook 1
+prop.npc_doctor_female_old.name,"Healer, old 2"
+prop.npc_doctor_female_young.name,"Healer, young 2"
+prop.npc_doctor_male_old.name,"Healer, old 1"
+prop.npc_doctor_male_young.name,"Healer, young 1"
+prop.npc_knight_golden_female.name,Knight in gold 2
+prop.npc_knight_golden_male.name,Knight in gold 1
+prop.npc_knight_male.name,Knight
+prop.npc_ninja_female.name,Scout in black 2
+prop.npc_ninja_male.name,Scout in black 1
+prop.npc_ninja_sand.name,Desert scout 1
+prop.npc_ninja_sand_female.name,Desert scout 2
+prop.npc_oldclassy_female.name,Lady
+prop.npc_oldclassy_male.name,Gentleman
+prop.npc_pirate_female.name,Sailor 2
+prop.npc_pirate_male.name,Sailor 1
+prop.npc_soldier_female.name,Soldier 2
+prop.npc_soldier_male.name,Soldier 1
+prop.npc_viking_female.name,Northwoman
+prop.npc_viking_male.name,Northman
+prop.npc_witch.name,Witch
+prop.npc_wizard.name,Wizard
+prop.npc_worker_female.name,Labourer 2
+prop.npc_worker_male.name,Labourer 1
 prop.oak_1.name,Oak
 prop.oak_2.name,"Oak, broad"
 prop.oak_3.name,"Oak, tall"
@@ -1447,6 +1484,7 @@ prop.ruin_wall_low.name,"Ruined wall, low"
 prop.ruin_wall_overgrown.name,"Ruined wall, overgrown"
 prop.ruin_window.name,Barred window
 prop.sack.name,Sack
+prop.sawmill.name,Sawmill
 prop.settle.name,Settle
 prop.shelf.name,Shelf
 prop.shelves_tall.name,Shelves
@@ -1456,6 +1494,7 @@ prop.silo.name,Silo
 prop.silo_barn.name,Silo and shed
 prop.skull.name,Skull
 prop.spruce.name,Spruce
+prop.stable.name,Stable
 prop.stairs.name,Stairs
 prop.stall.name,Market stall
 prop.statue_fox.name,Statue of a fox
@@ -1491,6 +1530,11 @@ prop.twisted_tree_2.name,"Twisted tree, leaning"
 prop.twisted_tree_3.name,"Twisted tree, gnarled"
 prop.vase.name,Vase
 prop.vase_rubble.name,Broken pottery
+prop.village_house_1.name,Timbered house
+prop.village_house_2.name,Timbered house on stone
+prop.village_house_3.name,Stone tower house
+prop.village_house_4.name,"Stone house, low"
+prop.village_mill.name,"Windmill, timbered"
 prop.wagon.name,Wagon
 prop.wall_fieldstone.name,"Wall, fieldstone"
 prop.wall_plaster.name,"Wall, plaster"
@@ -1527,16 +1571,12 @@ skill.religion.name,Religion
 skill.sleight_of_hand.name,Sleight of Hand
 skill.stealth.name,Stealth
 skill.survival.name,Survival
-species.beastfolk.description,"Medium humanoid animals with natural instincts. Beastfolk vary widely in appearance, from agile felines to powerful bears. Their keen senses and natural abilities make them capable adventurers. Small or Medium; speed 30 feet; Darkvision; Keen Senses; Natural Agility; Instinctive Awareness; choose a kind: Feline, Canine, Rodent, Ursine."
+species.beastfolk.description,"Medium humanoid animals with natural instincts. Beastfolk can vary widely in appearance, but all have superb natural instincts. Their keen senses and natural abilities make them capable adventurers. Small or Medium; speed 30 feet; Darkvision; Keen Senses; Natural Agility; Instinctive Awareness; choose a kind: Vulpine, Selachian."
 species.beastfolk.name,Beastfolk
-species.beastfolk_canine.description,Dog-like Beastfolk. Every kind has the same traits; the kind is how you look.
-species.beastfolk_canine.name,Canine
-species.beastfolk_feline.description,Cat-like Beastfolk. Every kind has the same traits; the kind is how you look.
-species.beastfolk_feline.name,Feline
-species.beastfolk_rodent.description,Mouse-like Beastfolk. Every kind has the same traits; the kind is how you look.
-species.beastfolk_rodent.name,Rodent
-species.beastfolk_ursine.description,Bear-like Beastfolk. Every kind has the same traits; the kind is how you look.
-species.beastfolk_ursine.name,Ursine
+species.beastfolk_selachian.description,Shark-like Beastfolk. Every kind has the same traits; the kind is how you look.
+species.beastfolk_selachian.name,Selachian
+species.beastfolk_vulpine.description,Fox-like Beastfolk. Every kind has the same traits; the kind is how you look.
+species.beastfolk_vulpine.name,Vulpine
 species.dragonborn.description,"Speed 30 feet; Dragonborn Darkvision; Draconic Flight; choose an ancestry: Acid, Cold, Fire, Lightning, Poison."
 species.dragonborn.name,Dragonborn
 species.dragonborn_acid.description,Speed 30 feet; a Black or Copper dragon forebear: acid Breath Weapon and Draconic Resistance.
@@ -1576,24 +1616,38 @@ spell.banishment.name,Banishment
 spell.black_tentacles.description,"Level 4. Tentacles fill a 20-foot square of difficult terrain. A creature there when they appear, entering, or ending its turn there makes a Strength save or takes 3d6 bludgeoning damage and is restrained. An action and an Athletics check breaks free. Requires concentration."
 spell.black_tentacles.name,Black Tentacles
 spell.blade_barrier.description,"Level 6. A wall of whirling blades up to 100 feet long, or a ring 60 feet across. It gives three-quarters cover and is difficult terrain. A creature in it when it appears, entering it, or ending its turn there makes a Dexterity save or takes 6d10 force damage, half on a success. Requires concentration."
+spell.blade_barrier.mode.line,A line
+spell.blade_barrier.mode.ring,A ring
 spell.blade_barrier.name,Blade Barrier
 spell.bless.description,Level 1. +1d4 to attack rolls and saving throws. Requires concentration.
 spell.bless.name,Bless
 spell.blight.description,"Level 4. 8d8 necrotic damage, con save for half. 1d8 more per level above 4."
 spell.blight.name,Blight
 spell.blindness_deafness.description,"Level 2. A creature you can see makes a Constitution save or is blinded or deafened, your choice, for the fight. It saves again at the end of each of its turns. One more target per level above 2."
+spell.blindness_deafness.mode.blindness,Blindness
+spell.blindness_deafness.mode.deafness,Deafness
 spell.blindness_deafness.name,Blindness/Deafness
 spell.blur.description,Level 2. Attack rolls against it have disadvantage. Requires concentration.
 spell.blur.name,Blur
 spell.breath_weapon_acid.description,A 15-foot cone or a 30-foot line of acid: Dexterity save for half.
+spell.breath_weapon_acid.mode.cone,A cone
+spell.breath_weapon_acid.mode.line,A line
 spell.breath_weapon_acid.name,Acid Breath
 spell.breath_weapon_cold.description,A 15-foot cone or a 30-foot line of cold: Dexterity save for half.
+spell.breath_weapon_cold.mode.cone,A cone
+spell.breath_weapon_cold.mode.line,A line
 spell.breath_weapon_cold.name,Cold Breath
 spell.breath_weapon_fire.description,A 15-foot cone or a 30-foot line of fire: Dexterity save for half.
+spell.breath_weapon_fire.mode.cone,A cone
+spell.breath_weapon_fire.mode.line,A line
 spell.breath_weapon_fire.name,Fire Breath
 spell.breath_weapon_lightning.description,A 15-foot cone or a 30-foot line of lightning: Dexterity save for half.
+spell.breath_weapon_lightning.mode.cone,A cone
+spell.breath_weapon_lightning.mode.line,A line
 spell.breath_weapon_lightning.name,Lightning Breath
 spell.breath_weapon_poison.description,A 15-foot cone or a 30-foot line of poison: Dexterity save for half.
+spell.breath_weapon_poison.mode.cone,A cone
+spell.breath_weapon_poison.mode.line,A line
 spell.breath_weapon_poison.name,Poison Breath
 spell.burning_hands.description,"Level 1. 3d6 fire damage in a 15-foot cone, dex save for half."
 spell.burning_hands.name,Burning Hands
@@ -1608,6 +1662,11 @@ spell.chromatic_orb.name,Chromatic Orb
 spell.cloudkill.description,"Level 5. A 20-foot sphere of poison fog that blocks sight: 5d8 poison damage, Constitution save for half, when it appears, when it rolls over a creature, and when a creature enters it or ends its turn there. It drifts 10 feet away from you each turn. 1d8 more per level above 5. Requires concentration."
 spell.cloudkill.name,Cloudkill
 spell.command.description,"Level 1. A one-word command: approach, drop, flee, grovel or halt. A creature you can see makes a Wisdom save or spends its next turn obeying. One more creature per level above 1."
+spell.command.mode.approach,Approach
+spell.command.mode.drop,Drop
+spell.command.mode.flee,Flee
+spell.command.mode.grovel,Grovel
+spell.command.mode.halt,Halt
 spell.command.name,Command
 spell.cone_of_cold.description,"Level 5. 8d8 cold damage in a 60-foot cone, con save for half. 1d8 more per level above 5."
 spell.cone_of_cold.name,Cone of Cold
@@ -1619,6 +1678,7 @@ spell.darkness.description,"Level 2. A 15-foot sphere of magical darkness. Nothi
 spell.darkness.name,Darkness
 spell.darkvision.description,Level 2. Its effect is told by the narrator.
 spell.darkvision.name,Darkvision
+spell.darkvision.narration,The dark thins to shades of grey: the one {0} touched can see in it now.
 spell.death_ward.description,"Level 4. Until your next long rest, the first time the creature would drop to 0 hit points it drops to 1 instead, and an effect that would kill it outright without dealing damage is negated. Either ends the ward."
 spell.death_ward.name,Death Ward
 spell.detect_magic.description,"Level 1. You sense magic within 30 feet, and can see a faint aura around any creature or object that bears it, with the school of the spell behind it. Stone, earth, wood, metal and lead block it. Requires concentration. Can be cast as a ritual."
@@ -1627,9 +1687,14 @@ spell.dimension_door.description,"Level 4. You teleport up to 500 feet to a plac
 spell.dimension_door.name,Dimension Door
 spell.disguise_self.description,Level 1. Its effect is told by the narrator.
 spell.disguise_self.name,Disguise Self
+spell.disguise_self.narration,{0}'s face and clothes shift into someone else's. A touch would give it away.
 spell.disintegrate.description,"Level 6. A green ray: Dexterity save or 10d6+40 force damage, and a creature it drops to 0 hit points is turned to dust. Or it destroys a creation of magical force, such as a Cube of Force. 3d6 more per level above 6."
+spell.disintegrate.mode.creature,A creature
+spell.disintegrate.mode.force,A wall of force
 spell.disintegrate.name,Disintegrate
 spell.dispel_magic.description,"Level 3. Ends the spells on a creature, or on a magical effect on the board: those of level 3 or lower at once, higher ones on a spellcasting check against 10 plus their level. Cast with a higher slot, it ends spells up to that level outright."
+spell.dispel_magic.mode.creature,On a creature
+spell.dispel_magic.mode.effect,On an effect
 spell.dispel_magic.name,Dispel Magic
 spell.dissonant_whispers.description,"Level 1. One creature you can see hears a discordant melody in its mind: Wisdom save, or 3d6 psychic damage and it must use its reaction to move as far from you as it can. Half damage on a success. 1d6 more per level above 1."
 spell.dissonant_whispers.name,Dissonant Whispers
@@ -1641,11 +1706,14 @@ spell.dragons_breath.description,"Level 2. Bonus action. You touch a willing cre
 spell.dragons_breath.name,Dragon's Breath
 spell.druidcraft.description,Cantrip. Its effect is told by the narrator.
 spell.druidcraft.name,Druidcraft
+spell.druidcraft.narration,"Flowers push up through the ground where {0} points, and the air smells of rain."
 spell.eldritch_blast.description,"Cantrip. 1d10 force damage, more beams as you level, on a hit."
 spell.eldritch_blast.name,Eldritch Blast
 spell.enhance_ability.description,Level 2. Advantage on ability checks. Requires concentration.
 spell.enhance_ability.name,Enhance Ability
 spell.enlarge_reduce.description,"Level 2. Enlarge: a creature grows a size, has advantage on Strength checks and saves, and deals 1d4 more with weapons. Reduce: it shrinks a size, has disadvantage on Strength checks and saves, and deals 1d4 less. An unwilling creature makes a Constitution save. Requires concentration."
+spell.enlarge_reduce.mode.enlarge,Enlarge
+spell.enlarge_reduce.mode.reduce,Reduce
 spell.enlarge_reduce.name,Enlarge/Reduce
 spell.entangle.description,"Level 1. Leaves the target restrained in a 20-foot square, Strength check as an action to break free, str save to avoid it; fills a 20-foot square, difficult terrain. Requires concentration."
 spell.entangle.name,Entangle
@@ -1672,6 +1740,8 @@ spell.fly.name,Fly
 spell.fog_cloud.description,Level 1. A 20-foot-radius sphere of fog that blocks sight entirely. 20 feet wider per level above 1. Requires concentration.
 spell.fog_cloud.name,Fog Cloud
 spell.forcecage.description,"Level 7. An invisible prison of force for as long as you concentrate, up to an hour: a cage of bars 20 feet on a side that can be seen and shot through, or a solid box 10 feet on a side that nothing passes. Nothing inside walks out, and magic to leave needs a Charisma save. Dispel Magic cannot end it. Requires concentration."
+spell.forcecage.mode.box,A box
+spell.forcecage.mode.cage,A cage
 spell.forcecage.name,Forcecage
 spell.foresight.description,"Level 9. Takes a minute to cast - not in a fight. Until your next long rest, the creature you touch has advantage on attack rolls, ability checks and saving throws, and attack rolls against it have disadvantage. Casting it again ends the first."
 spell.foresight.name,Foresight
@@ -1684,6 +1754,10 @@ spell.goodberry.name,Goodberry
 spell.greater_invisibility.description,"Level 4. A creature you touch is invisible until the spell ends, attacking or not. Requires concentration."
 spell.greater_invisibility.name,Greater Invisibility
 spell.greater_restoration.description,"Level 5. Removes one of these from the creature you touch: the charmed condition, the petrified condition, a curse, or any reduction to its ability scores."
+spell.greater_restoration.mode.abilities,Restore an ability
+spell.greater_restoration.mode.charmed,End Charmed
+spell.greater_restoration.mode.curse,End a curse
+spell.greater_restoration.mode.petrified,End Petrified
 spell.greater_restoration.name,Greater Restoration
 spell.guidance.description,Cantrip. +1d4 to checks with a skill you choose. Requires concentration.
 spell.guidance.name,Guidance
@@ -1716,6 +1790,10 @@ spell.identify.name,Identify
 spell.invisibility.description,"Level 2. A creature you touch is invisible until the spell ends - or until it makes an attack roll, deals damage or casts a spell. One more creature per level above 2. Requires concentration."
 spell.invisibility.name,Invisibility
 spell.lesser_restoration.description,"Level 2. Bonus action. A creature you touch is freed of one condition, chosen as you cast: blinded, deafened, paralyzed or poisoned."
+spell.lesser_restoration.mode.blinded,End Blinded
+spell.lesser_restoration.mode.deafened,End Deafened
+spell.lesser_restoration.mode.paralyzed,End Paralyzed
+spell.lesser_restoration.mode.poisoned,End Poisoned
 spell.lesser_restoration.name,Lesser Restoration
 spell.light.description,Cantrip. Lights 4 squares.
 spell.light.name,Light
@@ -1727,16 +1805,19 @@ spell.mage_armor.description,Level 1. Armor Class 13 plus Dexterity while wearin
 spell.mage_armor.name,Mage Armor
 spell.mage_hand.description,Cantrip. Its effect is told by the narrator.
 spell.mage_hand.name,Mage Hand
+spell.mage_hand.narration,"A ghostly hand shimmers into the air beside {0}, ready to fetch and carry."
 spell.magic_missile.description,"Level 1. Three glowing darts, each striking a creature you can see for 1d4+1 force damage - they never miss. One more dart per level above 1."
 spell.magic_missile.name,Magic Missile
 spell.major_image.description,"Level 3. An illusion of an object, creature or other sight up to a 20-foot cube; its effect is told by the narrator. Requires concentration - unless cast with a level 4 slot or higher."
 spell.major_image.name,Major Image
+spell.major_image.narration,"A whole scene takes shape where {0} wills it, sight, sound, smell and heat, and all of it false."
 spell.maze.description,"Level 8. No save: a creature you can see within 60 feet is banished into a labyrinth, off the board, until the spell ends. On its turn it can study the maze - a DC 20 Intelligence (Investigation) check - and escapes on a success, ending the spell. It comes back where it left. Requires concentration."
 spell.maze.name,Maze
 spell.meteor_swarm.description,"Level 9. 20d6 fire damage in 4 40-foot bursts, dex save for half; 20d6 bludgeoning damage in 4 40-foot bursts, the same save for half."
 spell.meteor_swarm.name,Meteor Swarm
 spell.minor_illusion.description,Cantrip. Its effect is told by the narrator.
 spell.minor_illusion.name,Minor Illusion
+spell.minor_illusion.narration,"A sound, or a shape no bigger than a crate, appears where {0} wills it. A close look sees through it."
 spell.mirror_image.description,"Level 2. Three illusory duplicates of you for the fight. Each time you are hit, roll a d6 for each duplicate left; on any 3 or higher a duplicate takes the hit and vanishes instead. Attackers that are blinded or have truesight are not fooled."
 spell.mirror_image.name,Mirror Image
 spell.misty_step.description,Level 2. Bonus action. You teleport up to 30 feet to an unoccupied space you can see.
@@ -1753,6 +1834,7 @@ spell.power_word_stun.description,Level 8. No save. A creature with 150 hit poin
 spell.power_word_stun.name,Power Word Stun
 spell.prestidigitation.description,Cantrip. Its effect is told by the narrator.
 spell.prestidigitation.name,Prestidigitation
+spell.prestidigitation.narration,"A spark, a puff of smoke and a faint chime: a small trick of {0}'s, gone in a moment."
 spell.produce_flame.description,"Cantrip. Bonus action. A flame in your hand lights 20 feet around you for the fight. While it lasts, you can take an action to hurl it at a creature within 60 feet: a ranged spell attack for 1d8 fire damage. A die more at levels 5, 11 and 17."
 spell.produce_flame.name,Produce Flame
 spell.raise_dead.description,"Level 5. Takes an hour to cast - not in a fight. A creature dead no more than ten days comes back with 1 hit point, its poisons gone. It takes -4 to attacks, saves and checks, easing by 1 each long rest. Nothing brings back a creature turned to dust."
@@ -1779,6 +1861,7 @@ spell.shocking_grasp.description,"Cantrip. 1d8 lightning damage, on a hit; it ca
 spell.shocking_grasp.name,Shocking Grasp
 spell.silent_image.description,Level 1. Its effect is told by the narrator. Requires concentration.
 spell.silent_image.name,Silent Image
+spell.silent_image.narration,"A silent image takes shape where {0} wills it, true to the eye until someone tries to touch it."
 spell.sleep.description,"Level 1. Creatures of your choice in a 5-foot-radius sphere within 60 feet make a Wisdom save or are incapacitated. At the end of their next turn they save again, and a second failure puts them to sleep. Damage or a shake wakes them. Elves and the sleepless are immune. Requires concentration."
 spell.sleep.name,Sleep
 spell.sleet_storm.description,"Level 3. Sleet fills a 20-foot radius, blocking sight and making difficult terrain. A creature that enters it or starts its turn there makes a Dexterity save or falls prone and loses its concentration. Requires concentration."
@@ -1789,8 +1872,10 @@ spell.spare_the_dying.description,"Cantrip. A creature within 15 feet at 0 hit p
 spell.spare_the_dying.name,Spare the Dying
 spell.speak_with_animals.description,Level 1. Its effect is told by the narrator.
 spell.speak_with_animals.name,Speak with Animals
+spell.speak_with_animals.narration,"For a while, {0} understands the beasts, and they understand {0}."
 spell.speak_with_dead.description,Level 3. Its effect is told by the narrator.
 spell.speak_with_dead.name,Speak with Dead
+spell.speak_with_dead.narration,"The dead stir, and will answer {0}'s questions. Five, and no more."
 spell.spike_growth.description,"Level 2. Fills 20 feet around the point, difficult terrain; 2d4 piercing damage for every 5 feet moved through it. Requires concentration."
 spell.spike_growth.name,Spike Growth
 spell.spirit_guardians.description,"Level 3. Spirits surround you for 15 feet: other creatures' speed is halved there, and one that enters or ends its turn there makes a Wisdom save or takes 3d8 radiant or necrotic damage (your choice as you cast), half on a success. 1d8 more per level above 3. Requires concentration."
@@ -1806,11 +1891,14 @@ spell.sunbeam.name,Sunbeam
 spell.sunburst.description,"Level 8. A 60-foot burst of sunlight: 12d6 radiant damage and blinded for the fight, Constitution save for half and no blinding. The blinded save again at the end of each of their turns. Burns away magical darkness in the area."
 spell.sunburst.name,Sunburst
 spell.telekinesis.description,"Level 5. When you cast it and with an action on later turns: move a Huge or smaller creature up to 30 feet (Strength save to resist) and hold it restrained until the end of your next turn, or pull an object from a creature's grip (Strength save to resist). Requires concentration."
+spell.telekinesis.mode.creature,A creature
+spell.telekinesis.mode.object,An object
 spell.telekinesis.name,Telekinesis
 spell.teleport.description,Level 7. Moves you elsewhere. (v1 ships a bounded version of this spell.)
 spell.teleport.name,Waypoint
 spell.thaumaturgy.description,Cantrip. Its effect is told by the narrator.
 spell.thaumaturgy.name,Thaumaturgy
+spell.thaumaturgy.narration,"{0}'s voice booms, the flames flicker and the ground trembles: a sign of something greater."
 spell.thunderwave.description,"Level 1. A wave of thunderous force in a 15-foot cube from you: Constitution save, or 2d8 thunder damage and it is pushed 10 feet away from you; half damage and no push on a success. 1d8 more per level above 1."
 spell.thunderwave.name,Thunderwave
 spell.true_seeing.description,"Level 6. For an hour the creature has truesight: it sees the invisible and through magical darkness, and sees illusions for what they are."
@@ -1822,6 +1910,8 @@ spell.vicious_mockery.name,Vicious Mockery
 spell.vitriolic_sphere.description,"Level 4. Acid bursts in a 20-foot radius: 10d4 acid damage, Dexterity save for half. A creature that fails takes 5d4 more at the end of its next turn. 2d4 more per level above 4."
 spell.vitriolic_sphere.name,Vitriolic Sphere
 spell.wall_of_fire.description,"Level 4. An opaque wall of fire up to 60 feet long, or a ring 20 feet across. Creatures in it when it appears make a Dexterity save or take 5d8 fire damage, half on a success. After that, entering the wall, or ending a turn in it or within 10 feet of the side you chose, deals 5d8 fire. 1d8 more per level above 4. Requires concentration."
+spell.wall_of_fire.mode.line,A line
+spell.wall_of_fire.mode.ring,A ring
 spell.wall_of_fire.name,Wall of Fire
 spell.wall_of_force.description,"Level 5. Raises a cube of invisible force, 20 feet on a side, on the edges of the squares: nothing walks through it, and everything is seen through it. Requires concentration."
 spell.wall_of_force.name,Cube of Force
@@ -1829,6 +1919,7 @@ spell.web.description,"Level 2. Fills a 20-foot cube with webs: difficult terrai
 spell.web.name,Web
 spell.wish.description,Level 9. Its effect is told by the narrator. (v1 ships a bounded version of this spell.)
 spell.wish.name,Wish
+spell.wish.narration,The air goes still as {0} speaks the Wish. What it brings is the story's to tell.
 ui.access.button,"{0}, on the bar."
 ui.access.nothing_to_reach,There is nothing on the table to reach.
 ui.access.piece,"{0}: {1} of {2} hit points, {3} squares away."
@@ -1843,13 +1934,12 @@ ui.act.builder_problems.name,Map builder: show or hide the map's problems: {0}
 ui.act.builder_to_main_menu.name,Map builder: go to the main menu: {0}
 ui.act.buildings_picker.name,Map builder: open the buildings: {0}
 ui.act.copy_map_to.name,Map builder: copy to a campaign: {0}
-ui.act.copy_selection.name,Map builder: copy what's selected: {0}
 ui.act.delete_selection.name,Map builder: clear what's selected: {0}
 ui.act.erase_tool.name,Map builder: erase: {0}
 ui.act.fill_tool.name,Map builder: fill terrain: {0}
 ui.act.help.name,Open the rules: {0}
 ui.act.leave_builder.name,"Map builder: leave, back to the Workshop: {0}"
-ui.act.paste_selection.name,Map builder: paste it where the pointer is: {0}
+ui.act.npcs_picker.name,Map builder: open the people: {0}
 ui.act.play_map.name,Map builder: play this map: {0}
 ui.act.players_view.name,Map builder: the player's view: {0}
 ui.act.props_picker.name,Map builder: open the props: {0}
@@ -2071,6 +2161,7 @@ ui.credits.licence_cc0,CC0
 ui.credits.licence_cc_by,CC BY
 ui.credits.licence_cc_by_3,CC BY 3.0
 ui.credits.licence_cc_by_4,CC BY 4.0
+ui.credits.licence_cc_by_nd_4,CC BY-ND 4.0
 ui.credits.licence_custom,Used under its own licence
 ui.credits.licence_free,Free to use
 ui.credits.licence_mit,MIT License
@@ -2171,6 +2262,11 @@ ui.log.initiative.name,Initiative is rolled: {0}.
 ui.log.lost.name,The fight is lost.
 ui.log.miss.name,Miss: {0} misses {1} ({2} against Armor Class {3}).
 ui.log.moved.name,{0} moves {1} squares.
+ui.log.obeys_approach.name,{0} obeys the command and approaches.
+ui.log.obeys_drop.name,{0} obeys the command and drops what it holds.
+ui.log.obeys_flee.name,{0} obeys the command and flees.
+ui.log.obeys_grovel.name,{0} obeys the command and grovels.
+ui.log.obeys_halt.name,{0} obeys the command and halts.
 ui.log.opportunity.name,{0} swings at {1} as it leaves.
 ui.log.ran_off.name,{0} runs off the map.
 ui.log.reacted.name,{0} reacts: {1}.
@@ -2197,15 +2293,17 @@ ui.map.category_containers,Containers
 ui.map.category_dungeon,Dungeon
 ui.map.category_farm,Farm
 ui.map.category_furniture,Furniture
+ui.map.category_guards,Guards
 ui.map.category_light,Light
 ui.map.category_plants_rocks,Plants & rocks
 ui.map.category_ruins,Ruins
+ui.map.category_townsfolk,Townsfolk
+ui.map.category_travellers,Travellers
 ui.map.category_trees,Trees
 ui.map.category_village_market,Village & market
 ui.map.category_walls_fences,Walls & fences
 ui.map.columns,Columns
 ui.map.copied,Copied to {0} as {1}.
-ui.map.copy,Copy
 ui.map.copy_to,Copy to campaign...
 ui.map.could_not_save,Couldn't save: {0}
 ui.map.delete,Delete
@@ -2231,17 +2329,21 @@ ui.map.menu_file,File
 ui.map.menu_view,View
 ui.map.my_maps,My maps
 ui.map.new,A new map
+ui.map.new_person,New character...
+ui.map.new_person_name,Their name
 ui.map.no_campaigns,There are no campaign folders to keep a map in.
 ui.map.no_maps,This campaign has no maps yet.
 ui.map.no_problems,No problems: this map plays.
+ui.map.npcs,NPCs
 ui.map.open,Open a map
 ui.map.page,Page {0} of {1}
 ui.map.page_back,Back
 ui.map.page_on,Next
-ui.map.paste,Paste
 ui.map.play,Play this map
 ui.map.players_view,Player's view
 ui.map.problem_nothing_painted,Nothing has been painted yet.
+ui.map.problem_npc_cant_stand,"A {0} stands where nobody could: on rock, or over a gap. Move them."
+ui.map.problem_npc_unknown_person,"Someone on the map is {0}, who isn't one of the campaign's characters any more."
 ui.map.problem_prop_in_wall,A {0} is inside a wall.
 ui.map.problem_prop_off_map,A {0} runs off the edge of the map.
 ui.map.problem_props_overlap,A {0} stands on top of another prop that blocks.
@@ -2269,16 +2371,24 @@ ui.map.saved_with_problems,"Saved. It has problems, so its campaign won't load i
 ui.map.scatter_hint,Ctrl and click to place more of the same; hold Shift and drag to scatter. Esc puts it down.
 ui.map.search,Search props
 ui.map.search_buildings,Search buildings
+ui.map.search_npcs,Search people
 ui.map.select_hint,"Drag a box to select, or click a prop to pick it up. Drag to move; R turns, Delete clears, Esc lets go."
+ui.map.someone,Someone
 ui.map.spawn,Spawn {0}
 ui.map.spawn_menu,Spawn
 ui.map.stay,Stay
 ui.map.style_fence,Wooden fence
 ui.map.style_fieldstone,Fieldstone
 ui.map.style_hedge,Hedge
+ui.map.style_iron_fence,Iron fence
 ui.map.style_plaster,Plaster and beam
+ui.map.style_ruin,Ruined wall
+ui.map.style_ruin_broken,"Ruined wall, broken"
+ui.map.style_ruin_low,"Ruined wall, low"
+ui.map.style_ruin_overgrown,"Ruined wall, overgrown"
 ui.map.style_stone,Dungeon stone
 ui.map.style_timber,Timber
+ui.map.style_town_wall,Town wall
 ui.map.styles,Made of
 ui.map.taken,There's already a map called {0} there.
 ui.map.template,Start from
@@ -2312,6 +2422,7 @@ ui.map.trial_problems,This map has problems to fix before it can be played.
 ui.map.trial_readout,"{0} XP of monsters. For one level {4} hero: a low fight is {1} XP, moderate {2}, high {3}."
 ui.map.undo,Undo
 ui.map.unsaved,This map has changes that aren't saved.
+ui.map.who,Who
 ui.not_castable.not_known.name,Not on your sheet
 ui.not_castable.reaction.name,"Cast as a reaction, when its moment comes"
 ui.not_castable.shifted.name,You can't cast in a borrowed shape

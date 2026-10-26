@@ -63,6 +63,10 @@ namespace Content.Species
         // Lanorim's own, not the SRD's (the Fairy, the Beastfolk): the word a background and a spell carry
         public bool NotInSrd { get; init; }
 
+        // THE IDS IT TAKES OVER (cc_task_m3 Part 9): a kind that was retired reads as this one in an old save, so the hero
+        // keeps a kind. The Beastfolk's Feline, Canine, Rodent and Ursine became Vulpine and Selachian
+        public IReadOnlyList<string> Replaces { get; init; } = Array.Empty<string>();
+
         public string NameKey => KeyConventions.SpeciesName(Id);
 
         public string DescriptionKey => KeyConventions.SpeciesDescription(Id);
@@ -103,7 +107,7 @@ namespace Content.Species
         // every key a species takes (its features' are FeatureReader.Keys)
         public static readonly IReadOnlyList<string> Keys = new[]
         {
-            "id", "speed", "bumps", "features", "lineages", "lineage_of", "sizes", "tags", "not_in_srd",
+            "id", "speed", "bumps", "features", "lineages", "lineage_of", "sizes", "tags", "not_in_srd", "replaces",
         };
 
         // the file: { "species": [ ... ] }, each entry read by ReadOne (EntryList)
@@ -141,6 +145,7 @@ namespace Content.Species
             {
                 Tags = tags.Count > 0 ? tags : Kind.Humanoid,
                 NotInSrd = entry.Flag("not_in_srd"),
+                Replaces = entry.Strings("replaces"),
             };
         }
     }

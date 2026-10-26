@@ -25,7 +25,8 @@ namespace Content.Tests
         {
             PropCatalogue palette = PropCatalogue.Srd();
 
-            Assert.Equal(new[] { "trees", "plants_rocks", "buildings", "walls_fences", "village_market", "farm", "camp", "ruins", "furniture", "containers", "light", "dungeon" }, palette.Categories);
+            Assert.Equal(new[] { "trees", "plants_rocks", "buildings", "walls_fences", "village_market", "farm", "camp", "ruins", "furniture", "containers", "light", "dungeon",
+                                 "townsfolk", "guards", "travellers" }, palette.Categories);
             Assert.True(palette.Props.Count >= 200);
 
             foreach (string category in palette.Categories)
