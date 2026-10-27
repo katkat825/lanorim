@@ -50,6 +50,14 @@ namespace Game.Workshop
             return hint;
         }
 
+        // a hint's look over words that aren't a key: a hand-written id, a thing's own summary
+        public static Label Note(string words)
+        {
+            Label note = Ui.Plain(words);
+            note.Modulate = new Color(1f, 1f, 1f, 0.7f);
+            return note;
+        }
+
         public static LineEdit Line(string name, string text, Action<string> changed, string placeholderKey = null)
         {
             var line = new LineEdit { Name = name, Text = text ?? "", PlaceholderText = placeholderKey == null ? "" : Ui.Say(placeholderKey) };

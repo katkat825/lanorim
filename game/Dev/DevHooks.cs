@@ -56,7 +56,10 @@ namespace Game.Dev
             new("--prop-icons", "", Where.Launch, false, "renders every prop's palette thumbnail into game/ui/prop_icons/ and quits; not headless"),
             new("--mine", "<folder>", Where.Launch, false, "My campaigns and My maps kept in <folder>/campaigns and <folder>/maps, not the player's"),
             new("--wizard", "<page>", Where.Launch, false, "with --show workshop, the new-campaign wizard at that page (about, rules, first_chapter), filled in"),
-            new("--tab", "<tab>", Where.Launch, false, "with --show workshop --open <campaign>, the campaign's page at that tab (about, chapters, characters)"),
+            new("--tab", "<tab>", Where.Launch, false, "with --show workshop --open <campaign>, the campaign's page at that tab (about, chapters, characters, story, fights, encounters, loot, shops, lucky)"),
+            new("--card", "<kind:id>", Where.Launch, false, "with --tab, that thing's card open and scrolled to (fight:goblin_camp, encounters:mill_road, loot:rat_nest, shop:millbrook_store, luck:id)"),
+            new("--scroll", "<px>", Where.Launch, false, "with --card, scrolled that much further down"),
+            new("--press", "<A,B>", Where.Any, false, "buttons pressed by name, in order, as each comes up (at launch and on at the table): pictures of what they open"),
 
             // play
             new("--auto", "", Where.Play, true, "plays itself to the end: first choices, the AutoPlayer in fights, dice thrown when asked (check-play)"),
@@ -177,7 +180,7 @@ namespace Game.Dev
             else launch.ShowFirst(screen, DevArgs.Open);
 
             // the wizard at a page, or a campaign's page at a tab (pictures of them)
-            if (screen == Game.Workshop.WorkshopPage.PageId) QuickStart.Workshop(launch, DevArgs.Wizard, DevArgs.Tab);
+            if (screen == Game.Workshop.WorkshopPage.PageId) QuickStart.Workshop(launch, DevArgs.Wizard, DevArgs.Tab, DevArgs.Card);
 
             // the question asked (it asks; nothing is deleted)
             if (screen == "book" && DevArgs.AskDelete)
@@ -185,6 +188,8 @@ namespace Game.Dev
                      ?.EmitSignal(BaseButton.SignalName.Pressed);
 
             if (DevArgs.Shot) launch.AddChild(Shot.Asked());
+
+            if (DevArgs.Press != null) launch.AddChild(new Presser { Name = "Presser" });
 
             if (DevArgs.LayoutProbe) launch.AddChild(Layouts.OfLaunch(launch));
 
@@ -230,6 +235,8 @@ namespace Game.Dev
 
         public static void AtPlay(PlayDirector director)
         {
+            if (DevArgs.Press != null) director.AddChild(new Presser { Name = "Presser" });
+
             if (DevArgs.WorkshopProbe) WorkshopProbe.AtPlay(director);
 
             if (DevArgs.ProneProbe) director.AddChild(new ProneProbe { Name = "ProneProbe", Combat = director.Combat });

@@ -229,3 +229,23 @@ format, and a hand-made campaign opens in the Workshop too.
   Recently deleted (kept 30 days). The loader skips any folder whose name starts with a dot.
 - **A chapter with no map yet** doesn't load (the check refuses it), but the Workshop still opens it with everything on
   its forms, so it can be finished there.
+
+*Added by cc_task_n to cc_task_q (2026-10-27).*
+
+- **The tables** (fights, random encounters, loot, shops, lucky rolls) are edited in their own files. A file is changed
+  only where it was changed: an entry nobody touched keeps its own text and layout, a key the editor doesn't know is kept,
+  and a file nobody touched is never written. A fight made in the Workshop goes into `encounters/fights.json`, table
+  `fights`; new random tables into `encounters/random.json`, loot into `loot/loot.json`, shops into
+  `merchants/merchants.json`, lucky rolls into `consequences/consequences.json`. A table's or fight's name, when it's more
+  than its id, is in `workshop.json`'s `names`.
+- **The story**: a card is a node. A node whose lines the editor writes back exactly opens as cards and blocks; any other
+  opens as a Text card and is kept byte for byte. Editor-made cards go into `dialogue/story.yarn`, and every card is saved
+  back into the file it came from, in its place. Each line gets a `#line:` id from its card's name and a number, once.
+- **A line with an expression in it** (`{$hero_name}`) has `{0}`, `{1}`... in its locale row, in order.
+- **What the story remembers** (`<<set $x to true>>`) must be declared before it's read; the Workshop writes
+  `dialogue/workshop_memory.yarn` (a node of `<<declare>>`s it owns, rewritten on every save). A hand-written campaign
+  declares its own. The phrases the author typed for them are in `workshop.json`'s `story.memory`.
+- **The board** (where each card sits, its colour and name, and the view) is `workshop.json`'s `story`, never the Yarn.
+- **A test** plays the campaign as the page has it from `user://workshop_test/<id>/`, its saves beside it; nothing it does
+  reaches the campaign's folder or the player's saves. The test hero and what it remembers are kept per campaign in
+  `.draft/test.json`.

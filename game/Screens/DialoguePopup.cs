@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Content.Screens;
 using Godot;
@@ -51,30 +52,39 @@ namespace Game.Screens
                 return;
             }
 
+            string nameKey = view.SpeakerNameKey;
+
+            // a choice line has no line of its own to show; the choices are the card
+            string line = view.LineKey == null ? "" : Ui.Say(view.LineKey, view.Substitutions.ToArray());
+
+            Fill(nameKey == null ? null : Ui.Say(nameKey), line, view.CanContinue,
+                 view.Choices.Select(c => (Ui.Say(c.Key, c.Substitutions.ToArray()), c.Offered, (Action)(() => Choose?.Invoke(c.Option)))),
+                 () => Continue?.Invoke());
+        }
+
+        // THE POPUP OVER ANY WORDS (cc_task_o Part 5.1, the story editor's Preview): who speaks (null: the narrator, no
+        // plate), the line, and Continue - or the choices, each with what pressing it does. The table's Show is this over
+        // a running campaign's DialogueView
+        public void Fill(string speaker, string line, bool canContinue, IEnumerable<(string Words, bool Offered, Action Pick)> choices, Action next)
+        {
             Visible = true;
 
-            string nameKey = view.SpeakerNameKey;
-            _speaker.Text = nameKey == null ? "" : Ui.Say(nameKey);
-            _speaker.Visible = nameKey != null;
-
-            _line.Text = view.LineKey == null ? "" : Ui.Say(view.LineKey, view.Substitutions.ToArray());
+            _speaker.Text = speaker ?? "";
+            _speaker.Visible = speaker != null;
+            _line.Text = line ?? "";
 
             Ui.Clear(_buttons);
 
-            if (view.CanContinue)
+            if (canContinue)
             {
-                _buttons.AddChild(Ui.Button(DialogueView.ContinueKey, () => Continue?.Invoke()));
+                _buttons.AddChild(Ui.Button(DialogueView.ContinueKey, () => next?.Invoke()));
             }
             else
             {
-                // a choice line has no line of its own to show; the choices are the card
-                if (view.LineKey == null) _line.Text = "";
-
-                foreach (ChoiceRow choice in view.Choices)
+                foreach ((string words, bool offered, Action pick) in choices)
                 {
-                    ChoiceRow c = choice;
-                    Button button = Ui.Button(Ui.Say(c.Key, c.Substitutions.ToArray()), () => Choose?.Invoke(c.Option), true);
-                    button.Disabled = !c.Offered;
+                    Button button = Ui.Button(words, () => pick?.Invoke(), true);
+                    button.Disabled = !offered;
                     _buttons.AddChild(button);
                 }
             }

@@ -120,6 +120,13 @@ namespace Game.Play
                 _fighting = false;
                 _combat.Clear();
 
+                // a test's fight, played: Try this fight goes back to the editor (cc_task_q)
+                if (GameState.Testing != null)
+                {
+                    AfterTestFight();
+                    return;
+                }
+
                 // a map being tried goes back to its builder when the fight ends, won, lost or fled (cc_task_l Part 5)
                 if (GameState.Trying != null)
                 {

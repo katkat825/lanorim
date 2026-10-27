@@ -93,16 +93,22 @@ namespace Content.Dialogue
             _pack = pack;
         }
 
+        // A WORKSHOP TEST'S RULE OVER THE HERO'S OWN CHECKS AND SAVES (cc_task_q 3.3, "Always pass" / "Always fail"): the
+        // attempt as rolled, judged again. null in play. The GM's rolls and a fight's never come here
+        public Func<Attempt, Attempt> Judge { get; set; }
+
+        Attempt Judged(Attempt attempt) => Judge == null ? attempt : Judge(attempt);
+
         public Settled Settle(Request request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
             return request.Kind switch
             {
-                RequestKind.Check => Checked(request, request.Skill != Skill.None
+                RequestKind.Check => Checked(request, Judged(request.Skill != Skill.None
                                                          ? Checks.Check(_resolver, _hero.Actor, request.Skill, request.Dc)
-                                                         : Checks.Check(_resolver, _hero.Actor, request.Ability, request.Dc)),
-                RequestKind.Save => Tested(request, Checks.Save(_resolver, _hero.Actor, request.Ability, request.Dc)),
+                                                         : Checks.Check(_resolver, _hero.Actor, request.Ability, request.Dc))),
+                RequestKind.Save => Tested(request, Judged(Checks.Save(_resolver, _hero.Actor, request.Ability, request.Dc))),
                 RequestKind.Roll => Rolled(request),
                 RequestKind.Encounter => Consulted(request),
                 RequestKind.Gold => Paid(request, Coins.FromGold(request.Amount)),

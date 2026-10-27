@@ -21,6 +21,10 @@ namespace Content.Campaigns
 
         public bool Armory { get; }
 
+        // WHAT AN ARMORY CAN LEND: anything but what's used up (a potion would be spent, not lent back). The campaign check
+        // refuses one in an armory's stock, and the Workshop's item picker greys it out
+        public static bool CanLend(Item item) => item != null && item.Kind != ItemKind.Consumable;
+
         public string Id { get; }
 
         public IReadOnlyList<string> Stock { get; }

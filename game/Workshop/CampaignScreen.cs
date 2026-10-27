@@ -92,6 +92,9 @@ namespace Game.Workshop
                             advanced,
                             Ui.Button(WorkshopWords.TitleKey, Back)));
 
+            // play-testing (cc_task_q): Play the campaign, the quick hero, Run it for me
+            AddChild(TestTools());
+
             _status = Forms.Hint(WorkshopWords.UnsavedKey);
             _status.Name = "Status";
             _status.Visible = Editor.Unsaved;
@@ -137,6 +140,12 @@ namespace Game.Workshop
                     case WorkshopTab.About: About(page); break;
                     case WorkshopTab.Chapters: Chapters(page); break;
                     case WorkshopTab.Characters: People(page); break;
+                    case WorkshopTab.Story: Story(page); break;
+                    case WorkshopTab.Fights: Fights(page); break;
+                    case WorkshopTab.Encounters: Encounters(page); break;
+                    case WorkshopTab.Loot: Loot(page); break;
+                    case WorkshopTab.Shops: Shops(page); break;
+                    case WorkshopTab.Lucky: Lucky(page); break;
                 }
 
                 ScrollContainer scroll = Ui.Scroll(page, 440);
@@ -193,6 +202,7 @@ namespace Game.Workshop
             string refused = Editor.Save();
 
             _autosave.Stop();
+            ForgetContent();
             GameState.CampaignsChanged(Editor.Folder);
 
             _status.Visible = true;
@@ -245,7 +255,15 @@ namespace Game.Workshop
         {
             if (@event is not InputEventKey { Pressed: true } key) return;
 
-            switch (Keyboard.Pressed(key))
+            Act? act = Keyboard.Pressed(key);
+
+            if (StoryKeys(act))
+            {
+                GetViewport().SetInputAsHandled();
+                return;
+            }
+
+            switch (act)
             {
                 case Act.UndoEdit: Undo(); break;
                 case Act.RedoEdit: Redo(); break;

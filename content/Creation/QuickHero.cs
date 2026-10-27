@@ -15,9 +15,12 @@ namespace Content.Creation
     {
         // every default creation offers, with the class, species and background already picked: learn says whether to
         // take the first spells too (a picture of the spell page wants them left)
-        public static void Defaults(Creation making, Library library, bool learn, string learnFirst = null)
+        // `species` (cc_task_q's test hero): human unless asked; a species with lineages takes its first
+        public static void Defaults(Creation making, Library library, bool learn, string learnFirst = null, string species = "human")
         {
-            making.Pick(library.Kind("human"));
+            Species.Kind kind = library.Kind(species) ?? library.Kind("human");
+            making.Pick(kind);
+            if (library.LineagesOf(kind.Id).FirstOrDefault() is { } lineage) making.Pick(lineage);
             making.Pick(library.Background("soldier"));
             making.SuggestTraits();
 
@@ -34,14 +37,14 @@ namespace Content.Creation
 
         // the whole hero. `improve: false` leaves the improvements unpicked (the sim's MageBalance always has)
         public static Hero Make(Library library, string cls, int level, string name, string learnFirst = null,
-                                bool improve = true)
+                                bool improve = true, string species = "human")
         {
             var making = new Creation(library, library.Backgrounds);
 
             making.StartAt(Math.Clamp(level, 1, 20));
             making.Pick(library.Class(cls));
 
-            Defaults(making, library, learn: true, learnFirst);
+            Defaults(making, library, learn: true, learnFirst, species);
 
             while (improve && making.ImprovementPicksLeft > 0 && making.Improve(making.SuggestedImprovement())) { }
 

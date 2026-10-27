@@ -102,6 +102,26 @@ namespace Content.Play
         // the companion this campaign's hero has, speaking from the game's barks and this campaign's
         public BarkBank Barks => Library.Barks.For(Hero.Class.Companion, Pack.Barks);
 
+        // WHAT THE STORY REMEMBERS, SET FROM OUTSIDE IT (cc_task_q 2.3: a Workshop test starting "as if Tavin was brave"):
+        // a bool, a number or a word, into the same store the story's own <<set>> writes
+        public void Remember(string variable, IConvertible value)
+        {
+            switch (value)
+            {
+                case bool flag: _store.SetValue(variable, flag); break;
+                case float or double or int: _store.SetValue(variable, Convert.ToSingle(value, System.Globalization.CultureInfo.InvariantCulture)); break;
+                default: _store.SetValue(variable, value?.ToString() ?? ""); break;
+            }
+        }
+
+        // what the story remembers now: a bool, a number or a word, or null for one it hasn't set (the Workshop's live
+        // memory list, a test's checks)
+        public object Recall(string variable) =>
+            _store.Flags.TryGetValue(variable, out bool flag) ? flag
+            : _store.Numbers.TryGetValue(variable, out float number) ? number
+            : _store.Words.TryGetValue(variable, out string word) ? word
+            : null;
+
         public override string ToString() => $"{Pack.Id} at {Talk.Node}: {Now}";
     }
 }

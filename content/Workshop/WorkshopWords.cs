@@ -202,6 +202,10 @@ namespace Content.Workshop
             .Concat(Manifest.GmScreens.Select(ScreenNameKey))
             .Concat(Enum.GetValues<WorkshopTab>().Select(TabKey))
             .Concat(CampaignWizard.Keys())
-            .Concat(ProblemWords.Keys());
+            .Concat(ProblemWords.Keys())
+            .Concat(Tables.TableWords.Keys())
+            .Concat(Story.StoryWords.Keys())
+            .Concat(Story.BlockWords.Keys())
+            .Concat(Testing.TestWords.Keys());
     }
 }

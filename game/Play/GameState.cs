@@ -21,7 +21,7 @@ namespace Game.Play
     // campaign being played. The launch screen fills it and changes to the table; the table reads it.
     // Plain static state, because Godot frees a scene's nodes when it changes scene and this is the
     // one thing that has to survive that.
-    public static class GameState
+    public static partial class GameState
     {
         static Game.Campaigns.Library _campaigns;
 

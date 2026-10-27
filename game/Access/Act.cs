@@ -109,6 +109,15 @@ namespace Game.Access
         BuilderProblems,
 
         BuilderMenus,
+
+        // THE STORY EDITOR (cc_task_o Part 5.6, cc_task_q Part 1.2): a card or block copied below itself (Ctrl+D), the
+        // whole board brought into view (Home), and a test started at the card that's open or picked (Ctrl+Enter).
+        // Delete is DeleteSelection's, and the arrows and Tab walk the cards as they walk any list
+        DuplicateCard,
+
+        FitBoard,
+
+        PlayFromHere,
     }
 
     public static class Acts
@@ -184,6 +193,11 @@ namespace Game.Access
             Act.BuilderProblems => Key.I,
             Act.BuilderMenus => Key.F10,
 
+            // the story editor's: the keys every editor uses for these
+            Act.DuplicateCard => Key.D,
+            Act.FitBoard => Key.Home,
+            Act.PlayFromHere => Key.Enter,
+
             _ => Key.None,
         };
 
@@ -204,7 +218,8 @@ namespace Game.Access
         // held with Ctrl: an editor's undo, redo and save (cc_task_l Part 4.7)
         public static bool Ctrled(this Act act) =>
             act is Act.UndoEdit or Act.RedoEdit or Act.SaveMap or
-                   Act.SaveMapAs or Act.CopyMapTo or Act.PlayMap or Act.BuilderToMainMenu or Act.LeaveBuilder;
+                   Act.SaveMapAs or Act.CopyMapTo or Act.PlayMap or Act.BuilderToMainMenu or Act.LeaveBuilder or
+                   Act.DuplicateCard or Act.PlayFromHere;
 
         // a binding's whole default: the key, and what's held with it
         public static Bindings.Bound Default(this Act act) => new(act.Standard(), act.Shifted(), act.Ctrled());

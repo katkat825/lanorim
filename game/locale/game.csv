@@ -1934,12 +1934,15 @@ ui.act.builder_problems.name,Map builder: show or hide the map's problems: {0}
 ui.act.builder_to_main_menu.name,Map builder: go to the main menu: {0}
 ui.act.buildings_picker.name,Map builder: open the buildings: {0}
 ui.act.copy_map_to.name,Map builder: copy to a campaign: {0}
-ui.act.delete_selection.name,Map builder: clear what's selected: {0}
+ui.act.delete_selection.name,Map builder and story editor: delete what's selected: {0}
+ui.act.duplicate_card.name,Story editor: duplicate a card or block: {0}
 ui.act.erase_tool.name,Map builder: erase: {0}
 ui.act.fill_tool.name,Map builder: fill terrain: {0}
+ui.act.fit_board.name,Story editor: fit every card in view: {0}
 ui.act.help.name,Open the rules: {0}
 ui.act.leave_builder.name,"Map builder: leave, back to the Workshop: {0}"
 ui.act.npcs_picker.name,Map builder: open the people: {0}
+ui.act.play_from_here.name,Workshop: play from this card: {0}
 ui.act.play_map.name,Map builder: play this map: {0}
 ui.act.players_view.name,Map builder: the player's view: {0}
 ui.act.props_picker.name,Map builder: open the props: {0}
@@ -2558,19 +2561,90 @@ ui.where.round,"A fight, round {0}."
 ui.where.story,The story goes on between fights.
 ui.where.their_turn,It is the {0}'s turn.
 ui.where.your_turn,It is your turn.
+ui.workshop.a_new_card,A new card
+ui.workshop.a_number,A number
+ui.workshop.ability_alone,More
 ui.workshop.add,Add
+ui.workshop.add_block,Add block
 ui.workshop.add_chapter,Add a chapter
+ui.workshop.add_clause,Add another condition
+ui.workshop.add_else_if,"Add ""or else if..."""
+ui.workshop.add_empty,Add empty pockets
+ui.workshop.add_fight_entry,Add a fight
+ui.workshop.add_find,Add a find
 ui.workshop.add_from_my_maps,Add from My maps
+ui.workshop.add_item,Add
+ui.workshop.add_moment_entry,Add a moment
+ui.workshop.add_monster,Add
+ui.workshop.add_nothing_entry,Add nothing happens
+ui.workshop.add_one,Add 1
+ui.workshop.add_option,Add an option
+ui.workshop.add_otherwise,"Add ""otherwise"""
+ui.workshop.add_outcome,Add: {0}
 ui.workshop.add_person,Add a character
+ui.workshop.add_roll_branch,Add: if it comes up at least...
+ui.workshop.add_roll_table,Add roll another table
 ui.workshop.add_tag,Add
 ui.workshop.advanced,Advanced
+ui.workshop.afterwards,Afterwards
+ui.workshop.all_of,All of these
+ui.workshop.always_shown,Always shown
 ui.workshop.always_speak,The GM and your companion
+ui.workshop.amount,How much
+ui.workshop.and_then,and then →
+ui.workshop.another_way,Add another way (a different skill)
+ui.workshop.any_challenge,Any challenge
+ui.workshop.any_of,Any of these
+ui.workshop.any_type,Any kind
+ui.workshop.armory_refuses,"An armory only lends gear the hero wears or holds, never things that get used up."
+ui.workshop.at_least,At least
 ui.workshop.author,Author
 ui.workshop.author_hint,"Your name, as you want it shown."
 ui.workshop.back,Back
+ui.workshop.back_to_board,Back to the board
+ui.workshop.back_to_editor,Back to the editor
+ui.workshop.bark_pool,What it's for
+ui.workshop.bark_pool_camp,At the campfire
+ui.workshop.bark_pool_danger,Danger ahead
+ui.workshop.bark_pool_maxed,A great roll
+ui.workshop.bark_pool_nearby,Something's near
+ui.workshop.bark_pool_secret,A secret roll behind the screen
+ui.workshop.bark_pool_snag,A bad roll
+ui.workshop.bark_pool_victory,A fight won
 ui.workshop.based_on,Based on {0} (Lanorim)
+ui.workshop.behind,Behind: {0}
+ui.workshop.block_armory,Open an armory
+ui.workshop.block_bark,The companion speaks up
+ui.workshop.block_blank,A gap
+ui.workshop.block_check,Check a skill
+ui.workshop.block_coins,Give or take coins
+ui.workshop.block_comment,A note to yourself
+ui.workshop.block_count,Remember a number
+ui.workshop.block_encounter,Random encounter
+ui.workshop.block_fight,Start a fight
+ui.workshop.block_forget,Forget that...
+ui.workshop.block_give,Give an item
+ui.workshop.block_jump,Go to card...
+ui.workshop.block_level,Level up
+ui.workshop.block_loot,Search for loot
+ui.workshop.block_note,The GM hands a note
+ui.workshop.block_only_if,Only if...
+ui.workshop.block_remember,Remember that...
+ui.workshop.block_rest,Rest
+ui.workshop.block_roll,The GM rolls dice
+ui.workshop.block_save,Saving throw
+ui.workshop.block_say,Someone says...
+ui.workshop.block_shop,Open a shop
+ui.workshop.block_stop,The story ends
+ui.workshop.block_xp,Give experience
+ui.workshop.blocks_many,{0} blocks
+ui.workshop.blocks_one,1 block
 ui.workshop.cancel,Cancel
+ui.workshop.card_name,A new card's name
+ui.workshop.cards_never_reached,Cards it never reached ({0})
+ui.workshop.cards_reached,Cards it reached ({0})
 ui.workshop.chapter_placeholder,The chapter's title
+ui.workshop.chapter_start,Chapter start
 ui.workshop.chapter_title,First chapter's title
 ui.workshop.chapter_title_hint,"You can rename it, and add more chapters, later."
 ui.workshop.chapters_hint,"Chapters play in this order. Drag one to move it, or use Up and Down."
@@ -2578,6 +2652,30 @@ ui.workshop.chapters_many,{0} chapters
 ui.workshop.chapters_one,1 chapter
 ui.workshop.characters,Character slots
 ui.workshop.characters_hint,How many heroes a player can keep in this campaign at once.
+ui.workshop.checked_in,Checked in: {0}
+ui.workshop.clause_carrying,the hero is carrying {0}
+ui.workshop.clause_count_at_least,{0} is at least {1}
+ui.workshop.clause_count_at_most,{0} is at most {1}
+ui.workshop.clause_count_is,{0} is exactly {1}
+ui.workshop.clause_encounter_fight,a fight came up
+ui.workshop.clause_encounter_was,{0} came up
+ui.workshop.clause_failed,the last check failed
+ui.workshop.clause_fight_broke,the enemies broke
+ui.workshop.clause_fight_was,the last fight was {0}
+ui.workshop.clause_forgot,they don't remember that {0}
+ui.workshop.clause_found_coins,they found coins
+ui.workshop.clause_hero_casts,the hero can cast spells
+ui.workshop.clause_hero_class,the hero is a {0}
+ui.workshop.clause_hero_level,the hero is level {0} or higher
+ui.workshop.clause_passed,the last check passed
+ui.workshop.clause_raw,{0}
+ui.workshop.clause_remembers,they remember that {0}
+ui.workshop.clause_roll_at_least,the GM's roll was at least {0}
+ui.workshop.coin_copper,Copper
+ui.workshop.coin_gold,Gold
+ui.workshop.coin_silver,Silver
+ui.workshop.coins,Coins
+ui.workshop.colour,Colour
 ui.workshop.consequences,Lucky and unlucky rolls
 ui.workshop.consequences_add,"The game's, plus mine"
 ui.workshop.consequences_hint,"What a natural 1 or 20 can bring: the game's, with yours added, or yours alone."
@@ -2594,79 +2692,274 @@ ui.workshop.defeat_continues,The story goes on (they're knocked out)
 ui.workshop.defeat_death,They die (reload a save)
 ui.workshop.defeat_hint,What losing a fight means. A fight can say otherwise for itself.
 ui.workshop.delete,Delete
+ui.workshop.delete_block,Delete
+ui.workshop.delete_card_question,Delete the card {0}?
 ui.workshop.delete_chapter_question,Delete this chapter? Its maps stay in the campaign.
 ui.workshop.delete_forever,Delete forever
 ui.workshop.delete_person_question,Delete {0}?
 ui.workshop.delete_question,Move {0} to Recently deleted? You can bring it back for 30 days.
+ui.workshop.delete_thing_question,Delete this?
 ui.workshop.delete_used_chapter_question,"The story uses this chapter. Delete it anyway? Its maps stay in the campaign."
+ui.workshop.delete_used_question,This is used in your campaign. Delete it anyway?
 ui.workshop.description,Description
 ui.workshop.description_hint,"One paragraph: what it's about, and how long it takes to play."
+ui.workshop.dice,Dice
+ui.workshop.dice_hint,"A number, or dice: 2d6 means two six-sided dice, 2 to 12."
+ui.workshop.difficulty_high,Hard
+ui.workshop.difficulty_low,Easy
+ui.workshop.difficulty_moderate,Medium
+ui.workshop.does_armory,open the armory {0}
+ui.workshop.does_bark,have the companion speak up: {0}
+ui.workshop.does_check,"check {0}, DC {1}"
+ui.workshop.does_copper,give {0} copper
+ui.workshop.does_encounter,roll on {0}
+ui.workshop.does_fight,start the fight {0}
+ui.workshop.does_give,give {0}
+ui.workshop.does_gold,give {0} gold
+ui.workshop.does_level,raise the hero to level {0}
+ui.workshop.does_loot,search {0}
+ui.workshop.does_rest,take a {0}
+ui.workshop.does_roll,roll {0}
+ui.workshop.does_save,"ask for a {0} save, DC {1}"
+ui.workshop.does_shop,open the shop {0}
+ui.workshop.does_silver,give {0} silver
+ui.workshop.does_xp,give {0} experience
+ui.workshop.done,Done
 ui.workshop.down,Down
 ui.workshop.draft_question,You have unsaved changes from last time.
 ui.workshop.duplicate,Duplicate
+ui.workshop.duplicate_block,Duplicate
+ui.workshop.duplicate_card,Duplicate the card
+ui.workshop.edit,Edit
 ui.workshop.edited,Last edited {0}
+ui.workshop.ends_story,Ends the story
+ui.workshop.entry_fight,A fight
+ui.workshop.entry_line,Just a moment
+ui.workshop.entry_nothing,Nothing happens
 ui.workshop.error,Error
+ui.workshop.every_spell,Every spell at this level
+ui.workshop.fail_empty,Something should still happen when they fail. What does it cost them?
+ui.workshop.fight_came_up,If a fight came up
+ui.workshop.fight_defeat_campaign,Use the campaign's setting
+ui.workshop.fight_defeat_continues,The story goes on
+ui.workshop.fight_defeat_death,They die
+ui.workshop.fight_flee,Run away
+ui.workshop.fight_lose,Lose it
+ui.workshop.fight_play,Play it
+ui.workshop.fight_starts,A fight starts: {0}
+ui.workshop.fight_win,Win it
+ui.workshop.fights_hint,The campaign's set-piece fights. The story starts one with Start a fight.
+ui.workshop.find_line,A line the GM reads (optional)
 ui.workshop.finish,Finish
 ui.workshop.first_map,First map
 ui.workshop.first_map_hint,"A new map opens in the map builder when you finish. A picked map is copied into the campaign."
 ui.workshop.first_map_make,Make a new map
 ui.workshop.first_map_pick,Pick from My maps
+ui.workshop.fit_all,Fit all
+ui.workshop.for_level,For level
 ui.workshop.forever_question,Delete {0} forever? This can't be undone.
+ui.workshop.found,Found in {0}
+ui.workshop.found_coins,If they found coins
+ui.workshop.found_nothing,If they found nothing
 ui.workshop.game_campaigns,Game campaigns
 ui.workshop.game_campaigns_hint,You can make a copy of the game's own campaigns and edit them.
 ui.workshop.gm_blank,Plain
 ui.workshop.gm_cave,Cave
 ui.workshop.gm_dead_forest,Dead forest
+ui.workshop.gm_line,What the GM says
+ui.workshop.gm_line_hint,Read out when this comes up.
 ui.workshop.gm_plains,Plains
 ui.workshop.gm_screen,GM screen
 ui.workshop.gm_screen_hint,The screen the GM stands behind at the table.
 ui.workshop.gm_snowy_mountains,Snowy mountains
+ui.workshop.gm_would,(the GM would {0} here)
 ui.workshop.go_there,Go there
+ui.workshop.go_to,Go to
+ui.workshop.go_to_card,Go to card...
 ui.workshop.group_about,About
 ui.workshop.group_fights,Fights
 ui.workshop.group_maps,Maps
 ui.workshop.group_story,Story
 ui.workshop.group_tables,Tables
+ui.workshop.hear_it,The player hears the dice
+ui.workshop.hear_the_roll,Can the player hear the roll
+ui.workshop.hero_dies_line,"The campaign is set so the hero dies, so there's no ""They lost"" or ""They gave up""."
+ui.workshop.hero_gets,The hero gets {0} {1}.
+ui.workshop.hero_name,The hero's name
+ui.workshop.hero_pays,The hero pays {0} {1}.
+ui.workshop.how_hard,How hard
+ui.workshop.how_hard_dc,How hard
+ui.workshop.how_many,How many
+ui.workshop.how_many_dice,How many dice
+ui.workshop.how_much,How much
+ui.workshop.how_often,How often something happens
 ui.workshop.id,Id
 ui.workshop.id_hint,"Made from the name. It names the campaign's folder and files; change it only if two campaigns clash."
+ui.workshop.if_fail,If they fail
+ui.workshop.if_hero_loses,If the hero loses
+ui.workshop.if_pass,If they pass
+ui.workshop.in_file,In {0}
+ui.workshop.item_line,{0}
+ui.workshop.items,Items
 ui.workshop.json,What this tab writes
 ui.workshop.keep,Keep
 ui.workshop.keep_them,Keep them
+ui.workshop.kept_keys,This campaign's files have {0} settings the Workshop doesn't edit. They're kept just as they are.
+ui.workshop.leader,Leader
+ui.workshop.leaves,What they leave behind
+ui.workshop.leaves_nothing,Nothing
+ui.workshop.lends,Lends gear (an armory)
+ui.workshop.level_to,Up to level
 ui.workshop.leveling,Levelling up
 ui.workshop.leveling_hint,Experience points come from fights won and from the story.
 ui.workshop.leveling_milestone,When the story says so
 ui.workshop.leveling_xp,By experience points
+ui.workshop.likely,How likely
+ui.workshop.likely_share,{0} in {1}
+ui.workshop.line_id,Line id: {0}
+ui.workshop.loot_find,A find
+ui.workshop.loot_hint,"What the hero finds: tables the story opens with Search for loot, and that fights leave behind."
+ui.workshop.loot_nothing,Nothing: the pockets were empty
+ui.workshop.loot_table,Roll another table
+ui.workshop.loot_totals,Twenty openings came to {0} in all. {1} were empty.
+ui.workshop.luck_adds,These are added to the game's own. Change that on the About tab.
+ui.workshop.luck_hint,What a natural 1 (unlucky) or a natural 20 (lucky) on a check can bring.
+ui.workshop.luck_replaces,These replace the game's own. Change that on the About tab.
+ui.workshop.lucky,Lucky (a 20)
+ui.workshop.make_conditional,Only show it if...
 ui.workshop.make_copy,Make an editable copy
+ui.workshop.make_it,Make it
+ui.workshop.make_loot,Make one
 ui.workshop.make_map,Make a new map
+ui.workshop.make_new_map,Make a new map
 ui.workshop.map_name,New map's name
 ui.workshop.maps,Maps
 ui.workshop.mature,Mature content
 ui.workshop.mature_hint,"Tick this if it has graphic violence, sexual content or other adult themes. On Steam, mature items are hidden from anyone who hasn't chosen to see them."
+ui.workshop.memory_edit,Edit
+ui.workshop.memory_live,What the story remembers
+ui.workshop.memory_title,What the story remembers
+ui.workshop.meter_cap,{0} enemies is more than a level {1} hero should face alone: see the guide.
+ui.workshop.meter_enemies,Enemies: {0} of {1} at most
+ui.workshop.meter_far_over,For a level {1} hero this is far harder than {0} ({2} XP of {3}): see the guide.
+ui.workshop.meter_over,For a level {1} hero this is harder than {0} ({2} XP of {3}): it may be too hard.
+ui.workshop.meter_right,For a level {1} hero this is {0}: about right.
+ui.workshop.meter_xp,{0} XP of {1}
+ui.workshop.moment_ability_shift,An ability shifts until the next rest
+ui.workshop.moment_came_up,If {0} came up
+ui.workshop.moment_condition,A condition
+ui.workshop.moment_flavour,Just a line of story
+ui.workshop.moment_gold,Lose or find coins
+ui.workshop.moment_health,Lose or gain health
+ui.workshop.moment_line,The line the GM reads
+ui.workshop.monster_line,"Challenge {0}, {1} hit points, armour class {2}"
+ui.workshop.morale,When they give up
+ui.workshop.morale_half,When half are down
+ui.workshop.morale_leader,When their leader falls
+ui.workshop.morale_none,Fight to the end
+ui.workshop.move_down,Move down
+ui.workshop.move_up,Move up
 ui.workshop.my_campaigns,My campaigns
 ui.workshop.name,Name
 ui.workshop.name_hint,What players see in the main menu.
+ui.workshop.natural_line,A 1 or a 20 adds a lucky or unlucky moment.
+ui.workshop.needs_both,Replacing the game's rolls needs at least one lucky and one unlucky roll.
+ui.workshop.never_checked,"Remembered, but nothing ever asks about it."
+ui.workshop.never_set,"Asked about, but never remembered: it will always be no."
 ui.workshop.new_campaign,New campaign
+ui.workshop.new_card,New card
+ui.workshop.new_fight,New fight
+ui.workshop.new_line,Something happens.
+ui.workshop.new_loot,New loot table
+ui.workshop.new_lucky,New lucky roll
 ui.workshop.new_map,New map
+ui.workshop.new_memory,Something happened
+ui.workshop.new_number,A count
+ui.workshop.new_option,Do something.
+ui.workshop.new_random_table,New random table
+ui.workshop.new_shop,New shop
+ui.workshop.new_unlucky,New unlucky roll
 ui.workshop.next,Next
+ui.workshop.next_fail,Next roll: fail
+ui.workshop.next_pass,Next roll: pass
 ui.workshop.no_campaigns,You don't have any campaigns yet.
+ui.workshop.no_fights,No fights yet.
+ui.workshop.no_loot,No loot tables yet.
+ui.workshop.no_map,Wherever the hero already is
 ui.workshop.no_maps_in_chapter,No maps yet. Add one below.
+ui.workshop.no_memory,The story doesn't remember anything yet. Use Remember that... in a card.
 ui.workshop.no_my_maps,You have no maps yet.
 ui.workshop.no_portrait,No picture
 ui.workshop.no_problems,No problems found.
+ui.workshop.no_problems_seen,Nothing went wrong.
+ui.workshop.no_random_tables,No random tables yet.
+ui.workshop.no_real,You have no characters to copy yet.
+ui.workshop.no_shops,No shops yet.
+ui.workshop.no_start_card,The chapter {0} has no card to start at.
+ui.workshop.no_way_out,This card doesn't lead anywhere: add Go to card or The story ends.
+ui.workshop.note_intro,The line before the note
+ui.workshop.nothing_came_up,If nothing came up
+ui.workshop.nothing_happened,Nothing happened
+ui.workshop.nothing_leads_here,Nothing leads here yet.
+ui.workshop.nowhere,Nowhere
+ui.workshop.often_always,Always
+ui.workshop.often_most,Most of the time
+ui.workshop.often_other,Other
+ui.workshop.often_other_numbers,"Roll {0}, something happens on {1} or more"
+ui.workshop.often_rarely,Rarely
+ui.workshop.often_sometimes,Sometimes
+ui.workshop.only_if_broke,Only if the enemies broke
+ui.workshop.only_if_said,only if {0}
+ui.workshop.only_shown_if,Only shown if...
 ui.workshop.open,Open
 ui.workshop.open_in_builder,Open in the builder
+ui.workshop.open_map,Open the map
 ui.workshop.open_original,Open the original
+ui.workshop.open_shop,Open the shop
+ui.workshop.option,Option
+ui.workshop.option_another_way,Find another way ({0})
+ui.workshop.option_go_round,Go round
+ui.workshop.option_try_it,Try it ({0})
+ui.workshop.or_else_if,Or else if...
+ui.workshop.other_leveling,"This campaign levels by {0}, so this block may not do what you mean."
+ui.workshop.otherwise,Otherwise
+ui.workshop.outcome_fled,They ran
+ui.workshop.outcome_lost,They lost
+ui.workshop.outcome_won,They won
+ui.workshop.outcome_yielded,They gave up
 ui.workshop.own_tag,Your own tag
 ui.workshop.page_about,Name and blurb
 ui.workshop.page_first_chapter,First chapter
 ui.workshop.page_rules,How it plays
+ui.workshop.palette_companion,Companion
+ui.workshop.palette_fights,Fights
+ui.workshop.palette_go,Go
+ui.workshop.palette_places,Places
+ui.workshop.palette_remember,Remember
+ui.workshop.palette_rewards,Rewards
+ui.workshop.palette_rolls,Rolls
+ui.workshop.palette_talk,Talk
+ui.workshop.pays,What it pays for things
+ui.workshop.pays_game,The game's usual
+ui.workshop.pays_half,Pays half price
+ui.workshop.pays_percent,Pays {0}% of the price
 ui.workshop.people_hint,The named people who speak or appear. The GM and your companion are always there to speak too.
 ui.workshop.person_name,Name
 ui.workshop.person_note,Note to self
 ui.workshop.person_note_hint,Only you see this.
 ui.workshop.person_placeholder,Their name
+ui.workshop.phrase,What's remembered
+ui.workshop.phrase_hint,"A short phrase: ""Tavin was brave"""
+ui.workshop.pick_armory,Which armory
+ui.workshop.pick_fight,Which fight
+ui.workshop.pick_loot,Which loot
 ui.workshop.pick_picture,Pick a picture
+ui.workshop.pick_shop,Which shop
+ui.workshop.pick_table,Which table
+ui.workshop.play_campaign,Play the campaign
+ui.workshop.play_from_here,Play from here
 ui.workshop.portrait,Portrait
+ui.workshop.preview,Preview
 ui.workshop.problem_about_engine,This campaign needs a newer version of the game.
 ui.workshop.problem_about_folder_id,The campaign's folder and its id don't match.
 ui.workshop.problem_about_format,This campaign is written for a different version of the game's files.
@@ -2709,23 +3002,83 @@ ui.workshop.problem_story_two_keys,"In {0}, a check has no way past a fail: a he
 ui.workshop.problem_story_untagged_line,"A line of the story has no name tag, so its translations would be lost the next time it's edited."
 ui.workshop.problem_unknown_folder,There's a folder in the campaign the game doesn't know: {0}.
 ui.workshop.problems,Problems
+ui.workshop.problems_seen,Problems seen
+ui.workshop.quick_hero,Use a quick test hero instead
+ui.workshop.random_hint,"Tables the story rolls on with Random encounter. Each roll may bring a fight, a moment, or nothing."
 ui.workshop.recently_deleted,Recently deleted
 ui.workshop.remove,Remove
 ui.workshop.rename,Rename
+ui.workshop.rename_card,Rename
+ui.workshop.rename_memory,Rename
+ui.workshop.rename_published,This campaign has been shared. Renaming what the story remembers means players' old saves forget it.
+ui.workshop.rest_kind,What kind of rest
+ui.workshop.rest_long,long rest
+ui.workshop.rest_saves,A rest is also an autosave.
+ui.workshop.rest_short,short rest
+ui.workshop.restart_card,Restart this card
+ui.workshop.restart_test,Restart the test
 ui.workshop.restore,Restore
+ui.workshop.result_line,{0}: {1}
+ui.workshop.roll_at_least,If it comes up at least {0}
+ui.workshop.roll_it,Roll it
+ui.workshop.rolled_hidden,"Yes, with a rattle"
+ui.workshop.rolled_quiet,No
+ui.workshop.rolled_shown,Show it
+ui.workshop.rolled_twenty,Rolled twenty times:
+ui.workshop.rolls_fail,Always fail
+ui.workshop.rolls_pass,Always pass
+ui.workshop.rolls_real,Roll for real
+ui.workshop.rolls_table,Which table
+ui.workshop.run_ended,Ended at {0}
+ui.workshop.run_for_me,Run it for me
+ui.workshop.run_report,Run it for me
+ui.workshop.runs,{0} runs
 ui.workshop.same_id,"Another campaign already uses this name, so this one isn't in the main menu. Rename gives it one of its own."
+ui.workshop.save_ability,Which ability
 ui.workshop.saved,Saved.
 ui.workshop.saved_with_problems,"Saved. It has problems that stop it loading yet, listed under Problems."
+ui.workshop.say_what,What they say
+ui.workshop.say_who,Who
+ui.workshop.scales_with_level,Gets bigger with level
+ui.workshop.search,Search
+ui.workshop.search_story,Search the story
+ui.workshop.sells,Sells to the hero
+ui.workshop.set_in,Remembered in: {0}
+ui.workshop.set_to,Set to
+ui.workshop.shops_hint,Shops sell to the hero and buy back. An armory lends gear for free instead.
+ui.workshop.spawns_ok,The map has room for them: {0} places for monsters to start.
+ui.workshop.spawns_short,"The map has {0} places for monsters to start, and this fight can bring {1}."
+ui.workshop.speaker_companion,The companion
+ui.workshop.speaker_companion_hint,"Written once, said by whichever companion the hero has."
+ui.workshop.speaker_gm,The GM
 ui.workshop.start_here,Start here
+ui.workshop.start_test,Start the test
+ui.workshop.starter_hurt,They take a little damage
+ui.workshop.starter_hurt_line,"It hurts, but you keep going."
+ui.workshop.starter_lose,They lose something (take coins)
+ui.workshop.starter_lose_line,Something slips out of your purse in the scramble.
+ui.workshop.starter_spotted,They're spotted (start a fight)
+ui.workshop.starter_spotted_line,Someone has seen you.
+ui.workshop.starter_time,It takes time (the GM rolls for an encounter)
+ui.workshop.starter_time_line,"It takes a long while, and the noise carries."
 ui.workshop.starting_shop,Shop before the story starts
 ui.workshop.starting_shop_hint,A new hero spends their gold before the first scene.
 ui.workshop.starts_here,Starts here
+ui.workshop.stock,Stock
+ui.workshop.story_ends,The story ends here.
+ui.workshop.story_hint,"Your story is a board of cards. Each card is one scene: open it to stack what happens, top to bottom."
 ui.workshop.story_starts,Your story starts here.
 ui.workshop.subscribed,Subscribed
 ui.workshop.subscribed_empty,Campaigns you subscribe to will be here.
 ui.workshop.tab_about,About
 ui.workshop.tab_chapters,Chapters and maps
 ui.workshop.tab_characters,Characters
+ui.workshop.tab_encounters,Random encounters
+ui.workshop.tab_fights,Fights
+ui.workshop.tab_loot,Loot
+ui.workshop.tab_lucky,Lucky rolls
+ui.workshop.tab_shops,Shops
+ui.workshop.tab_story,Story
 ui.workshop.tag_beginner_friendly,Beginner-friendly
 ui.workshop.tag_combat_heavy,Combat-heavy
 ui.workshop.tag_comedy,Comedy
@@ -2736,13 +3089,66 @@ ui.workshop.tag_short,Short
 ui.workshop.tag_story_heavy,Story-heavy
 ui.workshop.tags,Tags
 ui.workshop.tags_hint,"Pick any that fit, or type your own and press Add."
+ui.workshop.take_one,Take away 1
 ui.workshop.template_hint,What the new map starts as.
+ui.workshop.test_class,Class
+ui.workshop.test_extras,Extras
+ui.workshop.test_gear,The class's own gear
+ui.workshop.test_gold,Gold
+ui.workshop.test_hero_line,"{0} gold, level {1}, {2} things carried"
+ui.workshop.test_hero_title,The test hero
+ui.workshop.test_level,Level
+ui.workshop.test_memory,What the story remembers
+ui.workshop.test_memory_hint,Start as if these had already happened.
+ui.workshop.test_problem_no_card,It goes to a card that isn't there: {0}
+ui.workshop.test_problem_no_map,A fight's map isn't there: {0}
+ui.workshop.test_problem_no_words,A line has no words: {0}
+ui.workshop.test_problem_other,{0}
+ui.workshop.test_rolls,Rolls
+ui.workshop.test_species,Species
+ui.workshop.testing,Testing
+ui.workshop.text_card,Text card
+ui.workshop.text_card_hint,This card was written by hand in a way the editor doesn't know. It's kept exactly as written; turn on Advanced to change it.
+ui.workshop.the_dice,The dice
+ui.workshop.their_yarn,What this card writes
+ui.workshop.then,Then
+ui.workshop.then_go,Then go to
+ui.workshop.thing_name,Name
+ui.workshop.thing_name_hint,"What you call it. The game makes its id from this the first time, and never changes it."
 ui.workshop.throw_away,Throw them away
+ui.workshop.times,times
 ui.workshop.title,Workshop
+ui.workshop.try_every,Try every choice
+ui.workshop.try_fight,Try this fight
+ui.workshop.two_keys_band,Only heroes good at {0} get past here.
+ui.workshop.unlucky,Unlucky (a 1)
 ui.workshop.unnamed,(no name yet)
 ui.workshop.unsaved,Unsaved changes
 ui.workshop.up,Up
+ui.workshop.use_real,Use one of my characters (a copy)
+ui.workshop.used_cards_many,{0} story cards
+ui.workshop.used_cards_one,1 story card
+ui.workshop.used_fights_many,{0} fights
+ui.workshop.used_fights_one,1 fight
+ui.workshop.used_in,Used in: {0}
+ui.workshop.used_nowhere,Not used anywhere yet
+ui.workshop.used_tables_many,{0} tables
+ui.workshop.used_tables_one,1 table
+ui.workshop.visited,Cards visited
 ui.workshop.warning,Warning
+ui.workshop.what_can_happen,What can happen
+ui.workshop.what_happens,What happens
+ui.workshop.where,Where
+ui.workshop.where_am_i,Where am I: {0}
+ui.workshop.where_hint,The map it's fought on.
+ui.workshop.which_ability,Which ability
+ui.workshop.which_coin,Which coin
+ui.workshop.which_condition,Which condition
+ui.workshop.which_item,Which item
+ui.workshop.which_skill,Which skill
+ui.workshop.who,Who
+ui.workshop.who_hint,"The monsters, and how many of each."
+ui.workshop.without_roll,Add a way without a roll
 ui.workshop.wizard_needs_chapter,Give the first chapter a title.
 ui.workshop.wizard_needs_map,"Pick one of your maps, or make a new one."
 ui.workshop.wizard_needs_name,Give it a name first.
@@ -2750,3 +3156,8 @@ ui.workshop.wizard_step,Step {0} of 3: {1}
 ui.workshop.wizard_title,New campaign
 ui.workshop.wont_load_many,Won't load yet: {0} problems
 ui.workshop.wont_load_one,Won't load yet: 1 problem
+ui.workshop.word_and,and
+ui.workshop.word_or,or
+ui.workshop.xp_amount,How much experience
+ui.workshop.zoom_in,+
+ui.workshop.zoom_out,-

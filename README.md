@@ -188,7 +188,10 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--prop-icons` | launch.tscn |  | renders every prop's palette thumbnail into game/ui/prop_icons/ and quits; not headless |
 | `--mine <folder>` | launch.tscn |  | My campaigns and My maps kept in <folder>/campaigns and <folder>/maps, not the player's |
 | `--wizard <page>` | launch.tscn |  | with --show workshop, the new-campaign wizard at that page (about, rules, first_chapter), filled in |
-| `--tab <tab>` | launch.tscn |  | with --show workshop --open <campaign>, the campaign's page at that tab (about, chapters, characters) |
+| `--tab <tab>` | launch.tscn |  | with --show workshop --open <campaign>, the campaign's page at that tab (about, chapters, characters, story, fights, encounters, loot, shops, lucky) |
+| `--card <kind:id>` | launch.tscn |  | with --tab, that thing's card open and scrolled to (fight:goblin_camp, encounters:mill_road, loot:rat_nest, shop:millbrook_store, luck:id) |
+| `--scroll <px>` | launch.tscn |  | with --card, scrolled that much further down |
+| `--press <A,B>` | wherever it applies |  | buttons pressed by name, in order, as each comes up (at launch and on at the table): pictures of what they open |
 
 *Play*
 

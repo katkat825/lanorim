@@ -104,6 +104,12 @@ namespace Game
         // `--show workshop --wizard <page>`: the new-campaign wizard at that page (about, rules, first_chapter), filled in
         public static string Wizard => Value("--wizard");
 
+        public static string Card => Value("--card");
+
+        public static string Press => Value("--press");
+
+        public static int Scroll => int.TryParse(Value("--scroll"), out int px) ? px : 0;
+
         // `--show workshop --open <campaign> --tab <tab>`: the campaign's page at that tab (about, chapters, characters)
         public static string Tab => Value("--tab");
 

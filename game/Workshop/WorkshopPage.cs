@@ -40,6 +40,17 @@ namespace Game.Workshop
             if (GameState.Editing is { } editing && Directory.Exists(editing.Folder))
             {
                 editing.Refresh();
+
+                // back from a test (cc_task_q 3.1): on the card that was playing, its block highlighted; or a tried fight's
+                if (GameState.EditingAt is { } at)
+                {
+                    GameState.EditingAt = null;
+                    CampaignScreen page = CampaignScreen.Show(launch, editing, at.Tab, fresh: false);
+                    if (at.Tab == Content.Workshop.WorkshopTab.Story) page.OpenStory(at.Card, at.Block);
+                    else page.OpenCard("fight:" + at.Card);
+                    return;
+                }
+
                 CampaignScreen.Show(launch, editing, Content.Workshop.WorkshopTab.Chapters, fresh: false);
                 return;
             }

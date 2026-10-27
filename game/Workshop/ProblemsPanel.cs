@@ -42,9 +42,7 @@ namespace Game.Workshop
             Label how = Ui.Label(problem.IsError ? WorkshopWords.ErrorKey : WorkshopWords.WarningKey);
             how.Modulate = problem.IsError ? ErrorColour : WarningColour;
 
-            string said = problem.Known
-                ? Ui.Say(problem.Key, problem.Args.Select(a => (object)Shown(a?.ToString(), draft)).ToArray())
-                : problem.Problem.What;
+            string said = Said(problem, draft);
 
             var one = Ui.Column(2, how, Ui.Plain(said));
             one.Name = "Problem_" + (problem.Kind ?? "unknown");
@@ -60,6 +58,13 @@ namespace Game.Workshop
 
             return one;
         }
+
+        // a problem in plain words, or its own when ProblemWords doesn't know it
+        static string Said(PlainProblem problem, CampaignDraft draft) =>
+            problem.Known ? Ui.Say(problem.Key, problem.Args.Select(a => (object)Shown(a?.ToString(), draft)).ToArray()) : problem.Problem.What;
+
+        public static string Said(Content.Schema.ContentProblem problem, CampaignDraft draft) =>
+            ProblemWords.Plain(new[] { problem }).Select(p => Said(p, draft)).FirstOrDefault() ?? problem.What;
 
         // a name a problem quotes, as the author knows it: a chapter by its title, anything else as written
         static string Shown(string arg, CampaignDraft draft) =>

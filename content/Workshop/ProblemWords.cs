@@ -24,6 +24,16 @@ namespace Content.Workshop
         About,
         Chapters,
         Characters,
+
+        // the story editor (cc_task_o)
+        Story,
+
+        // the table editors (cc_task_n)
+        Fights,
+        Encounters,
+        Loot,
+        Shops,
+        Lucky,
     }
 
     // ONE PROBLEM, IN PLAIN WORDS: its group, the tab its Go there opens (none until that part's editor exists), the
@@ -58,20 +68,20 @@ namespace Content.Workshop
         static readonly Kind[] Kinds =
         {
             // the story, and the companion's lines
-            new("story_two_keys", ProblemGroup.Story, null, @"^dialogue/", null, $@"check in '{Named("node")}' has no way past a fail", "node"),
-            new("story_hero_variable", ProblemGroup.Story, null, @"^dialogue/", null, @"is the hero's, read-only"),
-            new("story_untagged_line", ProblemGroup.Story, null, @"^dialogue/", null, @"has no '#line:' tag"),
-            new("story_no_speaker", ProblemGroup.Story, null, @"^dialogue/", null, $@"node '{Named("node")}' has no 'speaker:' header", "node"),
-            new("story_missing_node", ProblemGroup.Story, null, @"^dialogue/", null, @"(?i)no node named|missing node|undefined node"),
+            new("story_two_keys", ProblemGroup.Story, WorkshopTab.Story, @"^dialogue/", null, $@"check in '{Named("node")}' has no way past a fail", "node"),
+            new("story_hero_variable", ProblemGroup.Story, WorkshopTab.Story, @"^dialogue/", null, @"is the hero's, read-only"),
+            new("story_untagged_line", ProblemGroup.Story, WorkshopTab.Story, @"^dialogue/", null, @"has no '#line:' tag"),
+            new("story_no_speaker", ProblemGroup.Story, WorkshopTab.Story, @"^dialogue/", null, $@"node '{Named("node")}' has no 'speaker:' header", "node"),
+            new("story_missing_node", ProblemGroup.Story, WorkshopTab.Story, @"^dialogue/", null, @"(?i)no node named|missing node|undefined node"),
             new("story_barks", ProblemGroup.Story, null, @"^barks/", null, null),
 
             // fights
-            new("fight_monster", ProblemGroup.Fights, null, @"^encounters/", null, $@"'{Named("monster")}' is not a monster in this campaign", "monster"),
-            new("fight_map", ProblemGroup.Fights, null, @"^encounters/", null, $@"is fought on '{Named("map")}' and there is no", "map"),
-            new("fight_loot", ProblemGroup.Fights, null, @"^encounters/", null, $@"leaves '{Named("loot")}' and there is no loot table", "loot"),
-            new("fight_too_hard", ProblemGroup.Fights, null, @"^encounters/", null, $@"'{Named("fight")}' is \d+ XP, over a", "fight"),
-            new("fight_too_many", ProblemGroup.Fights, null, @"^encounters/", null, $@"'{Named("fight")}' can field \d+ enemies", "fight"),
-            new("fight_no_level", ProblemGroup.Fights, null, @"^encounters/", null, $@"'{Named("fight")}' says no level", "fight"),
+            new("fight_monster", ProblemGroup.Fights, WorkshopTab.Fights, @"^encounters/", null, $@"'{Named("monster")}' is not a monster in this campaign", "monster"),
+            new("fight_map", ProblemGroup.Fights, WorkshopTab.Fights, @"^encounters/", null, $@"is fought on '{Named("map")}' and there is no", "map"),
+            new("fight_loot", ProblemGroup.Fights, WorkshopTab.Fights, @"^encounters/", null, $@"leaves '{Named("loot")}' and there is no loot table", "loot"),
+            new("fight_too_hard", ProblemGroup.Fights, WorkshopTab.Fights, @"^encounters/", null, $@"'{Named("fight")}' is \d+ XP, over a", "fight"),
+            new("fight_too_many", ProblemGroup.Fights, WorkshopTab.Fights, @"^encounters/", null, $@"'{Named("fight")}' can field \d+ enemies", "fight"),
+            new("fight_no_level", ProblemGroup.Fights, WorkshopTab.Fights, @"^encounters/", null, $@"'{Named("fight")}' says no level", "fight"),
 
             // maps
             new("map_missing", ProblemGroup.Maps, WorkshopTab.Chapters, Pack, $@"^chapters\.{Named("chapter")}$", $@"is played on '{Named("map")}' and there is no", "chapter", "map"),
@@ -79,13 +89,13 @@ namespace Content.Workshop
             new("map_unplayable", ProblemGroup.Maps, WorkshopTab.Chapters, $@"^maps/{Named("map")}\.map$", null, null, "map"),
 
             // tables: loot, shops, the lucky and unlucky rolls, and anything defined twice
-            new("loot_item", ProblemGroup.Tables, null, @"^loot/", null, $@"'{Named("item")}' is not an item in this campaign", "item"),
-            new("loot_table", ProblemGroup.Tables, null, @"^loot/", null, $@"rolls '{Named("table")}' and there is no loot table", "table"),
-            new("shop_item", ProblemGroup.Tables, null, @"^merchants$", null, $@"'{Named("item")}' is not an item in this campaign", "item"),
-            new("armory_used_up", ProblemGroup.Tables, null, @"^merchants$", null, $@"'{Named("item")}' is used up, and an armory lends gear", "item"),
-            new("armory_unworn", ProblemGroup.Tables, null, @"^merchants$", null, $@"'{Named("item")}' isn't worn or held", "item"),
-            new("roll_taken", ProblemGroup.Tables, null, @"^consequences$", null, @"is one of the game's own consequences"),
-            new("roll_one_sided", ProblemGroup.Tables, null, @"^consequences$", null, @"replaces the game's consequences and has no"),
+            new("loot_item", ProblemGroup.Tables, WorkshopTab.Loot, @"^loot/", null, $@"'{Named("item")}' is not an item in this campaign", "item"),
+            new("loot_table", ProblemGroup.Tables, WorkshopTab.Loot, @"^loot/", null, $@"rolls '{Named("table")}' and there is no loot table", "table"),
+            new("shop_item", ProblemGroup.Tables, WorkshopTab.Shops, @"^merchants$", null, $@"'{Named("item")}' is not an item in this campaign", "item"),
+            new("armory_used_up", ProblemGroup.Tables, WorkshopTab.Shops, @"^merchants$", null, $@"'{Named("item")}' is used up, and an armory lends gear", "item"),
+            new("armory_unworn", ProblemGroup.Tables, WorkshopTab.Shops, @"^merchants$", null, $@"'{Named("item")}' isn't worn or held", "item"),
+            new("roll_taken", ProblemGroup.Tables, WorkshopTab.Lucky, @"^consequences$", null, @"is one of the game's own consequences"),
+            new("roll_one_sided", ProblemGroup.Tables, WorkshopTab.Lucky, @"^consequences$", null, @"replaces the game's consequences and has no"),
             new("defined_twice", ProblemGroup.Tables, null, @"^(?<folder>[a-z_]+)$", null, $@"'{Named("id")}' is defined twice in", "folder", "id"),
 
             // about: pack.json and the folder

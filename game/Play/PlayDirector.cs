@@ -68,7 +68,7 @@ namespace Game.Play
             _autoStory = _auto || DevArgs.AutoStory;
 
             // start the story at a node other than the chapter's first (a probe, a screenshot)
-            _startAt = DevArgs.Start;
+            _startAt = DevArgs.Start ?? TestStart;
 
             // the pause menu opened on the hero's first turn in a fight: for a screenshot of it
             _pauseOnTurn = DevArgs.Pause;
@@ -83,6 +83,9 @@ namespace Game.Play
             HandTheDice(autoDice);
 
             BuildUi();
+
+            // a Workshop test's bar along the top (cc_task_q)
+            MountWorkshopBar();
 
             SeatTheFight();
 

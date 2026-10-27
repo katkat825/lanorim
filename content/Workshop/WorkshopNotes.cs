@@ -14,18 +14,41 @@ namespace Content.Workshop
     //   { "based_on": "sample_millbrook",
     //     "characters": [ { "id": "oda", "note": "the miller; owes Hesk", "portrait": "assets/portraits/oda.png" } ] }
     //
-    // based_on (cc_task_m2 Part 6): the game's own campaign this one was copied from, by id; said on its About tab
+    // based_on (cc_task_m2 Part 6): the game's own campaign this one was copied from, by id; said on its About tab.
+    // names (cc_task_n): a fight's, a table's or a shop's name as the author typed it, where it's more than its id
+    // ("fight:goblin_camp": "The goblin camp"; TablesDraft.Names). story (cc_task_o Part 1.7): the story board - where each
+    // card sits, its colour and name, and where the board was looking - never in the Yarn
     public sealed class WorkshopNotes
     {
         public const string FileName = "workshop.json";
 
-        static readonly string[] Fields = { "based_on", "characters" };
+        static readonly string[] Fields = { "based_on", "characters", "names", "story" };
 
         static readonly string[] CharacterFields = { "id", "note", "portrait" };
 
         public Dictionary<string, (string Note, string Portrait)> People { get; } = new(StringComparer.Ordinal);
 
         public string BasedOn { get; set; } = "";
+
+        public Dictionary<string, string> Names { get; } = new(StringComparer.Ordinal);
+
+        public Dictionary<string, Story.CardLook> Looks { get; } = new(StringComparer.Ordinal);
+
+        public Story.BoardView View { get; set; } = new();
+
+        public Dictionary<string, string> Phrases { get; } = new(StringComparer.Ordinal);
+
+        static readonly JsonSerializerOptions Board = new() { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower, WriteIndented = true };
+
+        // the board's part of the file: { "view": {...}, "cards": { "old_mill": { "x", "y", "placed", "colour", "name" } } }
+        sealed class StoryNotes
+        {
+            public Story.BoardView View { get; set; } = new();
+
+            public Dictionary<string, Story.CardLook> Cards { get; set; } = new();
+
+            public Dictionary<string, string> Memory { get; set; } = new();
+        }
 
         public string Note(string id) => People.TryGetValue(id, out var person) ? person.Note : "";
 
@@ -37,6 +60,15 @@ namespace Content.Workshop
 
             foreach (Person person in draft.People.Where(p => p.Note.Length > 0 || p.Portrait.Length > 0))
                 notes.People[person.Id] = (person.Note, person.Portrait);
+
+            foreach (KeyValuePair<string, string> name in draft.Tables.Names) notes.Names[name.Key] = name.Value;
+
+            foreach (KeyValuePair<string, Story.CardLook> look in draft.Story.Looks.Where(l => !l.Value.IsPlain && draft.Story.Card(l.Key) != null))
+                notes.Looks[look.Key] = look.Value;
+
+            notes.View = draft.Story.View;
+
+            foreach (KeyValuePair<string, string> phrase in draft.Story.Phrases) notes.Phrases[phrase.Key] = phrase.Value;
 
             return notes;
         }
@@ -66,6 +98,25 @@ namespace Content.Workshop
                     based.ValueKind == JsonValueKind.String && Campaigns.ContentId.IsLocal(based.GetString()))
                     notes.BasedOn = based.GetString();
 
+                if (document.RootElement.TryGetProperty("names", out JsonElement names) && names.ValueKind == JsonValueKind.Object)
+                    foreach (JsonProperty name in names.EnumerateObject().Where(n => n.Value.ValueKind == JsonValueKind.String))
+                        notes.Names[name.Name] = name.Value.GetString();
+
+                if (document.RootElement.TryGetProperty("story", out JsonElement story) && story.ValueKind == JsonValueKind.Object)
+                {
+                    try
+                    {
+                        StoryNotes board = story.Deserialize<StoryNotes>(Board);
+                        foreach (KeyValuePair<string, Story.CardLook> look in board?.Cards ?? new()) notes.Looks[look.Key] = look.Value;
+                        notes.View = board?.View ?? new Story.BoardView();
+                        foreach (KeyValuePair<string, string> phrase in board?.Memory ?? new()) notes.Phrases[phrase.Key] = phrase.Value;
+                    }
+                    catch (JsonException wrong)
+                    {
+                        problems.Add(ContentProblem.Caution(FileName, "story", "the story board's notes couldn't be read - " + wrong.Message));
+                    }
+                }
+
                 if (!PackJson.OptionalList(document.RootElement, "characters", FileName, "characters is a list of { \"id\", \"note\", \"portrait\" }",
                                            problems, out JsonElement list))
                     return notes;
@@ -92,7 +143,7 @@ namespace Content.Workshop
         {
             string file = Path.Combine(folder, FileName);
 
-            if (People.Count == 0 && BasedOn.Length == 0)
+            if (People.Count == 0 && BasedOn.Length == 0 && Names.Count == 0 && Looks.Count == 0 && Phrases.Count == 0)
             {
                 if (File.Exists(file)) File.Delete(file);
                 return;
@@ -112,6 +163,16 @@ namespace Content.Workshop
             if (BasedOn.Length > 0) file["based_on"] = BasedOn;
 
             file["characters"] = characters;
+
+            if (Names.Count > 0) file["names"] = Names.OrderBy(n => n.Key, StringComparer.Ordinal).ToDictionary(n => n.Key, n => n.Value);
+
+            if (Looks.Count > 0 || Phrases.Count > 0)
+                file["story"] = JsonSerializer.SerializeToElement(new StoryNotes
+                {
+                    View = View,
+                    Cards = Looks.OrderBy(l => l.Key, StringComparer.Ordinal).ToDictionary(l => l.Key, l => l.Value),
+                    Memory = Phrases.OrderBy(p => p.Key, StringComparer.Ordinal).ToDictionary(p => p.Key, p => p.Value),
+                }, Board);
 
             return JsonSerializer.Serialize(file,
                                             new JsonSerializerOptions { WriteIndented = true }).Replace("\r\n", "\n") + "\n";

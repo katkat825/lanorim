@@ -13,6 +13,8 @@ namespace Game.Play
         {
             if (_rules.Busy || _overlay != null) return;
 
+            _bar?.Refresh();
+
             // a level the story just gave: the level-up card first, whatever comes next
             if (Run.Hero.Level > _level || Run.Hero.PendingImprovements > 0)
             {
@@ -51,7 +53,7 @@ namespace Game.Play
 
                 case Scene.Fight:
                     _dialogue.Visible = false;
-                    if (!_fighting && !OfferedBeforeTheFight()) StartFight();
+                    if (!_fighting && !AskToSkip() && !OfferedBeforeTheFight()) StartFight();
                     break;
 
                 case Scene.Shop:

@@ -126,10 +126,17 @@
 - deferred by cc_task_m (2026-10-12, `_design_docs/RUN_LOG_2026-10-12_m.md`):
     - **[DEFER]** **The Workshop written on the open book.** The hub, the wizard and a campaign's page are panels over the open book (the way creation is), not words on its pages the way the contents and the map builder's page are: a campaign card with its cover, a tabbed page and a problems panel don't fit a page's column. Kathleen's call (#5); the panels are built from `Ui` and the theme, so moving them is layout work.
     - **[DEFER]** **Every problem, even when pack.json has one.** The loader stops at a pack.json with a problem (`Package.Read`), so until it's fixed the panel shows only pack.json's problems, not the maps', fights' and story's. What it would take: `Package.Read` going on with the Workshop's lenient manifest (`ManifestReader.Parse(..., lenient: true)`) and the pack still refused. Half a day, and a look at what else reads `Package.Manifest`.
-    - **[DEFER]** **Go there for the story, fights and tables.** Their problems have no tab to open until the story editor (O) and the table editors (N) add theirs; `ProblemWords` gives each kind a `WorkshopTab`, so it's one word per kind then.
+    - ~~**Go there for the story, fights and tables.**~~ Done by cc_task_n and cc_task_o (2026-10-27): each kind opens its tab.
     - **[DEFER]** **A renamed campaign's saves.** Saves are kept under the campaign's id; a Workshop rename (or a restore under a new id) leaves them under the old one. Moving them would be `SaveLibrary` renaming a folder.
     - **[DEFER]** **A hand-written pack.json with a bad value, saved from the Workshop.** The Workshop reads what it can and writes a sound pack.json, so a value the reader refused (an unknown GM screen, a rule word it doesn't know, an unknown key) is replaced by the default when the About tab is saved. A pack.json that isn't JSON at all is never written over.
     - **[DEFER]** **The campaign page's words in another language.** A new locale row gets English only (`LocaleSheet.Set`); another language's column is kept but not offered on the forms.
+
+- deferred by cc_task_n to cc_task_q (2026-10-27, `_design_docs/RUN_LOG_2026-10-27_nopq.md`):
+    - **[DEFER]** **A shop's preview with a test hero** (N Part 4). Play from here on a card with `<<shop>>` opens the real shop at the table; a preview from the Shops tab itself would be the same test, started on a card of its own (as Try this fight is).
+    - **[DEFER]** **Use one of my real characters in a test** (Q 2.4, "optional, if it's simple"). A save's hero carries its campaign's state; copying one into another campaign's test needs a decision about what comes with it (gold, items, levels, a quest item).
+    - **[DEFER]** **A story command that takes hit points** (P 1.5, "They take a little damage"). No command does outside a fight; the fail starter writes the GM's line only. A `<<hurt dice>>` verb in `Requests` would make it real.
+    - **[DEFER]** **Coins in one block** (P 3). A coin block is one command; gold, silver and copper together are three blocks.
+    - **[DEFER]** **The editor's lines in other languages.** As M's forms: English only, other columns kept.
 
 - v1 bark pools trimmed (Kathleen, 2026-10-12: "there's too many bark pools for v1"; cc_task_i Part 2):
     - **[DEFER]** No bark, and no trigger, for: **Nudge** (a cocked die nosed flat), **Down** (the hero at 0), **Overasked**

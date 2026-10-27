@@ -134,12 +134,14 @@ namespace Game.Dev
 
         // `--show workshop --wizard <page>`: the new-campaign wizard at that page, filled in as an author would; `--tab <tab>`
         // (with `--open <campaign>`): the campaign's page at that tab. Pictures of them, and the layout check's
-        public static void Workshop(Launch launch, string wizard, string tab)
+        public static void Workshop(Launch launch, string wizard, string tab, string card = null)
         {
             if (wizard != null && Core.Words.EnumWords.TryParse(wizard, out Content.Workshop.WizardPage page)) Wizard(launch, page);
 
             if (tab != null && Core.Words.EnumWords.TryParse(tab, out Content.Workshop.WorkshopTab at))
                 Game.Workshop.CampaignScreen.Current?.GoThere(at);
+
+            if (card != null) Game.Workshop.CampaignScreen.Current?.OpenCard(card, DevArgs.Scroll);
         }
 
         // the wizard, its first pages filled in with an example (developer text, exempt from localization), at a page

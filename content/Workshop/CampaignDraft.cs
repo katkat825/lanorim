@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Content.Campaigns;
+using Content.Workshop.Story;
+using Content.Workshop.Tables;
 using Core.Combat;
 
 namespace Content.Workshop
@@ -73,6 +75,19 @@ namespace Content.Workshop
         // --- characters: the named people who speak or appear -------------------------------------------------------
 
         public List<Person> People { get; set; } = new();
+
+        // --- the tables: fights, random encounters, loot, shops, lucky and unlucky moments (cc_task_n) -------------------
+
+        public TablesDraft Tables { get; set; } = new();
+
+        // --- the story: its cards and the board (cc_task_o) -----------------------------------------------------------
+
+        public StoryDraft Story { get; set; } = new();
+
+        // THE KEYS THE TABLE EDITORS KEPT WITHOUT READING THEM when it was opened ("encounters/x.json road.wolves:
+        // 'note'"): each written back as it was, and said on the page (cc_task_n, "keep them and warn")
+        [JsonIgnore]
+        public List<string> Unread { get; } = new();
 
         // THE GAME'S CAMPAIGN THIS ONE IS A COPY OF (cc_task_m2 Part 6, Make an editable copy): its id, "" for one of the
         // author's own. Kept in workshop.json, which the game never reads; the About tab says "Based on ... (Lanorim)"

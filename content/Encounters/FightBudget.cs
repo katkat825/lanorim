@@ -49,6 +49,17 @@ namespace Content.Encounters
         // THE SOLO ENEMY CAP: no more than 2 at levels 1-2, 3 at 3-4, 4 at 5-10, 5 at 11 and up
         public static int Cap(int level) => level <= 2 ? 2 : level <= 4 ? 3 : level <= 10 ? 4 : 5;
 
+        // A FIGHT'S XP AND ITS ENEMIES, each band counted at the most its dice can come to (a monster the campaign
+        // doesn't have counts nothing): what the check holds to the budget and the cap, and the Workshop's meter shows
+        public static (int Xp, int Enemies) Tally(EncounterEntry fight, Func<string, Monster> find)
+        {
+            var counted = fight.Monsters.Select(b => (Monster: find(b.Monster), Most: Math.Max(1, b.Count.Maximum)))
+                               .Where(m => m.Monster != null)
+                               .ToList();
+
+            return (counted.Sum(m => Xp(m.Monster) * m.Most), counted.Sum(m => m.Most));
+        }
+
         // what the check says about one fight: nothing when it's within both, a caution for each it's over, and a note
         // when it has no level to be checked against
         public static IEnumerable<ContentProblem> Check(EncounterEntry fight, Func<string, Monster> find, string file,
@@ -63,12 +74,7 @@ namespace Content.Encounters
                 yield break;
             }
 
-            var counted = fight.Monsters.Select(b => (Monster: find(b.Monster), Most: Math.Max(1, b.Count.Maximum)))
-                               .Where(m => m.Monster != null)
-                               .ToList();
-
-            int xp = counted.Sum(m => Xp(m.Monster) * m.Most);
-            int enemies = counted.Sum(m => m.Most);
+            (int xp, int enemies) = Tally(fight, find);
             int budget = BudgetFor(fight.Level, fight.Difficulty);
             string named = fight.Difficulty.ToString().ToLowerInvariant();
 

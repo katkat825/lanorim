@@ -44,6 +44,25 @@ namespace Game.Dev
                 }));
             }
 
+            // the story editor (cc_task_o): a board of 40 cards (the sample's five and 35 more, never saved), a card open with
+            // a note and a check; and the test hero panel (cc_task_q)
+            Game.Workshop.CampaignScreen Sample(Content.Workshop.WorkshopTab tab)
+            {
+                string folder = System.IO.Path.Combine(Game.Campaigns.CampaignFolders.Local(), "sample_millbrook");
+                Game.Workshop.CampaignScreen page = Game.Workshop.CampaignScreen.Show(launch, Content.Workshop.CampaignEditor.Open(folder), tab, fresh: false);
+                GameState.Editing = null;
+                return page;
+            }
+
+            probe.Screens.Add(("story 40 cards", () =>
+            {
+                Game.Workshop.CampaignScreen page = Sample(Content.Workshop.WorkshopTab.Story);
+                for (int i = 0; i < 35; i++) page.Editor.NewCard($"Scene {i + 1}", 40 + (i % 7) * 300, 400 + (i / 7) * 160);
+                page.Redraw();
+            }));
+            probe.Screens.Add(("story card", () => Sample(Content.Workshop.WorkshopTab.Story).OpenStory("cellar")));
+            probe.Screens.Add(("test hero", () => Sample(Content.Workshop.WorkshopTab.Story).PlayFromHere("cellar", null)));
+
             probe.Screens.Add(("create", () => QuickStart.Creating(launch, "class", null)));
             probe.Screens.Add(("spells", () => QuickStart.Creating(launch, "spells", "mage")));
             probe.Screens.Add(("abilities", () => QuickStart.Creating(launch, "abilities", "mage")));

@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using Content.Campaigns;
 using Content.Schema;
+using Content.Workshop.Story;
+using Content.Workshop.Tables;
 using Core.Localization;
 
 namespace Content.Workshop
@@ -70,6 +72,14 @@ namespace Content.Workshop
             WorkshopNotes notes = WorkshopNotes.Read(folder, problems);
             draft.BasedOn = notes.BasedOn;
 
+            draft.Tables = TableFiles.Open(folder, sheet, draft.Unread);
+            draft.Tables.Names = new Dictionary<string, string>(notes.Names, StringComparer.Ordinal);
+
+            draft.Story = StoryFiles.Open(folder);
+            draft.Story.Looks = new Dictionary<string, CardLook>(notes.Looks, StringComparer.Ordinal);
+            draft.Story.View = notes.View;
+            draft.Story.Phrases = new Dictionary<string, string>(notes.Phrases, StringComparer.Ordinal);
+
             draft.People = Actors(sheet).Concat(notes.People.Keys).Distinct().OrderBy(a => a, StringComparer.Ordinal)
                 .Select(actor => new Person
                 {
@@ -106,6 +116,8 @@ namespace Content.Workshop
                 LocaleSheet sheet = File.Exists(csv) ? LocaleSheet.Of(File.ReadAllText(csv)) : LocaleSheet.Empty();
 
                 Words(draft, sheet);
+                TableFiles.Save(draft.Tables, folder, sheet);
+                StoryFiles.Save(draft.Story, folder, draft.Id, sheet);
 
                 Directory.CreateDirectory(Path.GetDirectoryName(csv));
                 File.WriteAllText(csv, sheet.Text());

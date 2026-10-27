@@ -28,6 +28,7 @@ namespace Game.Dev
     //   4. its card on the hub, and its line in the book's contents;
     //   5. played from the book's own entry: its one line, then the end (--auto ends the run, "play    the end").
     // Prints "workshop passed" or "workshop FAILED". THE STAGES ARE STATIC: each scene change makes a new probe
+    // cc_task_n adds the table editors (WorkshopProbe.Tables.cs), between the character and Save
     public partial class WorkshopProbe : Node
     {
         public const string Root = "user://workshop_probe";
@@ -40,7 +41,7 @@ namespace Game.Dev
 
         public MapBuilder Builder { get; set; }
 
-        enum Stage { Making, Building, Editing, Playing, Done }
+        enum Stage { Making, Building, Editing, Failing, Passing, Trying, Playing, Done }
 
         static Stage _stage = Stage.Making;
         static bool _setUp;
@@ -95,6 +96,13 @@ namespace Game.Dev
                 return;
             }
 
+            // a test at the table (cc_task_q): watched, and its fight answered
+            if (Launch == null && Builder == null && _stage is Stage.Failing or Stage.Passing or Stage.Trying)
+            {
+                if (++_frame % 15 == 0) WatchTest();
+                return;
+            }
+
             if (++_frame % 15 != 0) return;
 
             _steps ??= Launch != null ? AtLaunchSteps() : Builder != null ? new Action[] { CheckBuilder, LeaveBuilder } : Array.Empty<Action>();
@@ -105,9 +113,21 @@ namespace Game.Dev
         Action[] AtLaunchSteps() => _stage switch
         {
             Stage.Making => new Action[] { OpenHub, NewCampaign, PageOne, PageTwo, PageThree },
-            Stage.Editing => new Action[] { BackOnPage, AddChapter, CopyInMyMap, UndoRedo, AddCharacter, Save, ToHub, ToBook, Play },
+            Stage.Editing => new Action[]
+            {
+                BackOnPage, AddChapter, CopyInMyMap, UndoRedo, AddCharacter,
+                MakeFight, MakeRandomTable, MakeLoot, MakeShops, MakeLucky,
+                StoryCards, StoryNote, StoryGate, StoryEnding,
+                Save, TablesSaved, StorySaved, FailTest,
+            },
+            Stage.Failing => new Action[] { BackFromFail, PassTest },
+            Stage.Passing => new Action[] { BackFromPass, RunItForMe, Wait, Wait, Wait, Wait, RunReported, TryTheFight },
+            Stage.Trying => new Action[] { BackFromFight, ToHub, ToBook, Play },
             _ => Array.Empty<Action>(),
         };
+
+        // a step that waits (Run it for me runs off the main thread)
+        void Wait() { }
 
         // --- 1. the hub --------------------------------------------------------------------------------------------
 

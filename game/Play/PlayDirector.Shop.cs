@@ -51,6 +51,14 @@ namespace Game.Play
 
         void TheEnd()
         {
+            // a Workshop test's end goes back to the editor, played by hand or by --auto (cc_task_q)
+            if (GameState.Testing != null)
+            {
+                GD.Print($"test    the end at {GameState.Testing.Card}");
+                BackToEditor();
+                return;
+            }
+
             if (_auto)
             {
                 GD.Print($"play    the end - {Run.Hero}, {_deaths} deaths");
@@ -67,6 +75,13 @@ namespace Game.Play
             if (GameState.Trying != null)
             {
                 BackToBuilder();
+                return;
+            }
+
+            // a Workshop test's end: back to the editor, the problems it saw listed there (cc_task_q)
+            if (GameState.Testing != null)
+            {
+                BackToEditor();
                 return;
             }
 

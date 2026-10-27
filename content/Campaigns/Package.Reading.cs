@@ -121,7 +121,7 @@ namespace Content.Campaigns
             foreach (MerchantDef armory in all.Where(m => m.Armory))
                 foreach (Item item in armory.Stock.Select(i => items.FirstOrDefault(x => x.Id == i) ?? srd.Find(i)).Where(i => i != null))
                 {
-                    if (item.Kind == ItemKind.Consumable)
+                    if (!MerchantDef.CanLend(item))
                         problems.Add(new ContentProblem(MerchantsFolder, $"merchants.{armory.Id}",
                             $"'{item.Id}' is used up, and an armory lends gear - no consumables in an armory"));
                     else if (!item.IsEquippable)
