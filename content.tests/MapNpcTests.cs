@@ -199,5 +199,37 @@ namespace Content.Tests
             Assert.Empty(view.People);
             Assert.Null(view.AddPerson("Anyone"));
         }
+
+        // A CHARACTER ADDED ON THE MAP WITH THE CAMPAIGN'S PAGE OPEN goes on the page (Kathleen's UI notes, 2026-10-27):
+        // written to the files instead, the page's next save put the old list back over it
+        [Fact]
+        public void APersonAddedFromTheMapGoesOnTheOpenPage()
+        {
+            string folder = Path.Combine(Path.GetTempPath(), "lanorim_npc_" + System.Guid.NewGuid().ToString("N"));
+            WorkshopTests.Copy(SampleCampaignTests.Folder, folder);
+            System.Func<string, Workshop.CampaignEditor> was = MapBuilderView.OpenPage;
+
+            try
+            {
+                Workshop.CampaignEditor page = Workshop.CampaignEditor.Open(folder);
+                MapBuilderView.OpenPage = f => f == folder ? page : was?.Invoke(f);
+
+                var view = new MapBuilderView(Editor(), MapPlace.OfCampaign(folder), "npc_map");
+                string id = view.AddPerson("Old Maud");
+
+                Assert.NotNull(id);
+                Assert.Contains(page.Draft.People, p => p.Id == id);
+                Assert.True(page.Unsaved);
+                Assert.DoesNotContain(Workshop.CampaignEditor.Open(folder).Draft.People, p => p.Id == id);
+
+                Assert.Null(page.Save());
+                Assert.Contains(Workshop.CampaignEditor.Open(folder).Draft.People, p => p.Id == id && p.Name == "Old Maud");
+            }
+            finally
+            {
+                MapBuilderView.OpenPage = was;
+                if (Directory.Exists(folder)) Directory.Delete(folder, true);
+            }
+        }
     }
 }

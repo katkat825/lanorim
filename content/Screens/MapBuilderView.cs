@@ -35,6 +35,12 @@ namespace Content.Screens
 
         public const int MinSide = 3;
 
+        // A NEW MAP'S SIZE when nobody has said one: the size boxes start here, and every template is fitted to whatever
+        // they say (Kathleen's UI notes, 2026-10-27: "every starting point should match the selected columns and rows")
+        public const int StartColumns = 12;
+
+        public const int StartRows = 10;
+
         // what the paint tool lays: a ground (its look and its rule), or a rule on its own over the look there
         public static readonly IReadOnlyList<Ground> Looks = Enum.GetValues<Ground>();
 

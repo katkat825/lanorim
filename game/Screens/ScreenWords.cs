@@ -36,6 +36,13 @@ namespace Game.Screens
 
         public static string FigureKey(int figure) => K("create", "figure_" + (figure + 1));
 
+        // the mini's own page (Step.Look)
+        public static readonly string LookBodyKey = K("create", "look_body");
+        public static readonly string LookSkinKey = K("create", "look_skin");
+        public static readonly string LookHairKey = K("create", "look_hair");
+        public static readonly string LookOwnKey = K("create", "look_own");
+        public static readonly string LookKindKey = K("create", "look_kind");
+
         // the Traits page's three sections (cc_task_e-shop-species-and-ui-notes.md 1.3)
         public static readonly string TraitSkill = K("create", "trait_skill");
         public static readonly string TraitSpellAbility = K("create", "trait_spell_ability");
@@ -116,6 +123,7 @@ namespace Game.Screens
             {
                 GameTitle, PressToBegin, Back, Next, Begin, Saves, NoSaves, Character, Retire,
                 CreateTitle, PointsLeft, PicksLeft, NameHint, Suggested, ChosenOf, Figure, FigureKey(0), FigureKey(1),
+                LookBodyKey, LookSkinKey, LookHairKey, LookOwnKey, LookKindKey,
                 PauseTitle, Resume, Save, Saved, Load, Sheet, Pack, ToTheBook,
                 TheEnd, TheEndBlurb, DemoEnd,
                 ThrowPrompt, VerdictHit, VerdictCritical, VerdictMiss, VerdictSaved, VerdictFailed, TurnHint, AimHint, CameRound, YourTurn, FightWon, FightFled,
@@ -130,6 +138,7 @@ namespace Game.Screens
             {
                 Step.Class, Step.Species, Step.Lineage, Step.Background, Step.Traits, Step.Abilities, Step.Improvements,
                 Step.Skills, Step.Cantrips, Step.Spells, Step.SpellResource, Step.Equipment, Step.Alignment, Step.Name,
+                Step.Look,
             }.Select(StepKey))
             .Concat(System.Enum.GetValues<Core.Combat.Stat>().SelectMany(s => new[] { YouChanged(s), TheyChanged(s) }));
     }

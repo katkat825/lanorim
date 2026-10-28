@@ -139,7 +139,9 @@ namespace Game.Dev
             if (MapTemplates.TakesTheSize(template))
                 Expect(Draft.Columns == BlankSize.X && Draft.Rows == BlankSize.Y && Draft.Start == new Cell(BlankSize.X / 2, BlankSize.Y / 2),
                        $"{template}: at the size chosen, {Draft.Columns} x {Draft.Rows}, the start in the middle ({Draft.Start})");
-            else Expect(Draft.Save() == MapTemplates.Read(template).Save(), $"{template}: the map is the template, at its own size");
+            else Expect(Draft.Columns == BlankSize.X && Draft.Rows == BlankSize.Y &&
+                        Draft.Save() == MapTemplates.Make(template, BlankSize.X, BlankSize.Y).Save(),
+                        $"{template}: the map is the template, at the size chosen ({Draft.Columns} x {Draft.Rows})");
 
             Draft.Name = name;
 

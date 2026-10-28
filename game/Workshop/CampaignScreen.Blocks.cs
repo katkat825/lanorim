@@ -113,7 +113,7 @@ namespace Game.Workshop
 
                 var row = Ui.Row(8, letter, words,
                     Ui.Button(StoryWords.MoveUpKey, () => Change(() => Editor.EditBlock<Choice>(card, path, c => Swap(c.Options, at, at - 1)))).Greyed(at == 0, null),
-                    Ui.Button(WorkshopWords.RemoveKey, () => Change(() => Editor.EditBlock<Choice>(card, path, c => c.Options.RemoveAt(at)))).Greyed(note.Options.Count <= 1, null));
+                    note.Options.Count <= 1 ? new Control() : Forms.Removal($"RemoveOption_{id}_{i}", () => Change(() => Editor.EditBlock<Choice>(card, path, c => c.Options.RemoveAt(at)))));
                 row.Name = $"OptionRow_{id}_{i}";
                 form.AddChild(row);
 

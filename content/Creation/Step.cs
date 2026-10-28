@@ -45,6 +45,11 @@ namespace Content.Creation
         Alignment,
 
         Name,
+
+        // THE MINI (Kathleen's UI notes, 2026-10-27): the suggested figure, another one, the skin and the hair. Never
+        // stopped on: pre-answered with the class's figure as it comes
+        Look,
+
         Done,
     }
 }

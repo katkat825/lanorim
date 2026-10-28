@@ -136,6 +136,9 @@ namespace Game.Workshop
         // a card opened in the editor; `block`, when given, highlighted (Go there, back from a test)
         public void OpenStory(string title, int[] block = null)
         {
+            // another card (or the board) starts at its top; the same card keeps its place
+            if ((title ?? "") != _openStory) _scrolled["!" + WorkshopTab.Story] = 0;
+
             _openStory = title ?? "";
             _highlight = block;
             Tab = WorkshopTab.Story;

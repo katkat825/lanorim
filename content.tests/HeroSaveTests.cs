@@ -331,5 +331,22 @@ namespace Content.Tests
             // and everything this build DID understand is the hero it was
             SameSheet(mage, back);
         }
+
+        // the mini picked on creation's last page (Kathleen's UI notes, 2026-10-27): another class's body, a skin, a hair
+        [Fact]
+        public void TheHerosLookComesBackAsItWasPicked()
+        {
+            Hero hero = Made("fighter", "soldier", new Dictionary<Ability, int> { [Ability.Strength] = 2, [Ability.Constitution] = 1 },
+                             new[] { Skill.Athletics, Skill.Perception }, 1);
+            hero.Look = new HeroLook("mage", 3, 5);
+
+            Assert.Equal(new HeroLook("mage", 3, 5), RoundTrip(hero).Look);
+
+            // the figure's own look is written as nothing at all
+            hero.Look = HeroLook.Own;
+            string saved = SaveWriter.Write(new SaveGame { Campaign = "ash_yard", Hero = HeroSaves.Capture(hero) });
+            Assert.DoesNotContain("\"skin\"", saved);
+            Assert.Equal(HeroLook.Own, RoundTrip(hero).Look);
+        }
     }
 }

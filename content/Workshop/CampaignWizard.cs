@@ -77,6 +77,11 @@ namespace Content.Workshop
         // with Make: the template it starts as
         public string Template { get; set; } = MapTemplates.Standard;
 
+        // and its size: the template is fitted to it
+        public int Columns { get; set; } = Screens.MapBuilderView.StartColumns;
+
+        public int Rows { get; set; } = Screens.MapBuilderView.StartRows;
+
         // with Pick: one of My maps
         public string Picked { get; set; } = "";
 
@@ -179,8 +184,7 @@ namespace Content.Workshop
                 return MapFiles.Write(campaign, MapId, picked);
             }
 
-            MapDraft drawn = MapTemplates.Read(Template) ?? MapTemplates.Read(MapTemplates.Standard);
-            MapDraft made = MapTemplates.Make(Template, drawn.Columns, drawn.Rows);
+            MapDraft made = MapTemplates.Make(Template, Columns, Rows) ?? MapTemplates.Make(MapTemplates.Standard, Columns, Rows);
 
             // a made map is called what its chapter is, when the title keeps the name rule (cc_task_m2 Part 7, MapName)
             made.Name = MapName.Allowed(ChapterTitle) ? ChapterTitle.Trim() : "";

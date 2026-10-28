@@ -92,6 +92,77 @@ namespace Game.Board
                 }
         }
 
+        // THE KAYKIT BODIES' SKIN AND HAIR (Kathleen's UI notes, 2026-10-27): every Adventurers texture is the same 8 x 4
+        // grid of colour swatches, each a top-to-bottom shading, and the first is the skin, the second the hair (the
+        // Knight's, the Rogue's and the Mage's checked by eye). A swatch is repainted as the colour asked for, its shading
+        // kept: each pixel scaled by the new colour over the swatch's own average
+        public static readonly Vector2I SkinSwatch = new(0, 0);
+
+        public static readonly Vector2I HairSwatch = new(1, 0);
+
+        const int SwatchColumns = 8, SwatchRows = 4;
+
+        // painted atlases already made, by the texture and what was asked of it
+        static readonly System.Collections.Generic.Dictionary<(ulong, Vector2I, Color), ImageTexture> Swatched = new();
+
+        public static void RecolourSwatch(Node node, Vector2I swatch, Color colour)
+        {
+            foreach (MeshInstance3D mesh in Meshes(node))
+                for (int i = 0; i < mesh.Mesh.GetSurfaceCount(); i++)
+                {
+                    if (mesh.GetSurfaceOverrideMaterial(i) is not ShaderMaterial painted) continue;
+                    if (painted.GetShaderParameter(AtlasParameter).AsGodotObject() is not Texture2D atlas) continue;
+
+                    // each figure its own material: two heroes on one board needn't share a skin
+                    var mine = (ShaderMaterial)painted.Duplicate();
+                    mine.SetShaderParameter(AtlasParameter, Swatch(atlas, swatch, colour));
+                    mesh.SetSurfaceOverrideMaterial(i, mine);
+                }
+        }
+
+        static Texture2D Swatch(Texture2D atlas, Vector2I swatch, Color colour)
+        {
+            var key = (atlas.GetInstanceId(), swatch, colour);
+            if (Swatched.TryGetValue(key, out ImageTexture made)) return made;
+
+            Image image = atlas.GetImage();
+            if (image == null) return atlas;
+
+            image = (Image)image.Duplicate();
+            if (image.IsCompressed()) image.Decompress();
+            image.Convert(Image.Format.Rgba8);
+
+            int w = image.GetWidth() / SwatchColumns, h = image.GetHeight() / SwatchRows;
+            int x0 = swatch.X * w, y0 = swatch.Y * h;
+
+            Color sum = new(0, 0, 0, 0);
+            int count = 0;
+
+            for (int y = 0; y < h; y += 4)
+                for (int x = 0; x < w; x += 4)
+                {
+                    sum += image.GetPixel(x0 + x, y0 + y);
+                    count++;
+                }
+
+            Color mean = sum / count;
+
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    Color was = image.GetPixel(x0 + x, y0 + y);
+                    image.SetPixel(x0 + x, y0 + y, new Color(
+                        Mathf.Clamp(was.R * colour.R / Mathf.Max(mean.R, 0.01f), 0, 1),
+                        Mathf.Clamp(was.G * colour.G / Mathf.Max(mean.G, 0.01f), 0, 1),
+                        Mathf.Clamp(was.B * colour.B / Mathf.Max(mean.B, 0.01f), 0, 1),
+                        was.A));
+                }
+
+            made = ImageTexture.CreateFromImage(image);
+            Swatched[key] = made;
+            return made;
+        }
+
         // matches the uniform in painted_miniature.gdshader
         const string TintParameter = "tint";
 

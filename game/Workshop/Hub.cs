@@ -24,6 +24,9 @@ namespace Game.Workshop
             int expired = RecentlyDeleted.Expire(WorkshopPage.Mine, DateTime.Today);
             if (expired > 0) GD.Print($"workshop {expired} campaigns past their thirty days in Recently deleted, gone");
 
+            int maps = MapFiles.Expire(MapBuilderPage.Library, DateTime.Today);
+            if (maps > 0) GD.Print($"workshop {maps} of My maps past their thirty days in Recently deleted, gone");
+
             var shelves = Ui.Column(14);
 
             Mine(launch, shelves);
@@ -202,39 +205,34 @@ namespace Game.Workshop
             {
                 RecentlyDeleted.Item one = item;
                 string name = Named(CampaignFiles.NameKey(one.Id), CampaignFiles.Sheet(one.Folder, one.Id).Get(CampaignFiles.NameKey(one.Id)));
-                Said left = WorkshopWords.DaysLeft(one.DaysLeft(DateTime.Today));
 
-                Label what = Ui.Plain($"{name}   {Ui.Say(left.Key, left.Args)}");
-                what.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-
-                var row = Ui.Row(8, what);
-                row.Name = "Deleted_" + one.Id;
-
-                row.AddChild(Ui.Button(WorkshopWords.RestoreKey, () =>
-                    Done(launch, one.Folder, RecentlyDeleted.Restore(one, WorkshopPage.Mine, WorkshopPage.Taken, out string problem), problem)));
-                row.AddChild(Ui.Button(WorkshopWords.DeleteForeverKey, () => AskForever(launch, row, one, name)));
-
-                shelves.AddChild(row);
+                shelves.AddChild(Forms.Deleted("Deleted_" + one.Id, name, one.DaysLeft(DateTime.Today),
+                    () => Done(launch, one.Folder, RecentlyDeleted.Restore(one, WorkshopPage.Mine, WorkshopPage.Taken, out string problem), problem),
+                    () =>
+                    {
+                        string problem = RecentlyDeleted.Forget(one);
+                        Done(launch, one.Folder, problem == null ? one.Folder : null, problem);
+                    }));
             }
         }
 
-        static void AskForever(Launch launch, HBoxContainer row, RecentlyDeleted.Item item, string name)
+        // MY MAPS' RECENTLY DELETED (Kathleen, 2026-10-27): under My maps, when anything is
+        static void DeletedMaps(Launch launch, VBoxContainer shelves, MapPlace library)
         {
-            Ui.Clear(row);
+            var items = MapFiles.Deleted(library);
 
-            Label question = Ui.Label(WorkshopWords.ForeverQuestionKey, name);
-            question.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+            if (items.Count == 0) return;
 
-            Button keep = Ui.Button(WorkshopWords.KeepKey, () => Show(launch));
+            shelves.AddChild(Ui.Label(WorkshopWords.RecentlyDeletedKey));
 
-            row.AddChild(question);
-            row.AddChild(Ui.Button(WorkshopWords.DeleteForeverKey, () =>
+            foreach (RecentlyDeleted.Item item in items)
             {
-                string problem = RecentlyDeleted.Forget(item);
-                Done(launch, item.Folder, problem == null ? item.Folder : null, problem);
-            }));
-            row.AddChild(keep);
-            Ui.FocusLater(keep);
+                RecentlyDeleted.Item one = item;
+
+                shelves.AddChild(Forms.Deleted("DeletedMap_" + one.Id, MapName.Of(one), one.DaysLeft(DateTime.Today),
+                    () => Show(launch, MapFiles.Restore(library, one, out string problem) == null ? problem : null),
+                    () => Show(launch, RecentlyDeleted.Forget(one))));
+            }
         }
 
         // --- my maps, and the game's campaigns ------------------------------------------------------------------------
@@ -251,13 +249,24 @@ namespace Game.Workshop
             foreach (string id in ids)
             {
                 string one = id;
-                shelves.AddChild(Launch.Leader(Ui.Button(MapName.Of(library, one), () => MapBuilderPage.OpenMap(launch, library, one), true),
-                                               "MyMap_" + one));
+                Control open = Launch.Leader(Ui.Button(MapName.Of(library, one), () => MapBuilderPage.OpenMap(launch, library, one), true), "MyMap_" + one);
+                open.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+
+                HBoxContainer delete = Forms.Removal("DeleteMyMap_" + one, () =>
+                {
+                    string problem = MapFiles.Delete(library, one, DateTime.Today);
+                    if (problem != null) GD.PushWarning($"workshop: {one} could not be deleted - {problem}");
+                    Show(launch);
+                }, WorkshopWords.DeleteMapQuestionKey, WorkshopWords.DeleteKey, MapName.Of(library, one));
+
+                shelves.AddChild(Ui.Row(8, open, delete));
             }
 
             Button make = Ui.Button(WorkshopWords.NewMapKey, () => launch.PageCalled("builder")?.Open(launch));
             make.Name = "NewMap";
             shelves.AddChild(Ui.Row(8, make));
+
+            DeletedMaps(launch, shelves, library);
         }
 
         static void GameCampaigns(Launch launch, VBoxContainer shelves)

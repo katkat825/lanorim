@@ -141,7 +141,7 @@ namespace Game.Workshop
             })));
 
             var row = Ui.Row(8, name, Ui.Label(TableWords.HowManyKey), count, leader,
-                             Ui.Button(WorkshopWords.RemoveKey, () => Change(() => Editor.Edit("fight", d => FightIn(d, fight).Monsters.RemoveAt(at)))));
+                             Forms.Removal($"RemoveBand_{fight}_{at}", () => Change(() => Editor.Edit("fight", d => FightIn(d, fight).Monsters.RemoveAt(at)))));
             row.Name = $"Band_{fight}_{at}";
             return row;
         }

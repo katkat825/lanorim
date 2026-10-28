@@ -115,7 +115,7 @@ namespace Game.Dev
             Stage.Making => new Action[] { OpenHub, NewCampaign, PageOne, PageTwo, PageThree },
             Stage.Editing => new Action[]
             {
-                BackOnPage, AddChapter, CopyInMyMap, UndoRedo, AddCharacter,
+                BackOnPage, AddChapter, CopyInMyMap, UndoRedo, AskToDeleteMap, DeleteMap, RestoreMap, AddCharacter,
                 MakeFight, MakeRandomTable, MakeLoot, MakeShops, MakeLucky,
                 StoryCards, StoryNote, StoryGate, StoryEnding,
                 Save, TablesSaved, StorySaved, FailTest,
@@ -205,8 +205,8 @@ namespace Game.Dev
             MapDraft drawn = Builder.View.Draft;
             string name = drawn.Name;
             drawn.Name = "";
-            Expect(drawn.Save() == MapTemplates.Make("empty_field", MapTemplates.Read("empty_field").Columns,
-                                                     MapTemplates.Read("empty_field").Rows).Save(), "made from the template asked for");
+            Expect(drawn.Save() == MapTemplates.Make("empty_field", MapBuilderView.StartColumns, MapBuilderView.StartRows).Save(),
+                   "made from the template asked for, at the size the wizard said");
             drawn.Name = name;
             Expect(name.Length > 0, $"and named after its chapter ({name})");
         }
@@ -254,6 +254,34 @@ namespace Game.Dev
             Expect(Page.Editor.Draft.Chapter("second_steps")?.Maps.Count == 0, "Ctrl+Z took the map back off");
             Key(Godot.Key.Y);
             Expect(Page.Editor.Draft.Chapter("second_steps")?.Maps.Count == 1, "Ctrl+Y put it back");
+        }
+
+        // A MAP DELETED GOES TO RECENTLY DELETED (Kathleen, 2026-10-27): asked first, off the chapter, listed with its days
+        // left; Restore puts the file back and Ctrl+Z puts it back on the chapter
+        const string MapRow = "DeleteMap_second_steps_0";
+
+        void AskToDeleteMap() => Press(MapRow + "_Ask");
+
+        void DeleteMap()
+        {
+            Expect(Has<Label>(l => l.Text == Ui.Say(WorkshopWords.DeleteMapQuestionKey, MapName.Of(Page.Editor.Maps, MyMap))),
+                   "Delete the map asks first, and says it can come back");
+            Press(MapRow + "_Yes");
+
+            Expect(!MapFiles.Has(Page.Editor.Maps, MyMap) && Page.Editor.Draft.Chapter("second_steps")?.Maps.Count == 0,
+                   "the map is off the chapter and out of the campaign's maps");
+            Expect(Page.Editor.DeletedMaps.Any(i => i.Id == MyMap), "and in the campaign's Recently deleted");
+        }
+
+        void RestoreMap()
+        {
+            Expect(Has<HBoxContainer>(r => r.Name == "DeletedMap_" + MyMap), "the Chapters tab lists it under Recently deleted");
+            Press("DeletedMap_" + MyMap + "_Restore");
+            Expect(MapFiles.Has(Page.Editor.Maps, MyMap) && Page.Editor.DeletedMaps.Count == 0, "Restore put the file back");
+
+            GetViewport().GuiReleaseFocus();
+            Key(Godot.Key.Z);
+            Expect(Page.Editor.Draft.Chapter("second_steps")?.Maps.SequenceEqual(new[] { MyMap }) == true, "and Ctrl+Z put it back on the chapter");
         }
 
         void AddCharacter()

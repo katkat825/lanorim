@@ -155,6 +155,12 @@ namespace Content.Workshop
         public static readonly string AddPersonKey = K("add_person");
         public static readonly string PersonPlaceholderKey = K("person_placeholder");
         public static readonly string DeletePersonKey = K("delete_person_question");
+
+        // deleting anything (Kathleen's UI notes, 2026-10-27): a map's file, for good; a part of a campaign, undoable until
+        // the campaign is left
+        public static readonly string DeleteMapKey = K("delete_map");
+        public static readonly string DeleteMapQuestionKey = K("delete_map_question");
+        public static readonly string RemoveQuestionKey = K("remove_question");
         public static readonly string AlwaysSpeakKey = K("always_speak");
 
         // --- the problems panel -----------------------------------------------------------------------------------
@@ -191,7 +197,7 @@ namespace Content.Workshop
                 DeleteChapterKey, DeleteUsedChapterKey, MapsKey, NoMapsInChapterKey, AddFromMyMapsKey, AddKey, MakeMapKey,
                 MapNameKey, OpenInBuilderKey, RemoveKey, AddChapterKey, ChapterPlaceholderKey, ChaptersHintKey,
                 PeopleHintKey, PersonNameKey, PersonNoteKey, PersonNoteHintKey, PortraitKey, NoPortraitKey, AddPersonKey,
-                PersonPlaceholderKey, DeletePersonKey, AlwaysSpeakKey,
+                PersonPlaceholderKey, DeletePersonKey, AlwaysSpeakKey, DeleteMapKey, DeleteMapQuestionKey, RemoveQuestionKey,
                 ProblemsKey, NoProblemsKey, GoThereKey, ErrorKey, WarningKey,
             }
             .Concat(Enum.GetValues<WizardPage>().Select(PageKey))

@@ -89,7 +89,7 @@ namespace Game.Workshop
 
             var top = Ui.Row(8, kind,
                 Pickers.Likely("LootLikely_" + id, Math.Max(1, entry.Weight), total, v => Edit("loot.weight", d => LootIn(d, table, id).Weight = v, true)),
-                Ui.Button(WorkshopWords.RemoveKey, () => Change(() => Editor.RemoveLootEntry(table, id))));
+                Forms.Removal("RemoveLoot_" + id, () => Change(() => Editor.RemoveLootEntry(table, id))));
 
             var column = Ui.Column(6, top);
             column.Name = "LootEntry_" + id;
@@ -107,7 +107,7 @@ namespace Game.Workshop
                         {
                             if (Pickers.IsDice(t)) Edit("loot.count", d => LootIn(d, table, id).Items[at].Count = t == "1" ? "" : t, true);
                         }),
-                        Ui.Button(WorkshopWords.RemoveKey, () => Change(() => Editor.Edit("loot", d => LootIn(d, table, id).Items.RemoveAt(at))))));
+                        Forms.Removal($"RemoveLot_{id}_{at}", () => Change(() => Editor.Edit("loot", d => LootIn(d, table, id).Items.RemoveAt(at))))));
                 }
 
                 column.AddChild(Forms.Field(TableWords.ItemsKey,

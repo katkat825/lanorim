@@ -38,6 +38,9 @@ namespace Content.Creation
         // which of the class's two figures the mini is (Hero.Figure): the creator's toggle, 0 until it's changed
         public int Figure { get; set; }
 
+        // and the rest of the mini's look: another class's body, a skin tone, a hair colour (Step.Look; HeroLook)
+        public HeroLook Look { get; set; } = HeroLook.Own;
+
         readonly Dictionary<Ability, int> _backgroundSpend = new Dictionary<Ability, int>();
         readonly List<Skill> _skills = new List<Skill>();
         readonly List<Skill> _expertise = new List<Skill>();

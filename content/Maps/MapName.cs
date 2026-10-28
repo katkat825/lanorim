@@ -31,5 +31,18 @@ namespace Content.Maps
         // a map's name as its file says it (read by the map's own reader); its id when it has none or doesn't read
         public static string Of(MapPlace place, string id) =>
             MapFiles.Read(place, id, out MapDraft draft, out _) ? Shown(draft.Name, id) : id;
+
+        // a deleted map's name, from its file in Recently deleted
+        public static string Of(Workshop.RecentlyDeleted.Item deleted)
+        {
+            try
+            {
+                return MapDraft.TryRead(System.IO.File.ReadAllText(deleted.Folder), out MapDraft draft, out _) ? Shown(draft.Name, deleted.Id) : deleted.Id;
+            }
+            catch (System.Exception could) when (could is System.IO.IOException || could is System.UnauthorizedAccessException)
+            {
+                return deleted.Id;
+            }
+        }
     }
 }

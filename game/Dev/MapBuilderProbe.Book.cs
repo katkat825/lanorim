@@ -19,14 +19,13 @@ namespace Game.Dev
 
             Type(Find<LineEdit>("MapName"), name);
 
-            bool blank = MapTemplates.TakesTheSize(template);
-            if (blank) Size(BlankSize.X, BlankSize.Y);
+            // every template is made at the size asked for (Kathleen's UI notes, 2026-10-27), not only Blank
+            Size(BlankSize.X, BlankSize.Y);
 
             Choose(Find<OptionButton>("Template"), MapTemplates.Ids.ToList().IndexOf(template));
 
-            if (blank)
-                Expect(Find<SpinBox>("Columns")?.Value == BlankSize.X && Find<SpinBox>("Rows")?.Value == BlankSize.Y,
-                       "picking Blank left the size boxes as they were");
+            Expect(Find<SpinBox>("Columns")?.Value == BlankSize.X && Find<SpinBox>("Rows")?.Value == BlankSize.Y,
+                   $"picking {template} left the size boxes as they were");
 
             Choose(Find<OptionButton>("Lives"), 0);
             Find<Button>("MakeMap")?.EmitSignal(BaseButton.SignalName.Pressed);

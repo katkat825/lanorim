@@ -121,6 +121,13 @@ namespace Content.Saves
         // which of its class's figures the hero's mini is (cc_task_h Part 2); 0 in a save from before it
         public int Figure { get; set; }
 
+        // the mini's look (HeroLook): "" and -1 are the figure's own
+        public string Body { get; set; } = "";
+
+        public int Skin { get; set; } = -1;
+
+        public int Hair { get; set; } = -1;
+
         // experience points, in a campaign that levels by XP (cc_task_i 3.4); 0 otherwise and in an older save
         public int Experience { get; set; }
 

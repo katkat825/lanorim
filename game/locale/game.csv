@@ -2133,6 +2133,11 @@ ui.create.kit_list,In your pack:
 ui.create.kit_no_gear,No gear: only gold.
 ui.create.kit_shop_first,"Before the story begins, you can spend it at a shop."
 ui.create.kit_starts_with,You start with {0}.
+ui.create.look_body,The figure. Your class's own come first; any other is yours to pick.
+ui.create.look_hair,Hair
+ui.create.look_kind,A Beastfolk stands as its own mini: there is nothing here to change. Go on when you're ready.
+ui.create.look_own,Its own
+ui.create.look_skin,Skin
 ui.create.name_hint,What are you called?
 ui.create.picks_left,{0} left to choose
 ui.create.points_left,{0} points left to spend
@@ -2144,6 +2149,7 @@ ui.create.step_class,Choose a class
 ui.create.step_equipment,Your starting equipment
 ui.create.step_improvements,Spend your ability score improvements
 ui.create.step_lineage,Choose a lineage
+ui.create.step_look,Choose your mini
 ui.create.step_name,Name your character
 ui.create.step_skills,Choose your skills
 ui.create.step_species,Choose a species
@@ -2693,14 +2699,16 @@ ui.workshop.defeat_death,They die (reload a save)
 ui.workshop.defeat_hint,What losing a fight means. A fight can say otherwise for itself.
 ui.workshop.delete,Delete
 ui.workshop.delete_block,Delete
-ui.workshop.delete_card_question,Delete the card {0}?
-ui.workshop.delete_chapter_question,Delete this chapter? Its maps stay in the campaign.
+ui.workshop.delete_card_question,Delete the card {0}? You can undo it (Ctrl+Z) until you leave the campaign.
+ui.workshop.delete_chapter_question,"Delete this chapter? Its maps stay in the campaign, and you can undo it (Ctrl+Z) until you leave."
 ui.workshop.delete_forever,Delete forever
-ui.workshop.delete_person_question,Delete {0}?
+ui.workshop.delete_map,Delete the map
+ui.workshop.delete_map_question,Move the map {0} to Recently deleted? You can bring it back for 30 days.
+ui.workshop.delete_person_question,Delete {0}? You can undo it (Ctrl+Z) until you leave the campaign.
 ui.workshop.delete_question,Move {0} to Recently deleted? You can bring it back for 30 days.
-ui.workshop.delete_thing_question,Delete this?
-ui.workshop.delete_used_chapter_question,"The story uses this chapter. Delete it anyway? Its maps stay in the campaign."
-ui.workshop.delete_used_question,This is used in your campaign. Delete it anyway?
+ui.workshop.delete_thing_question,Delete this? You can undo it (Ctrl+Z) until you leave the campaign.
+ui.workshop.delete_used_chapter_question,"The story uses this chapter. Delete it anyway? Its maps stay in the campaign, and you can undo it (Ctrl+Z) until you leave."
+ui.workshop.delete_used_question,This is used in your campaign. Delete it anyway? You can undo it (Ctrl+Z) until you leave the campaign.
 ui.workshop.description,Description
 ui.workshop.description_hint,"One paragraph: what it's about, and how long it takes to play."
 ui.workshop.dice,Dice
@@ -3007,6 +3015,7 @@ ui.workshop.quick_hero,Use a quick test hero instead
 ui.workshop.random_hint,"Tables the story rolls on with Random encounter. Each roll may bring a fight, a moment, or nothing."
 ui.workshop.recently_deleted,Recently deleted
 ui.workshop.remove,Remove
+ui.workshop.remove_question,Remove this? You can undo it (Ctrl+Z) until you leave the campaign.
 ui.workshop.rename,Rename
 ui.workshop.rename_card,Rename
 ui.workshop.rename_memory,Rename

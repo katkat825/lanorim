@@ -43,6 +43,7 @@ namespace Game.Dev
             new("--ask-delete", "", Where.Launch, false, "with --show book, the first character's Delete pressed, for a picture of the question"),
             new("--page", "<step>", Where.Launch, false, "with --show create, that creation page, part filled in"),
             new("--class", "<class>", Where.Any, false, "with --show create, that class (mage otherwise); on the demonstration table, the hero's class (rogue otherwise)"),
+            new("--look", "<skin,hair>", Where.Launch, false, "with --show create, that skin tone and hair colour picked (FigureSkins, from 0)"),
             new("--longest", "", Where.Launch, false, "with --show create --page, the picks that make that page longest (equipment, traits, cantrips, spells; check-layout's worst case)"),
             new("--species", "<species|lineage>", Where.Any, false, "with --show create, that species (and lineage) picked; on the demonstration table, the hero's (halfling otherwise)"),
             new("--begin", "<campaign> [class]", Where.Launch, false, "a character with every default (fighter otherwise), straight to the table; probe saves are kept apart"),

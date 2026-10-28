@@ -121,6 +121,7 @@ namespace Content.Saves
             hero.DiscardWarningDismissed = saved.DiscardWarningDismissed;
             hero.ShopsFirst = saved.ShopsFirst;
             hero.Figure = saved.Figure;
+            hero.Look = new HeroLook(saved.Body ?? "", saved.Skin, saved.Hair);
             hero.Remember(saved.Experience);
 
             RestoreKit(saved, library, hero, file, found);

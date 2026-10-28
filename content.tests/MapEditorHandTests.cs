@@ -94,6 +94,17 @@ namespace Content.Tests
         }
 
         [Fact]
+        public void EscapePutsTheWallOrDoorDownToo()
+        {
+            MapEditor editor = Editor();
+            editor.Tool = MapTool.Wall;
+
+            Assert.Equal(MapEscape.Dropped, editor.Escape(open: true));
+            Assert.Equal(MapTool.Select, editor.Tool);
+            Assert.Equal(MapEscape.Close, editor.Escape(open: true));
+        }
+
+        [Fact]
         public void ShiftDragIsStillTheScatterAndLeavesTheHandAlone()
         {
             MapEditor editor = Editor();

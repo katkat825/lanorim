@@ -305,5 +305,97 @@ namespace Content.Tests
             foreach (string file in Directory.EnumerateFiles(from)) File.Copy(file, Path.Combine(to, Path.GetFileName(file)));
             foreach (string dir in Directory.EnumerateDirectories(from)) Copy(dir, Path.Combine(to, Path.GetFileName(dir)));
         }
+
+        // EVERY START IS THE SIZE ASKED FOR (Kathleen's UI notes, 2026-10-27): the wizard's first map and a new one alike
+        [Fact]
+        public void ANewMapIsTheSizeAskedFor()
+        {
+            CampaignWizard wizard = Filled();
+            wizard.Template = "forest_clearing";
+            wizard.Columns = 15;
+            wizard.Rows = 9;
+            CampaignEditor editor = CampaignEditor.Open(Finish(wizard));
+
+            Assert.True(MapFiles.Read(editor.Maps, editor.Draft.Chapters[0].Maps[0], out MapDraft first, out _));
+            Assert.Equal((15, 9), (first.Columns, first.Rows));
+
+            foreach (string template in MapTemplates.Ids)
+            {
+                string made = editor.MakeMap("Sized " + template, template, out string problem, 11, 13);
+                Assert.Null(problem);
+                Assert.True(MapFiles.Read(editor.Maps, made, out MapDraft drawn, out _), template);
+                Assert.Equal((11, 13), (drawn.Columns, drawn.Rows));
+            }
+
+            string plain = editor.MakeMap("Plain", "empty_field", out _);
+            Assert.True(MapFiles.Read(editor.Maps, plain, out MapDraft standard, out _));
+            Assert.Equal((Content.Screens.MapBuilderView.StartColumns, Content.Screens.MapBuilderView.StartRows),
+                         (standard.Columns, standard.Rows));
+        }
+
+        // a deleted map goes to the campaign's Recently deleted and off every chapter; Restore brings the file back (its
+        // own id, or the next free one); a map that isn't there is a problem, not a crash
+        [Fact]
+        public void DeletingAMapTakesItOffEveryChapterForThirtyDays()
+        {
+            CampaignEditor editor = CampaignEditor.Open(Finish(Filled()));
+            string chapter = editor.Draft.Chapters[0].Id;
+            string map = editor.MakeMap("Lamp Room", "dungeon_room", out _);
+            editor.AddMap(chapter, map);
+            int before = MapFiles.Ids(editor.Maps).Count;
+
+            Assert.Null(editor.DeleteMap(map));
+            Assert.False(MapFiles.Has(editor.Maps, map));
+            Assert.DoesNotContain(map, editor.Draft.Chapters[0].Maps);
+            Assert.Equal(before - 1, MapFiles.Ids(editor.Maps).Count);
+
+            // the campaign still loads: the dot-folder is the Workshop's, not content
+            Assert.Null(editor.Save());
+            Assert.Empty(WorkshopProblems.Of(editor.Folder));
+
+            RecentlyDeleted.Item gone = Assert.Single(editor.DeletedMaps);
+            Assert.Equal(map, gone.Id);
+            Assert.Equal("Lamp Room", MapName.Of(gone));
+            Assert.Equal(RecentlyDeleted.KeptFor, gone.DaysLeft(DateTime.Today));
+
+            // a map of the same id made since: the one restored takes the next free id
+            Assert.Equal(map, editor.MakeMap("Lamp Room", "dungeon_room", out _));
+            Assert.Equal(map + "_2", editor.RestoreMap(gone, out string problem));
+            Assert.Null(problem);
+            Assert.True(MapFiles.Has(editor.Maps, map + "_2"));
+            Assert.Empty(editor.DeletedMaps);
+
+            Assert.NotNull(editor.DeleteMap("nothing_here"));
+        }
+
+        // My maps' deleted maps: thirty days, then gone when the hub opens; Delete forever before that
+        [Fact]
+        public void MyMapsDeletedExpireAfterThirtyDays()
+        {
+            var monday = new DateTime(2026, 10, 26);
+            Assert.Null(MapFiles.Write(MyMaps, "mill_yard", MapTemplates.Make("empty_field", 12, 10)));
+            Assert.Null(MapFiles.Write(MyMaps, "toll_house", MapTemplates.Make("empty_field", 12, 10)));
+
+            Assert.Null(MapFiles.Delete(MyMaps, "mill_yard", monday));
+            Assert.Null(MapFiles.Delete(MyMaps, "toll_house", monday.AddDays(5)));
+            Assert.Equal(new[] { "toll_house", "mill_yard" }, MapFiles.Deleted(MyMaps).Select(i => i.Id));
+            Assert.Empty(MapFiles.Ids(MyMaps));
+
+            Assert.Equal(0, MapFiles.Expire(MyMaps, monday.AddDays(RecentlyDeleted.KeptFor)));
+            Assert.Equal(1, MapFiles.Expire(MyMaps, monday.AddDays(RecentlyDeleted.KeptFor + 1)));
+            RecentlyDeleted.Item left = Assert.Single(MapFiles.Deleted(MyMaps));
+
+            Assert.Null(RecentlyDeleted.Forget(left));
+            Assert.Empty(MapFiles.Deleted(MyMaps));
+            Assert.NotNull(MapFiles.Delete(MyMaps, "nothing_here", monday));
+        }
+
+        // the builder's title is the campaign's name, not its folder
+        [Fact]
+        public void ACampaignsMapsGoByTheCampaignsName()
+        {
+            CampaignEditor editor = CampaignEditor.Open(Finish(Filled()));
+            Assert.Equal("The Salt Road", editor.Maps.Named);
+        }
     }
 }

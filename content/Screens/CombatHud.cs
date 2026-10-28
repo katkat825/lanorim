@@ -37,10 +37,12 @@ namespace Content.Screens
     {
         // `showing`: whose turn the table is playing back, when it is behind the rules (CombatDirector): the session
         // has already run every monster's turn and is on the hero's next, and the strip follows the table, not the
-        // rules (cc_task_e-shop-species-and-ui-notes.md 2.7). null is the live turn
-        public CombatHud(CombatSession session, FightLog log = null, Actor showing = null)
+        // rules (cc_task_e-shop-species-and-ui-notes.md 2.7). null is the live turn. `healthShown`: the hit points the
+        // table has shown so far, the same way (a blow's damage waits for the blow); null for an actor is its live number
+        public CombatHud(CombatSession session, FightLog log = null, Actor showing = null, Func<Actor, int?> healthShown = null)
         {
             Showing = showing;
+            _healthShown = healthShown;
             Session = session ?? throw new ArgumentNullException(nameof(session));
             Log = log;
         }
@@ -52,6 +54,10 @@ namespace Content.Screens
         Encounter Fight => Session.Fight;
 
         public Actor Showing { get; }
+
+        readonly Func<Actor, int?> _healthShown;
+
+        int HitPointsOf(Actor actor) => _healthShown?.Invoke(actor) ?? actor.Health.Current;
 
         // whose turn the strip shows: the one being played back, else the live one
         public Actor TurnShown => Showing ?? Session.Turn?.Actor;
@@ -85,9 +91,9 @@ namespace Content.Screens
                                               : null,
                                 Current = roll.Actor == now,
                                 Initiative = roll.Total,
-                                HitPoints = roll.Actor.Health.Current,
+                                HitPoints = HitPointsOf(roll.Actor),
                                 MaxHitPoints = roll.Actor.Health.Maximum,
-                                Down = roll.Actor.Health.Current <= 0,
+                                Down = HitPointsOf(roll.Actor) <= 0,
                             })
                             .ToList();
             }

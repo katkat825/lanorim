@@ -74,7 +74,7 @@ namespace Game.Workshop
                 var row = Ui.Row(8, name,
                     Ui.Button(WorkshopWords.UpKey, () => Change(() => Editor.Edit("shop", d => Swap(d.Tables.Shop(id).Stock, at, at - 1)))).Greyed(at == 0, null),
                     Ui.Button(WorkshopWords.DownKey, () => Change(() => Editor.Edit("shop", d => Swap(d.Tables.Shop(id).Stock, at, at + 1)))).Greyed(at == shop.Stock.Count - 1, null),
-                    Ui.Button(WorkshopWords.RemoveKey, () => Change(() => Editor.Edit("shop", d => d.Tables.Shop(id).Stock.RemoveAt(at)))));
+                    Forms.Removal($"RemoveStock_{id}_{at}", () => Change(() => Editor.Edit("shop", d => d.Tables.Shop(id).Stock.RemoveAt(at)))));
                 row.Name = $"StockItem_{id}_{at}";
                 stock.AddChild(row);
             }

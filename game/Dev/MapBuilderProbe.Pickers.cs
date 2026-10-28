@@ -36,9 +36,12 @@ namespace Game.Dev
             Expect(Enumerable.Range(2, 3).All(y => Draft.StyleAt(new Border(new Cell(7, y), true)) == WallStyle.Fence), "the drag laid a run of fence");
             Expect(Draft.Layout().At(new Border(new Cell(7, 3), true)) == Edge.Bars, "which the rules see through");
 
+            // Esc puts the wall in hand down first, as it does a prop (Kathleen's UI notes, 2026-10-27), then shuts the picker
             Bar("WallsAndDoors");
             Key(Godot.Key.Escape, ctrl: false);
-            Expect(Builder.Panels.Open == null, "Esc shut the picker");
+            Expect(Editor.Tool == MapTool.Select && Builder.Panels.Open != null, "Esc put the wall down and left the picker open");
+            Key(Godot.Key.Escape, ctrl: false);
+            Expect(Builder.Panels.Open == null, "a second Esc shut the picker");
         }
 
         // SOMEONE ON THE MAP (cc_task_m3 Part 10): the NPCs button opens the people; one placed is selected; it turns, says

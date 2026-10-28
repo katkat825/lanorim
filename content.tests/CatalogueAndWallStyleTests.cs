@@ -60,16 +60,16 @@ namespace Content.Tests
         }
 
         [Theory]
-        [InlineData("bell_tower", 3, 3)]
-        [InlineData("blacksmith", 6, 5)]
-        [InlineData("village_house_1", 3, 4)]
-        [InlineData("village_house_2", 3, 5)]
-        [InlineData("village_house_3", 3, 3)]
-        [InlineData("village_house_4", 3, 3)]
-        [InlineData("inn", 6, 6)]
-        [InlineData("village_mill", 5, 4)]
-        [InlineData("sawmill", 7, 5)]
-        [InlineData("stable", 7, 5)]
+        [InlineData("bell_tower", 2, 2)]
+        [InlineData("blacksmith", 3, 3)]
+        [InlineData("village_house_1", 2, 2)]
+        [InlineData("village_house_2", 2, 3)]
+        [InlineData("village_house_3", 2, 2)]
+        [InlineData("village_house_4", 2, 2)]
+        [InlineData("inn", 3, 3)]
+        [InlineData("village_mill", 3, 2)]
+        [InlineData("sawmill", 4, 3)]
+        [InlineData("stable", 4, 3)]
         public void TheMedievalVillagePacksBuildingsAreOnTheBuildingsShelf(string id, int across, int deep)
         {
             PropEntry building = Palette.Find(id);

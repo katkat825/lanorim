@@ -60,6 +60,12 @@ namespace Game
         // the demonstration hero's species or lineage ("fairy", "beastfolk_vulpine"), and a creation page's
         public static string Species => Word("--species");
 
+        // `--show create --page look --look 2,4`: the Look page with that skin tone and hair colour picked (FigureSkins)
+        public static (int Skin, int Hair)? Look =>
+            Value("--look")?.Split(',') is { Length: 2 } two && int.TryParse(two[0], out int skin) && int.TryParse(two[1], out int hair)
+                ? (skin, hair)
+                : null;
+
         // `--show create --page equipment --longest`: the page with the picks that make it longest (cc_task_m3 Part 1)
         public static bool Longest => Has("--longest");
 

@@ -104,6 +104,9 @@ namespace Game.Dev
                 if (kind.IsLineage) creation.Making.PickLineage(kind);
             }
 
+            if (DevArgs.Look is var (skin, hair))
+                creation.Making.Look = creation.Making.Look with { Skin = skin, Hair = hair };
+
             if (paged || cls != null || DevArgs.Species != null) creation.Open(step);
         }
 

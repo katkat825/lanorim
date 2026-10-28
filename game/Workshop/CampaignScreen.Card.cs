@@ -19,7 +19,7 @@ namespace Game.Workshop
         {
             CardDraft card = Draft.Story.Card(title);
 
-            Button back = Ui.Button(StoryWords.BackToBoardKey, () => { _openStory = ""; _highlight = null; Redraw(); });
+            Button back = Ui.Button(StoryWords.BackToBoardKey, () => { _highlight = null; OpenStory(""); });
             back.Name = "BackToBoard";
 
             LineEdit name = Forms.Line("CardName", Draft.Story.NameOf(title), _ => { });
@@ -155,15 +155,16 @@ namespace Game.Workshop
             items.AddItem(Ui.Say(StoryWords.DeleteBlockKey), 3);
             items.SetItemDisabled(0, at == 0);
             items.SetItemDisabled(1, at == count - 1);
-            items.IdPressed += id => BlockMenu(card, path, (int)id);
+            var head = Ui.Row(8, name, menu);
+            items.IdPressed += id => BlockMenu(card, path, (int)id, head);
 
-            var column = Ui.Column(6, Ui.Row(8, name, menu));
+            var column = Ui.Column(6, head);
             BlockForm(column, card, path, block);
 
             PanelContainer row = Ui.Panel(column);
             row.Name = "Block_" + StoryPath.Name(path);
             row.FocusMode = FocusModeEnum.All;
-            row.GuiInput += e => BlockKeys(card, path, e, row);
+            row.GuiInput += e => BlockKeys(card, path, e, row, head);
 
             if (_highlight != null && _highlight.SequenceEqual(path))
             {
@@ -180,26 +181,41 @@ namespace Game.Workshop
             return margin;
         }
 
-        void BlockMenu(string card, int[] path, int item)
+        void BlockMenu(string card, int[] path, int item, HBoxContainer head)
         {
             switch (item)
             {
                 case 0: Change(() => Editor.MoveBlock(card, path, -1)); break;
                 case 1: Change(() => Editor.MoveBlock(card, path, 1)); break;
                 case 2: Change(() => Editor.DuplicateBlock(card, path)); break;
-                case 3: Change(() => Editor.DeleteBlock(card, path)); break;
+                case 3: AskToDeleteBlock(card, path, head); break;
             }
         }
 
-        // a block's keys: Ctrl+D duplicates it, Delete takes it out
-        void BlockKeys(string card, int[] path, InputEvent @event, Control row)
+        // DELETE A BLOCK, asked on its own head (what's under it goes too)
+        void AskToDeleteBlock(string card, int[] path, HBoxContainer head)
+        {
+            Ui.Clear(head);
+            Label question = Ui.Label(WorkshopWords.RemoveQuestionKey);
+            question.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+            Button yes = Ui.Button(WorkshopWords.DeleteKey, () => Change(() => Editor.DeleteBlock(card, path)));
+            yes.Name = "DeleteBlock_" + StoryPath.Name(path);
+            Button keep = Ui.Button(WorkshopWords.KeepKey, Redraw);
+            head.AddChild(question);
+            head.AddChild(yes);
+            head.AddChild(keep);
+            Ui.FocusLater(keep);
+        }
+
+        // a block's keys: Ctrl+D duplicates it, Delete asks to take it out
+        void BlockKeys(string card, int[] path, InputEvent @event, Control row, HBoxContainer head)
         {
             if (@event is not InputEventKey { Pressed: true } key) return;
 
             Act? act = Keyboard.Pressed(key);
 
             if (act == Act.DuplicateCard) Change(() => Editor.DuplicateBlock(card, path));
-            else if (act == Act.DeleteSelection) Change(() => Editor.DeleteBlock(card, path));
+            else if (act == Act.DeleteSelection) AskToDeleteBlock(card, path, head);
             else return;
 
             row.AcceptEvent();

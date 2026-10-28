@@ -30,15 +30,19 @@ namespace Content.Maps
         // what the title bar calls it: "My maps", or the campaign's name
         public string NameKey { get; }
 
+        // THE CAMPAIGN'S NAME AS ITS PAGE HAS IT (Kathleen's UI notes, 2026-10-27): a campaign being made in the Workshop
+        // may not have its words loaded, or may have been renamed and not saved, so its page says it; "" when nobody did
+        public string Named { get; private init; } = "";
+
         public static readonly string LibraryKey = Screens.ScreenKeys.Key("map", "my_maps");
 
         // the library: its folder is the maps' own
         public static MapPlace Library(string folder) => new(folder, null, null, LibraryKey);
 
         // a campaign: its maps are in its maps/ folder, the one Package.ReadMaps reads
-        public static MapPlace OfCampaign(string campaign, string nameKey = null) =>
+        public static MapPlace OfCampaign(string campaign, string nameKey = null, string named = "") =>
             new(Path.Combine(campaign ?? "", Package.MapsFolder), campaign,
-                Path.GetFileName((campaign ?? "").TrimEnd('/', '\\')), nameKey);
+                Path.GetFileName((campaign ?? "").TrimEnd('/', '\\')), nameKey) { Named = named ?? "" };
 
         public bool Same(MapPlace other) =>
             other != null && Path.GetFullPath(Folder).TrimEnd('/', '\\') == Path.GetFullPath(other.Folder).TrimEnd('/', '\\');

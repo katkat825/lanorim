@@ -125,6 +125,7 @@ namespace Game.Workshop
                 form.AddChild(Forms.Field(Content.Screens.MapBuilderView.TemplateKey,
                     Forms.Choice("Template", MapTemplates.Ids, Wizard.Template, MapTemplates.NameKey, v => Wizard.Template = v),
                     WorkshopWords.TemplateHintKey));
+                form.AddChild(Forms.MapSize("FirstMap", Wizard.Columns, Wizard.Rows, (c, r) => { Wizard.Columns = c; Wizard.Rows = r; }));
                 return;
             }
 

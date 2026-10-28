@@ -175,6 +175,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--ask-delete` | launch.tscn |  | with --show book, the first character's Delete pressed, for a picture of the question |
 | `--page <step>` | launch.tscn |  | with --show create, that creation page, part filled in |
 | `--class <class>` | wherever it applies |  | with --show create, that class (mage otherwise); on the demonstration table, the hero's class (rogue otherwise) |
+| `--look <skin,hair>` | launch.tscn |  | with --show create, that skin tone and hair colour picked (FigureSkins, from 0) |
 | `--longest` | launch.tscn |  | with --show create --page, the picks that make that page longest (equipment, traits, cantrips, spells; check-layout's worst case) |
 | `--species <species|lineage>` | wherever it applies |  | with --show create, that species (and lineage) picked; on the demonstration table, the hero's (halfling otherwise) |
 | `--begin <campaign> [class]` | launch.tscn |  | a character with every default (fighter otherwise), straight to the table; probe saves are kept apart |

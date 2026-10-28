@@ -29,6 +29,11 @@ namespace Game.Play
             public Border? Door;
             public string Spell;
             public Cell? At;
+
+            // everyone's hit points as of this step (Kathleen's UI notes, 2026-10-27: the bar went down before the hit
+            // was seen). The rules have taken them off by the time the board shows the blow, so the strip shows these
+            // while it plays back. A strike's own target already reads as after it
+            public Dictionary<Actor, int> Health;
         }
 
         readonly ConcurrentQueue<Step> _steps;
@@ -40,7 +45,19 @@ namespace Game.Play
             _isHero = isHero;
         }
 
-        void Add(Step step) => _steps.Enqueue(step);
+        // who is in the fight, for the hit points each step remembers
+        Actor[] _all = Array.Empty<Actor>();
+
+        public override void Began(IReadOnlyList<InitiativeRoll> order) =>
+            _all = order?.Select(roll => roll.Actor).ToArray() ?? Array.Empty<Actor>();
+
+        void Add(Step step)
+        {
+            step.Health ??= Snapshot();
+            _steps.Enqueue(step);
+        }
+
+        Dictionary<Actor, int> Snapshot() => _all.ToDictionary(actor => actor, actor => actor.Health.Current);
 
         public override void TurnBegan(Turn turn) =>
             Add(new Step { What = "turn", Actor = turn.Actor, Hero = _isHero(turn.Actor) });
@@ -48,8 +65,20 @@ namespace Game.Play
         public override void Moved(Actor actor, IReadOnlyList<Cell> route) =>
             Add(new Step { What = "move", Actor = actor, Route = route?.ToArray() ?? Array.Empty<Cell>(), Hero = _isHero(actor) });
 
-        public override void Struck(Blow blow) =>
-            Add(new Step { What = "strike", Actor = blow.Attacker, Other = blow.Target, Hit = blow.Hit, Hero = _isHero(blow.Attacker) });
+        // told before the damage comes off (Encounter.Attacks), so the target's hit points are the ones after it:
+        // temporary hit points first (Health.Hurt)
+        public override void Struck(Blow blow)
+        {
+            Dictionary<Actor, int> health = Snapshot();
+
+            if (blow.Hit && blow.Target != null)
+            {
+                int through = Math.Max(0, blow.Suffered - blow.Target.Health.Temporary);
+                health[blow.Target] = Math.Max(0, blow.Target.Health.Current - through);
+            }
+
+            Add(new Step { What = "strike", Actor = blow.Attacker, Other = blow.Target, Hit = blow.Hit, Hero = _isHero(blow.Attacker), Health = health });
+        }
 
         // PRONE IS A PLACE ON THE BOARD, NOT A DEATH (cc_task_working-notes-10-01.md 1.2): Prone lays the piece
         // down in its square and its end stands it back up. Unconscious brings Prone with it (SRD 5.2.1), so it

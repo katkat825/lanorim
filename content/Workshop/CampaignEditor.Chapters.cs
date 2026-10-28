@@ -12,7 +12,7 @@ namespace Content.Workshop
     public sealed partial class CampaignEditor
     {
         // where the campaign's maps live: its maps/ folder, the one the builder saves into
-        public MapPlace Maps => MapPlace.OfCampaign(Folder, CampaignFiles.NameKey(Id));
+        public MapPlace Maps => MapPlace.OfCampaign(Folder, CampaignFiles.NameKey(Id), Draft.Name);
 
         // a chapter, its id made from its title (and the next free one if that's taken); its id is returned
         public string AddChapter(string title)
@@ -79,13 +79,13 @@ namespace Content.Workshop
             return problem == null ? id : null;
         }
 
-        // A NEW MAP, made from a template at its own size and written into maps/ straight away, so the chapter that names
-        // it plays whether or not the builder ever saves it; the id it's under, or null and why not
-        public string MakeMap(string name, string template, out string problem)
+        // A NEW MAP, made from a template at the size asked for and written into maps/ straight away, so the chapter that
+        // names it plays whether or not the builder ever saves it; the id it's under, or null and why not
+        public string MakeMap(string name, string template, out string problem,
+                              int columns = Screens.MapBuilderView.StartColumns, int rows = Screens.MapBuilderView.StartRows)
         {
             string id = MapName.IdIn(Maps, name);
-            MapDraft drawn = MapTemplates.Read(template) ?? MapTemplates.Read(MapTemplates.Standard);
-            MapDraft made = MapTemplates.Make(template, drawn.Columns, drawn.Rows);
+            MapDraft made = MapTemplates.Make(template, columns, rows) ?? MapTemplates.Make(MapTemplates.Standard, columns, rows);
 
             // the name as typed, the id made from it (cc_task_m2 Part 7)
             made.Name = name?.Trim() ?? "";
@@ -94,6 +94,23 @@ namespace Content.Workshop
 
             return problem == null ? id : null;
         }
+
+        // A CAMPAIGN'S MAP DELETED: off every chapter (one undo step) and its file to the campaign's Recently deleted for
+        // thirty days (undo puts it back on the chapter, Restore puts the file back). null when it went, or why not
+        public string DeleteMap(string map)
+        {
+            string problem = MapFiles.Delete(Maps, map, System.DateTime.Today);
+            if (problem != null) return problem;
+
+            Edit("map", d => { foreach (ChapterDraft chapter in d.Chapters) chapter.Maps.RemoveAll(m => m == map); });
+            return null;
+        }
+
+        // the campaign's deleted maps, the newest first, and one put back: the id it has now (its own, or the next free
+        // one), or null and why not. Not an edit: the map is a file, and a chapter takes it again by Add
+        public System.Collections.Generic.IReadOnlyList<RecentlyDeleted.Item> DeletedMaps => MapFiles.Deleted(Maps);
+
+        public string RestoreMap(RecentlyDeleted.Item item, out string problem) => MapFiles.Restore(Maps, item, out problem);
 
         static void Move<T>(System.Collections.Generic.List<T> list, int from, int to)
         {

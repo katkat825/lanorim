@@ -28,6 +28,14 @@ namespace Game.Workshop
         Timer _autosave;
         bool _advanced;
 
+        // the map builder adds a character from a map to the page open on its campaign, not to a copy read from disk
+        static CampaignScreen() =>
+            Content.Screens.MapBuilderView.OpenPage = folder =>
+                GameState.Editing is { } editing && SameFolder(editing.Folder, folder) ? editing : null;
+
+        static bool SameFolder(string a, string b) =>
+            System.IO.Path.GetFullPath(a ?? "").TrimEnd('/', '\\') == System.IO.Path.GetFullPath(b ?? "").TrimEnd('/', '\\');
+
         CampaignScreen(Launch launch, CampaignEditor editor, bool fresh)
         {
             _launch = launch;
@@ -120,14 +128,25 @@ namespace Game.Workshop
 
         // EVERY TAB AND THE PROBLEMS DRAWN AGAIN from the draft: after an undo or a redo, or a change that adds or takes
         // away a row. A field being typed into is never redrawn under the typing
+        // EVERY TAB KEEPS ITS PLACE through a redraw (Kathleen's UI notes, 2026-10-27: Add block, Add an option, Only if...
+        // used to throw the page back to its top); a tab told to start again (another card opened) goes to its top
+        readonly System.Collections.Generic.Dictionary<string, int> _scrolled = new();
+
         public void Redraw()
         {
             WorkshopTab showing = Tab;
 
             foreach (Node old in _tabs.GetChildren())
             {
+                if (old is ScrollContainer kept && !_scrolled.ContainsKey("!" + kept.Name)) _scrolled[kept.Name] = kept.ScrollVertical;
                 _tabs.RemoveChild(old);
                 old.QueueFree();
+            }
+
+            foreach (string fresh in _scrolled.Keys.Where(k => k.StartsWith('!')).ToList())
+            {
+                _scrolled.Remove(fresh);
+                _scrolled.Remove(fresh.Substring(1));
             }
 
             foreach (WorkshopTab tab in Enum.GetValues<WorkshopTab>())
@@ -151,6 +170,8 @@ namespace Game.Workshop
                 ScrollContainer scroll = Ui.Scroll(page, 440);
                 scroll.Name = tab.ToString();
                 _tabs.AddChild(scroll);
+
+                if (_scrolled.TryGetValue(scroll.Name, out int was) && was > 0) Callable.From(() => Restore(scroll, was)).CallDeferred();
                 _tabs.SetTabTitle(_tabs.GetTabCount() - 1, Ui.Say(WorkshopWords.TabKey(tab)));
             }
 
@@ -159,6 +180,13 @@ namespace Game.Workshop
 
             ProblemsPanel.Fill(_problems, Editor, _advanced, GoThere);
             _title.Text = Hub.Named(CampaignFiles.NameKey(Editor.Id), Draft.Name);
+        }
+
+        // back to where it was once the new page has laid out (a page's height isn't known the frame it's made)
+        async void Restore(ScrollContainer scroll, int to)
+        {
+            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+            if (IsInstanceValid(scroll)) scroll.ScrollVertical = to;
         }
 
         public void GoThere(WorkshopTab tab)

@@ -53,6 +53,13 @@ namespace Content.Maps
                 return MapEscape.Dropped;
             }
 
+            // the wall or door in hand put down too (Kathleen's UI notes, 2026-10-27): back to Select, as a prop is
+            if (Tool == MapTool.Wall)
+            {
+                Tool = MapTool.Select;
+                return MapEscape.Dropped;
+            }
+
             if (open) return MapEscape.Close;
 
             if (Chosen != null)

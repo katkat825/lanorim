@@ -37,7 +37,7 @@ namespace Game.Screens
             {
                 Step.Class, Step.Species, Step.Lineage, Step.Background, Step.Traits, Step.Abilities,
                 Step.Improvements, Step.Skills, Step.Cantrips, Step.Spells, Step.SpellResource, Step.Equipment,
-                Step.Alignment, Step.Name,
+                Step.Alignment, Step.Name, Step.Look,
             };
         }
 
@@ -148,6 +148,7 @@ namespace Game.Screens
                 case Step.SpellResource: Choices(Enum.GetValues<SpellResourceMode>(), Creation.LabelKey, m => _making.Resource == m, m => _making.Pick(m), Creation.BlurbKey); break;
                 case Step.Alignment: Choices(Alignments.All, a => a.NameKey(), a => _making.Alignment == a, a => { _making.Pick(a); return true; }); break;
                 case Step.Name: Naming(); break;
+                case Step.Look: LookPage(); break;
             }
 
             _scroll = Ui.Scroll(_body, ListHeight);

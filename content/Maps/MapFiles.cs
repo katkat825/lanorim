@@ -60,6 +60,26 @@ namespace Content.Maps
             }
         }
 
+        // A MAP DELETED goes to its place's Recently deleted for thirty days (Kathleen, 2026-10-27; RecentlyDeleted), as a
+        // campaign does: null when it went, or why not
+        public static string Delete(MapPlace place, string id, DateTime today)
+        {
+            if (!Has(place, id)) return $"there is no map called '{id}' there";
+
+            return Workshop.RecentlyDeleted.DeleteFile(PathOf(place, id), today, out string problem) == null ? problem : null;
+        }
+
+        // the place's deleted maps, the newest first; one restored (the id it has now, its own or the next free one);
+        // and those past their thirty days, gone
+        public static IReadOnlyList<Workshop.RecentlyDeleted.Item> Deleted(MapPlace place) =>
+            Workshop.RecentlyDeleted.Files(place.Folder, Package.MapExtension);
+
+        public static string Restore(MapPlace place, Workshop.RecentlyDeleted.Item item, out string problem) =>
+            Workshop.RecentlyDeleted.RestoreFile(item, place.Folder, out problem);
+
+        public static int Expire(MapPlace place, DateTime today) =>
+            Workshop.RecentlyDeleted.ExpireFiles(place.Folder, Package.MapExtension, today);
+
         // the first id like this one that no map in the place has: mill_yard_2, mill_yard_3. what "rename" offers when
         // a copy's id is taken
         public static string FreeId(MapPlace place, string id) => ContentId.Free(id, taken => Has(place, taken));

@@ -113,21 +113,14 @@ namespace Game.Screens
 
             var name = new LineEdit { Name = "MapName", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
             Label rule = Game.Workshop.Forms.NameRule(name);
-            SpinBox columns = Side("Columns", 12), rows = Side("Rows", 10);
+            SpinBox columns = Side("Columns", MapBuilderView.StartColumns), rows = Side("Rows", MapBuilderView.StartRows);
 
             var template = new OptionButton { Name = "Template", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, ClipText = true, FitToLongestItem = false };
             foreach (string one in MapTemplates.Ids) template.AddItem(Ui.Say(MapTemplates.NameKey(one)));
             template.Selected = MapTemplates.Ids.ToList().IndexOf(MapTemplates.Standard);
 
-            // a template's own size, when it's picked: the size boxes are only a starting point. Blank has no size of its
-            // own: it takes the boxes' (cc_task_m3 Part 3)
-            template.ItemSelected += i =>
-            {
-                MapDraft drawn = MapTemplates.TakesTheSize(MapTemplates.Ids[(int)i]) ? null : MapTemplates.Read(MapTemplates.Ids[(int)i]);
-                if (drawn == null) return;
-                columns.Value = drawn.Columns;
-                rows.Value = drawn.Rows;
-            };
+            // a template never changes the size boxes: every template is fitted to the size they say (Kathleen's UI notes,
+            // 2026-10-27; it used to offer its own size when picked)
 
             var lives = new OptionButton { Name = "Lives", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, ClipText = true, FitToLongestItem = false };
             lives.AddItem(Ui.Say(MapPlace.LibraryKey));

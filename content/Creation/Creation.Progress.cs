@@ -77,6 +77,7 @@ namespace Content.Creation
                 ClassKit = ClassKit,
                 BackgroundKit = BackgroundKit,
                 Figure = Figure,
+                Look = Look ?? HeroLook.Own,
             };
 
             hero.Build(_backgroundSpend, _skills.Concat(_traitSkills), _expertise, Library.Items, _spells,

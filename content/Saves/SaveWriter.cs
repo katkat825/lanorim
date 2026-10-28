@@ -133,6 +133,9 @@ namespace Content.Saves
             if (!string.IsNullOrEmpty(hero.Size)) json.WriteString("size", hero.Size);
             if (hero.ShopsFirst) json.WriteBoolean("shops_first", true);
             if (hero.Figure != 0) json.WriteNumber("figure", hero.Figure);
+            if (!string.IsNullOrEmpty(hero.Body)) json.WriteString("body", hero.Body);
+            if (hero.Skin >= 0) json.WriteNumber("skin", hero.Skin);
+            if (hero.Hair >= 0) json.WriteNumber("hair", hero.Hair);
             if (hero.Experience != 0) json.WriteNumber("xp", hero.Experience);
             json.WriteNumber("level", hero.Level);
         }

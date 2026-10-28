@@ -87,34 +87,47 @@ namespace Game.Board
         public static IEnumerable<string> Classes => ByClass.Keys;
 
         // a class's figure (0 or 1; anything else is the first), or null for a class with no row; a species with a
-        // mini of its own changes it (the Beastfolk's plushie, the Fairy's wings)
-        public static MiniLook LookOf(string classId, int figure = 0, string species = null, string lineage = null)
+        // mini of its own changes it (the Beastfolk's plushie, the Fairy's wings). `chosen`: the hero's own pick on
+        // creation's last page - another class's body, a skin tone, a hair colour (HeroLook) - never for a kind with a
+        // mini of its own
+        public static MiniLook LookOf(string classId, int figure = 0, string species = null, string lineage = null,
+                                      Content.Sheet.HeroLook chosen = null)
         {
             if (lineage != null && ByLineage.TryGetValue(lineage, out MiniLook kind)) return kind;
 
-            MiniLook look = classId != null && ByClass.TryGetValue(classId, out MiniLook[] looks)
+            string body = chosen?.Body is { Length: > 0 } other && ByClass.ContainsKey(other) ? other : classId;
+
+            MiniLook look = body != null && ByClass.TryGetValue(body, out MiniLook[] looks)
                 ? looks[figure >= 0 && figure < looks.Length ? figure : 0]
                 : null;
+
+            if (look != null && chosen != null)
+                look = look with { Skin = FigureSkins.Pick(FigureSkins.Tones, chosen.Skin), Hair = FigureSkins.Pick(FigureSkins.Hair, chosen.Hair) };
 
             return species == "fairy" ? look?.Winged() : look;
         }
 
-        // the hero's own mini: its class, its figure, its species and lineage
+        // a kind that stands as a mini of its own (the Beastfolk): no body, skin or hair to choose
+        public static bool OwnKind(string lineage) => lineage != null && ByLineage.ContainsKey(lineage);
+
+        public static bool OwnKind(MiniLook look) => look != null && ByLineage.ContainsValue(look);
+
+        // the hero's own mini: its class, its figure, its species and lineage, and its look
         public static (PackedScene Model, MiniLook Look)? For(Content.Sheet.Hero hero) =>
-            hero == null ? null : For(hero.Class.Id, hero.Figure, hero.Species.Id, hero.Lineage?.Id);
+            hero == null ? null : For(hero.Class.Id, hero.Figure, hero.Species.Id, hero.Lineage?.Id, hero.Look);
 
         // the class's figure and pose, or null for the board's own HeroFigure: a class with no row, or the switch off.
         // For pictures and comparisons: `--old-hero` is the switch off for one run, `--plain-pose` every body in
         // Idle_A, `--empty-handed` nothing held, `--figure 1` the second figure, `--head kaykit/Mage.glb` any head
         // on the body with its headgear off (the heads sheet)
         public static (PackedScene Model, MiniLook Look)? For(string classId, int figure = 0, string species = null,
-                                                             string lineage = null)
+                                                             string lineage = null, Content.Sheet.HeroLook chosen = null)
         {
             if (!Game.Screens.HudLayout.Current.HeroByClass || DevArgs.OldHero) return null;
 
             if (DevArgs.Figure is int asked) figure = asked;
 
-            MiniLook look = LookOf(classId, figure, species, lineage);
+            MiniLook look = LookOf(classId, figure, species, lineage, chosen);
 
             if (look == null) return null;
 

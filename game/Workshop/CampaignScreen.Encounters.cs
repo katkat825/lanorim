@@ -120,7 +120,7 @@ namespace Game.Workshop
 
             var top = Ui.Row(8, kind,
                 Pickers.Likely("Likely_" + id, Math.Max(1, entry.Weight), total, v => Edit("encounters.weight", d => d.Tables.Table(table).Entry(id).Weight = v, true)),
-                Ui.Button(WorkshopWords.RemoveKey, () => Change(() => Editor.RemoveEntry(table, id))));
+                Forms.Removal("RemoveEntry_" + id, () => Change(() => Editor.RemoveEntry(table, id))));
 
             var column = Ui.Column(6, top);
             column.Name = "Entry_" + id;

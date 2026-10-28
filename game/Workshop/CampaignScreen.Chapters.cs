@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Text.Json;
 using Content.Maps;
+using Content.Screens;
 using Content.Workshop;
 using Game.Play;
 using Game.Screens;
@@ -36,11 +37,43 @@ namespace Game.Workshop
             add.Name = "AddChapter";
             page.AddChild(Ui.Row(8, title, add));
 
+            DeletedMaps(page);
+
             Json(page, JsonSerializer.Serialize(new
             {
                 chapters = Draft.Chapters.Select(c => new { id = c.Id, maps = c.Maps }),
                 start = Draft.StartsAt,
             }, new JsonSerializerOptions { WriteIndented = true }));
+        }
+
+        // THE CAMPAIGN'S DELETED MAPS (Kathleen, 2026-10-27): thirty days in its maps/.deleted, Restore puts one back among
+        // its maps (a chapter takes it again by Add), Delete forever asks first. Past their days, they go as the tab opens
+        void DeletedMaps(VBoxContainer page)
+        {
+            Content.Maps.MapFiles.Expire(Editor.Maps, System.DateTime.Today);
+            var items = Editor.DeletedMaps;
+
+            if (items.Count == 0) return;
+
+            page.AddChild(Ui.Label(WorkshopWords.RecentlyDeletedKey));
+
+            foreach (Content.Workshop.RecentlyDeleted.Item item in items)
+            {
+                Content.Workshop.RecentlyDeleted.Item one = item;
+
+                page.AddChild(Forms.Deleted("DeletedMap_" + one.Id, Content.Maps.MapName.Of(one), one.DaysLeft(System.DateTime.Today),
+                    () =>
+                    {
+                        if (Editor.RestoreMap(one, out string problem) == null) GD.PushWarning($"workshop: {one.Id} could not be restored - {problem}");
+                        Redraw();
+                    },
+                    () =>
+                    {
+                        string problem = Content.Workshop.RecentlyDeleted.Forget(one);
+                        if (problem != null) GD.PushWarning($"workshop: {one.Id} could not be deleted - {problem}");
+                        Redraw();
+                    }));
+            }
         }
 
         Control Chapter(int at, ChapterDraft chapter)
@@ -95,7 +128,13 @@ namespace Game.Workshop
                 Ui.Button(WorkshopWords.OpenInBuilderKey, () => OpenMap(map)).Greyed(!MapFiles.Has(Editor.Maps, map), null),
                 Ui.Button(WorkshopWords.UpKey, () => Change(() => Editor.MoveMap(chapter, at, at - 1))).Greyed(at == 0, null),
                 Ui.Button(WorkshopWords.DownKey, () => Change(() => Editor.MoveMap(chapter, at, at + 1))).Greyed(at == count - 1, null),
-                Ui.Button(WorkshopWords.RemoveKey, () => Change(() => Editor.RemoveMap(chapter, at))));
+                Ui.Button(WorkshopWords.RemoveKey, () => Change(() => Editor.RemoveMap(chapter, at))),
+                Forms.Removal($"DeleteMap_{chapter}_{at}", () =>
+                {
+                    string problem = Editor.DeleteMap(map);
+                    if (problem != null) GD.PushWarning($"workshop: {map} could not be deleted - {problem}");
+                    Redraw();
+                }, WorkshopWords.DeleteMapQuestionKey, WorkshopWords.DeleteMapKey, MapName.Of(Editor.Maps, map)));
             row.Name = $"Map_{chapter}_{at}";
             return row;
         }
@@ -142,6 +181,9 @@ namespace Game.Workshop
             OptionButton templates = Forms.Choice("NewMapTemplate_" + chapter, MapTemplates.Ids, template, MapTemplates.NameKey, v => template = v);
             templates.CustomMinimumSize = new Vector2(Ui.Px(150), 0);
 
+            int columns = MapBuilderView.StartColumns, rows = MapBuilderView.StartRows;
+            HBoxContainer size = Forms.MapSize("NewMapSize_" + chapter, columns, rows, (c, r) => { columns = c; rows = r; });
+
             Button make = Ui.Button(WorkshopWords.MakeMapKey, () =>
             {
                 if (!MapName.Allowed(name.Text))
@@ -150,7 +192,7 @@ namespace Game.Workshop
                     return;
                 }
 
-                string made = Editor.MakeMap(name.Text, template, out string problem);
+                string made = Editor.MakeMap(name.Text, template, out string problem, columns, rows);
 
                 if (made == null)
                 {
@@ -163,7 +205,7 @@ namespace Game.Workshop
             });
             make.Name = "MakeMap_" + chapter;
 
-            return Ui.Column(2, Ui.Row(8, name, templates, make), rule);
+            return Ui.Column(2, Ui.Row(8, name, templates, make), size, rule);
         }
 
         // the builder, on one of the campaign's maps; leaving it comes back to this page as it was (GameState.Editing)

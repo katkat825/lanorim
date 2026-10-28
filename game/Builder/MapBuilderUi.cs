@@ -64,7 +64,16 @@ namespace Game.Builder
 
         // "My maps / Mill Yard •": where it lives, its name, and a dot while there are changes not saved
         public string Title =>
-            $"{Ui.Say(Builder.View.Place.NameKey ?? Builder.View.Place.Id ?? "")} / {Builder.View.Name}{(Editor.Unsaved ? " •" : "")}";
+            $"{PlaceName(Builder.View.Place)} / {Builder.View.Name}{(Editor.Unsaved ? " •" : "")}";
+
+        // a campaign by its name: the Workshop's page's, else its words, else its id; "My maps" for the library
+        static string PlaceName(Content.Maps.MapPlace place)
+        {
+            if (place.Named.Length > 0) return place.Named;
+
+            string said = place.NameKey == null ? "" : Ui.Say(place.NameKey);
+            return said.Length > 0 && said != place.NameKey ? said : place.Id ?? "";
+        }
 
         public void Refresh()
         {

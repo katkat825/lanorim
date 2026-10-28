@@ -19,6 +19,10 @@ namespace Game.Screens
 
         [Export] public float Fov { get; set; } = 40f;
 
+        [Export] public float KindScale { get; set; } = 0.9f;
+
+        [Export] public float KindDrop { get; set; } = 0.02f;
+
         const string MiniScene = "res://Board/mini.tscn";
         const string PaintPath = "res://shaders/painted.tres";
 
@@ -98,7 +102,12 @@ namespace Game.Screens
 
             var mini = GD.Load<PackedScene>(MiniScene).Instantiate<Mini>();
             mini.FigureModel = model.Model;
-            mini.FigureHeight = look.Height;
+
+            // a Beastfolk's own mini a tenth smaller and a little lower here, so its ears and hood stay in the window
+            // (Kathleen's UI notes, 2026-10-27)
+            bool kind = HeroMinis.OwnKind(look);
+            mini.FigureHeight = look.Height * (kind ? KindScale : 1f);
+            mini.Position = new Vector3(0f, kind ? -KindDrop : 0f, 0f);
             mini.Look = look;
             mini.Paint = ResourceLoader.Exists(PaintPath) ? GD.Load<Material>(PaintPath) : null;
 

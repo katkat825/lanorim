@@ -78,7 +78,17 @@ namespace Game.Board
 
             PaintedModel.Paint(figure, Paint, "mini");
 
-            if (Look?.Skin is Color skin) PaintedModel.Recolour(figure, "Skin", skin);
+            if (Look?.Skin is Color skin)
+            {
+                PaintedModel.Recolour(figure, "Skin", skin);
+                PaintedModel.RecolourSwatch(figure, PaintedModel.SkinSwatch, skin);
+            }
+
+            if (Look?.Hair is Color hair)
+            {
+                PaintedModel.Recolour(figure, "Hair", hair);
+                PaintedModel.RecolourSwatch(figure, PaintedModel.HairSwatch, hair);
+            }
 
             // a rigged figure is measured off its posed skeleton, because its AABB is stuck in the
             // bind pose; anything else is measured off its geometry, which is telling the truth

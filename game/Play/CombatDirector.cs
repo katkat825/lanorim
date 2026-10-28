@@ -126,6 +126,14 @@ namespace Game.Play
 
         public Actor TurnShown => Presenting ? _showing : null;
 
+        // the hit points the table has shown so far, while it is behind the rules (BoardShow.Step.Health); null is the
+        // live number
+        readonly System.Collections.Generic.Dictionary<Actor, int> _health = new();
+
+        public int? HealthShown(Actor actor) => Presenting && _health.TryGetValue(actor, out int shown) ? shown : null;
+
+        bool _wasPresenting;
+
         // choosing an option, or aiming the one picked. Targeting is still the hero's move: when it
         // was left out, picking an attack switched off the click that aims it, the right-click and
         // Esc that cancel it, and the bar, and the strip said "enemy turn" (cc_ui_issues_9-25-2026.md)
@@ -152,6 +160,10 @@ namespace Game.Play
 
                 if (!_skipping) break;
             }
+
+            // caught up: the strip goes back to the live numbers
+            if (_wasPresenting && !Presenting) _hud?.RefreshStrip();
+            _wasPresenting = Presenting;
 
             if (_steps.IsEmpty && _wait <= 0)
             {
@@ -192,6 +204,9 @@ namespace Game.Play
 
         void Play(BoardShow.Step step)
         {
+            if (step.Health != null)
+                foreach (var (actor, hitPoints) in step.Health) _health[actor] = hitPoints;
+
             switch (step.What)
             {
                 case "turn":

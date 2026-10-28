@@ -223,7 +223,7 @@ namespace Game.Screens
 
             Ui.Clear(_strip);
 
-            var hud = new CombatHud(session, null, _director.TurnShown);
+            var hud = new CombatHud(session, null, _director.TurnShown, _director.HealthShown);
 
             foreach (TurnChip chip in hud.Order) _strip.AddChild(Chip(chip));
 

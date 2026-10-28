@@ -108,5 +108,24 @@ namespace Content.Tests
             Assert.Equal(hud.Actions, hud.ActionsGiven);
             Assert.Equal("●○", CombatHud.Pips(1, 2));
         }
+
+        // THE STRIP FOLLOWS THE TABLE (Kathleen's UI notes, 2026-10-27): while the board is still showing the blow, the
+        // health bar shows what the table has shown, not what the rules already took off
+        [Fact]
+        public void TheStripShowsTheHitPointsTheTableHasShown()
+        {
+            CombatSession session = Session(Made("fighter"), new[] { Goblin(8, 3) });
+            Core.Characters.Actor goblin = session.Fight.Order.Select(r => r.Actor).First(a => a != session.Hero.Actor);
+            int live = goblin.Health.Current;
+
+            var behind = new CombatHud(session, null, null, a => a == goblin ? live + 3 : null);
+            Assert.Equal(live + 3, behind.Order.Single(c => c.Actor == goblin).HitPoints);
+            Assert.Equal(session.Hero.Actor.Health.Current, behind.Order.Single(c => c.Hero).HitPoints);
+
+            var shownDown = new CombatHud(session, null, null, a => a == goblin ? 0 : null);
+            Assert.True(shownDown.Order.Single(c => c.Actor == goblin).Down);
+
+            Assert.Equal(live, new CombatHud(session).Order.Single(c => c.Actor == goblin).HitPoints);
+        }
     }
 }

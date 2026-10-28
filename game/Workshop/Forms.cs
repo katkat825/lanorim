@@ -92,6 +92,92 @@ namespace Game.Workshop
             return list;
         }
 
+        // A NEW MAP'S SIZE: columns and rows, each a number from the smallest side to the largest (the map builder's own
+        // New map page has the same two boxes)
+        public static HBoxContainer MapSize(string name, int columns, int rows, Action<int, int> changed)
+        {
+            int c = columns, r = rows;
+            SpinBox across = Number(name + "_Columns", Content.Screens.MapBuilderView.MinSide, Content.Maps.MapDraft.MaxSide, columns, v => changed(c = v, r));
+            SpinBox down = Number(name + "_Rows", Content.Screens.MapBuilderView.MinSide, Content.Maps.MapDraft.MaxSide, rows, v => changed(c, r = v));
+
+            return Ui.Row(8, Ui.Label(Content.Screens.MapBuilderView.ColumnsKey), across, Ui.Label(Content.Screens.MapBuilderView.RowsKey), down);
+        }
+
+        // REMOVE, ASKED FIRST (Kathleen's UI notes, 2026-10-27: "a way to delete any workshop item, with a confirmation"):
+        // the button becomes the question, Delete and Keep, where it stands. `questionKey` takes `words` as its {0}
+        public static HBoxContainer Removal(string name, Action remove, string questionKey = null, string buttonKey = null, params object[] words)
+        {
+            var row = Ui.Row(6);
+            row.Name = name;
+
+            void Ask()
+            {
+                Ui.Clear(row);
+                row.AddChild(Ui.Label(questionKey ?? WorkshopWords.RemoveQuestionKey, words));
+                Button yes = Ui.Button(WorkshopWords.DeleteKey, remove);
+                yes.Name = name + "_Yes";
+                Button keep = Ui.Button(WorkshopWords.KeepKey, Plain);
+                row.AddChild(yes);
+                row.AddChild(keep);
+                Ui.FocusLater(keep);
+            }
+
+            void Plain()
+            {
+                Ui.Clear(row);
+                Button button = Ui.Button(buttonKey ?? WorkshopWords.RemoveKey, Ask);
+                button.Name = name + "_Ask";
+                row.AddChild(button);
+            }
+
+            Plain();
+            return row;
+        }
+
+        // ONE ROW OF RECENTLY DELETED: its name and the days it has left, Restore, and Delete forever asked first (the
+        // question names it and says it can't be undone). A campaign on the hub, a map there or on the Chapters tab
+        public static HBoxContainer Deleted(string name, string shown, int daysLeft, Action restore, Action forget)
+        {
+            var row = Ui.Row(8);
+            row.Name = name;
+
+            void Plain()
+            {
+                Ui.Clear(row);
+                Content.Screens.Said left = WorkshopWords.DaysLeft(daysLeft);
+                Label what = Ui.Plain($"{shown}   {Ui.Say(left.Key, left.Args)}");
+                what.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+                row.AddChild(what);
+
+                Button back = Ui.Button(WorkshopWords.RestoreKey, restore);
+                back.Name = name + "_Restore";
+                row.AddChild(back);
+
+                Button gone = Ui.Button(WorkshopWords.DeleteForeverKey, Ask);
+                gone.Name = name + "_Forever";
+                row.AddChild(gone);
+            }
+
+            void Ask()
+            {
+                Ui.Clear(row);
+                Label question = Ui.Label(WorkshopWords.ForeverQuestionKey, shown);
+                question.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+                row.AddChild(question);
+
+                Button yes = Ui.Button(WorkshopWords.DeleteForeverKey, forget);
+                yes.Name = name + "_Yes";
+                row.AddChild(yes);
+
+                Button keep = Ui.Button(WorkshopWords.KeepKey, Plain);
+                row.AddChild(keep);
+                Ui.FocusLater(keep);
+            }
+
+            Plain();
+            return row;
+        }
+
         public static CheckBox Tick(string name, string key, bool on, Action<bool> changed)
         {
             var tick = new CheckBox { Name = name, Text = Ui.Say(key), ButtonPressed = on };

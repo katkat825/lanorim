@@ -23,26 +23,35 @@ namespace Content.Screens
 
         IReadOnlyList<(string Id, string Name)> _people;
 
-        // the campaign's characters, by id and name, as its files have them now; none for My maps
+        // THE CAMPAIGN AS ITS WORKSHOP PAGE HAS IT, when the page is open on it (the game says: GameState.Editing), so a
+        // character added from the map is on the page's Characters tab and isn't lost when the page saves (Kathleen's UI
+        // notes, 2026-10-27). null: no page open on that campaign, and its files are read and written instead
+        public static Func<string, CampaignEditor> OpenPage { get; set; }
+
+        CampaignEditor Campaign => OpenPage?.Invoke(Place.Campaign) ?? CampaignEditor.Open(Place.Campaign);
+
+        // the campaign's characters, by id and name, as its page or its files have them now; none for My maps
         public IReadOnlyList<(string Id, string Name)> People =>
             _people ??= Place == null || Place.IsLibrary
                 ? Array.Empty<(string, string)>()
-                : CampaignEditor.Open(Place.Campaign).Draft.People.Select(p => (p.Id, p.Name)).ToList();
+                : Campaign.Draft.People.Select(p => (p.Id, p.Name)).ToList();
 
         // the name a figure's actor goes by, or null for someone, or for one the campaign no longer has
         public string NameOf(string actor) =>
             string.IsNullOrEmpty(actor) ? null : People.FirstOrDefault(p => p.Id == actor).Name;
 
-        // A NEW CHARACTER, from the map: added to the campaign's Characters tab (a name; the rest is the tab's) and saved
-        // there. Its id, or null when the campaign couldn't be written or there is none
+        // A NEW CHARACTER, from the map: added to the campaign's Characters tab (a name; the rest is the tab's). With its
+        // page open, to the page's draft (one undo step there, saved with the page); without, to its files, saved now.
+        // Its id, or null when the campaign couldn't be written or there is none
         public string AddPerson(string name)
         {
             if (Place == null || Place.IsLibrary || string.IsNullOrWhiteSpace(name)) return null;
 
-            CampaignEditor campaign = CampaignEditor.Open(Place.Campaign);
+            CampaignEditor page = OpenPage?.Invoke(Place.Campaign);
+            CampaignEditor campaign = page ?? CampaignEditor.Open(Place.Campaign);
             string id = campaign.AddPerson(name.Trim());
 
-            if (campaign.Save() != null) return null;
+            if (page == null && campaign.Save() != null) return null;
 
             _people = null;
             return id;

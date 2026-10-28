@@ -81,6 +81,9 @@ namespace Content.Sheet
         // not a rule: nothing in play reads it. saved; a save from before it is the first
         public int Figure { get; set; }
 
+        // the mini's body, skin and hair, when the player changed them on creation's last page (HeroLook). saved
+        public HeroLook Look { get; set; } = HeroLook.Own;
+
         // the player types a name, so it is not a localization key - it is the one string in the
         // game that is neither authored nor translated
         public string Name { get; set; }

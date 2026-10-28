@@ -11,19 +11,21 @@ namespace Game.Screens
         // its class, its figure, and what its species and lineage make of it (HeroMinis: a Beastfolk's plushie, a
         // Fairy's wings). Under the class list the choice of figure is the two figures themselves: click one to choose
         // it, the chosen one pressed. Underneath it is still Hero.Figure, 0 or 1 ($hero_figure 1 or 2)
-        static bool ShowsTheMini(Step step) => step is Step.Class or Step.Species or Step.Lineage;
+        static bool ShowsTheMini(Step step) => step is Step.Class or Step.Species or Step.Lineage or Step.Look;
 
+        // a figure of the hero's class, with the look picked so far (its skin and hair; another class's body is the
+        // Look page's own)
         MiniLook LookFor(int figure) =>
             _making.Class == null
                 ? null
-                : HeroMinis.LookOf(_making.Class.Id, figure, _making.Species?.Id, _making.Lineage?.Id);
+                : HeroMinis.LookOf(_making.Class.Id, figure, _making.Species?.Id, _making.Lineage?.Id, _making.Look with { Body = "" });
 
         Control TheMini()
         {
             var size = new Vector2I((int)Ui.Px(220), (int)Ui.Px(250));
             var mini = new MiniPreview(size) { Name = "TheMini", SizeFlagsHorizontal = SizeFlags.ShrinkCenter };
 
-            _updates.Add(() => mini.Show(LookFor(_making.Figure)));
+            _updates.Add(() => mini.Show(LookNow()));
             return mini;
         }
 
