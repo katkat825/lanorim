@@ -42,8 +42,12 @@ namespace Content.Screens
     {
         readonly ItemShelf _shelf;
 
-        public PackView(Hero hero, ItemShelf shelf, Merchant merchant = null, bool armory = false)
+        // `fight`: the fight the pack is opened in, when it is: then putting anything on or taking it off costs an action
+        // (CombatSession.ChangeGear, Kathleen 2026-11-03)
+        public PackView(Hero hero, ItemShelf shelf, Merchant merchant = null, bool armory = false,
+                        Combat.CombatSession fight = null)
         {
+            Fight = fight != null && fight.Phase != Combat.SessionPhase.Over ? fight : null;
             Hero = hero ?? throw new ArgumentNullException(nameof(hero));
             _shelf = shelf;
             Merchant = merchant;
@@ -168,19 +172,37 @@ namespace Content.Screens
 
         Item InPack(string itemId) => Pack.FirstOf(itemId)?.Item;
 
-        public bool CanEquip(string itemId) =>
+        public Combat.CombatSession Fight { get; }
+
+        // why nothing can be put on or taken off right now (in a fight: not your turn, no action left), or null
+        public string GearWhyNotKey => Fight?.WhyNotChangeGear;
+
+        // "Putting something on or taking it off takes an action in a fight", shown while the pack is open in one
+        public static readonly string GearInAFightKey = ScreenKeys.Key("pack", "gear_in_a_fight");
+
+        // the change, through the fight when there is one (an action), free outside one
+        bool Change(Func<bool> change) => Fight == null ? change() : Fight.ChangeGear(change);
+
+        // could be put on at all (the screen shows its button, greyed while GearWhyNotKey says why)
+        public bool Fits(string itemId) =>
             InPack(itemId) is Item item && item.IsEquippable && Hero.Equipment.Refuses(item, Hero.Actor, Hero.Class.Id) == null;
 
-        public bool Equip(string itemId) => CanEquip(itemId) && Hero.Wear(InPack(itemId));
+        public bool CanEquip(string itemId) => Fits(itemId) && GearWhyNotKey == null;
 
-        public bool CanHoldInOffHand(string itemId) => CanEquip(itemId) && InPack(itemId).FitsOffHand;
+        public bool Equip(string itemId) => CanEquip(itemId) && Change(() => Hero.Wear(InPack(itemId)));
 
-        public bool HoldInOffHand(string itemId) => CanHoldInOffHand(itemId) && Hero.HoldInOffHand(InPack(itemId));
+        public bool FitsOffHand(string itemId) => Fits(itemId) && InPack(itemId).FitsOffHand;
+
+        public bool CanHoldInOffHand(string itemId) => FitsOffHand(itemId) && GearWhyNotKey == null;
+
+        public bool HoldInOffHand(string itemId) => CanHoldInOffHand(itemId) && Change(() => Hero.HoldInOffHand(InPack(itemId)));
 
         public IReadOnlyList<(Slot Slot, Item Item)> Worn =>
             Slots.All.Where(s => Hero.Equipment.In(s) != null).Select(s => (s, Hero.Equipment.In(s))).ToList();
 
-        public bool TakeOff(Slot slot) => Hero.TakeOff(slot);
+        public bool CanTakeOff(Slot slot) => Hero.Equipment.In(slot) != null && GearWhyNotKey == null;
+
+        public bool TakeOff(Slot slot) => CanTakeOff(slot) && Change(() => Hero.TakeOff(slot));
 
         // --- the armory's racks (cc_task_i 3.3) ----------------------------------------------------------------
 
@@ -251,7 +273,7 @@ namespace Content.Screens
             {
                 TitleKey, GoldKey, SilverKey, CopperKey, SlotsKey, QuestKey, UseKey, EquipKey, UnequipKey, OffHandKey, WornKey, DiscardKey,
                 DiscardWarningKey, DontWarnAgainKey, BuyKey, SellKey, SellEquippedKey, NewItemKey,
-                MakeRoomKey, LeaveKey, ArmoryKey, RacksKey, LoanedKey,
+                MakeRoomKey, LeaveKey, ArmoryKey, RacksKey, LoanedKey, GearInAFightKey,
             }.Concat(Slots.All.Select(SlotKey));
     }
 }

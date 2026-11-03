@@ -35,6 +35,13 @@ namespace Game.Screens
             if (_view.AtTheCounter)
                 Body.AddChild(Ui.Label(_view.MerchantLineKey));
 
+            // in a fight, putting on and taking off costs an action, and why it can't be done now when it can't
+            if (_view.Fight != null)
+            {
+                Body.AddChild(Ui.Label(PackView.GearInAFightKey));
+                Body.AddChild(Ui.Why(_view.GearWhyNotKey != null, _view.GearWhyNotKey));
+            }
+
             var mine = Ui.Column(4);
 
             foreach (PackRow row in _view.Rows)
@@ -66,11 +73,13 @@ namespace Game.Screens
                 line.AddChild(Ui.Button(PackView.UseKey, () => { _view.Use(r.Item.Id, _dice); Redraw(); }));
 
             // put it on, or hold a Light weapon in the off hand (cc_task_open-questions-answers.md 3.1)
-            if (_view.CanEquip(r.Item.Id))
-                line.AddChild(Ui.Button(PackView.EquipKey, () => { _view.Equip(r.Item.Id); Redraw(); }));
+            if (_view.Fits(r.Item.Id))
+                line.AddChild(Ui.Button(PackView.EquipKey, () => { _view.Equip(r.Item.Id); Redraw(); })
+                                .Greyed(!_view.CanEquip(r.Item.Id), _view.GearWhyNotKey));
 
-            if (_view.CanHoldInOffHand(r.Item.Id))
-                line.AddChild(Ui.Button(PackView.OffHandKey, () => { _view.HoldInOffHand(r.Item.Id); Redraw(); }));
+            if (_view.FitsOffHand(r.Item.Id))
+                line.AddChild(Ui.Button(PackView.OffHandKey, () => { _view.HoldInOffHand(r.Item.Id); Redraw(); })
+                                .Greyed(!_view.CanHoldInOffHand(r.Item.Id), _view.GearWhyNotKey));
 
             if (_view.AtTheCounter && r.SellsFor >= 0)
             {
@@ -151,7 +160,8 @@ namespace Game.Screens
                 string lent = _view.IsLoaned(item) ? "  " + Ui.Say(PackView.LoanedKey) : "";
                 var worn = Ui.Row(6, Ui.Plain($"{Ui.Say(PackView.SlotKey(s))}: {Ui.Say(item.NameKey)}{lent}"));
                 worn.GetChild<Label>(0).SizeFlagsHorizontal = SizeFlags.ExpandFill;
-                worn.AddChild(Ui.Button(PackView.UnequipKey, () => { _view.TakeOff(s); Redraw(); }));
+                worn.AddChild(Ui.Button(PackView.UnequipKey, () => { _view.TakeOff(s); Redraw(); })
+                                .Greyed(!_view.CanTakeOff(s), _view.GearWhyNotKey));
 
                 // selling it off your back: asks every time (inventory_decisions.md; cc_task_i 5.1)
                 if (_view.SellsForWorn(s) >= 0)

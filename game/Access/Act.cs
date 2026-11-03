@@ -52,6 +52,10 @@ namespace Game.Access
         // in the HUD, out of the InputMap, so it could be neither listed nor rebound
         ToggleLog,
 
+        // the character sheet, open and shut, in a fight and out of one (cc_task_cs 1.2): C, which nothing at the
+        // table had
+        OpenSheet,
+
         // THE MAP BUILDER'S (cc_task_l Part 4.7), which were raw keys in MapBuilder before: undo, redo and save, the prop
         // in hand (or picked up) turned either way, and the Select tool's clear (its copy and paste went in cc_task_m3
         // Part 8; a saved binding to either is passed over as an act that no longer exists). Only the builder
@@ -163,6 +167,7 @@ namespace Game.Access
             Act.ZoomOut => Key.Minus,
 
             Act.ToggleLog => Key.L,
+            Act.OpenSheet => Key.C,
 
             // the keys every editor in the world uses
             Act.UndoEdit => Key.Z,

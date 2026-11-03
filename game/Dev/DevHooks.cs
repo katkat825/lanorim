@@ -49,6 +49,7 @@ namespace Game.Dev
             new("--begin", "<campaign> [class]", Where.Launch, false, "a character with every default (fighter otherwise), straight to the table; probe saves are kept apart"),
             new("--learn", "<spell,spell>", Where.Launch, false, "with --begin, those spells learned first"),
             new("--gold", "", Where.Launch, false, "with --begin, the gold instead of the gear, so the run opens in the starting shop"),
+            new("--level", "<n>", Where.Launch, false, "with --begin, the character raised to that level before the table (a level 20 sheet)"),
             new("--build", "<campaign|mine> [map]", Where.Launch, false, "that map, or a new one called probe_map, in the map builder; mine is My maps"),
             new("--template", "<id>", Where.Launch, false, "with --build, a new map starts as that template (dungeon_room otherwise)"),
             new("--tool", "<tool>", Where.Builder, false, "the builder opens with that tool in hand (select, paint, fill, wall, prop...)"),
@@ -68,6 +69,7 @@ namespace Game.Dev
             new("--autostory", "", Where.Play, true, "the story's lines and first choices taken as they come, past the starting shop"),
             new("--start", "<node>", Where.Play, true, "the story starts at that node (cellar, road, camp in the sample)"),
             new("--pause", "", Where.Play, true, "the pause menu opened on the hero's first turn in a fight"),
+            new("--sheet", "<front|back|spell|feature>[:spell]", Where.Play, false, "on the hero's first turn in a fight, the character sheet at that side, or a spell's or a feature's card over it; :spell casts that spell at the nearest foe and holds it first"),
             new("--say-bark", "<pool>", Where.Play, true, "a line from that bark pool every few seconds, past the chatter and the starting shop"),
             new("--gm-screen", "<skin>", Where.Play, true, "another of the GM screens at the table"),
 
@@ -248,6 +250,8 @@ namespace Game.Dev
                     Name = "CastProbe", Combat = director.Combat,
                     Spell = cast.Split(':')[0], Mode = cast.Contains(':') ? cast.Split(':')[1] : null,
                 });
+
+            if (DevArgs.Sheet is { } sheet) director.AddChild(new SheetProbe { Name = "SheetProbe", Director = director, Side = sheet });
 
             if (DevArgs.LayoutProbe) director.AddChild(Layouts.OfPlay(director));
         }

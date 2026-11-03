@@ -165,6 +165,10 @@ namespace Game.Play
                 HeroName = Run.Hero.Name,
             };
             AddChild(_combat);
+            _combat.OpenSheet = () =>
+            {
+                if (_overlay == null && !_rules.Busy) OpenSheet();
+            };
             _combat.Mount(_ui);
             _combat.Finished += FightOver;
         }
@@ -188,6 +192,10 @@ namespace Game.Play
         System.Collections.Generic.IReadOnlyList<Game.Access.Reachable> Reachables()
         {
             var reach = new System.Collections.Generic.List<Game.Access.Reachable>(_combat?.Reachables() ?? new System.Collections.Generic.List<Game.Access.Reachable>());
+
+            // A CARD OVER THE TABLE HAS THE KEYBOARD (cc_task_cs 1.4): with nothing to reach, Tab is left to Godot and walks
+            // the sheet's (or the pack's) buttons instead of the minis under it
+            if (_overlay != null) reach.Clear();
 
             if (reach.Count == 0) return reach;
 

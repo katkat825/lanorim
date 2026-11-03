@@ -327,7 +327,10 @@ namespace Game.Screens
                     title.SetPressedNoSignal(ReferenceEquals(reading, one));
                 });
 
-                _body.AddChild(Ui.Row(8, learn, title));
+                // its whole card, over the page (cc_task_cs 2.1)
+                Button card = Ui.Button(Content.Screens.SheetWords.CardKey, () => CardOverlay.Show(this, SpellCard.Of(one)));
+
+                _body.AddChild(Ui.Row(8, learn, title, card));
             }
 
             _describe = () => reading == null ? "" : SpellCardText.Of(SpellCard.Of(reading));

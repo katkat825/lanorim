@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Content.Classes;
+using Content.Items;
 using Content.Spells;
 using Core.Characters;
 using Core.Combat;
@@ -113,6 +114,9 @@ namespace Content.Sheet
         // (character_sheet_decisions.md, weapons)
         public int SwapCostActions => InAFight ? 1 : 0;
 
+        // the weapons in the pack that Swap can take in hand now (Hero.SpareWeapons): one Swap button each
+        public IReadOnlyList<Item> SpareWeapons { get; private set; }
+
         // --- spells --------------------------------------------------------------------------
 
         public bool Casts { get; private set; }
@@ -211,6 +215,7 @@ namespace Content.Sheet
         void ReadWeapons(Hero hero)
         {
             Weapons = hero.Attacks.Select(a => new WeaponRow(hero.Actor, a)).ToList();
+            SpareWeapons = hero.SpareWeapons;
         }
 
         void ReadSpells(Hero hero)
@@ -257,7 +262,7 @@ namespace Content.Sheet
             Keepsake = hero.HasKeepsake ? hero.KeepsakeReady : null;
 
             Special = hero.Activatable
-                          .Select(f => new SpecialRow(f, hero.UsesLeft(f)))
+                          .Select(f => new SpecialRow(f, hero.UsesLeft(f), hero.PoolOf(f).UsesAt(hero.Level)))
                           .ToList();
         }
 
@@ -360,30 +365,5 @@ namespace Content.Sheet
         public int RangeFeet { get; }
 
         public int LongRangeFeet { get; }
-    }
-
-    public sealed class SpecialRow
-    {
-        public SpecialRow(Feature feature, int usesLeft)
-        {
-            Feature = feature;
-            NameKey = feature.NameKey;
-            DescriptionKey = feature.DescriptionKey;
-            UsesMost = feature.Uses;
-            UsesLeft = feature.Uses > 0 ? Math.Max(0, usesLeft) : 0;
-        }
-
-        public Feature Feature { get; }
-
-        public string NameKey { get; }
-
-        public string DescriptionKey { get; }
-
-        // zero is "no limit" - a stance you can switch on whenever
-        public int UsesMost { get; }
-
-        public int UsesLeft { get; }
-
-        public bool Available => UsesMost == 0 || UsesLeft > 0;
     }
 }

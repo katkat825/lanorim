@@ -79,6 +79,8 @@ namespace Content.Combat
             OptionKind.Surge => Done(Turn.Surge(), "no_surge"),
             OptionKind.Flee => Done(Fight.Flee(Turn), "not_an_edge"),
             OptionKind.Yield => Done(Fight.Yield(Turn), "cannot_act"),
+            OptionKind.Swap => DoSwap(option),
+            OptionKind.EndConcentration => DoLetGo(),
             OptionKind.EndTurn => EndTurn(),
             _ => ActionResult.No(Why("no_target")),
         };

@@ -34,6 +34,8 @@ namespace Content.Combat
             options.AddRange(ItemOptions());
             options.AddRange(FeatureOptions());
             options.AddRange(ShapeOptions());
+            options.AddRange(SwapOptions());
+            options.AddRange(LetGoOptions());
             options.AddRange(FreeOptions());
 
             // 1 to 9 for the first nine that do something - attacks, then spells, then the rest
@@ -325,7 +327,7 @@ namespace Content.Combat
         public static IEnumerable<string> ActionKeys() =>
             new[] { "dash", "disengage", "hide", "bonus_dash", "bonus_disengage", "bonus_hide",
                     "stand_up", "break_free", "shake", "surge", "flee", "yield", "end_turn",
-                    "grapple", "shove", "shove_prone", "open_door", "off_hand" }
+                    "grapple", "shove", "shove_prone", "open_door", "off_hand", "swap", "end_concentration" }
                 .Select(UiName)
                 .Concat(Keys())
                 .Concat(ReactionPolicies.Keys());

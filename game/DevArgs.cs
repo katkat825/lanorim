@@ -82,6 +82,9 @@ namespace Game
 
         public static bool Gold => Has("--gold");
 
+        // `--level <n>`: with --begin, the character raised to that level (cc_task_cs: a level 20 sheet)
+        public static int Level => Int("--level") ?? 1;
+
         // `--build <campaign> [map]`: that map, or a new one, in the map builder
         public static string Build => Value("--build");
 
@@ -226,6 +229,9 @@ namespace Game
 
         // the pause menu opened on the hero's first turn in a fight
         public static bool Pause => Has("--pause");
+
+        // `--sheet <front|back|spell|feature>`: the character sheet, or a card over it, on the hero's first turn (cc_task_cs)
+        public static string Sheet => Value("--sheet");
 
         // `--say-bark <pool>`: a line from that pool every few seconds, past the chatter
         public static string SayBark => Value("--say-bark");

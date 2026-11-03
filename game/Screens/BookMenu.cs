@@ -17,6 +17,7 @@ namespace Game.Screens
             new Game.Workshop.WorkshopPage(),
             new MapBuilderPage(),
             new SettingsPage(),
+            new SpellsPage(),
             new CreditsPage(),
         };
 

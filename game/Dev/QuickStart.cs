@@ -62,6 +62,13 @@ namespace Game.Dev
                 return;
             }
 
+            // `--level`: raised the way a milestone raises it, the improvements spent the suggested way (as --auto spends
+            // them), so the level-up card doesn't hold the table
+            hero.LevelTo(DevArgs.Level);
+
+            var raised = new Content.Screens.LevelUpView(hero, 1, hero.Actor.Health.Maximum);
+            while (hero.PendingImprovements > 0) raised.TakeSuggested();
+
             GD.Print($"launch  {hero} in {pack.Id}");
 
             launch.Play(pack, hero, 0);

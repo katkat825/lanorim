@@ -23,6 +23,11 @@ namespace Game.Screens
 
         protected float Width { get; set; } = 620;
 
+        // A PAGE THE SIZE OF THE WINDOW (the character sheet, cc_task_cs 1.3): no scroll of its own, its body the window
+        // less a margin, so what doesn't fit runs off the screen where check-layout sees it rather than scrolling away
+        // out of sight. A section that may grow (a long spell list) scrolls inside itself
+        protected bool FillsTheScreen { get; set; }
+
         public override void _Ready()
         {
             SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
@@ -30,6 +35,14 @@ namespace Game.Screens
 
             Body = Ui.Column(10);
             Body.CustomMinimumSize = new Vector2(Ui.Px(Width), 0);
+
+            if (FillsTheScreen)
+            {
+                AddChild(Ui.Panel(Body));
+                Fill();
+                Draw();
+                return;
+            }
 
             // A CARD TALLER THAN THE WINDOW SCROLLS inside it rather than running off the bottom
             // (cc_task_ui-issues-9-30.md 2: the sheet was 1205 tall on a 1080 canvas)
@@ -45,8 +58,19 @@ namespace Game.Screens
         // the room a card may take: the window's height less a margin top and bottom
         static float Margin => Ui.Px(24);
 
+        // the window less a margin each side and the panel's own padding
+        void Fill()
+        {
+            Vector2 window = GetViewportRect().Size;
+            var size = new Vector2(window.X - 2 * Margin - 2 * 24, window.Y - 2 * Margin - 2 * 24);
+
+            if (Body.CustomMinimumSize != size) Body.CustomMinimumSize = size;
+        }
+
         public override void _Process(double delta)
         {
+            if (FillsTheScreen) Fill();
+
             if (_scroll == null) return;
 
             float most = GetViewportRect().Size.Y - 2 * Margin - 2 * 24;
@@ -145,93 +169,6 @@ namespace Game.Screens
 
             Body.AddChild(Ui.Button(LevelUpView.DoneKey, Close).Greyed(!_view.Done, _view.DoneWhyNotKey));
             Body.AddChild(Ui.Why(!_view.Done, _view.DoneWhyNotKey));
-        }
-    }
-
-    // THE CHARACTER SHEET, the short form: who, how hurt, how hard to hit, the scores, the spells,
-    // the features with uses left
-    public partial class SheetScreen : Overlay
-    {
-        readonly SheetView _sheet;
-
-        public SheetScreen(SheetView sheet)
-        {
-            _sheet = sheet;
-            Width = 760;
-        }
-
-        protected override void Draw()
-        {
-            Body.AddChild(Ui.Title(ScreenWords.SheetTitle));
-            Body.AddChild(Ui.Plain($"{_sheet.Name} — {Ui.Say(_sheet.SpeciesKey)} {Ui.Say(_sheet.ClassKey)}"));
-            Body.AddChild(Ui.Row(24,
-                Ui.Label(ScreenWords.SheetLevel, _sheet.Level),
-                Ui.Label(ScreenWords.SheetHp, _sheet.HitPoints, _sheet.MaxHitPoints),
-                Ui.Label(ScreenWords.SheetAc, _sheet.ArmorClass)));
-
-            // in a campaign that levels by XP (cc_task_i 3.4)
-            if (_sheet.Experience is int xp)
-                Body.AddChild(_sheet.NextLevelAt > 0
-                    ? Ui.Label(ScreenWords.SheetXp, xp, _sheet.NextLevelAt)
-                    : Ui.Label(ScreenWords.SheetXpTop, xp));
-
-            var origin = Ui.Row(24, Ui.Label(ScreenWords.SheetSize, Ui.Say(_sheet.SizeKey)));
-
-            if (_sheet.SpeciesSpellAbilityKey != null)
-                origin.AddChild(Ui.Label(ScreenWords.SheetSpeciesSpells, Ui.Say(_sheet.SpeciesSpellAbilityKey)));
-
-            Body.AddChild(origin);
-
-            // one line each, never wrapped: a wrapping label in a row was squeezed to nothing (found by
-            // check-layout, 2026-10-01)
-            var scores = Ui.Row(12, _sheet.Abilities
-                                          .Select(row => (Control)Ui.Plain($"{Ui.Say(row.ShortKey)} {row.Score} ({row.Modifier:+0;-0})"))
-                                          .ToArray());
-
-            Body.AddChild(scores);
-
-            var more = Ui.Column(4);
-
-            // NO HOVER TEXT (cc_task_ui-issues-9-30.md 3.1): a spell or a feature is picked to read, and
-            // what it is shows under the list - a spell as its whole card
-            Label about = Ui.Plain("");
-            about.ThemeTypeVariation = "CardLabel";
-
-            void Readable(string words, string text)
-            {
-                Button name = Ui.Button(words, () => about.Text = text, true);
-                name.Flat = true;
-                name.Alignment = HorizontalAlignment.Left;
-                name.FocusEntered += () => about.Text = text;
-                more.AddChild(name);
-            }
-
-            if (_sheet.Spells.Count > 0)
-            {
-                more.AddChild(Ui.Label(ScreenWords.SheetSpells));
-
-                if (_sheet.SoloSlots > 0) more.AddChild(Ui.Plain(Ui.Say(ScreenWords.SheetSoloSlot)));
-
-                foreach (SpellCard card in _sheet.Spells)
-                    Readable(Ui.Say(card.NameKey), SpellCardText.Of(card));
-            }
-
-            // the keepsake: ready, or spent until a long rest (cc_task_h 3.2)
-            if (_sheet.Keepsake is bool ready)
-                more.AddChild(Ui.Plain(Ui.Say(ready ? ScreenWords.SheetKeepsakeReady : ScreenWords.SheetKeepsakeSpent)));
-
-            if (_sheet.Special.Count > 0)
-            {
-                more.AddChild(Ui.Label(ScreenWords.SheetFeatures));
-
-                foreach (SpecialRow row in _sheet.Special)
-                    Readable(Ui.Say(row.NameKey) + (row.UsesMost > 0 ? $"  {row.UsesLeft}/{row.UsesMost}" : ""),
-                             Ui.Say(row.DescriptionKey));
-            }
-
-            Body.AddChild(Ui.Scroll(more, 320));
-            Body.AddChild(about);
-            Body.AddChild(Ui.Button(ScreenWords.Back, Close));
         }
     }
 

@@ -77,6 +77,32 @@ namespace Content.Spells
 
         public static readonly string AdaptedKey = Ui("spell_card", "adapted");
 
+        // WHAT THE SPELL IS TO A PARTY OF ONE, when that differs from the SRD (cc_task_cs 2.4): the rules' own words,
+        // never a card's. A spell no solo hero can cast (Solo.Unavailable), and one with a casting time of a minute
+        // or more, cast only outside a fight (Spell.OutOfCombat). Empty for most spells
+        public IReadOnlyList<string> SoloKeys { get; private set; }
+
+        public static readonly string SoloUnavailableKey = Ui("spell_card", "solo_unavailable");
+
+        public static readonly string OutOfCombatKey = Ui("spell_card", "out_of_combat");
+
+        // V, S, M and the material, the SRD's words (spell.<id>.components). Shown, never tracked: v1 doesn't track
+        // components (decisions_checklist.md, deferred 2026-10-01). Every SRD spell has them; a campaign's own spell
+        // may not, and a screen leaves out a key with no English
+        public string ComponentsKey => ComponentsKeyOf(Spell.Id);
+
+        public static string ComponentsKeyOf(string spellId) =>
+            KeyConventions.Key(KeyConventions.SpellNs, spellId, "components");
+
+        // WHAT IT DOES, IN A FEW WORDS, for the sheet's spell rows (character_sheet_decisions.md: "effect (damage or
+        // condition or whatever is applicable)"): SpellCardEffect's key, the dice at this caster's level when there
+        // are any, and the damage type or condition the key names
+        public string EffectKey { get; private set; }
+
+        public Core.Dice.DiceRoll EffectDice { get; private set; }
+
+        public string EffectWordKey { get; private set; }
+
         // --- what it asks of the caster, when there is one ------------------------------------
 
         public bool RollsToHit => Spell.Attacks;
@@ -117,7 +143,10 @@ namespace Content.Spells
                 SchoolKey = SchoolKeyOf(spell.School),
                 CastingTimeKey = CastingTimeKeyOf(spell),
                 Lasts = LastsOf(spell),
+                SoloKeys = SoloKeysOf(spell),
             };
+
+            (card.EffectKey, card.EffectDice, card.EffectWordKey) = SpellCardEffect.Of(spell, caster?.Actor.Level ?? 1);
 
             card.ReadRange(caster);
             card.ReadArea();
@@ -251,7 +280,21 @@ namespace Content.Spells
             spell.Answers
                 ? KeyConventions.Key(KeyConventions.UiNs, "casting_time", spell.CastingTime.Id(),
                                      "name", spell.Trigger.Value.Id())
-                : Ui("casting_time", spell.CastingTime.Id());
+                : spell.OutOfCombat ? Ui("casting_time", "out_of_combat")
+                : SpendKeyOf(spell.CastingTime);
+
+        // an action, a bonus action, a reaction, free: a spell's casting time and a feature's use, in the same words
+        public static string SpendKeyOf(Spend spend) => Ui("casting_time", spend.Id());
+
+        static IReadOnlyList<string> SoloKeysOf(Spell spell)
+        {
+            var keys = new List<string>();
+
+            if (spell.Solo == Solo.Unavailable) keys.Add(SoloUnavailableKey);
+            if (spell.OutOfCombat) keys.Add(OutOfCombatKey);
+
+            return keys;
+        }
 
         // every key a card can show. derived, like the rest of EngineKeys, so a new school or a
         // new trigger is owed its English the day it exists
@@ -262,8 +305,9 @@ namespace Content.Spells
 
             foreach (School school in Schools.All) yield return SchoolKeyOf(school);
 
-            yield return Ui("casting_time", Spend.Action.Id());
-            yield return Ui("casting_time", Spend.Bonus.Id());
+            foreach (Spend spend in Enum.GetValues<Spend>()) yield return SpendKeyOf(spend);
+
+            yield return Ui("casting_time", "out_of_combat");
 
             // a smite answers your own hit with a bonus action; everything else is a reaction
             foreach (Trigger trigger in Triggers.All)
@@ -285,6 +329,10 @@ namespace Content.Spells
                 yield return Ui("not_castable", why);
 
             yield return AdaptedKey;
+            yield return SoloUnavailableKey;
+            yield return OutOfCombatKey;
+
+            foreach (string key in SpellCardEffect.Keys()) yield return key;
 
             foreach (Duration duration in Longest.Append(Duration.Instant)) yield return DurationKeyOf(duration);
         }

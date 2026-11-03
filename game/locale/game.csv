@@ -1609,24 +1609,32 @@ species.orc.description,Speed 30 feet; Adrenaline Rush; Orc Darkvision; Relentle
 species.orc.name,Orc
 species.tiefling.description,Speed 30 feet; Infernal Legacy; Tiefling Darkvision; Otherworldly Presence.
 species.tiefling.name,Tiefling
+spell.aid.components,"V, S, M (a strip of white cloth)"
 spell.aid.description,Level 2. Up to three creatures gain 5 to their hit point maximum and their current hit points until your next long rest. 5 more per level above 2.
 spell.aid.name,Aid
+spell.banishment.components,"V, S, M (a pentacle)"
 spell.banishment.description,"Level 4. One creature you can see within 30 feet: Charisma save, or it is sent to a harmless demiplane - off the board, and incapacitated there - until the spell ends, when it comes back where it left. Held for the full minute, an aberration, celestial, elemental, fey or fiend doesn't come back. One more creature per level above 4. Requires concentration."
 spell.banishment.name,Banishment
+spell.black_tentacles.components,"V, S, M (a tentacle)"
 spell.black_tentacles.description,"Level 4. Tentacles fill a 20-foot square of difficult terrain. A creature there when they appear, entering, or ending its turn there makes a Strength save or takes 3d6 bludgeoning damage and is restrained. An action and an Athletics check breaks free. Requires concentration."
 spell.black_tentacles.name,Black Tentacles
+spell.blade_barrier.components,"V, S"
 spell.blade_barrier.description,"Level 6. A wall of whirling blades up to 100 feet long, or a ring 60 feet across. It gives three-quarters cover and is difficult terrain. A creature in it when it appears, entering it, or ending its turn there makes a Dexterity save or takes 6d10 force damage, half on a success. Requires concentration."
 spell.blade_barrier.mode.line,A line
 spell.blade_barrier.mode.ring,A ring
 spell.blade_barrier.name,Blade Barrier
+spell.bless.components,"V, S, M (a Holy Symbol worth 5+ GP)"
 spell.bless.description,Level 1. +1d4 to attack rolls and saving throws. Requires concentration.
 spell.bless.name,Bless
+spell.blight.components,"V, S"
 spell.blight.description,"Level 4. 8d8 necrotic damage, con save for half. 1d8 more per level above 4."
 spell.blight.name,Blight
+spell.blindness_deafness.components,V
 spell.blindness_deafness.description,"Level 2. A creature you can see makes a Constitution save or is blinded or deafened, your choice, for the fight. It saves again at the end of each of its turns. One more target per level above 2."
 spell.blindness_deafness.mode.blindness,Blindness
 spell.blindness_deafness.mode.deafness,Deafness
 spell.blindness_deafness.name,Blindness/Deafness
+spell.blur.components,V
 spell.blur.description,Level 2. Attack rolls against it have disadvantage. Requires concentration.
 spell.blur.name,Blur
 spell.breath_weapon_acid.description,A 15-foot cone or a 30-foot line of acid: Dexterity save for half.
@@ -1649,18 +1657,25 @@ spell.breath_weapon_poison.description,A 15-foot cone or a 30-foot line of poiso
 spell.breath_weapon_poison.mode.cone,A cone
 spell.breath_weapon_poison.mode.line,A line
 spell.breath_weapon_poison.name,Poison Breath
+spell.burning_hands.components,"V, S"
 spell.burning_hands.description,"Level 1. 3d6 fire damage in a 15-foot cone, dex save for half."
 spell.burning_hands.name,Burning Hands
+spell.call_lightning.components,"V, S"
 spell.call_lightning.description,"Level 3. A storm cloud 60 feet across gathers above you. A bolt strikes a point under it: 3d10 lightning damage within 5 feet, Dexterity save for half. An action calls another bolt on later turns. 1d10 more in a storm, and per level above 3. Requires concentration."
 spell.call_lightning.name,Call Lightning
+spell.chain_lightning.components,"V, S, M (three silver pins)"
 spell.chain_lightning.description,"Level 6. A bolt at a creature, leaping to up to three others within 30 feet of it: each makes a Dexterity save or takes 10d8 lightning damage, half on a success. One more leap per level above 6."
 spell.chain_lightning.name,Chain Lightning
+spell.charm_person.components,"V, S"
 spell.charm_person.description,"Level 1. A humanoid makes a Wisdom save, with advantage if you are fighting it, or is charmed by you for an hour. It ends if you or your allies hurt it. One more target per level above 1."
 spell.charm_person.name,Charm Person
+spell.chromatic_orb.components,"V, S, M (a diamond worth 50+ GP)"
 spell.chromatic_orb.description,"Level 1. A ranged spell attack for 3d8 acid, cold, fire, lightning, poison or thunder damage, your choice. If two of the dice match, the orb leaps to another creature within 30 feet with a new attack. One more leap and 1d8 more per level above 1."
 spell.chromatic_orb.name,Chromatic Orb
+spell.cloudkill.components,"V, S"
 spell.cloudkill.description,"Level 5. A 20-foot sphere of poison fog that blocks sight: 5d8 poison damage, Constitution save for half, when it appears, when it rolls over a creature, and when a creature enters it or ends its turn there. It drifts 10 feet away from you each turn. 1d8 more per level above 5. Requires concentration."
 spell.cloudkill.name,Cloudkill
+spell.command.components,V
 spell.command.description,"Level 1. A one-word command: approach, drop, flee, grovel or halt. A creature you can see makes a Wisdom save or spends its next turn obeying. One more creature per level above 1."
 spell.command.mode.approach,Approach
 spell.command.mode.drop,Drop
@@ -1668,255 +1683,365 @@ spell.command.mode.flee,Flee
 spell.command.mode.grovel,Grovel
 spell.command.mode.halt,Halt
 spell.command.name,Command
+spell.cone_of_cold.components,"V, S, M (a small crystal or glass cone)"
 spell.cone_of_cold.description,"Level 5. 8d8 cold damage in a 60-foot cone, con save for half. 1d8 more per level above 5."
 spell.cone_of_cold.name,Cone of Cold
+spell.counterspell.components,S
 spell.counterspell.description,"Level 3. Reaction, when you see a spell cast. Stops a spell as it is cast, con save to avoid it."
 spell.counterspell.name,Counterspell
+spell.cure_wounds.components,"V, S"
 spell.cure_wounds.description,Level 1. Restores 2d8 plus your spellcasting modifier hit points.
 spell.cure_wounds.name,Cure Wounds
+spell.darkness.components,"V, M (bat fur and a piece of coal)"
 spell.darkness.description,"Level 2. A 15-foot sphere of magical darkness. Nothing sees through it, not even darkvision; only truesight does. Requires concentration."
 spell.darkness.name,Darkness
+spell.darkvision.components,"V, S, M (a dried carrot)"
 spell.darkvision.description,Level 2. Its effect is told by the narrator.
 spell.darkvision.name,Darkvision
 spell.darkvision.narration,The dark thins to shades of grey: the one {0} touched can see in it now.
+spell.death_ward.components,"V, S"
 spell.death_ward.description,"Level 4. Until your next long rest, the first time the creature would drop to 0 hit points it drops to 1 instead, and an effect that would kill it outright without dealing damage is negated. Either ends the ward."
 spell.death_ward.name,Death Ward
+spell.detect_magic.components,"V, S"
 spell.detect_magic.description,"Level 1. You sense magic within 30 feet, and can see a faint aura around any creature or object that bears it, with the school of the spell behind it. Stone, earth, wood, metal and lead block it. Requires concentration. Can be cast as a ritual."
 spell.detect_magic.name,Detect Magic
+spell.dimension_door.components,V
 spell.dimension_door.description,"Level 4. You teleport up to 500 feet to a place you can see or picture, and can bring one willing creature from beside you. Arriving in an occupied space deals 4d6 force damage to each of you, and the spell fails."
 spell.dimension_door.name,Dimension Door
+spell.disguise_self.components,"V, S"
 spell.disguise_self.description,Level 1. Its effect is told by the narrator.
 spell.disguise_self.name,Disguise Self
 spell.disguise_self.narration,{0}'s face and clothes shift into someone else's. A touch would give it away.
+spell.disintegrate.components,"V, S, M (a lodestone and dust)"
 spell.disintegrate.description,"Level 6. A green ray: Dexterity save or 10d6+40 force damage, and a creature it drops to 0 hit points is turned to dust. Or it destroys a creation of magical force, such as a Cube of Force. 3d6 more per level above 6."
 spell.disintegrate.mode.creature,A creature
 spell.disintegrate.mode.force,A wall of force
 spell.disintegrate.name,Disintegrate
+spell.dispel_magic.components,"V, S"
 spell.dispel_magic.description,"Level 3. Ends the spells on a creature, or on a magical effect on the board: those of level 3 or lower at once, higher ones on a spellcasting check against 10 plus their level. Cast with a higher slot, it ends spells up to that level outright."
 spell.dispel_magic.mode.creature,On a creature
 spell.dispel_magic.mode.effect,On an effect
 spell.dispel_magic.name,Dispel Magic
+spell.dissonant_whispers.components,V
 spell.dissonant_whispers.description,"Level 1. One creature you can see hears a discordant melody in its mind: Wisdom save, or 3d6 psychic damage and it must use its reaction to move as far from you as it can. Half damage on a success. 1d6 more per level above 1."
 spell.dissonant_whispers.name,Dissonant Whispers
+spell.divine_smite.components,V
 spell.divine_smite.description,"Level 1. Bonus action, right after you hit with a melee attack: the hit deals 2d8 radiant damage more, 3d8 against a fiend or an undead. 1d8 more per level above 1."
 spell.divine_smite.name,Divine Smite
+spell.dominate_monster.components,"V, S"
 spell.dominate_monster.description,"Level 8. Leaves the target stunned, wis save to avoid it. Requires concentration. (v1 ships a bounded version of this spell.)"
 spell.dominate_monster.name,Dominate Monster
+spell.dragons_breath.components,"V, S, M (a hot pepper)"
 spell.dragons_breath.description,"Level 2. Bonus action. You touch a willing creature and choose acid, cold, fire, lightning or poison. While you hold the spell, it can take an action to exhale a 15-foot cone: Dexterity save, 3d6 damage of that type, half on a success. 1d6 more per level above 2. Requires concentration."
 spell.dragons_breath.name,Dragon's Breath
+spell.druidcraft.components,"V, S"
 spell.druidcraft.description,Cantrip. Its effect is told by the narrator.
 spell.druidcraft.name,Druidcraft
 spell.druidcraft.narration,"Flowers push up through the ground where {0} points, and the air smells of rain."
+spell.eldritch_blast.components,"V, S"
 spell.eldritch_blast.description,"Cantrip. 1d10 force damage, more beams as you level, on a hit."
 spell.eldritch_blast.name,Eldritch Blast
+spell.enhance_ability.components,"V, S, M (fur or a feather)"
 spell.enhance_ability.description,Level 2. Advantage on ability checks. Requires concentration.
 spell.enhance_ability.name,Enhance Ability
+spell.enlarge_reduce.components,"V, S, M (a pinch of powdered iron)"
 spell.enlarge_reduce.description,"Level 2. Enlarge: a creature grows a size, has advantage on Strength checks and saves, and deals 1d4 more with weapons. Reduce: it shrinks a size, has disadvantage on Strength checks and saves, and deals 1d4 less. An unwilling creature makes a Constitution save. Requires concentration."
 spell.enlarge_reduce.mode.enlarge,Enlarge
 spell.enlarge_reduce.mode.reduce,Reduce
 spell.enlarge_reduce.name,Enlarge/Reduce
+spell.entangle.components,"V, S"
 spell.entangle.description,"Level 1. Leaves the target restrained in a 20-foot square, Strength check as an action to break free, str save to avoid it; fills a 20-foot square, difficult terrain. Requires concentration."
 spell.entangle.name,Entangle
+spell.faerie_fire.components,V
 spell.faerie_fire.description,"Level 1. Attack rolls against it have advantage, it gains nothing from being unseen in a 20-foot square, dex save to avoid it. Requires concentration."
 spell.faerie_fire.name,Faerie Fire
+spell.fear.components,"V, S, M (a white feather)"
 spell.fear.description,"Level 3. Creatures in a 30-foot cone make a Wisdom save or drop what they hold and are frightened. Each turn they dash away from you, and save again only when they end a turn out of your sight. Requires concentration."
 spell.fear.name,Fear
+spell.find_familiar.components,"V, S, M (burning incense worth 10+ GP, which the spell consumes)"
 spell.find_familiar.description,Level 1. Calls something to your side. (v1 ships a bounded version of this spell.)
 spell.find_familiar.name,Find Familiar
+spell.finger_of_death.components,"V, S"
 spell.finger_of_death.description,"Level 7. Constitution save or 7d8+30 necrotic damage, half on a success. A humanoid it kills rises at the start of your next turn as a zombie that fights for you."
 spell.finger_of_death.name,Finger of Death
+spell.fire_bolt.components,"V, S"
 spell.fire_bolt.description,"Cantrip. 1d10 fire damage, on a hit."
 spell.fire_bolt.name,Fire Bolt
+spell.fireball.components,"V, S, M (a ball of bat guano and sulfur)"
 spell.fireball.description,"Level 3. 8d6 fire damage in a 20-foot burst, dex save for half."
 spell.fireball.name,Fireball
+spell.flame_strike.components,"V, S, M (a pinch of sulfur)"
 spell.flame_strike.description,"Level 5. 5d6 fire damage in a 10-foot burst, dex save for half; 5d6 radiant damage in a 10-foot burst, the same save for half. 1d6 more of each per level above 5."
 spell.flame_strike.name,Flame Strike
+spell.flaming_sphere.components,"V, S, M (a ball of wax)"
 spell.flaming_sphere.description,"Level 2. A 5-foot sphere of fire. A creature that ends its turn within 5 feet of it makes a Dexterity save or takes 2d6 fire damage, half on a success. A bonus action rolls it up to 30 feet; rolled into a creature, it stops and that creature saves. 1d6 more per level above 2. Requires concentration."
 spell.flaming_sphere.name,Flaming Sphere
+spell.flesh_to_stone.components,"V, S, M (a cockatrice feather)"
 spell.flesh_to_stone.description,"Level 6. A creature makes a Constitution save or is restrained; on a success it cannot move until your next turn. The restrained save again each turn: three successes end the spell, three failures turn it to stone. Constructs automatically succeed on the save. Requires concentration."
 spell.flesh_to_stone.name,Flesh to Stone
+spell.fly.components,"V, S, M (a feather)"
 spell.fly.description,"Level 3. A willing creature you touch flies at a speed of 60 feet, passing over difficult ground and anything on the ground. Requires concentration. (v1 ships a bounded version of this spell.)"
 spell.fly.name,Fly
+spell.fog_cloud.components,"V, S"
 spell.fog_cloud.description,Level 1. A 20-foot-radius sphere of fog that blocks sight entirely. 20 feet wider per level above 1. Requires concentration.
 spell.fog_cloud.name,Fog Cloud
+spell.forcecage.components,"V, S, M (ruby dust worth 1,500+ GP, which the spell consumes)"
 spell.forcecage.description,"Level 7. An invisible prison of force for as long as you concentrate, up to an hour: a cage of bars 20 feet on a side that can be seen and shot through, or a solid box 10 feet on a side that nothing passes. Nothing inside walks out, and magic to leave needs a Charisma save. Dispel Magic cannot end it. Requires concentration."
 spell.forcecage.mode.box,A box
 spell.forcecage.mode.cage,A cage
 spell.forcecage.name,Forcecage
+spell.foresight.components,"V, S, M (a hummingbird feather)"
 spell.foresight.description,"Level 9. Takes a minute to cast - not in a fight. Until your next long rest, the creature you touch has advantage on attack rolls, ability checks and saving throws, and attack rolls against it have disadvantage. Casting it again ends the first."
 spell.foresight.name,Foresight
+spell.gaseous_form.components,"V, S, M (a bit of gauze)"
 spell.gaseous_form.description,"Level 3. A willing creature you touch becomes a misty cloud: it flies at 10 feet, resists bludgeoning, piercing and slashing damage, can't be knocked prone, and has advantage on Strength, Dexterity and Constitution saves, but it can't attack or cast spells. It ends at 0 hit points. One more creature per level above 3. Requires concentration. (v1 ships a bounded version of this spell.)"
 spell.gaseous_form.name,Gaseous Form
+spell.globe_of_invulnerability.components,"V, S, M (a glass bead)"
 spell.globe_of_invulnerability.description,Level 6. A still barrier 10 feet around where you stand. A spell of level 5 or lower cast from outside cannot affect anything inside it; one level higher per level above 6. Requires concentration.
 spell.globe_of_invulnerability.name,Globe of Invulnerability
+spell.goodberry.components,"V, S, M (a sprig of mistletoe)"
 spell.goodberry.description,Level 1. Ten magic berries appear in your pack for a day. Eating one is a bonus action and restores 1 hit point; one is a day's food.
 spell.goodberry.name,Goodberry
+spell.greater_invisibility.components,"V, S"
 spell.greater_invisibility.description,"Level 4. A creature you touch is invisible until the spell ends, attacking or not. Requires concentration."
 spell.greater_invisibility.name,Greater Invisibility
+spell.greater_restoration.components,"V, S, M (diamond dust worth 100+ GP, which the spell consumes)"
 spell.greater_restoration.description,"Level 5. Removes one of these from the creature you touch: the charmed condition, the petrified condition, a curse, or any reduction to its ability scores."
 spell.greater_restoration.mode.abilities,Restore an ability
 spell.greater_restoration.mode.charmed,End Charmed
 spell.greater_restoration.mode.curse,End a curse
 spell.greater_restoration.mode.petrified,End Petrified
 spell.greater_restoration.name,Greater Restoration
+spell.guidance.components,"V, S"
 spell.guidance.description,Cantrip. +1d4 to checks with a skill you choose. Requires concentration.
 spell.guidance.name,Guidance
+spell.guiding_bolt.components,"V, S"
 spell.guiding_bolt.description,"Level 1. 4d6 radiant damage, on a hit; the next attack roll against it has advantage."
 spell.guiding_bolt.name,Guiding Bolt
+spell.haste.components,"V, S, M (a shaving of licorice root)"
 spell.haste.description,"Level 3. A willing creature's speed doubles, it gains +2 AC and advantage on Dexterity saves, and it has one extra action each turn for a single weapon attack, Dash, Disengage or Hide. When the spell ends it is incapacitated and cannot move until the end of its next turn. Requires concentration."
 spell.haste.name,Haste
+spell.heal.components,"V, S"
 spell.heal.description,"Level 6. Restores 70 hit points and ends the blinded, deafened and poisoned conditions. 10 more hit points per level above 6."
 spell.heal.name,Heal
+spell.healing_word.components,V
 spell.healing_word.description,Level 1. Bonus action. Restores 2d4 plus your spellcasting modifier hit points.
 spell.healing_word.name,Healing Word
+spell.hellish_rebuke.components,"V, S"
 spell.hellish_rebuke.description,"Level 1. Reaction, when you are hurt. 2d10 fire damage, dex save for half."
 spell.hellish_rebuke.name,Hellish Rebuke
+spell.hex.components,"V, S, M (the petrified eye of a newt)"
 spell.hex.description,"Level 1. Bonus action. 1d6 necrotic damage whenever you hit the target with an attack roll, and disadvantage on its checks with an ability you choose. If it drops to 0 hit points, a bonus action on a later turn curses a new creature. Requires concentration."
 spell.hex.name,Hex
+spell.hideous_laughter.components,"V, S, M (a tart and a feather)"
 spell.hideous_laughter.description,"Level 1. A creature makes a Wisdom save or falls prone laughing, incapacitated and unable to stand. It saves again at the end of each of its turns and whenever it takes damage, with advantage then. One more creature per level above 1. Requires concentration."
 spell.hideous_laughter.name,Hideous Laughter
+spell.hold_monster.components,"V, S, M (a straight piece of iron)"
 spell.hold_monster.description,Level 5. A creature you can see makes a Wisdom save or is paralyzed. It saves again at the end of each of its turns. One more target per level above 5. Requires concentration.
 spell.hold_monster.name,Hold Monster
+spell.hold_person.components,"V, S, M (a straight piece of iron)"
 spell.hold_person.description,Level 2. A humanoid you can see makes a Wisdom save or is paralyzed. It saves again at the end of each of its turns. One more target per level above 2. Requires concentration.
 spell.hold_person.name,Hold Person
+spell.hunters_mark.components,V
 spell.hunters_mark.description,"Level 1. Bonus action. 1d6 force damage whenever you hit the marked creature with an attack roll. If it drops to 0 hit points, a bonus action moves the mark to a new creature you can see. Requires concentration."
 spell.hunters_mark.name,Hunter's Mark
+spell.hypnotic_pattern.components,"S, M (a pinch of confetti)"
 spell.hypnotic_pattern.description,"Level 3. Every creature in a 30-foot cube that can see the pattern makes a Wisdom save or is charmed, incapacitated and unable to move. It ends for a creature that takes damage or is shaken awake. Requires concentration."
 spell.hypnotic_pattern.name,Hypnotic Pattern
+spell.ice_storm.components,"V, S, M (a mitten)"
 spell.ice_storm.description,"Level 4. 2d10 bludgeoning damage in a 20-foot burst, dex save for half; 4d6 cold damage in a 20-foot burst, the same save for half; fills 20 feet around the point, difficult terrain. 1d10 more bludgeoning per level above 4."
 spell.ice_storm.name,Ice Storm
+spell.identify.components,"V, S, M (a pearl worth 100+ GP)"
 spell.identify.description,"Level 1. Takes a minute to cast (or as a ritual) - not in a fight. Touch an object to learn its magical properties, or a creature to learn which spells are affecting it."
 spell.identify.name,Identify
+spell.invisibility.components,"V, S, M (an eyelash in gum arabic)"
 spell.invisibility.description,"Level 2. A creature you touch is invisible until the spell ends - or until it makes an attack roll, deals damage or casts a spell. One more creature per level above 2. Requires concentration."
 spell.invisibility.name,Invisibility
+spell.lesser_restoration.components,"V, S"
 spell.lesser_restoration.description,"Level 2. Bonus action. A creature you touch is freed of one condition, chosen as you cast: blinded, deafened, paralyzed or poisoned."
 spell.lesser_restoration.mode.blinded,End Blinded
 spell.lesser_restoration.mode.deafened,End Deafened
 spell.lesser_restoration.mode.paralyzed,End Paralyzed
 spell.lesser_restoration.mode.poisoned,End Poisoned
 spell.lesser_restoration.name,Lesser Restoration
+spell.light.components,"V, M (a firefly or phosphorescent moss)"
 spell.light.description,Cantrip. Lights 4 squares.
 spell.light.name,Light
+spell.lightning_bolt.components,"V, S, M (a bit of fur and a crystal rod)"
 spell.lightning_bolt.description,"Level 3. 8d6 lightning damage in a 100-foot line, dex save for half."
 spell.lightning_bolt.name,Lightning Bolt
+spell.longstrider.components,"V, S, M (a pinch of dirt)"
 spell.longstrider.description,Level 1. A creature you touch has 10 feet more Speed until a rest. One more creature for each slot level above 1.
 spell.longstrider.name,Longstrider
+spell.mage_armor.components,"V, S, M (a piece of cured leather)"
 spell.mage_armor.description,Level 1. Armor Class 13 plus Dexterity while wearing no armor.
 spell.mage_armor.name,Mage Armor
+spell.mage_hand.components,"V, S"
 spell.mage_hand.description,Cantrip. Its effect is told by the narrator.
 spell.mage_hand.name,Mage Hand
 spell.mage_hand.narration,"A ghostly hand shimmers into the air beside {0}, ready to fetch and carry."
+spell.magic_missile.components,"V, S"
 spell.magic_missile.description,"Level 1. Three glowing darts, each striking a creature you can see for 1d4+1 force damage - they never miss. One more dart per level above 1."
 spell.magic_missile.name,Magic Missile
+spell.major_image.components,"V, S, M (a bit of fleece)"
 spell.major_image.description,"Level 3. An illusion of an object, creature or other sight up to a 20-foot cube; its effect is told by the narrator. Requires concentration - unless cast with a level 4 slot or higher."
 spell.major_image.name,Major Image
 spell.major_image.narration,"A whole scene takes shape where {0} wills it, sight, sound, smell and heat, and all of it false."
+spell.maze.components,"V, S"
 spell.maze.description,"Level 8. No save: a creature you can see within 60 feet is banished into a labyrinth, off the board, until the spell ends. On its turn it can study the maze - a DC 20 Intelligence (Investigation) check - and escapes on a success, ending the spell. It comes back where it left. Requires concentration."
 spell.maze.name,Maze
+spell.meteor_swarm.components,"V, S"
 spell.meteor_swarm.description,"Level 9. 20d6 fire damage in 4 40-foot bursts, dex save for half; 20d6 bludgeoning damage in 4 40-foot bursts, the same save for half."
 spell.meteor_swarm.name,Meteor Swarm
+spell.minor_illusion.components,"S, M (a bit of fleece)"
 spell.minor_illusion.description,Cantrip. Its effect is told by the narrator.
 spell.minor_illusion.name,Minor Illusion
 spell.minor_illusion.narration,"A sound, or a shape no bigger than a crate, appears where {0} wills it. A close look sees through it."
+spell.mirror_image.components,"V, S"
 spell.mirror_image.description,"Level 2. Three illusory duplicates of you for the fight. Each time you are hit, roll a d6 for each duplicate left; on any 3 or higher a duplicate takes the hit and vanishes instead. Attackers that are blinded or have truesight are not fooled."
 spell.mirror_image.name,Mirror Image
+spell.misty_step.components,V
 spell.misty_step.description,Level 2. Bonus action. You teleport up to 30 feet to an unoccupied space you can see.
 spell.misty_step.name,Misty Step
+spell.moonbeam.components,"V, S, M (a moonseed leaf)"
 spell.moonbeam.description,"Level 2. A beam of moonlight 5 feet around a point: Constitution save or 2d10 radiant damage when it appears, when a creature enters it, and when a creature ends its turn there, half on a success. A shape-shifted creature that fails reverts to its true form and can't shift again until it leaves. An action moves it up to 60 feet on a later turn. 1d10 more per level above 2. Requires concentration."
 spell.moonbeam.name,Moonbeam
+spell.pass_without_trace.components,"V, S, M (ashes from burned mistletoe)"
 spell.pass_without_trace.description,Level 2. An aura 30 feet around you: you and your allies inside it have +10 to Stealth and leave no tracks. Requires concentration.
 spell.pass_without_trace.name,Pass without Trace
+spell.polymorph.components,"V, S, M (a caterpillar cocoon)"
 spell.polymorph.description,Level 4. Grants 30 temporary hit points. Requires concentration. (v1 ships a bounded version of this spell.)
 spell.polymorph.name,Polymorph
+spell.power_word_kill.components,V
 spell.power_word_kill.description,Level 9. A creature with 100 hit points or fewer dies; anything else takes 12d12 psychic damage.
 spell.power_word_kill.name,Power Word Kill
+spell.power_word_stun.components,V
 spell.power_word_stun.description,Level 8. No save. A creature with 150 hit points or fewer is stunned and makes a Constitution save at the end of each of its turns to end it. A tougher creature cannot move until the start of your next turn.
 spell.power_word_stun.name,Power Word Stun
+spell.prestidigitation.components,"V, S"
 spell.prestidigitation.description,Cantrip. Its effect is told by the narrator.
 spell.prestidigitation.name,Prestidigitation
 spell.prestidigitation.narration,"A spark, a puff of smoke and a faint chime: a small trick of {0}'s, gone in a moment."
+spell.produce_flame.components,"V, S"
 spell.produce_flame.description,"Cantrip. Bonus action. A flame in your hand lights 20 feet around you for the fight. While it lasts, you can take an action to hurl it at a creature within 60 feet: a ranged spell attack for 1d8 fire damage. A die more at levels 5, 11 and 17."
 spell.produce_flame.name,Produce Flame
+spell.raise_dead.components,"V, S, M (a diamond worth 500+ GP, which the spell consumes)"
 spell.raise_dead.description,"Level 5. Takes an hour to cast - not in a fight. A creature dead no more than ten days comes back with 1 hit point, its poisons gone. It takes -4 to attacks, saves and checks, easing by 1 each long rest. Nothing brings back a creature turned to dust."
 spell.raise_dead.name,Raise Dead
+spell.ray_of_frost.components,"V, S"
 spell.ray_of_frost.description,"Cantrip. 1d8 cold damage, on a hit; -10 feet of speed."
 spell.ray_of_frost.name,Ray of Frost
+spell.remove_curse.components,"V, S"
 spell.remove_curse.description,"Level 3. Every curse on the creature you touch ends, whatever its level."
 spell.remove_curse.name,Remove Curse
+spell.sacred_flame.components,"V, S"
 spell.sacred_flame.description,"Cantrip. 1d8 radiant damage, dex save to avoid it."
 spell.sacred_flame.name,Sacred Flame
+spell.scorching_ray.components,"V, S"
 spell.scorching_ray.description,"Level 2. Three rays of fire, each a ranged spell attack for 2d6 fire damage on a hit. One more ray per level above 2."
 spell.scorching_ray.name,Scorching Ray
+spell.searing_smite.components,V
 spell.searing_smite.description,"Level 1. Bonus action, right after you hit with a melee attack: 1d6 fire damage more, and the target burns - 1d6 fire at the start of each of its turns, then a Constitution save to put it out. 1d6 more per level above 1."
 spell.searing_smite.name,Searing Smite
+spell.shapechange.components,"V, S, M (a jade circlet worth 1,500+ GP)"
 spell.shapechange.description,Level 9. Grants 100 temporary hit points. Requires concentration. (v1 ships a bounded version of this spell.)
 spell.shapechange.name,Shapechange
+spell.shatter.components,"V, S, M (a chip of mica)"
 spell.shatter.description,"Level 2. 3d8 thunder damage in a 10-foot burst, con save for half."
 spell.shatter.name,Shatter
+spell.shield.components,"V, S"
 spell.shield.description,"Level 1. Reaction, when you are hit by an attack roll or targeted by Magic Missile: +5 AC until the start of your next turn, against that attack too, and Magic Missile does you no harm."
 spell.shield.name,Shield
+spell.shillelagh.components,"V, S, M (mistletoe)"
 spell.shillelagh.description,"Cantrip. Bonus action. For the fight your club or quarterstaff can use your spellcasting ability, rolls a d8 for damage and can deal force damage. The die grows to d10 at level 5, d12 at 11 and 2d6 at 17."
 spell.shillelagh.name,Shillelagh
+spell.shocking_grasp.components,"V, S"
 spell.shocking_grasp.description,"Cantrip. 1d8 lightning damage, on a hit; it can't make opportunity attacks."
 spell.shocking_grasp.name,Shocking Grasp
+spell.silent_image.components,"V, S, M (a bit of fleece)"
 spell.silent_image.description,Level 1. Its effect is told by the narrator. Requires concentration.
 spell.silent_image.name,Silent Image
 spell.silent_image.narration,"A silent image takes shape where {0} wills it, true to the eye until someone tries to touch it."
+spell.sleep.components,"V, S, M (a pinch of sand or rose petals)"
 spell.sleep.description,"Level 1. Creatures of your choice in a 5-foot-radius sphere within 60 feet make a Wisdom save or are incapacitated. At the end of their next turn they save again, and a second failure puts them to sleep. Damage or a shake wakes them. Elves and the sleepless are immune. Requires concentration."
 spell.sleep.name,Sleep
+spell.sleet_storm.components,"V, S, M (a miniature umbrella)"
 spell.sleet_storm.description,"Level 3. Sleet fills a 20-foot radius, blocking sight and making difficult terrain. A creature that enters it or starts its turn there makes a Dexterity save or falls prone and loses its concentration. Requires concentration."
 spell.sleet_storm.name,Sleet Storm
+spell.slow.components,"V, S, M (a drop of molasses)"
 spell.slow.description,"Level 3. Up to six creatures of your choice in a 40-foot cube: Wisdom save, or its speed is halved, it takes -2 to AC and Dexterity saves, can't take reactions, takes an action or a bonus action but not both, and makes only one attack. It repeats the save at the end of each of its turns. Requires concentration. (v1 ships a bounded version of this spell.)"
 spell.slow.name,Slow
+spell.spare_the_dying.components,"V, S"
 spell.spare_the_dying.description,"Cantrip. A creature within 15 feet at 0 hit points and not dead becomes stable. The range doubles at levels 5, 11 and 17."
 spell.spare_the_dying.name,Spare the Dying
+spell.speak_with_animals.components,"V, S"
 spell.speak_with_animals.description,Level 1. Its effect is told by the narrator.
 spell.speak_with_animals.name,Speak with Animals
 spell.speak_with_animals.narration,"For a while, {0} understands the beasts, and they understand {0}."
+spell.speak_with_dead.components,"V, S, M (burning incense)"
 spell.speak_with_dead.description,Level 3. Its effect is told by the narrator.
 spell.speak_with_dead.name,Speak with Dead
 spell.speak_with_dead.narration,"The dead stir, and will answer {0}'s questions. Five, and no more."
+spell.spike_growth.components,"V, S, M (seven thorns)"
 spell.spike_growth.description,"Level 2. Fills 20 feet around the point, difficult terrain; 2d4 piercing damage for every 5 feet moved through it. Requires concentration."
 spell.spike_growth.name,Spike Growth
+spell.spirit_guardians.components,"V, S, M (a prayer scroll)"
 spell.spirit_guardians.description,"Level 3. Spirits surround you for 15 feet: other creatures' speed is halved there, and one that enters or ends its turn there makes a Wisdom save or takes 3d8 radiant or necrotic damage (your choice as you cast), half on a success. 1d8 more per level above 3. Requires concentration."
 spell.spirit_guardians.name,Spirit Guardians
+spell.spiritual_weapon.components,"V, S"
 spell.spiritual_weapon.description,Level 2. Bonus action. A spectral weapon appears within 60 feet and makes a melee spell attack against a creature beside it: 1d8 plus your spellcasting modifier in force damage. On later turns a bonus action moves it up to 20 feet and attacks again. 1d8 more per level above 2. Requires concentration.
 spell.spiritual_weapon.name,Spiritual Weapon
+spell.stinking_cloud.components,"V, S, M (a rotten egg)"
 spell.stinking_cloud.description,Level 3. A 20-foot sphere of gas that blocks sight. A creature that starts its turn in it makes a Constitution save or is poisoned for that turn and can take no action or bonus action. Requires concentration.
 spell.stinking_cloud.name,Stinking Cloud
+spell.stoneskin.components,"V, S, M (diamond dust worth 100+ GP, which the spell consumes)"
 spell.stoneskin.description,"Level 4. Resistance to bludgeoning, piercing, slashing damage. Requires concentration."
 spell.stoneskin.name,Stoneskin
+spell.sunbeam.components,"V, S, M (a magnifying glass)"
 spell.sunbeam.description,"Level 6. A 60-foot line of sunlight: 6d8 radiant damage and blinded until the start of your next turn, Constitution save for half and no blinding. You can take an action to fire a new beam on later turns. Sheds sunlight around you. Requires concentration."
 spell.sunbeam.name,Sunbeam
+spell.sunburst.components,"V, S, M (a piece of sunstone)"
 spell.sunburst.description,"Level 8. A 60-foot burst of sunlight: 12d6 radiant damage and blinded for the fight, Constitution save for half and no blinding. The blinded save again at the end of each of their turns. Burns away magical darkness in the area."
 spell.sunburst.name,Sunburst
+spell.telekinesis.components,"V, S"
 spell.telekinesis.description,"Level 5. When you cast it and with an action on later turns: move a Huge or smaller creature up to 30 feet (Strength save to resist) and hold it restrained until the end of your next turn, or pull an object from a creature's grip (Strength save to resist). Requires concentration."
 spell.telekinesis.mode.creature,A creature
 spell.telekinesis.mode.object,An object
 spell.telekinesis.name,Telekinesis
+spell.teleport.components,V
 spell.teleport.description,Level 7. Moves you elsewhere. (v1 ships a bounded version of this spell.)
 spell.teleport.name,Waypoint
+spell.thaumaturgy.components,V
 spell.thaumaturgy.description,Cantrip. Its effect is told by the narrator.
 spell.thaumaturgy.name,Thaumaturgy
 spell.thaumaturgy.narration,"{0}'s voice booms, the flames flicker and the ground trembles: a sign of something greater."
+spell.thunderwave.components,"V, S"
 spell.thunderwave.description,"Level 1. A wave of thunderous force in a 15-foot cube from you: Constitution save, or 2d8 thunder damage and it is pushed 10 feet away from you; half damage and no push on a success. 1d8 more per level above 1."
 spell.thunderwave.name,Thunderwave
+spell.true_seeing.components,"V, S, M (mushroom powder worth 25+ GP, which the spell consumes)"
 spell.true_seeing.description,"Level 6. For an hour the creature has truesight: it sees the invisible and through magical darkness, and sees illusions for what they are."
 spell.true_seeing.name,True Seeing
+spell.true_strike.components,"S, M (a weapon with which you have profi- ciency and that is worth 1+ CP)"
 spell.true_strike.description,"Cantrip. Make one attack with the weapon you cast it with, using your spellcasting ability, dealing radiant damage or the weapon's own. At level 5 a hit deals 1d6 radiant more, 2d6 at 11 and 3d6 at 17."
 spell.true_strike.name,True Strike
+spell.vicious_mockery.components,V
 spell.vicious_mockery.description,"Cantrip. 1d6 psychic damage, wis save to avoid it; disadvantage on its next attack roll, on the same failed save."
 spell.vicious_mockery.name,Vicious Mockery
+spell.vitriolic_sphere.components,"V, S, M (a drop of bile)"
 spell.vitriolic_sphere.description,"Level 4. Acid bursts in a 20-foot radius: 10d4 acid damage, Dexterity save for half. A creature that fails takes 5d4 more at the end of its next turn. 2d4 more per level above 4."
 spell.vitriolic_sphere.name,Vitriolic Sphere
+spell.wall_of_fire.components,"V, S, M (a piece of charcoal)"
 spell.wall_of_fire.description,"Level 4. An opaque wall of fire up to 60 feet long, or a ring 20 feet across. Creatures in it when it appears make a Dexterity save or take 5d8 fire damage, half on a success. After that, entering the wall, or ending a turn in it or within 10 feet of the side you chose, deals 5d8 fire. 1d8 more per level above 4. Requires concentration."
 spell.wall_of_fire.mode.line,A line
 spell.wall_of_fire.mode.ring,A ring
 spell.wall_of_fire.name,Wall of Fire
+spell.wall_of_force.components,"V, S, M (a shard of glass)"
 spell.wall_of_force.description,"Level 5. Raises a cube of invisible force, 20 feet on a side, on the edges of the squares: nothing walks through it, and everything is seen through it. Requires concentration."
 spell.wall_of_force.name,Cube of Force
+spell.web.components,"V, S, M (a bit of spiderweb)"
 spell.web.description,"Level 2. Fills a 20-foot cube with webs: difficult terrain and lightly obscured. A creature that enters or starts its turn there makes a Dexterity save or is restrained, and can use an action and a Strength check to break free. Requires concentration."
 spell.web.name,Web
+spell.wish.components,V
 spell.wish.description,Level 9. Its effect is told by the narrator. (v1 ships a bounded version of this spell.)
 spell.wish.name,Wish
 spell.wish.narration,The air goes still as {0} speaks the Wish. What it brings is the story's to tell.
@@ -1942,6 +2067,7 @@ ui.act.fit_board.name,Story editor: fit every card in view: {0}
 ui.act.help.name,Open the rules: {0}
 ui.act.leave_builder.name,"Map builder: leave, back to the Workshop: {0}"
 ui.act.npcs_picker.name,Map builder: open the people: {0}
+ui.act.open_sheet.name,Open or close the character sheet: {0}
 ui.act.play_from_here.name,Workshop: play from this card: {0}
 ui.act.play_map.name,Map builder: play this map: {0}
 ui.act.players_view.name,Map builder: the player's view: {0}
@@ -2008,6 +2134,10 @@ ui.caption.room.name,The room is quiet.
 ui.casting_time.action.name,Action
 ui.casting_time.bonus_action.name,Bonus action
 ui.casting_time.bonus_action.name.struck,"Bonus action, right after you hit with a melee attack"
+ui.casting_time.free.name,Free
+ui.casting_time.movement.name,Movement
+ui.casting_time.out_of_combat.name,"A minute or more, outside a fight"
+ui.casting_time.reaction.name,Reaction
 ui.casting_time.reaction.name.cast,"Reaction, when you see a creature cast a spell"
 ui.casting_time.reaction.name.damaged,"Reaction, when a creature you can see hurts you"
 ui.casting_time.reaction.name.hit,"Reaction, when an attack hits you"
@@ -2065,6 +2195,7 @@ ui.combat_action.bonus_hide.name,Hide (bonus action)
 ui.combat_action.break_free.name,Break free
 ui.combat_action.dash.name,Dash
 ui.combat_action.disengage.name,Disengage
+ui.combat_action.end_concentration.name,End concentration
 ui.combat_action.end_turn.name,End turn
 ui.combat_action.flee.name,Leave the map
 ui.combat_action.grapple.name,Grapple
@@ -2076,6 +2207,7 @@ ui.combat_action.shove.name,Shove
 ui.combat_action.shove_prone.name,Knock prone
 ui.combat_action.stand_up.name,Stand up
 ui.combat_action.surge.name,Action Surge
+ui.combat_action.swap.name,Swap to {0}
 ui.combat_action.yield.name,Yield
 ui.combat_why.cannot_act.name,You can't act right now.
 ui.combat_why.cannot_cast.name,You can't cast spells in this form.
@@ -2212,6 +2344,10 @@ ui.duration.turn_end.name,Until the end of the turn
 ui.end.blurb,The story is over. Your character waits in the book.
 ui.end.demo,This is the end of the demo.
 ui.end.title,The End
+ui.hand.main.name,Main hand
+ui.hand.none.name,No hand needed
+ui.hand.off.name,Off hand
+ui.hand.two.name,Two hands
 ui.help.attack,"Pick an attack or a spell on the bar, then click the creature to aim it at."
 ui.help.close,F1 or Esc closes this.
 ui.help.dice,Your own rolls are thrown on the dice tray. The game master's are rolled behind the screen.
@@ -2443,6 +2579,7 @@ ui.pack.discard,Discard
 ui.pack.discard_warning,Discarded items are gone for good.
 ui.pack.dont_warn_again,Don't warn me again for this character
 ui.pack.equip,Equip
+ui.pack.gear_in_a_fight,"In a fight, putting something on or taking it off takes an action."
 ui.pack.gold,{0} gp
 ui.pack.leave,Leave
 ui.pack.loaned,(on loan)
@@ -2487,6 +2624,9 @@ ui.reaction_prompt.hit.name,Use your reaction: {0}?
 ui.reaction_prompt.leave_reach.name,{1} is leaving your reach. Take an opportunity attack?
 ui.reaction_prompt.struck.name,You hit {1}. Cast {0}?
 ui.reaction_prompt.turns_the_hit.name,That turns the hit.
+ui.recharge.long_rest.name,Every use back on a long rest
+ui.recharge.one_per_short_rest.name,"One use back on a short rest, every use on a long rest"
+ui.recharge.short_rest.name,Every use back on a short or long rest
 ui.school.abjuration.name,Abjuration
 ui.school.conjuration.name,Conjuration
 ui.school.divination.name,Divination
@@ -2519,17 +2659,105 @@ ui.settings.speed_instant,Instant
 ui.settings.speed_normal,Normal
 ui.settings.speed_slow,Slow
 ui.settings.title,Settings
+ui.sheet.abilities,Abilities and saving throws
+ui.sheet.ability,{0} {1} ({2:+0;-0})
+ui.sheet.actions,Actions: {0}
+ui.sheet.alignment,Alignment: {0}
 ui.sheet.armor_class,Armor Class {0}
+ui.sheet.attack_roll,Attack roll
+ui.sheet.back,Spells and features
+ui.sheet.background,Background: {0}
+ui.sheet.banked,Extra actions banked until a rest: {0}
+ui.sheet.basics,Basics
+ui.sheet.bonus_actions,Bonus actions: {0}
+ui.sheet.box_save,Save {0:+0;-0}
+ui.sheet.box_save_proficient,"Save {0:+0;-0}, proficient"
+ui.sheet.card,Card
+ui.sheet.card_casting_time,Casting time
+ui.sheet.card_components,Components
+ui.sheet.card_cost,Cost
+ui.sheet.card_duration,Duration
+ui.sheet.card_effect,Effect
+ui.sheet.card_range,Range
+ui.sheet.card_recharge,Recharge
+ui.sheet.card_ritual,Can be cast as a ritual
+ui.sheet.card_roll,Attack or save
+ui.sheet.card_use,Takes
+ui.sheet.card_uses,Uses
+ui.sheet.class,Class: {0}
+ui.sheet.class_with_subclass,Class: {0} ({1})
+ui.sheet.close,Close
+ui.sheet.column_attack,Attack
+ui.sheet.column_concentration,Concentration
+ui.sheet.column_critical,Critical hit
+ui.sheet.column_damage,Damage
+ui.sheet.column_effect,Effect
+ui.sheet.column_hand,Hand
+ui.sheet.column_level,Level
+ui.sheet.column_name,Name
+ui.sheet.column_reach,Reach or range
+ui.sheet.column_roll,Attack or save
+ui.sheet.column_use,Takes
+ui.sheet.column_uses,Uses
+ui.sheet.concentrating,Concentrating on {0}
+ui.sheet.conditions,Condition: {0}
+ui.sheet.feature_line,{0}: {1}; {2}
 ui.sheet.features,Features
+ui.sheet.front,Abilities and skills
+ui.sheet.hit_dice,Hit dice: {0} of {1} ({2})
 ui.sheet.hit_points,{0} / {1} hit points
+ui.sheet.identity,Who
+ui.sheet.improvement,Ability score improvements to spend: {0}
+ui.sheet.initiative,Initiative {0:+0;-0}
 ui.sheet.keepsake_ready,"Keepsake: ready"
 ui.sheet.keepsake_spent,"Keepsake: spent until a long rest"
 ui.sheet.level,Level {0}
+ui.sheet.movement,Movement: {0} feet
+ui.sheet.needs_concentration,Concentration
+ui.sheet.no_background,No background
+ui.sheet.no_concentration,No concentration
+ui.sheet.no_conditions,No conditions
+ui.sheet.no_effect,None
+ui.sheet.no_limit,No limit
+ui.sheet.no_roll,No roll
+ui.sheet.no_spare,No other weapon in the pack to swap to.
+ui.sheet.not_concentrating,Not concentrating
+ui.sheet.passive,Passive {0} {1}
+ui.sheet.points,Spell points: {0} of {1}
+ui.sheet.proficiency,Proficiency bonus {0:+0;-0}
+ui.sheet.range,Range {0} to {1} feet
+ui.sheet.reach,Reach {0} feet
+ui.sheet.reactions,Reactions: {0}
+ui.sheet.read_aloud,Read this page aloud
+ui.sheet.save,{0} saving throw {1:+0;-0}
+ui.sheet.save_ability,{0} save
+ui.sheet.save_dc,DC {0} {1}
+ui.sheet.save_proficient,"{0} saving throw {1:+0;-0}, proficient"
 ui.sheet.size,{0}
+ui.sheet.size_line,Size: {0}
+ui.sheet.skill,{0} ({1}) {2:+0;-0}
+ui.sheet.skill_expert,"{0} ({1}) {2:+0;-0}, expertise"
+ui.sheet.skill_proficient,"{0} ({1}) {2:+0;-0}, proficient"
+ui.sheet.skills,Skills
+ui.sheet.slots,Level {0} slots: {1} of {2}
 ui.sheet.solo_slot,"One extra 1st-level spell slot, a solo bonus"
+ui.sheet.special,Special
+ui.sheet.species,Species: {0}
 ui.sheet.species_spells,Species spells: {0}
+ui.sheet.species_with_lineage,Species: {0} ({1})
+ui.sheet.speed,Speed {0} feet
+ui.sheet.spell_line,"{0}, {1}: {2}; {3}; {4}"
 ui.sheet.spells,Spells
+ui.sheet.swap_free,Swapping weapons is free outside a fight.
+ui.sheet.swap_in_a_fight,Swapping weapons takes an action in a fight.
+ui.sheet.temporary,{0} temporary hit points
 ui.sheet.title,Character
+ui.sheet.to_hit,{0:+0;-0} to hit
+ui.sheet.turn,What a turn holds
+ui.sheet.turn_in_a_fight,Left this turn
+ui.sheet.uses,{0} of {1} uses left
+ui.sheet.weapon,"{0}: {1}, {2} damage, {3} on a critical hit, {4}, {5}"
+ui.sheet.weapons,Weapons
 ui.sheet.xp,XP {0} of {1}
 ui.sheet.xp_top,XP {0}
 ui.size.gargantuan.name,Gargantuan
@@ -2539,15 +2767,46 @@ ui.size.medium.name,Medium
 ui.size.small.name,Small
 ui.size.tiny.name,Tiny
 ui.spell_card.adapted.name,A Lanorim version of this spell
+ui.spell_card.out_of_combat.name,Cast outside a fight only: the minute passes in the telling
+ui.spell_card.solo_unavailable.name,A hero on their own can't cast this
 ui.spell_cost.at_will.name,At will
 ui.spell_cost.points.name,{0} spell points
 ui.spell_cost.slot.name,A level {0} slot
+ui.spell_effect.condition.name,{1}
+ui.spell_effect.damage.name,{0} {1}
+ui.spell_effect.damage_chosen.name,"{0}, a type you choose"
+ui.spell_effect.heal.name,Heals {0}
+ui.spell_kind.afflict.name,Hindrance
+ui.spell_kind.conjure.name,Conjures
+ui.spell_kind.counter.name,Counters a spell
+ui.spell_kind.damage.name,Damage
+ui.spell_kind.direct.name,A command
+ui.spell_kind.disarm.name,Disarms
+ui.spell_kind.dispel.name,Ends magic
+ui.spell_kind.heal.name,Healing
+ui.spell_kind.illuminate.name,Light
+ui.spell_kind.narrate.name,In the story
+ui.spell_kind.relieve.name,Relief
+ui.spell_kind.reveal.name,Senses
+ui.spell_kind.shift.name,Movement
+ui.spell_kind.stabilize.name,Stabilizes
+ui.spell_kind.strike.name,A weapon strike
+ui.spell_kind.summon.name,Summons
+ui.spell_kind.sway.name,Charm
+ui.spell_kind.ward.name,Protection
+ui.spell_kind.zone.name,An area
 ui.spell_level.cantrip.name,Cantrip
 ui.spell_level.leveled.name,Level {0}
 ui.spell_resource.points.description,"One pool. Every spell level has a price, and a long rest refills it. Spells of 6th level and above are still once a day."
 ui.spell_resource.points.name,Spell points (simpler bookkeeping)
 ui.spell_resource.slots.description,"A grid of slots by level, refilled by a long rest. Cast a spell by spending a slot of its level or higher."
 ui.spell_resource.slots.name,Spell slots (the classic way)
+ui.spells.all_classes,Every class
+ui.spells.all_levels,Every level
+ui.spells.count,{0} of {1} spells
+ui.spells.none,No spell matches.
+ui.spells.search,Search by name
+ui.spells.title,Spells
 ui.table.came_round,"You come round a long while later, sore but whole. The day is done."
 ui.table.turn_hint,{0} and {1} turn the table; the wheel or {2} and {3} zoom
 ui.tutorial.advanced,Advanced

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Game.Access;
 using Game.Play;
 using Godot;
@@ -24,7 +25,8 @@ namespace Game.Dev
 
         public override void _Process(double delta)
         {
-            if (AccessDesk.Reaching?.Invoke() is not { Count: > 1 }) return;
+            // the table's pieces to reach, until C has put the sheet over them (step 8 on)
+            if (_step < 8 && AccessDesk.Reaching?.Invoke() is not { Count: > 1 }) return;
 
             if ((_wait -= delta) > 0) return;
             _wait = 0.3;
@@ -70,6 +72,21 @@ namespace Game.Dev
                     Check("F3 reads aloud, and back", flipped && GameState.Settings.ReadAloud == was, Desk.Narrator.Last);
                     break;
 
+                // C (cc_task_cs 1.2): the character sheet opens over the fight, Tab is left to its buttons, C shuts it
+                case 7:
+                    Press(Key.C);
+                    break;
+
+                case 8:
+                    Check("C opens the sheet", Sheet != null, Sheet?.Aloud().FirstOrDefault());
+                    Check("Tab is the sheet's while it's up", AccessDesk.Reaching?.Invoke() is not { Count: > 0 }, "");
+                    Press(Key.C);
+                    break;
+
+                case 9:
+                    Check("C shuts the sheet", Sheet == null, "");
+                    break;
+
                 default:
                     GD.Print(_failures.Count == 0
                         ? "access  check passed"
@@ -79,6 +96,9 @@ namespace Game.Dev
                     break;
             }
         }
+
+        Game.Screens.SheetPage Sheet =>
+            Nodes.Under<Game.Screens.SheetPage>(GetTree().Root).FirstOrDefault(p => !p.IsQueuedForDeletion());
 
         static void Press(Key key, bool shift = false)
         {

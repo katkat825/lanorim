@@ -166,9 +166,12 @@ namespace Game.Access
         // what F2 put up, while it's up ("" when it isn't)
         public string Toast => _toast?.Visible == true ? _toast.Text : "";
 
-        // a sentence, its arguments said first when they are keys themselves (a campaign's name, a monster's)
+        // a sentence, its arguments said first when they are keys themselves (a campaign's name, a monster's) or
+        // sentences of their own (a row of the character sheet, its cells: SheetReading)
         public static string Words(Said said) =>
-            Ui.Say(said.Key, said.Args.Select(a => a is string s && Spoken.IsAKey(s) ? Ui.Say(s) : a).ToArray());
+            Ui.Say(said.Key, said.Args.Select(a => a is Said inner ? Words(inner)
+                                                 : a is string s && Spoken.IsAKey(s) ? Ui.Say(s)
+                                                 : a).ToArray());
 
         // --- F1 ---------------------------------------------------------------------------------------------------
 

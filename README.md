@@ -181,6 +181,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--begin <campaign> [class]` | launch.tscn |  | a character with every default (fighter otherwise), straight to the table; probe saves are kept apart |
 | `--learn <spell,spell>` | launch.tscn |  | with --begin, those spells learned first |
 | `--gold` | launch.tscn |  | with --begin, the gold instead of the gear, so the run opens in the starting shop |
+| `--level <n>` | launch.tscn |  | with --begin, the character raised to that level before the table (a level 20 sheet) |
 | `--build <campaign|mine> [map]` | launch.tscn |  | that map, or a new one called probe_map, in the map builder; mine is My maps |
 | `--template <id>` | launch.tscn |  | with --build, a new map starts as that template (dungeon_room otherwise) |
 | `--tool <tool>` | in the map builder |  | the builder opens with that tool in hand (select, paint, fill, wall, prop...) |
@@ -203,6 +204,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--autostory` | at the table, in a campaign | yes | the story's lines and first choices taken as they come, past the starting shop |
 | `--start <node>` | at the table, in a campaign | yes | the story starts at that node (cellar, road, camp in the sample) |
 | `--pause` | at the table, in a campaign | yes | the pause menu opened on the hero's first turn in a fight |
+| `--sheet <front|back|spell|feature>[:spell]` | at the table, in a campaign |  | on the hero's first turn in a fight, the character sheet at that side, or a spell's or a feature's card over it; :spell casts that spell at the nearest foe and holds it first |
 | `--say-bark <pool>` | at the table, in a campaign | yes | a line from that bark pool every few seconds, past the chatter and the starting shop |
 | `--gm-screen <skin>` | at the table, in a campaign | yes | another of the GM screens at the table |
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Content.Inventory;
 using Content.Items;
 
@@ -23,6 +24,17 @@ namespace Content.Sheet
 
         // SRD 5.2.1 Light: a one-handed Light weapon in the off hand, for the Light bonus attack
         public bool HoldInOffHand(Item item) => item != null && item.FitsOffHand && Wear(item, Slot.OffHand);
+
+        // THE WEAPONS IN THE PACK THAT COULD BE TAKEN IN HAND NOW, one of each: what the sheet's Swap and the fight's
+        // offer (character_sheet_decisions.md, weapons). None while in a borrowed shape, which has no hands for them
+        public IReadOnlyList<Item> SpareWeapons =>
+            Form != null
+                ? Array.Empty<Item>()
+                : Pack.Stacks.Select(s => s.Item)
+                      .Where(i => i.Kind == ItemKind.Weapon && Fits(i, null))
+                      .GroupBy(i => i.Id)
+                      .Select(g => g.First())
+                      .ToList();
 
         public bool TakeOff(Slot slot)
         {

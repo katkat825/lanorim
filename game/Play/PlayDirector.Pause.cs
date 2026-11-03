@@ -1,5 +1,6 @@
 using Content.Saves;
 using Content.Screens;
+using Core.Words;
 using Game.Screens;
 using Godot;
 
@@ -16,10 +17,26 @@ namespace Game.Play
             Open(new MenuCard(ScreenWords.PauseTitle, null, true,
                 (ScreenWords.Resume, () => _overlay?.Close(), true),
                 (ScreenWords.Save, SaveNow, idle),
-                (ScreenWords.Sheet, () => Swap(new SheetScreen(Content.Sheet.SheetView.Of(Run.Hero, leveling: Run.Pack.Manifest.Rules.Leveling))), idle),
-                (ScreenWords.Pack, () => Swap(new PackScreen(new PackView(Run.Hero, Run.Items), GameState.Resolver)), idle),
+                (ScreenWords.Sheet, () => OpenSheet(), idle),
+                (ScreenWords.Pack, () => Swap(new PackScreen(new PackView(Run.Hero, Run.Items, fight: _combat.Session), GameState.Resolver)), idle),
                 (CampaignBook.SettingsKey, () => Swap(SettingsCard()), true),
                 (ScreenWords.ToTheBook, ToTheBook, true)), Refresh);
+        }
+
+        // THE CHARACTER SHEET (cc_task_cs 1.2), from the pause menu, C at the table and the HUD's button alike. In a fight
+        // it's read with the fight and the turn, and its Swap and End concentration go to the combat director's Pick;
+        // opening it spends nothing
+        internal void OpenSheet(bool back = false)
+        {
+            Content.Combat.CombatSession Fight() =>
+                _combat.Session is { Phase: not Content.Combat.SessionPhase.Over } session ? session : null;
+
+            Swap(new SheetPage(
+                () => Content.Sheet.SheetView.Of(Run.Hero, Fight()?.Fight, Fight()?.Turn, Run.Pack.Manifest.Rules.Leveling),
+                () => new SheetActs(Run.Hero, Fight()),
+                option => _combat.Pick(option),
+                () => _rules.Busy || _combat.Presenting,
+                back));
         }
 
         internal void Swap(Overlay next)
@@ -73,6 +90,16 @@ namespace Game.Play
                 }
 
                 // never the table's demonstration throw while a campaign is played
+                GetViewport().SetInputAsHandled();
+                return;
+            }
+
+            // C: the sheet, open and shut, whenever the rules are idle
+            if (key.IsActionPressed(Game.Access.Act.OpenSheet.Id()))
+            {
+                if (_overlay is SheetPage) _overlay.Close();
+                else if (_overlay == null && !_rules.Busy) OpenSheet();
+
                 GetViewport().SetInputAsHandled();
                 return;
             }

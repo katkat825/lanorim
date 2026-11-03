@@ -34,6 +34,7 @@ namespace Game.Screens
         VBoxContainer _log;
         Button _logTitle;
         Button _endTurn;
+        Button _sheet;
         bool _logOpen;
 
         readonly List<string> _lines = new List<string>();
@@ -77,7 +78,7 @@ namespace Game.Screens
         void Wrap()
         {
             if (_strip != null) Ui.Fit(_strip, Between);
-            if (_bar != null) Ui.Fit(_bar, Across - Layout.EndTurnMinWidth - 6 * Layout.BarGap);
+            if (_bar != null) Ui.Fit(_bar, Across - Layout.EndTurnMinWidth - SheetWidth - 9 * Layout.BarGap);
         }
 
         // top centre, flush to the top edge
@@ -107,13 +108,16 @@ namespace Game.Screens
             _endTurn = Ui.Button(CombatHud.EndTurnKey, () => _director.EndTurn());
             _endTurn.CustomMinimumSize = new Vector2(Layout.EndTurnMinWidth, 0);
 
+            // the character sheet, beside End Turn (cc_task_cs 1.2): C does the same
+            _sheet = Ui.Button(ScreenWords.Sheet, () => _director.OpenSheet?.Invoke());
+
             _pips = Ui.Centred("HudText");
             _preview = Ui.Centred("HudText");
             _aim = Ui.Centred("HudText");
             _aim.Visible = false;
 
             // the options take the room; a gap of their own keeps End Turn apart from the last of them
-            var row = Ui.Row(Layout.BarGap * 3, _bar, new VSeparator(), _endTurn);
+            var row = Ui.Row(Layout.BarGap * 3, _bar, new VSeparator(), _sheet, _endTurn);
 
             var bottom = new VBoxContainer
             {
@@ -268,8 +272,11 @@ namespace Game.Screens
         static readonly Color Chosen = new Color(1.2f, 1.1f, 0.8f);
 
         // the number is only on an option you can take now: a greyed one has none to press
-        static string Label(ActionOption o) => (o.Hotkey > 0 && o.Enabled ? o.Hotkey + " " : "") + Ui.Say(o.NameKey) +
+        static string Label(ActionOption o) => (o.Hotkey > 0 && o.Enabled ? o.Hotkey + " " : "") +
+                                               (o.Kind == OptionKind.Swap ? Ui.Say(CombatSession.SwapKey, Ui.Say(o.NameKey)) : Ui.Say(o.NameKey)) +
                                                (o.Attack?.Hand == Core.Characters.Hand.Off ? " " + Ui.Say(CombatSession.OffHandKey) : "");
+
+        float SheetWidth => _sheet == null ? 0 : _sheet.GetCombinedMinimumSize().X;
 
         static bool IsSelected(CombatSession session, ActionOption o) =>
             ReferenceEquals(session.Selected, o) || session.Selected?.Id == o.Id;
@@ -352,6 +359,16 @@ namespace Game.Screens
                         _bar.MoveChild(word, 0);
                     }
 
+                // aiming a spell: its card, to read before it's cast (cc_task_cs 2.1)
+                if (session.Selected is { Spell: { } reading })
+                {
+                    Content.Spells.SpellCard card = Content.Spells.SpellCard.Of(reading, session.Hero.Caster);
+                    Button read = Ui.Button(Ui.Say(Content.Screens.SheetWords.CardKey), () => CardOverlay.Show(this, card), true);
+                    read.ThemeTypeVariation = "HudButton";
+                    _bar.AddChild(read);
+                    _bar.MoveChild(read, 0);
+                }
+
                 // aiming a spell that can go on the hero: cast it on yourself without finding your mini
                 if (_director.CanAimAtSelf)
                 {
@@ -381,6 +398,7 @@ namespace Game.Screens
             Wrap();
             _barPanel.Visible = can;
             _endTurn.Disabled = !can;
+            _sheet.Disabled = !can;
 
             if (can) Ui.FocusFirst(_bar);
         }

@@ -87,10 +87,45 @@ namespace Game.Dev
                 Board = () => BoardOnScreen(director.Table),
             };
 
-            probe.Screens.Add(("fight", () => director.Showing?.Close()));
-            probe.Screens.Add(("pause", () => { director.Showing?.Close(); director.Pause(); }));
-            probe.Screens.Add(("sheet", () => director.Swap(new SheetScreen(Content.Sheet.SheetView.Of(GameState.Run.Hero, leveling: GameState.Run.Pack.Manifest.Rules.Leveling)))));
-            probe.Screens.Add(("pack", () => director.Swap(new PackScreen(new Content.Screens.PackView(GameState.Run.Hero, GameState.Run.Items), GameState.Resolver))));
+            // a card from the last look, put away before the next (it's on a layer of its own, not the director's)
+            CardOverlay card = null;
+
+            void Show(System.Action show)
+            {
+                if (card != null && GodotObject.IsInstanceValid(card)) card.Close();
+                card = null;
+                show();
+            }
+
+            probe.Screens.Add(("fight", () => Show(() => director.Showing?.Close())));
+            probe.Screens.Add(("pause", () => Show(() => { director.Showing?.Close(); director.Pause(); })));
+            probe.Screens.Add(("pack", () => Show(() => director.Swap(new PackScreen(new Content.Screens.PackView(GameState.Run.Hero, GameState.Run.Items), GameState.Resolver)))));
+
+            // THE CHARACTER SHEET (cc_task_cs): both sides in this fight and out of one; a mage who knows every spell they
+            // can cast and the level 20 hero with the most features, both sides; a spell's card and a feature's
+            Content.Sheet.Hero mage = SheetSamples.Make("mage", 5, everySpell: true);
+            Content.Sheet.Hero twenty = SheetSamples.MostFeatures();
+
+            probe.Screens.Add(("sheet", () => Show(() => director.OpenSheet())));
+            probe.Screens.Add(("sheet back", () => Show(() => director.OpenSheet(back: true))));
+            probe.Screens.Add(("sheet out", () => Show(() => director.Swap(SheetSamples.Page(GameState.Run.Hero, false)))));
+            probe.Screens.Add(("sheet out back", () => Show(() => director.Swap(SheetSamples.Page(GameState.Run.Hero, true)))));
+            probe.Screens.Add(("sheet mage", () => Show(() => director.Swap(SheetSamples.Page(mage, false)))));
+            probe.Screens.Add(("sheet mage back", () => Show(() => director.Swap(SheetSamples.Page(mage, true)))));
+            probe.Screens.Add(("sheet 20", () => Show(() => director.Swap(SheetSamples.Page(twenty, false)))));
+            probe.Screens.Add(("sheet 20 back", () => Show(() => director.Swap(SheetSamples.Page(twenty, true)))));
+            probe.Screens.Add(("spell card", () => Show(() =>
+            {
+                director.Swap(SheetSamples.Page(mage, true));
+                card = CardOverlay.Show(director, Content.Sheet.SheetView.Of(mage).Spells
+                                                     .OrderByDescending(c => Ui.Say(c.DescriptionKey).Length).First());
+            })));
+            probe.Screens.Add(("feature card", () => Show(() =>
+            {
+                director.Swap(SheetSamples.Page(twenty, true));
+                card = CardOverlay.Show(director, Content.Sheet.SheetView.Of(twenty).Special
+                                                     .OrderByDescending(r => Ui.Say(r.DescriptionKey).Length).First());
+            })));
 
             return probe;
         }

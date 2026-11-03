@@ -30,6 +30,9 @@ namespace Game.Play
 
         public string HeroName { get; set; } = "";
 
+        // the HUD's Character sheet button: the play director opens it (cc_task_cs 1.2)
+        public Action OpenSheet { get; set; }
+
         // the fight is over and every step shown: the director hands the outcome back
         public event Action<Outcome> Finished;
 

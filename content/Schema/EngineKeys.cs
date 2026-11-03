@@ -58,6 +58,13 @@ namespace Content.Schema
             // what the spell card says about when and how a spell is cast, and its school
             foreach (string key in Content.Spells.SpellCard.Keys()) yield return key;
 
+            // the sheet's feature cards: what brings a feature's uses back
+            foreach (string key in Content.Sheet.SpecialRow.Keys()) yield return key;
+
+            // every SRD spell's components, the SRD's words (a card shows them; v1 doesn't track them)
+            foreach (Core.Magic.Spell spell in Content.Spells.SpellBook.Srd().All)
+                yield return Content.Spells.SpellCard.ComponentsKeyOf(spell.Id);
+
             // the screens' own labels: the book, the tutorial picker, level-up, the pack and the
             // counter, the dialogue popup, the combat HUD, settings, the death screen
             foreach (string key in Content.Screens.ScreenKeys.All()) yield return key;
