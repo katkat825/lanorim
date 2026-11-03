@@ -176,6 +176,25 @@
       ],
       "english_name": "Perfect Remaking",
       "english_description": "Level 9. Leaves the target stunned, wis save to avoid it. Requires concentration. (v1 ships a bounded version of this spell.)"
+    },
+    {
+      "id": "wish",
+      "level": 9,
+      "school": "conjuration",
+      "range": 0,
+      "classes": ["mage"],
+      "approximated": true,
+      "effects": [
+        {
+          "primitive": "narrate",
+          "aim": "caster",
+          "note": "duplicate a spell of level 8 or lower, or pick from a small authored menu. no free-text reality alteration (v1_spell_list.md). DEFERRED 2026-11-03 (Kathleen: \"remove the spell for v1\"): as built it was narration only; the decided duplicate-a-spell-or-menu was never built"
+        }
+      ],
+      "english_name": "Wish",
+      "english_description": "Level 9. Its effect is told by the narrator. (v1 ships a bounded version of this spell.)",
+      "english_narration": "The air goes still as {0} speaks the Wish. What it brings is the story's to tell.",
+      "english_components": "V"
     }
   ]
 }

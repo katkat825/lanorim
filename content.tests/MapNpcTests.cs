@@ -27,7 +27,8 @@ namespace Content.Tests
         {
             var people = Palette.Matching("", p => p.Id, null, PropShelf.People).ToList();
 
-            Assert.Equal(34, people.Count);
+            // 34 until Kathleen trimmed twelve (2026-11-03: the witch, the wizard, the workers, every ninja and doctor)
+            Assert.Equal(22, people.Count);
             Assert.All(people, p => Assert.True(p.Figure && p.Blocks && p.Width == 1 && p.Depth == 1, p.Id));
             Assert.Equal(new[] { "townsfolk", "guards", "travellers" }, Palette.CategoriesOn(PropShelf.People));
 
@@ -38,6 +39,8 @@ namespace Content.Tests
 
             // Kathleen, 2026-10-23: no Elf, no robes, no animals
             Assert.DoesNotContain(people, p => p.Id is "npc_elf" or "npc_kimono_male" or "npc_kimono_female" or "npc_cow" or "npc_pug");
+            Assert.DoesNotContain(people, p => p.Id is "npc_witch" or "npc_wizard" || p.Id.StartsWith("npc_worker") ||
+                                               p.Id.StartsWith("npc_ninja") || p.Id.StartsWith("npc_doctor"));
         }
 
         [Fact]
@@ -72,19 +75,19 @@ namespace Content.Tests
         {
             MapEditor editor = Editor();
             editor.Draft.PlaceProp("barrel", new Cell(1, 1));
-            editor.Draft.PlaceProp("npc_wizard", new Cell(4, 4), 2, "elder_tam");
-            editor.Draft.PlaceProp("npc_witch", new Cell(5, 4));
+            editor.Draft.PlaceProp("npc_oldclassy_male", new Cell(4, 4), 2, "elder_tam");
+            editor.Draft.PlaceProp("npc_chef_female", new Cell(5, 4));
 
             string saved = editor.Draft.Save();
 
             Assert.Contains("\"npcs\": [", saved);
-            Assert.Contains("{ \"figure\": \"npc_wizard\", \"x\": 4, \"y\": 4, \"turn\": 2, \"actor\": \"elder_tam\" }", saved);
-            Assert.Contains("{ \"figure\": \"npc_witch\", \"x\": 5, \"y\": 4, \"turn\": 0 }", saved);
-            Assert.DoesNotContain("\"id\": \"npc_wizard\"", saved);
+            Assert.Contains("{ \"figure\": \"npc_oldclassy_male\", \"x\": 4, \"y\": 4, \"turn\": 2, \"actor\": \"elder_tam\" }", saved);
+            Assert.Contains("{ \"figure\": \"npc_chef_female\", \"x\": 5, \"y\": 4, \"turn\": 0 }", saved);
+            Assert.DoesNotContain("\"id\": \"npc_oldclassy_male\"", saved);
 
             Assert.True(MapDraft.TryRead(saved, out MapDraft again, out string problem), problem);
             Assert.Equal(saved, again.Save());
-            Assert.Contains(again.Props, p => p.Id == "npc_wizard" && p.Actor == "elder_tam" && p.Turn == 2);
+            Assert.Contains(again.Props, p => p.Id == "npc_oldclassy_male" && p.Actor == "elder_tam" && p.Turn == 2);
         }
 
         [Fact]
@@ -148,7 +151,7 @@ namespace Content.Tests
         public void APersonWhereNobodyCouldStandIsAWarningAndTheMapStillPlays()
         {
             MapEditor editor = Editor();
-            Assert.True(editor.Draft.PlaceProp("npc_wizard", new Cell(6, 2)));
+            Assert.True(editor.Draft.PlaceProp("npc_oldclassy_male", new Cell(6, 2)));
             editor.Draft.Paint(new Cell(6, 2), Tile.Void);
 
             MapProblem problem = Assert.Single(editor.Draft.Findings());
@@ -156,6 +159,24 @@ namespace Content.Tests
             Assert.True(problem.Warning);
             Assert.Equal(new Cell(6, 2), problem.At);
             Assert.True(editor.Draft.Sound);
+        }
+
+        // the witch was a figure until Kathleen trimmed twelve (2026-11-03): a map that still stands her somewhere loads, says so,
+        // and plays with nothing there
+        [Fact]
+        public void AMapNamingARemovedFigureLoadsWithAWarning()
+        {
+            MapEditor editor = Editor();
+            Assert.True(editor.Draft.PlaceProp("npc_chef_female", new Cell(4, 4)));
+
+            string saved = editor.Draft.Save().Replace("npc_chef_female", "npc_witch");
+
+            Assert.True(MapDraft.TryRead(saved, out MapDraft old, out string problem), problem);
+
+            MapProblem gone = Assert.Single(old.Findings(), p => p.Said.Key == MapProblem.KeyFor("prop_unknown"));
+            Assert.True(gone.Warning);
+            Assert.Equal(new Cell(4, 4), gone.At);
+            Assert.True(old.Sound);
         }
 
         [Fact]
@@ -168,7 +189,7 @@ namespace Content.Tests
             {
                 MapPlace place = MapPlace.OfCampaign(folder);
                 MapEditor editor = Editor();
-                editor.Draft.PlaceProp("npc_witch", new Cell(2, 2), 0, "nobody_we_know");
+                editor.Draft.PlaceProp("npc_chef_female", new Cell(2, 2), 0, "nobody_we_know");
 
                 var view = new MapBuilderView(editor, place, "npc_map");
 

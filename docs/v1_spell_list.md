@@ -5,6 +5,9 @@
 Written 2026-09-21 from the spell scope workbook. All spell names and text come from **SRD 5.2.1
 (CC-BY-4.0)** and are legal to ship.
 
+> **2026-11-03:** Wish deferred (Kathleen: "remove the spell for v1"), so **122 functioning spells** (61 MUST + 61 SHOULD),
+> **124 on class lists** with the Wood Elf's two, and **7** approximations keep their SRD names.
+>
 > **Build status (2026-09-25, after the SRD check):** **123 functioning spells** (62 MUST + 61 SHOULD). Kathleen deferred 7 SHOULD spells (Feather Fall, Heat Metal, Plane Shift, Reverse Gravity, Antimagic Field, Earthquake, True Polymorph; see `deferred.md`) and cut Suggestion. Their data is kept in `content/deferred/spells/`, which the loader doesn't ship. **Dissonant Whispers** (SRD p.124) and **Dragon's Breath** (SRD p.126) *are* in SRD 5.2.1. The 09-24 note said they weren't; that was wrong. Both were rebuilt from the SRD text and ship under their SRD names. **113** are the SRD spell under its SRD name. **8** keep their SRD names as approximations Kathleen approved (the allow-list under the HARD RULE in `decisions_checklist.md` §1). **2** ship renamed: Wall of Force as *Cube of Force*, Teleport as *Waypoint*. Every functioning spell was checked field by field against the SRD text (`_design_docs/SRD_CHECK_2026-09-25.md`). The table at the end lists the approximations.
 
 ## The plan in one paragraph
@@ -141,7 +144,7 @@ spell already was, except the Wood Elf's two (now **125 spells on class lists**)
 
 - Meteor Swarm — *Damage*
 - Power Word Kill — *Damage*
-- Wish — *Information, Utility / narrative* — ⚠ Simplify: exact duplicate-spell option plus a small authored menu; no free-text reality alteration.
+- ~~Wish~~ — **deferred 2026-11-03** (Kathleen: "remove the spell for v1"; `deferred.md`). Was ⚠ Simplify: exact duplicate-spell option plus a small authored menu, which was never built.
 
 ---
 
@@ -261,7 +264,6 @@ spell already was, except the Wood Elf's two (now **125 spells on class lists**)
 | MUST | 5 | `wall_of_force` | Cube of Force | renamed |
 | MUST | 7 | `teleport` | Waypoint | renamed |
 | MUST | 8 | `dominate_monster` | Dominate Monster | SRD name, approved approximation |
-| MUST | 9 | `wish` | Wish | SRD name, approved approximation |
 | SHOULD | 3 | `gaseous_form` | Gaseous Form | SRD name, approved approximation |
 | SHOULD | 4 | `polymorph` | Polymorph | SRD name, approved approximation |
 | SHOULD | 9 | `shapechange` | Shapechange | SRD name, approved approximation |

@@ -231,21 +231,6 @@
           "note": "SRD 5.2.1: a creature with 100 hit points or fewer dies; anything tougher takes 12d12 psychic"
         }
       ]
-    },
-    {
-      "id": "wish",
-      "level": 9,
-      "school": "conjuration",
-      "range": 0,
-      "classes": ["mage"],
-      "approximated": true,
-      "effects": [
-        {
-          "primitive": "narrate",
-          "aim": "caster",
-          "note": "duplicate a spell of level 8 or lower, or pick from a small authored menu. no free-text reality alteration (v1_spell_list.md)"
-        }
-      ]
     }
   ]
 }

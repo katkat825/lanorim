@@ -190,7 +190,7 @@ Windows `%APPDATA%\Godot\app_userdata\Lanorim\maps`), and the builder's **Copy t
 | Key | What it is |
 |---|---|
 | `name` | the map's name as its author typed it ("Mill Yard - North"): letters, numbers, spaces, dashes and underscores. The file's name is its id, made from the name (lowercase, a space or a dash an underscore) and free where it lives. Left out, the map is called by its id (cc_task_m2, 2026-10-22) |
-| `map` | the squares and the lines between them, one glyph each: `.` floor, `~` difficult, `#` rock, `_` deep water or a chasm (seen across, never crossed), `@` the start, `1`-`9` spawns; `\|` `-` a wall, `x` a door |
+| `map` | the squares and the lines between them, one glyph each: `.` floor, `~` difficult, `#` rock, `_` deep water or a chasm (seen across, never crossed), `@` the start, `1`-`9` spawns; `\|` `-` a wall, `x` a door, `a` an archway, `w` a window (2026-11-03) |
 | `ground` | one letter a square, a row of letters a row of squares: `s` stone, `p` wood planks, `g` grass, `d` dirt, `c` cobblestone, `a` sand, `n` snow, `w` shallow water. Left out when the whole map is stone |
 | `walls` | the `map`'s own shape, a letter on each wall or door that isn't the dungeon's stone: `t` timber, `p` plaster and beam, `f` fieldstone, `e` wooden fence, `h` hedge. Left out when every wall is stone |
 | `rough_markers` | `[[x, y], ...]`: a start or spawn standing on difficult ground (the `map` writes `@` there, which can't say so) |
@@ -202,6 +202,10 @@ Deep water is shallow water's ground on a chasm square.
 
 **A fence or a hedge** stops a walker and not an eye: the rules see bars there. A door in it is a gate, and a shut gate
 blocks the view as any door does.
+
+**An archway** is an open way that never shuts: walked through and seen through. **A window** is seen through and
+never walked through (bars, as a fence is). Each comes only in the styles that have one: an archway in timber, plaster,
+fieldstone and the ruins (whole, broken, overgrown); a window in plaster, fieldstone and the ruins (cc_task_m4, 2026-11-03).
 
 **A prop can cover more than one square** (a cottage is 2 x 2, a barn 4 x 4); its size is the palette's, so the map file
 only says where its top-left square is and how it's turned. A prop that blocks can't share a square with another that

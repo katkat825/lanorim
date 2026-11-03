@@ -52,7 +52,6 @@
       "files": [
         "models/minis/goblin_male.gltf",
         "models/minis/knight_male.gltf",
-        "models/minis/ninja_male.gltf",
         "models/minis/pirate_male.gltf",
         "models/minis/zombie_male.gltf",
         "models/minis/wolf.gltf",
@@ -159,8 +158,7 @@
       "files": [
         "models/minis/beastfolk/fox"
       ],
-      "ships": false,
-      "note": "the Vulpine Beastfolk's mini (cc_task_m3). LICENCE TO CONFIRM: the page links CC BY-ND 4.0, and NoDerivatives may not allow the painted-miniature restyle; left out of every build (export_presets.cfg) until Kathleen confirms"
+      "note": "the Vulpine Beastfolk's mini (cc_task_m3). CC BY-ND 4.0: ships unmodified apart from posing, scaling and lighting, never repainted (its entry keeps its own look), by Kathleen's decision of 2026-11-03 (cc_task_m4 Part 1)"
     },
     {
       "id": "devmops",

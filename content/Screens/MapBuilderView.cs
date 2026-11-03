@@ -47,7 +47,8 @@ namespace Content.Screens
         public static readonly IReadOnlyList<Tile> Rules = new[] { Tile.Floor, Tile.Rough, Tile.Void, Tile.Chasm };
 
         // and the wall tool: a wall or a door, in a style
-        public static readonly IReadOnlyList<Edge> Lines = new[] { Edge.Wall, Edge.Door };
+        // the kinds of line Walls and doors lays (cc_task_m4 Part 4: Archway and Window beside Wall and Door)
+        public static readonly IReadOnlyList<Edge> Lines = new[] { Edge.Wall, Edge.Door, Edge.Archway, Edge.Window };
 
         public static readonly IReadOnlyList<WallStyle> Styles = Enum.GetValues<WallStyle>();
 

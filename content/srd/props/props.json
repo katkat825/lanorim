@@ -110,6 +110,7 @@
     {"id": "wall_plaster", "category": "walls_fences", "pack": "Medieval Village MegaKit[Standard].zip", "model": "Medieval Village MegaKit[Standard]/glTF/Wall_Plaster_Straight.gltf", "blocks": true, "retired": true},
     {"id": "wall_fieldstone", "category": "walls_fences", "pack": "Medieval Village MegaKit[Standard].zip", "model": "Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Straight.gltf", "blocks": true, "retired": true},
     {"id": "wall_window", "category": "walls_fences", "pack": "Medieval Village MegaKit[Standard].zip", "model": "Medieval Village MegaKit[Standard]/glTF/Wall_Plaster_Window_Wide_Flat.gltf", "blocks": true, "retired": true},
+    {"id": "wall_window_fieldstone", "category": "walls_fences", "pack": "Medieval Village MegaKit[Standard].zip", "model": "Medieval Village MegaKit[Standard]/glTF/Wall_UnevenBrick_Window_Wide_Flat.gltf", "blocks": true, "retired": true},
     {"id": "archway", "category": "walls_fences", "pack": "Medieval Village MegaKit[Standard].zip", "model": "Medieval Village MegaKit[Standard]/glTF/Wall_Arch.gltf", "blocks": false, "retired": true},
     {"id": "door_frame", "category": "walls_fences", "pack": "Medieval Village MegaKit[Standard].zip", "model": "Medieval Village MegaKit[Standard]/glTF/DoorFrame_Flat_WoodDark.gltf", "blocks": false, "retired": true},
     {"id": "door_wooden", "category": "walls_fences", "pack": "Medieval Village MegaKit[Standard].zip", "model": "Medieval Village MegaKit[Standard]/glTF/Door_1_Flat.gltf", "blocks": false, "retired": true},

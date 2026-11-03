@@ -7612,41 +7612,20 @@
     zone on goblin: landed
   cast:
     wizard: concentrating=web
-== wish @9 on the board
-  cast at 9: 1 landings, 0 squares, 0 covered
-    narrate on wizard: landed
-  a point of damage each:
-    ally: hp=39/40+0
-    goblin: hp=29/30+0
-    fiend: hp=59/60+0
-    undead: hp=59/60+0
-    weak: hp=3/4+0
-    giant: hp=179/180+0
-  zones left 0; over Open
-  a long rest:
-    ally: hp=40/40+0
-    goblin: hp=30/30+0
-    fiend: hp=60/60+0
-    undead: hp=60/60+0
-    weak: hp=4/4+0
-    giant: hp=180/180+0
-== wish @9 off the board
-  cast at 9: 1 landings, 0 squares, 0 covered
-    narrate on wizard: landed
 == breath_weapon_acid @0 [cone] on the board
   cast at 0: 3 landings, 0 squares, 5 covered
-    damage on goblin: landed 14 (Save 17 vs 16 made)
-    damage on fiend: landed 11 (Save 21 vs 16 made)
-    damage on undead: landed 32 (Save 3 vs 16 failed)
+    damage on goblin: landed 9 (Save 17 vs 16 made)
+    damage on fiend: landed 25 (Save 5 vs 16 failed)
+    damage on undead: landed 13 (Save 17 vs 16 made)
   cast:
-    goblin: hp=16/30+0
-    fiend: hp=49/60+0
-    undead: hp=28/60+0
+    goblin: hp=21/30+0
+    fiend: hp=35/60+0
+    undead: hp=47/60+0
   a point of damage each:
     ally: hp=39/40+0
-    goblin: hp=15/30+0
-    fiend: hp=48/60+0
-    undead: hp=27/60+0
+    goblin: hp=20/30+0
+    fiend: hp=34/60+0
+    undead: hp=46/60+0
     weak: hp=3/4+0
     giant: hp=179/180+0
   zones left 0; over Open
@@ -7659,50 +7638,23 @@
     giant: hp=180/180+0
 == breath_weapon_acid @0 [cone] off the board
   cast at 0: 1 landings, 0 squares, 0 covered
-    damage on goblin: landed 13 (Save 17 vs 16 made)
+    damage on goblin: landed 21 (Save 5 vs 16 failed)
   cast:
-    goblin: hp=17/30+0
+    goblin: hp=9/30+0
 == breath_weapon_acid @0 [line] on the board
   cast at 0: 2 landings, 0 squares, 6 covered
-    damage on goblin: landed 30 (Save 7 vs 16 failed)
-    damage on giant: landed 23 (Save 8 vs 16 failed)
+    damage on goblin: landed 14 (Save 17 vs 16 made)
+    damage on giant: landed 11 (Save 21 vs 16 made)
   cast:
-    goblin: attack leans=(False, True) attack leans str=(False, True) can act=False conditions=prone,unconscious disarmed=True down=True/False/False/False hp=0/30+0 leans against close=(True, False) leans against far=(True, True) leans against seen=(True, False) leans against unseen=(True, False)
-    giant: hp=157/180+0
+    goblin: hp=16/30+0
+    giant: hp=169/180+0
   a point of damage each:
     ally: hp=39/40+0
+    goblin: hp=15/30+0
     fiend: hp=59/60+0
     undead: hp=59/60+0
     weak: hp=3/4+0
-    giant: hp=156/180+0
-  zones left 0; over Open
-  a long rest:
-    ally: hp=40/40+0
-    fiend: hp=60/60+0
-    undead: hp=60/60+0
-    weak: hp=4/4+0
-    giant: hp=180/180+0
-== breath_weapon_acid @0 [line] off the board
-  cast at 0: 1 landings, 0 squares, 0 covered
-    damage on goblin: landed 13 (Save 20 vs 16 made)
-  cast:
-    goblin: hp=17/30+0
-== breath_weapon_cold @0 [cone] on the board
-  cast at 0: 3 landings, 0 squares, 5 covered
-    damage on goblin: landed 16 (Save 7 vs 16 failed)
-    damage on fiend: landed 22 (Save 13 vs 16 failed)
-    damage on undead: landed 29 (Save 15 vs 16 failed)
-  cast:
-    goblin: hp=14/30+0
-    fiend: hp=38/60+0
-    undead: hp=31/60+0
-  a point of damage each:
-    ally: hp=39/40+0
-    goblin: hp=13/30+0
-    fiend: hp=37/60+0
-    undead: hp=30/60+0
-    weak: hp=3/4+0
-    giant: hp=179/180+0
+    giant: hp=168/180+0
   zones left 0; over Open
   a long rest:
     ally: hp=40/40+0
@@ -7711,25 +7663,52 @@
     undead: hp=60/60+0
     weak: hp=4/4+0
     giant: hp=180/180+0
-== breath_weapon_cold @0 [cone] off the board
+== breath_weapon_acid @0 [line] off the board
   cast at 0: 1 landings, 0 squares, 0 covered
-    damage on goblin: landed 8 (Save 21 vs 16 made)
+    damage on goblin: landed 13 (Save 17 vs 16 made)
   cast:
-    goblin: hp=22/30+0
-== breath_weapon_cold @0 [line] on the board
-  cast at 0: 2 landings, 0 squares, 6 covered
-    damage on goblin: landed 24 (Save 13 vs 16 failed)
-    damage on giant: landed 10 (Save 18 vs 16 made)
+    goblin: hp=17/30+0
+== breath_weapon_cold @0 [cone] on the board
+  cast at 0: 3 landings, 0 squares, 5 covered
+    damage on goblin: landed 30 (Save 7 vs 16 failed)
+    damage on fiend: landed 23 (Save 8 vs 16 failed)
+    damage on undead: landed 21 (Save 15 vs 16 failed)
   cast:
-    goblin: hp=6/30+0
-    giant: hp=170/180+0
+    goblin: attack leans=(False, True) attack leans str=(False, True) can act=False conditions=prone,unconscious disarmed=True down=True/False/False/False hp=0/30+0 leans against close=(True, False) leans against far=(True, True) leans against seen=(True, False) leans against unseen=(True, False)
+    fiend: hp=37/60+0
+    undead: hp=39/60+0
   a point of damage each:
     ally: hp=39/40+0
-    goblin: hp=5/30+0
+    fiend: hp=36/60+0
+    undead: hp=38/60+0
+    weak: hp=3/4+0
+    giant: hp=179/180+0
+  zones left 0; over Open
+  a long rest:
+    ally: hp=40/40+0
+    fiend: hp=60/60+0
+    undead: hp=60/60+0
+    weak: hp=4/4+0
+    giant: hp=180/180+0
+== breath_weapon_cold @0 [cone] off the board
+  cast at 0: 1 landings, 0 squares, 0 covered
+    damage on goblin: landed 13 (Save 20 vs 16 made)
+  cast:
+    goblin: hp=17/30+0
+== breath_weapon_cold @0 [line] on the board
+  cast at 0: 2 landings, 0 squares, 6 covered
+    damage on goblin: landed 16 (Save 7 vs 16 failed)
+    damage on giant: landed 22 (Save 13 vs 16 failed)
+  cast:
+    goblin: hp=14/30+0
+    giant: hp=158/180+0
+  a point of damage each:
+    ally: hp=39/40+0
+    goblin: hp=13/30+0
     fiend: hp=59/60+0
     undead: hp=59/60+0
     weak: hp=3/4+0
-    giant: hp=169/180+0
+    giant: hp=157/180+0
   zones left 0; over Open
   a long rest:
     ally: hp=40/40+0
@@ -7740,23 +7719,23 @@
     giant: hp=180/180+0
 == breath_weapon_cold @0 [line] off the board
   cast at 0: 1 landings, 0 squares, 0 covered
-    damage on goblin: landed 22 (Save 12 vs 16 failed)
+    damage on goblin: landed 8 (Save 21 vs 16 made)
   cast:
-    goblin: hp=8/30+0
+    goblin: hp=22/30+0
 == breath_weapon_fire @0 [cone] on the board
   cast at 0: 3 landings, 0 squares, 5 covered
-    damage on goblin: landed 13 (Save 15 vs 16 failed)
-    damage on fiend: landed 11 (Save 16 vs 16 made)
-    damage on undead: landed 6 (Save 16 vs 16 made)
+    damage on goblin: landed 24 (Save 13 vs 16 failed)
+    damage on fiend: landed 10 (Save 18 vs 16 made)
+    damage on undead: landed 25 (Save 8 vs 16 failed)
   cast:
-    goblin: hp=17/30+0
-    fiend: hp=49/60+0
-    undead: hp=54/60+0
+    goblin: hp=6/30+0
+    fiend: hp=50/60+0
+    undead: hp=35/60+0
   a point of damage each:
     ally: hp=39/40+0
-    goblin: hp=16/30+0
-    fiend: hp=48/60+0
-    undead: hp=53/60+0
+    goblin: hp=5/30+0
+    fiend: hp=49/60+0
+    undead: hp=34/60+0
     weak: hp=3/4+0
     giant: hp=179/180+0
   zones left 0; over Open
@@ -7769,23 +7748,23 @@
     giant: hp=180/180+0
 == breath_weapon_fire @0 [cone] off the board
   cast at 0: 1 landings, 0 squares, 0 covered
-    damage on goblin: landed 11 (Save 17 vs 16 made)
+    damage on goblin: landed 22 (Save 12 vs 16 failed)
   cast:
-    goblin: hp=19/30+0
+    goblin: hp=8/30+0
 == breath_weapon_fire @0 [line] on the board
   cast at 0: 2 landings, 0 squares, 6 covered
-    damage on goblin: landed 20 (Save 12 vs 16 failed)
-    damage on giant: landed 6 (Save 20 vs 16 made)
+    damage on goblin: landed 13 (Save 15 vs 16 failed)
+    damage on giant: landed 11 (Save 16 vs 16 made)
   cast:
-    goblin: hp=10/30+0
-    giant: hp=174/180+0
+    goblin: hp=17/30+0
+    giant: hp=169/180+0
   a point of damage each:
     ally: hp=39/40+0
-    goblin: hp=9/30+0
+    goblin: hp=16/30+0
     fiend: hp=59/60+0
     undead: hp=59/60+0
     weak: hp=3/4+0
-    giant: hp=173/180+0
+    giant: hp=168/180+0
   zones left 0; over Open
   a long rest:
     ally: hp=40/40+0
@@ -7796,23 +7775,23 @@
     giant: hp=180/180+0
 == breath_weapon_fire @0 [line] off the board
   cast at 0: 1 landings, 0 squares, 0 covered
-    damage on goblin: landed 25 (Save 5 vs 16 failed)
+    damage on goblin: landed 11 (Save 17 vs 16 made)
   cast:
-    goblin: hp=5/30+0
+    goblin: hp=19/30+0
 == breath_weapon_lightning @0 [cone] on the board
   cast at 0: 3 landings, 0 squares, 5 covered
-    damage on goblin: landed 12 (Save 4 vs 16 failed)
-    damage on fiend: landed 21 (Save 8 vs 16 failed)
-    damage on undead: landed 24 (Save 15 vs 16 failed)
+    damage on goblin: landed 20 (Save 12 vs 16 failed)
+    damage on fiend: landed 6 (Save 20 vs 16 made)
+    damage on undead: landed 8 (Save 20 vs 16 made)
   cast:
-    goblin: hp=18/30+0
-    fiend: hp=39/60+0
-    undead: hp=36/60+0
+    goblin: hp=10/30+0
+    fiend: hp=54/60+0
+    undead: hp=52/60+0
   a point of damage each:
     ally: hp=39/40+0
-    goblin: hp=17/30+0
-    fiend: hp=38/60+0
-    undead: hp=35/60+0
+    goblin: hp=9/30+0
+    fiend: hp=53/60+0
+    undead: hp=51/60+0
     weak: hp=3/4+0
     giant: hp=179/180+0
   zones left 0; over Open
@@ -7825,23 +7804,23 @@
     giant: hp=180/180+0
 == breath_weapon_lightning @0 [cone] off the board
   cast at 0: 1 landings, 0 squares, 0 covered
-    damage on goblin: landed 6 (Save 17 vs 16 made)
+    damage on goblin: landed 25 (Save 5 vs 16 failed)
   cast:
-    goblin: hp=24/30+0
+    goblin: hp=5/30+0
 == breath_weapon_lightning @0 [line] on the board
   cast at 0: 2 landings, 0 squares, 6 covered
-    damage on goblin: landed 28 (Save 8 vs 16 failed)
-    damage on giant: landed 15 (Save 15 vs 16 failed)
+    damage on goblin: landed 12 (Save 4 vs 16 failed)
+    damage on giant: landed 21 (Save 8 vs 16 failed)
   cast:
-    goblin: hp=2/30+0
-    giant: hp=165/180+0
+    goblin: hp=18/30+0
+    giant: hp=159/180+0
   a point of damage each:
     ally: hp=39/40+0
-    goblin: hp=1/30+0
+    goblin: hp=17/30+0
     fiend: hp=59/60+0
     undead: hp=59/60+0
     weak: hp=3/4+0
-    giant: hp=164/180+0
+    giant: hp=158/180+0
   zones left 0; over Open
   a long rest:
     ally: hp=40/40+0
@@ -7852,23 +7831,23 @@
     giant: hp=180/180+0
 == breath_weapon_lightning @0 [line] off the board
   cast at 0: 1 landings, 0 squares, 0 covered
-    damage on goblin: landed 24 (Save 13 vs 16 failed)
+    damage on goblin: landed 6 (Save 17 vs 16 made)
   cast:
-    goblin: hp=6/30+0
+    goblin: hp=24/30+0
 == breath_weapon_poison @0 [cone] on the board
   cast at 0: 3 landings, 0 squares, 5 covered
-    damage on goblin: landed 4 (Save 16 vs 16 made)
-    damage on fiend: landed 14 (Save 18 vs 16 made)
-    damage on undead: landed 26 (Save 8 vs 16 failed)
+    damage on goblin: landed 28 (Save 8 vs 16 failed)
+    damage on fiend: landed 15 (Save 15 vs 16 failed)
+    damage on undead: landed 27 (Save 5 vs 16 failed)
   cast:
-    goblin: hp=26/30+0
-    fiend: hp=46/60+0
-    undead: hp=34/60+0
-  a point of damage each:
-    ally: hp=39/40+0
-    goblin: hp=25/30+0
+    goblin: hp=2/30+0
     fiend: hp=45/60+0
     undead: hp=33/60+0
+  a point of damage each:
+    ally: hp=39/40+0
+    goblin: hp=1/30+0
+    fiend: hp=44/60+0
+    undead: hp=32/60+0
     weak: hp=3/4+0
     giant: hp=179/180+0
   zones left 0; over Open
@@ -7881,23 +7860,23 @@
     giant: hp=180/180+0
 == breath_weapon_poison @0 [cone] off the board
   cast at 0: 1 landings, 0 squares, 0 covered
-    damage on goblin: landed 15 (Save 5 vs 16 failed)
+    damage on goblin: landed 24 (Save 13 vs 16 failed)
   cast:
-    goblin: hp=15/30+0
+    goblin: hp=6/30+0
 == breath_weapon_poison @0 [line] on the board
   cast at 0: 2 landings, 0 squares, 6 covered
-    damage on goblin: landed 16 (Save 18 vs 16 made)
-    damage on giant: landed 15 (Save 7 vs 16 failed)
+    damage on goblin: landed 4 (Save 16 vs 16 made)
+    damage on giant: landed 14 (Save 18 vs 16 made)
   cast:
-    goblin: hp=14/30+0
-    giant: hp=165/180+0
+    goblin: hp=26/30+0
+    giant: hp=166/180+0
   a point of damage each:
     ally: hp=39/40+0
-    goblin: hp=13/30+0
+    goblin: hp=25/30+0
     fiend: hp=59/60+0
     undead: hp=59/60+0
     weak: hp=3/4+0
-    giant: hp=164/180+0
+    giant: hp=165/180+0
   zones left 0; over Open
   a long rest:
     ally: hp=40/40+0
@@ -7908,12 +7887,12 @@
     giant: hp=180/180+0
 == breath_weapon_poison @0 [line] off the board
   cast at 0: 1 landings, 0 squares, 0 covered
-    damage on goblin: landed 30 (Save 12 vs 16 failed)
+    damage on goblin: landed 15 (Save 5 vs 16 failed)
   cast:
-    goblin: attack leans=(False, True) attack leans str=(False, True) can act=False conditions=prone,unconscious down=True/False/False/False hp=0/30+0 leans against close=(True, False) leans against far=(True, True) leans against seen=(True, False) leans against unseen=(True, False)
+    goblin: hp=15/30+0
 == spider_web @0 on the board
   cast at 0: 1 landings, 0 squares, 0 covered
-    afflict on goblin: not (Save 19 vs 18 made)
+    afflict on goblin: not (Save 18 vs 18 made)
   a point of damage each:
     ally: hp=39/40+0
     goblin: hp=29/30+0
@@ -7931,6 +7910,6 @@
     giant: hp=180/180+0
 == spider_web @0 off the board
   cast at 0: 1 landings, 0 squares, 0 covered
-    afflict on goblin: landed restrained (Save 8 vs 18 failed)
+    afflict on goblin: landed restrained (Save 12 vs 18 failed)
   cast:
     goblin: attack leans=(False, True) attack leans str=(False, True) conditions=restrained leans against close=(True, False) leans against far=(True, False) leans against seen=(True, False) leans against unseen=(True, False) save leans dex=Disadvantage

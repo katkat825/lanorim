@@ -139,7 +139,7 @@ Nothing on the list is "licence to confirm": every pack's licence was in its zip
 | Asset | Creator | Source | Licence (where it was read) | Attribution | For |
 |---|---|---|---|---|---|
 | Medieval Village Pack (Dec 2020) | Quaternius | quaternius.com | **CC0 1.0** (`License.txt` in the zip) | optional; credited | buildings and additional props |
-| Hooded Fox (`fox.zip`) | Tibo (HeyTibo) | [itch](https://heytibo.itch.io/hooded-fox) | **CC BY-ND 4.0** (the page's licence badge links creativecommons.org/licenses/by-nd/4.0; the zip has no licence file; read 2026-10-23) | **required**: Tibo / HeyTibo | the Vulpine Beastfolk's mini. **LICENCE TO CONFIRM**: NoDerivatives may not allow the game's painted-miniature restyle (and scaling and posing are arguably fine); left out of every build (`export_presets.cfg`) and its credit not shipping until Kathleen confirms |
+| Hooded Fox (`fox.zip`) | Tibo (HeyTibo) | [itch](https://heytibo.itch.io/hooded-fox) | **CC BY-ND 4.0** (the page's licence badge links creativecommons.org/licenses/by-nd/4.0; the zip has no licence file; read 2026-10-23) | **required**: Tibo / HeyTibo | the Vulpine Beastfolk's mini. **Ships unmodified apart from posing, scaling and lighting, by Kathleen's decision of 2026-11-03** (cc_task_m4 Part 1: "use it, but don't repaint it"): never given the painted-miniature shader or any recolour (`MiniLook.OwnLook`), in the export builds, its credit on the credits page |
 | Pirate Kit (`Characters_Sharky`) | Quaternius | quaternius.com | the Quaternius row (no licence file in the zip) | goodwill | the Selachian Beastfolk's mini |
 
 ### Adventures Kathleen downloaded: NOT assets

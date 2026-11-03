@@ -18,8 +18,9 @@ namespace Game.Builder
     {
         public const string IconFolder = PropPalette.IconFolder + "walls/";
 
+        // <style>_wall.png, _door.png, _archway.png, _window.png (the last two since cc_task_m4 Part 4)
         public static string Picture(WallStyle style, Edge line) =>
-            IconFolder + style.Id() + (line == Edge.Door ? "_door" : "_wall") + ".png";
+            IconFolder + style.Id() + "_" + (line is Edge.Door or Edge.Archway or Edge.Window ? line.Id() : "wall") + ".png";
 
         public MapEditor Editor { get; set; }
 

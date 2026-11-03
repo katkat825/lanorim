@@ -10,9 +10,10 @@ namespace Content.Maps
     // the first one that has a door, and picking such a style while Door is chosen does nothing
     public sealed partial class MapEditor
     {
-        // the styles the picker offers for this line: every one for a wall, the ones with a door for a door
+        // the styles the picker offers for this line: every one for a wall, the ones with a door for a door, an archway or
+        // a window for those (WallStyles.Offers, cc_task_m4 Part 4)
         public static IReadOnlyList<WallStyle> StylesFor(Edge line) =>
-            Screens.MapBuilderView.Styles.Where(s => line != Edge.Door || s.HasDoor()).ToList();
+            Screens.MapBuilderView.Styles.Where(s => s.Offers(line)).ToList();
 
         public bool PickLine(Edge line)
         {

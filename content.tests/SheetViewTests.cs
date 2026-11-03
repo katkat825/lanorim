@@ -253,7 +253,7 @@ namespace Content.Tests
         [Fact]
         public void AnAdaptedSpellsCardSaysSo()
         {
-            Assert.True(SpellCard.Of(Srd.Spells.Find("wish")).Adapted);
+            Assert.True(SpellCard.Of(Srd.Spells.Find("polymorph")).Adapted);
             Assert.False(SpellCard.Of(Srd.Spells.Find("fireball")).Adapted);
         }
 

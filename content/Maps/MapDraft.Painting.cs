@@ -111,9 +111,11 @@ namespace Content.Maps
             {
                 if (!Extent.Contains(border) || changed.Exists(c => c.Line == border)) continue;
 
-                WallStyle now = edge == Edge.None ? WallStyle.Stone : edge == Edge.Door ? DoorStyle(border, style) : style;
+                // a door, an archway or a window takes its wall's style (DoorStyle), and only where that style has one
+                // (WallStyles.Offers, cc_task_m4 Part 4)
+                WallStyle now = edge == Edge.None ? WallStyle.Stone : edge == Edge.Wall ? style : DoorStyle(border, style);
 
-                if (edge == Edge.Door && !now.HasDoor()) continue;
+                if (edge != Edge.None && !now.Offers(edge)) continue;
 
                 if (At(border) != edge || StyleAt(border) != now)
                     changed.Add((border, At(border), StyleAt(border), now));

@@ -85,6 +85,21 @@ namespace Game.Dev
             Expect(Labels(creation).Any(l => l.Text == Ui.Say(ScreenWords.ChosenOf, 1, creation.Making.SpellPicks)),
                    "the count didn't go to 1 of n");
 
+            // THE FOX KEEPS ITS OWN LOOK (cc_task_m4 Part 1; CC BY-ND 4.0): creation's turning mini of a Vulpine Beastfolk
+            // wears the model's own materials, never the painted-miniature shader
+            creation.Making.Pick(GameState.Content.Kind("beastfolk"));
+            creation.Making.PickLineage(GameState.Content.Kind("beastfolk_vulpine"));
+            creation.Open(Step.Class);
+            await this.Frames(6);
+
+            Game.Board.Mini fox = Nodes.Under<Game.Board.Mini>(creation).FirstOrDefault();
+            int meshes = fox == null ? 0 : Nodes.Under<MeshInstance3D>(fox).Count();
+            int painted = fox == null ? 0 : Nodes.Under<MeshInstance3D>(fox).Count(Painted);
+
+            GD.Print($"creation  the fox's mini: {meshes} meshes, {painted} painted");
+            Expect(fox != null && meshes > 0, "no fox mini on creation's class page");
+            Expect(painted == 0, "the fox wears the painted-miniature shader");
+
             foreach (string problem in _problems) GD.PrintErr("creation  " + problem);
 
             GD.Print(_problems.Count == 0 ? "creation ok" : $"creation FAILED - {_problems.Count} problem(s)");
@@ -93,6 +108,11 @@ namespace Game.Dev
             GetTree().Quit(_problems.Count == 0 ? 0 : 1);
         }
 
+
+        // painted by PaintedModel: the shader over the whole mesh or on any surface
+        static bool Painted(MeshInstance3D mesh) =>
+            mesh.MaterialOverride is ShaderMaterial ||
+            Enumerable.Range(0, mesh.GetSurfaceOverrideMaterialCount()).Any(i => mesh.GetSurfaceOverrideMaterial(i) is ShaderMaterial);
 
         void Expect(bool ok, string problem)
         {

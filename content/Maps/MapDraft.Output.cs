@@ -32,7 +32,7 @@ namespace Content.Maps
         }
 
         // how it looks, for the board: each square's ground and each line's style (cc_task_l Part 2)
-        public MapLook Look() => new MapLook(Extent, _ground, _styles);
+        public MapLook Look() => new MapLook(Extent, _ground, _styles, _edges);
 
         // everything that would make the map unplayable: what the map builder shows, live, each with its square where it
         // has one (MapProblem, cc_task_f Part 2). checked on save, so an author finds out in the editor rather than the
@@ -93,6 +93,17 @@ namespace Content.Maps
 
             foreach (Prop prop in _props)
             {
+                // A THING THE GAME NO LONGER HAS (cc_task_m4 Part 3: twelve NPC figures went): a warning, nothing drawn
+                // there, and the map still plays. Said by its id, since its name went with it
+                if (Palette.Find(prop.Id) == null)
+                {
+                    problems.Add(new MapProblem("prop_unknown", prop.Cell, $"the {prop.Id} at {prop.Cell} is no longer in the game", prop.Id)
+                    {
+                        Warning = true,
+                    });
+                    continue;
+                }
+
                 IReadOnlyList<Cell> covers = Covers(prop);
                 string name = Palette.Find(prop.Id)?.NameKey ?? prop.Id;
 

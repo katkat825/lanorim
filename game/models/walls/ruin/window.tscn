@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+; A BARRED WINDOW IN A RUIN: the pack's Window_Bars (cc_task_m4 Part 4): the Ultimate Modular Ruins pack's Window_Bars.obj, moved so its middle is on the line as the ruins' door is.
+; First pass: Kathleen's to lay out.
+
+[ext_resource type="Mesh" path="res://models/props/ultimate_modular_ruins_pack_aug_2021/Window_Bars.obj" id="1_body"]
+
+[node name="window" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.095)
+mesh = ExtResource("1_body")

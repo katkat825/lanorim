@@ -76,15 +76,18 @@ namespace Game.Board
 
             Dress(figure);
 
-            PaintedModel.Paint(figure, Paint, "mini");
+            // a model that keeps its own look (MiniLook.OwnLook) is never painted or recoloured: posed, scaled and lit only
+            bool painted = Look?.OwnLook != true;
 
-            if (Look?.Skin is Color skin)
+            if (painted) PaintedModel.Paint(figure, Paint, "mini");
+
+            if (painted && Look?.Skin is Color skin)
             {
                 PaintedModel.Recolour(figure, "Skin", skin);
                 PaintedModel.RecolourSwatch(figure, PaintedModel.SkinSwatch, skin);
             }
 
-            if (Look?.Hair is Color hair)
+            if (painted && Look?.Hair is Color hair)
             {
                 PaintedModel.Recolour(figure, "Hair", hair);
                 PaintedModel.RecolourSwatch(figure, PaintedModel.HairSwatch, hair);
@@ -118,7 +121,8 @@ namespace Game.Board
                      $"-> {FigureHeight * 1000f:0} mm tall");
 
             // in its hands after it is measured, and painted like the rest of it
-            foreach (Node3D held in HeldItems.Put(figure, Look?.Holds)) PaintedModel.Paint(held, Paint, "mini");
+            foreach (Node3D held in HeldItems.Put(figure, Look?.Holds))
+                if (painted) PaintedModel.Paint(held, Paint, "mini");
         }
 
         // SWAP THE STAND-IN FOR A REAL MODEL, AND STOP IT MOVING.

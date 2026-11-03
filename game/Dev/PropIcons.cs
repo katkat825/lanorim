@@ -90,6 +90,12 @@ namespace Game.Dev
 
                 if (one.HasDoor())
                     _jobs.Add((WallPalette.Picture(one, Core.Space.Edge.Door), () => Instance(one == WallStyle.Stone ? StoneDoor : WallLooks.Door(one))));
+
+                if (one.HasArchway())
+                    _jobs.Add((WallPalette.Picture(one, Core.Space.Edge.Archway), () => Instance(WallLooks.Archway(one))));
+
+                if (one.HasWindow())
+                    _jobs.Add((WallPalette.Picture(one, Core.Space.Edge.Window), () => Instance(WallLooks.Window(one))));
             }
 
             // only the pictures not made yet (cc_task_m3): remaking every one churns every committed picture for nothing.

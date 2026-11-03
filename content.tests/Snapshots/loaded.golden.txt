@@ -1,4 +1,4 @@
-spells 125
+spells 124
 classes 7
 class features 123
 species 19
@@ -132,4 +132,3 @@ spell vitriolic_sphere 4 effects 2
 spell wall_of_fire 4 effects 4
 spell wall_of_force 5 effects 1
 spell web 2 effects 2
-spell wish 9 effects 1

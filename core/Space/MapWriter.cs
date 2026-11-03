@@ -83,6 +83,8 @@ namespace Core.Space
         {
             Edge.Wall => vertical ? '|' : '-',
             Edge.Door => 'x',
+            Edge.Archway => 'a',
+            Edge.Window => 'w',
             _ => ' ',
         };
     }

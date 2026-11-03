@@ -1396,17 +1396,9 @@ prop.npc_casual_female.name,Villager 2
 prop.npc_casual_male.name,Villager 1
 prop.npc_chef_female.name,Cook 2
 prop.npc_chef_male.name,Cook 1
-prop.npc_doctor_female_old.name,"Healer, old 2"
-prop.npc_doctor_female_young.name,"Healer, young 2"
-prop.npc_doctor_male_old.name,"Healer, old 1"
-prop.npc_doctor_male_young.name,"Healer, young 1"
 prop.npc_knight_golden_female.name,Knight in gold 2
 prop.npc_knight_golden_male.name,Knight in gold 1
 prop.npc_knight_male.name,Knight
-prop.npc_ninja_female.name,Scout in black 2
-prop.npc_ninja_male.name,Scout in black 1
-prop.npc_ninja_sand.name,Desert scout 1
-prop.npc_ninja_sand_female.name,Desert scout 2
 prop.npc_oldclassy_female.name,Lady
 prop.npc_oldclassy_male.name,Gentleman
 prop.npc_pirate_female.name,Sailor 2
@@ -1415,10 +1407,6 @@ prop.npc_soldier_female.name,Soldier 2
 prop.npc_soldier_male.name,Soldier 1
 prop.npc_viking_female.name,Northwoman
 prop.npc_viking_male.name,Northman
-prop.npc_witch.name,Witch
-prop.npc_wizard.name,Wizard
-prop.npc_worker_female.name,Labourer 2
-prop.npc_worker_male.name,Labourer 1
 prop.oak_1.name,Oak
 prop.oak_2.name,"Oak, broad"
 prop.oak_3.name,"Oak, tall"
@@ -1541,6 +1529,7 @@ prop.wall_plaster.name,"Wall, plaster"
 prop.wall_shelf.name,Wall shelf
 prop.wall_timbered.name,Timber frame
 prop.wall_window.name,Wall with a window
+prop.wall_window_fieldstone.name,Fieldstone wall with a window
 prop.warehouse.name,Warehouse
 prop.watchtower.name,Watchtower
 prop.watchtower_stone.name,"Watchtower, stone"
@@ -2041,10 +2030,6 @@ spell.wall_of_force.name,Cube of Force
 spell.web.components,"V, S, M (a bit of spiderweb)"
 spell.web.description,"Level 2. Fills a 20-foot cube with webs: difficult terrain and lightly obscured. A creature that enters or starts its turn there makes a Dexterity save or is restrained, and can use an action and a Strength check to break free. Requires concentration."
 spell.web.name,Web
-spell.wish.components,V
-spell.wish.description,Level 9. Its effect is told by the narrator. (v1 ships a bounded version of this spell.)
-spell.wish.name,Wish
-spell.wish.narration,The air goes still as {0} speaks the Wish. What it brings is the story's to tell.
 ui.access.button,"{0}, on the bar."
 ui.access.nothing_to_reach,There is nothing on the table to reach.
 ui.access.piece,"{0}: {1} of {2} hit points, {3} squares away."
@@ -2464,8 +2449,10 @@ ui.map.id,Map name
 ui.map.id_rule,"Only letters, numbers, dashes, spaces and underscores are allowed"
 ui.map.leave,Leave
 ui.map.leave_anyway,Leave without saving
+ui.map.line_archway,Archway
 ui.map.line_door,Door
 ui.map.line_wall,Wall
+ui.map.line_window,Window
 ui.map.lives,Keep it in
 ui.map.looks,Ground
 ui.map.make,Make the map
@@ -2491,6 +2478,7 @@ ui.map.problem_npc_cant_stand,"A {0} stands where nobody could: on rock, or over
 ui.map.problem_npc_unknown_person,"Someone on the map is {0}, who isn't one of the campaign's characters any more."
 ui.map.problem_prop_in_wall,A {0} is inside a wall.
 ui.map.problem_prop_off_map,A {0} runs off the edge of the map.
+ui.map.problem_prop_unknown,"There was a {0} here, which the game no longer has. Nothing stands there now."
 ui.map.problem_props_overlap,A {0} stands on top of another prop that blocks.
 ui.map.problem_spawn_in_prop,Spawn {0} is inside a prop that blocks.
 ui.map.problem_spawn_on_rock,Spawn {0} is on solid rock.

@@ -332,6 +332,24 @@ namespace Content.Tests
             SameSheet(mage, back);
         }
 
+        // WISH LEFT V1 (Kathleen, 2026-11-03; deferred.md): a save that knew it loads without it, with a caution
+        [Fact]
+        public void ASaveThatKnewWishLoadsWithoutIt()
+        {
+            Hero mage = Made("mage", "sage", null, null, 5, highestSpell: 2);
+
+            var save = new SaveGame { Hero = HeroSaves.Capture(mage) };
+            save.Hero.Known.Add("wish");
+
+            Hero back = HeroSaves.Restore(SaveReader.Parse(SaveWriter.Write(save)).Value.Hero, Srd,
+                                          out IReadOnlyList<ContentProblem> problems);
+
+            Assert.NotNull(back);
+            Assert.DoesNotContain(back.Caster.Known, s => s.Id == "wish");
+            Assert.Contains(problems, p => p.IsACaution && p.What.Contains("wish"));
+            Assert.Null(Srd.Spells.Find("wish"));
+        }
+
         // the mini picked on creation's last page (Kathleen's UI notes, 2026-10-27): another class's body, a skin, a hair
         [Fact]
         public void TheHerosLookComesBackAsItWasPicked()

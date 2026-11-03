@@ -68,7 +68,8 @@ namespace Game.Board
         // to sole (Crown). Each about as tall as the bandit beside it on the 2026-10-23 shots
         static readonly Dictionary<string, MiniLook> ByLineage = new Dictionary<string, MiniLook>
         {
-            ["beastfolk_vulpine"] = new("beastfolk/fox.glb", 0.29f, "Idle", Crown: true),
+            // CC BY-ND 4.0: shipped as it comes, never repainted (Kathleen, 2026-11-03: "use it, but don't repaint it")
+            ["beastfolk_vulpine"] = new("beastfolk/fox.glb", 0.29f, "Idle", Crown: true, OwnLook: true),
             ["beastfolk_selachian"] = new("beastfolk/sharky.gltf", 0.225f, "Idle"),
         };
 

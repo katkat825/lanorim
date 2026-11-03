@@ -758,7 +758,6 @@ namespace Content.Tests
             {
                 ["find_familiar"] = "fixed familiar archetypes and a scouting menu, not any creature - close enough; approved by Kathleen 2026-09-25",
                 ["dominate_monster"] = "a short command set, not full obedience - close enough; approved by Kathleen 2026-09-25",
-                ["wish"] = "duplicates a spell or picks from an authored menu, no free-text wish - close enough; approved by Kathleen 2026-09-25",
                 ["polymorph"] = "curated form cards, not any beast's statblock - close enough; approved by Kathleen 2026-09-25",
                 ["shapechange"] = "curated high-level form cards, not any creature - close enough; approved by Kathleen 2026-09-25",
                 ["fly"] = "no altitude, and no extra creature for a higher slot - approved by Kathleen 2026-09-25",
@@ -767,12 +766,13 @@ namespace Content.Tests
             };
 
         [Fact]
-        public void TheAllowListIsTheApprovedEightAndEachSaysWhatChanged()
+        public void TheAllowListIsTheApprovedSevenAndEachSaysWhatChanged()
         {
             IReadOnlyDictionary<string, string> english =
                 Locale.Read(System.IO.File.ReadAllText("game.csv"));
 
-            Assert.Equal(8, KeptUnderTheirSrdNames.Count);
+            // eight approved 2026-09-25; Wish left v1 on 2026-11-03
+            Assert.Equal(7, KeptUnderTheirSrdNames.Count);
 
             foreach (string id in KeptUnderTheirSrdNames.Keys)
             {

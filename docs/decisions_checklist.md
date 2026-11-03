@@ -138,7 +138,8 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
     (`KeptUnderTheirSrdNames` in `content.tests/ShapesAndReactionsTests.cs`):
     - **Find Familiar**: fixed familiar archetypes and a scouting menu, not any creature.
     - **Dominate Monster**: a short command set, not full obedience.
-    - **Wish**: duplicates a spell or picks from an authored menu; no free-text reality change.
+    - ~~**Wish**: duplicates a spell or picks from an authored menu; no free-text reality change.~~ Deferred 2026-11-03
+      (`deferred.md`): the spell leaves v1.
     - **Polymorph**: curated form cards, not any beast's statblock.
     - **Shapechange**: curated high-level form cards.
     - **Fly**: a Flying status with speed 60 and no altitude. It drops the extra creature per slot level above 3.
@@ -406,3 +407,19 @@ additive (currently deferred; v1 is flat 40 slots) · global inventory / lost-an
 *Add anything here as it comes up. Half-formed is fine.*
 
 - **[DECIDED] Campaign-specific nat-1 / nat-20 consequences.** *(Built 2026-10-12, cc_task_i 4.3: (a) campaign-wide. A pack's `consequences/*.json`, in `content/srd/consequences/pool.json`'s shape, adds to the game-wide pool while that campaign runs, or replaces it with `"consequences": "replace"` in pack.json; flavour-only entries work. (b), encounter- or NPC-scoped lines, is not built. Kathleen to confirm.)* Was: *(raised 2026-09-24 — the campaign's goat is growing a personality.)* **Not currently wired up.** The engine already supports it — the consequence pool is data with a `.With()` layer, and there's a `Flavour` kind that's a pure narrator line (no mechanics) — but the campaign seam isn't connected: a campaign `Package` has no `consequences` folder, and `Library.With(pack)` passes the SRD pool through unchanged. Two levels: **(a) campaign-wide** additions (goat-tone banes/boons that can be drawn on any nat-1/20 in that campaign) is a ~3-edit wire and easy — and since the pool is additive it sidesteps the "can't redefine SRD content yet" limit entirely; **(b) encounter/NPC-scoped** (a line that fires *only* around the goat / in one encounter) is a bigger add — the pool has no context/tag filtering today, only polarity. Decision pending on whether to wire (a), and whether (b) is worth it.
+
+- **[DECIDED 2026-11-03] Kathleen's answers to the M3 and N–Q run logs' open questions** (`cc_task_m4-decisions-11-03.md`):
+  - Copies of the game's own campaigns **can't be published to the Workshop in v1** (R's rule): confirmed.
+  - **No `<<hurt>>` story command.** "They take a little damage" stays the GM's line only, naming no amount
+    (`ui.workshop.starter_hurt_line`).
+  - **Play-testing with one of the player's real characters is not in v1.** The test hero is enough.
+  - **Old saves of the four retired Beastfolk kinds may break**: the game isn't public yet.
+  - **Stone floor on all-stone dungeons is fine as it is** (`StoneWhereAlone` stays off).
+  - **The village buildings keep using the pack's OBJ versions.**
+  - **The N–Q screens and the M3 shots are fine as they are.**
+  - **The Hooded Fox ships, unpainted** (CC BY-ND 4.0: drawn with its own materials, only posed, scaled and lit).
+  - **Wish leaves v1** (`deferred.md`).
+  - **Twelve NPC figures are removed** from the picker (witch, wizard, the workers, every ninja and every doctor).
+  - **Archway and Window** join Wall and Door as kinds of line in the map builder's Walls and doors.
+- **[DECIDED 2026-11-03] Any equip from any source costs an action during a fight** (Kathleen, on the CS run log): the
+  sheet's Swap, the HUD's, and the pack's Equip, Off hand and Unequip. Free outside a fight.

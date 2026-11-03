@@ -48,10 +48,11 @@ namespace Content.Tests
 
                 "dominate_monster", "sunburst",
 
-                "meteor_swarm", "power_word_kill", "wish",
+                // Wish was the 62nd until it left v1 (Kathleen, 2026-11-03; deferred.md)
+                "meteor_swarm", "power_word_kill",
             };
 
-            Assert.Equal(62, must.Length);
+            Assert.Equal(61, must.Length);
 
             string[] missing = must.Where(id => !Book.Has(id)).ToArray();
 
@@ -112,8 +113,9 @@ namespace Content.Tests
 
             // 131 on the v1 list, 123 working (Kathleen, 2026-09-25), and the Wood Elf's two
             // (content/srd/spells/species_spells.json), on the class lists the SRD gives them since cc_task_f 1.2
-            Assert.Equal(62 + 61 + 2, Book.Count);
-            Assert.Equal(125, Book.All.Count(s => s.Classes.Count > 0));
+            // and Wish left v1 on 2026-11-03 (deferred.md)
+            Assert.Equal(61 + 61 + 2, Book.Count);
+            Assert.Equal(124, Book.All.Count(s => s.Classes.Count > 0));
             Assert.False(Book.Find("dissonant_whispers").Renamed);
             Assert.False(Book.Find("dragons_breath").Renamed);
         }
@@ -157,13 +159,13 @@ namespace Content.Tests
             // 2026-09-25 (Kathleen's decisions): Banishment and Maze made faithful (off the board
             // and back); seven deferred and Suggestion skipped. Fly, Gaseous Form and Slow are
             // closer but still not exact, and keep their SRD names on the allow-list with Find
-            // Familiar, Dominate Monster, Wish, Polymorph and Shapechange
+            // Familiar, Dominate Monster, Polymorph and Shapechange (Wish was one until it left v1, 2026-11-03)
             // (ShapesAndReactionsTests.KeptUnderTheirSrdNames). Wall of Force ships as Cube of
             // Force, Teleport as Waypoint
             string[] must =
             {
                 "find_familiar", "fly", "slow", "wall_of_force", "teleport",
-                "dominate_monster", "wish",
+                "dominate_monster",
             };
 
             string[] should =
@@ -171,7 +173,7 @@ namespace Content.Tests
                 "gaseous_form", "polymorph", "shapechange",
             };
 
-            Assert.Equal(7, must.Length);
+            Assert.Equal(6, must.Length);
             Assert.Equal(3, should.Length);
 
             Assert.Equal(must.Concat(should).OrderBy(id => id),

@@ -245,7 +245,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--mood <mood>` | table.tscn on its own |  | with --companion, it feels that (pleased, alert, quiet, watching) |
 | `--mood-after <seconds>` | table.tscn on its own |  | with --mood, so many seconds in (2 otherwise) |
 | `--corners` | table.tscn on its own |  | a cross of walls on the map, so every kind of wall post is on the table |
-| `--wall-styles` | table.tscn on its own |  | every wall style in a row of its own, two walls, its door (where it has one), two more and a corner, on grass (cc_task_m3) |
+| `--wall-styles` | table.tscn on its own |  | every wall style in a row of its own: walls, its door, archway and window (where it has them), and a corner, on grass (cc_task_m3, m4) |
 | `--open-door` | table.tscn on its own |  | the map's door swung open |
 
 *The probes and the checks*

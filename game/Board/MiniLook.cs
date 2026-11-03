@@ -20,8 +20,11 @@ namespace Game.Board
     //   Skin    the colour its surface called "Skin" is painted instead of its own (the map's people, FigureSkins), and
     //           on a KayKit body its atlas's skin swatch (PaintedModel.RecolourSwatch). null keeps the pack's
     //   Hair    the same for its hair: the surface called "Hair", or the KayKit atlas's hair swatch (the hero's pick)
+    //   OwnLook drawn with its own textures and materials, never the painted-miniature shader and never recoloured: only
+    //           posed, scaled and lit. A model whose licence forbids changing it (the Hooded Fox, CC BY-ND 4.0; cc_task_m4
+    //           Part 1). Skin and Hair are ignored on it
     public sealed record MiniLook(string File, float Height, string Pose = null, float At = Mini.RestingFrame,
                                   string Rig = null, IReadOnlyList<(string Bone, string Item)> Holds = null,
                                   bool Crown = false, string Head = null, IReadOnlyList<string> Leave = null,
-                                  Godot.Color? Skin = null, Godot.Color? Hair = null);
+                                  Godot.Color? Skin = null, Godot.Color? Hair = null, bool OwnLook = false);
 }

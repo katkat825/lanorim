@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+; A BROKEN RUINED ARCHWAY (cc_task_m4 Part 4): the Ultimate Modular Ruins pack's Wall_ArchRound_Broken.obj, moved so its middle is on the line as the ruins' door is.
+; First pass: Kathleen's to lay out.
+
+[ext_resource type="Mesh" path="res://models/props/ultimate_modular_ruins_pack_aug_2021/Wall_ArchRound_Broken.obj" id="1_body"]
+
+[node name="archway" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.095)
+mesh = ExtResource("1_body")

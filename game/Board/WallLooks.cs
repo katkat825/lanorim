@@ -23,6 +23,11 @@ namespace Game.Board
         // a style with no door of its own has none to draw (WallStyles.HasDoor, cc_task_m3 Part 6)
         public static PackedScene Door(WallStyle style) => style.HasDoor() ? Scene(style, "door") : null;
 
+        // an archway and a window in a style (cc_task_m4 Part 4): archway.tscn and window.tscn beside its wall and door
+        public static PackedScene Archway(WallStyle style) => style.HasArchway() ? Scene(style, "archway") : null;
+
+        public static PackedScene Window(WallStyle style) => style.HasWindow() ? Scene(style, "window") : null;
+
         // how tall a style stands, as a share of the dungeon's walls (Board.WallTall): a fence and a hedge come to a
         // mini's waist, so they never need to come down for the camera
         public static float Height(WallStyle style) => style switch

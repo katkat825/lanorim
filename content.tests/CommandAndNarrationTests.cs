@@ -111,7 +111,7 @@ namespace Content.Tests
 
         static readonly string[] Narrators =
         {
-            "druidcraft", "mage_hand", "minor_illusion", "prestidigitation", "disguise_self", "wish", "thaumaturgy",
+            "druidcraft", "mage_hand", "minor_illusion", "prestidigitation", "disguise_self", "thaumaturgy",
             "silent_image", "speak_with_animals", "darkvision", "major_image", "speak_with_dead",
         };
 

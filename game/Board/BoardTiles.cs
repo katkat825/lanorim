@@ -123,6 +123,16 @@ namespace Game.Board
         {
             Content.Maps.WallStyle style = Look?.At(on) ?? Content.Maps.WallStyle.Stone;
 
+            // an archway or a window (cc_task_m4 Part 4): to the rules an open line and bars, drawn as what the map says
+            switch (Look?.Drawn(on) ?? Edge.None)
+            {
+                case Edge.Archway when WallLooks.Archway(style) is PackedScene arch:
+                    return Panel(on, arch, style, opening: true);
+
+                case Edge.Window when WallLooks.Window(style) is PackedScene window:
+                    return Panel(on, window, style, opening: true);
+            }
+
             return map.At(on) switch
             {
                 Edge.Wall or Edge.Bars when style != Content.Maps.WallStyle.Stone && WallLooks.Wall(style) is PackedScene styled =>
@@ -155,14 +165,17 @@ namespace Game.Board
         }
 
         // uniform scale: a modular kit's wall already fits a line, so nothing is stretched. a low style (a fence, a
-        // hedge) stands at its own height and never comes down for the camera; the rest cut away as the dungeon's do
-        Node3D Panel(Border on, PackedScene model, Content.Maps.WallStyle style = Content.Maps.WallStyle.Stone)
+        // hedge) stands at its own height and never comes down for the camera; the rest cut away as the dungeon's do,
+        // but an archway or a window (`opening`, cc_task_m4 Part 4) stays tall, as a doorway does, so it reads as one
+        Node3D Panel(Border on, PackedScene model, Content.Maps.WallStyle style = Content.Maps.WallStyle.Stone,
+                     bool opening = false)
         {
             Node3D panel = Standing(model, NameFor(on), Centre(on), _metrics.CellSize, out Aabb bounds);
 
             panel.Rotation = new Vector3(0f, Facing(on), 0f);
 
             if (WallLooks.Low(style)) StandLow(panel, bounds, WallLooks.Height(style));
+            else if (opening) Cutaway?.Doorway(panel, bounds, on);
             else Cutaway?.Line(panel, bounds, on);
 
             return panel;

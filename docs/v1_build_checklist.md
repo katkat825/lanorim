@@ -9,6 +9,16 @@ can tell when v1 is *done*. Written 2026-09-21.
 **Legend:** `[ ]` to build · `[~]` in progress · `[x]` done · `[HARVEST]` reuse/adapt old game code ·
 `[DEFER]` explicitly post-v1.
 
+## Progress snapshot — 2026-11-03, refreshed from the run logs since September (cc_task_m4 Part 5)
+
+*Marks below brought up to what the run logs of 2026-09-26 to 2026-11-03 say is built; nothing about what v1 includes
+changed. Each changed line carries a dated note naming the task. In short: the **map builder** (tasks F, L, M2, M3) and
+the **Workshop's editors** (M: hub and campaign setup; N: fights, encounters, loot, shops, lucky rolls; O and P: the story
+editor; Q: play-testing) are built, but not the Steam Workshop upload (task R). The **full character sheet and spell
+cards** are built (task CS). **Wish left v1** (122 functioning spells). Accessibility's keys, reader and rebinding are
+built (the 10-03 answers). Export presets and a check exist, but no export has run. Content (the campaigns) and
+release are still to do.*
+
 ## Progress snapshot — 2026-09-25, after the SRD check
 
 *`dotnet test` green: **949** (core 284 + content 665). Everything the data calls SRD was checked field by field
@@ -78,7 +88,7 @@ done.**
 
 - `[x]` **d20 resolution** — roll + mods vs DC/AC, advantage/disadvantage.
 - `[x]` **Ability scores, modifiers, proficiency bonus** (+2→+6).
-- `[~]` **Skill checks** — 18 skills, DC ladder or campaign custom, **nat-1/nat-20 consequence pool**. *(2026-09-28: wired. A story's check with a natural 1 draws a bane and a natural 20 a boon, behind the GM screen (`GmScreen.Draw`), carried out on the hero by `Referee.Consequence` and said on the table; the hero's critical hits draw through the same door and go in the fight log. A campaign's own consequences are still open, decisions_checklist.md.)*
+- `[x]` **Skill checks** — 18 skills, DC ladder or campaign custom, **nat-1/nat-20 consequence pool**. *(2026-11-03 refresh: a campaign's own consequences are built, campaign-wide (task I 4.3); encounter- or NPC-scoped ones are not, and are a decision, not a build.)* *(2026-09-28: wired. A story's check with a natural 1 draws a bane and a natural 20 a boon, behind the GM screen (`GmScreen.Draw`), carried out on the hero by `Referee.Consequence` and said on the table; the hero's critical hits draw through the same door and go in the fight log. A campaign's own consequences are still open, decisions_checklist.md.)*
 - `[~]` **Saving throws** — six saves + class proficiencies.
 - `[x]` **Attack + damage + crits** — weapon die + mod; crit = double + consequence pool.
 - `[x]` **HP / damage / healing / death save** — single d20 ≥ 10 death save.
@@ -94,8 +104,8 @@ done.**
   utility-narrative — the composition engine (the #1 cost; see `v1_spell_list.md`).
 - `[x]` **Spell resource — two modes, chosen at creation** — **(A) spell slots** (full/half tables) and **(B) spell points** (fixed cost per level + 6th+-once-per-rest cap); cantrips at-will in both; refill on rest; one `ISpellResource` abstraction over the shared cast-at-level engine. *(2026-09-23: was mana-only. Built + unit-tested 2026-09-24 — slots + points + 6th+ cap; the choose-at-creation UI is §10.)*
 - `[x]` **Concentration** — binary (held until ended or downed); dropping it lifts its conditions and zones.
-- `[x]` **123 functioning spells** composed from primitives. *(2026-09-25: was 131. Kathleen deferred 7 and cut Suggestion; see `deferred.md`. **Dissonant Whispers and Dragon's Breath are in SRD 5.2.1** (p.124, p.126). The 09-24 note saying they weren't was wrong. Both were rebuilt from the SRD text and ship under their SRD names. 113 are the SRD spell under its SRD name. 8 keep their SRD names as approximations Kathleen approved (the allow-list under the HARD RULE). 2 ship renamed (Cube of Force, Waypoint). Every spell was checked field by field against the SRD text (`_design_docs/SRD_CHECK_2026-09-25.md`). Both halves of the naming rule are tests. Review: `_design_docs/REVIEW_spell_names.md`.)*
-- `[~]` **Spell cards UI** — text cards; full ~339 SRD list as reference cards. *(Card logic built — `SpellCard.cs`; the Godot card is not.)*
+- `[x]` **122 functioning spells** composed from primitives. *(2026-11-03: Wish left v1, Kathleen; `deferred.md`.)* *(2026-09-25: was 131. Kathleen deferred 7 and cut Suggestion; see `deferred.md`. **Dissonant Whispers and Dragon's Breath are in SRD 5.2.1** (p.124, p.126). The 09-24 note saying they weren't was wrong. Both were rebuilt from the SRD text and ship under their SRD names. 113 are the SRD spell under its SRD name. 8 keep their SRD names as approximations Kathleen approved (the allow-list under the HARD RULE). 2 ship renamed (Cube of Force, Waypoint). Every spell was checked field by field against the SRD text (`_design_docs/SRD_CHECK_2026-09-25.md`). Both halves of the naming rule are tests. Review: `_design_docs/REVIEW_spell_names.md`.)*
+- `[x]` **Spell cards UI** — text cards; full ~339 SRD list as reference cards. *(Card logic built — `SpellCard.cs`; the Godot card is not.)* *(2026-11-03 refresh, task CS: the card is built (and a feature card in the same frame), opened from the sheet, creation, the HUD and the book's new Spells page, which lists v1's spells only, since only they are in the data.)*
 
 ## 4. Classes, species, progression
 
@@ -107,7 +117,7 @@ done.**
 
 ## 5. Character sheet & inventory
 
-- `[~]` **Character sheet UI** — *(logic built — `SheetView.cs`, plus Alignment; a short sheet card is wired from the pause menu 2026-09-24 — the full layout of `character_sheet_decisions.md` is not)* — identity, basics, abilities, skills, actions/bonus/reactions, weapons, spells, special (`character_sheet_decisions.md`).
+- `[x]` **Character sheet UI** — *(2026-11-03 refresh, task CS: the full sheet, every section, as a full-screen parchment page with two sides; opened from C, the HUD and the pause menu. The paper-on-the-table version is a later step.)* *(logic built — `SheetView.cs`, plus Alignment; a short sheet card is wired from the pause menu 2026-09-24 — the full layout of `character_sheet_decisions.md` is not)* — identity, basics, abilities, skills, actions/bonus/reactions, weapons, spells, special (`character_sheet_decisions.md`).
 - `[x]` **Inventory system** — flat 40 slots, stacking, equip, buy/sell, discard-to-make-room, class/level gating (`inventory_decisions.md`).
 - `[x]` **Merchant** — buy/sell, unlimited gold default, buy-prevention when full. *(Logic built + tested; the pack/merchant card is wired 2026-09-24 — `<<shop id>>` in a story opens it. Needs Kathleen's eyes.)*
 
@@ -126,7 +136,7 @@ done.**
 - `[~]` **3D table scene** — grid map (3/4 screen), lifting dice tray, GM screen, companion, help button.
 - `[x]` **Dice physics + roll + sound** — reuse the old dice system + the moved sound pool.
 - `[x]` **GM screen** — first-party GM-screen models made (`game/models/gm_screen/`); wire **blank** for now, per-campaign backgrounds later. *(2026-09-24: `GmScreen` stands beyond the board's far edge whatever the map's size; a manifest's `gm_screen` picks cave / dead-forest / plains / snowy-mountains; the GM's hidden rolls rattle behind it. Its place and size need eyes.)*
-- `[~]` **Companion mini** — Quaternius creature, idle presence + hints (off-map token). *(2026-10-01: `game/Table/CompanionFigure.cs`, idles dealt by `Idling`, moods from `CompanionMind` watching the fight, a rest and the hero being down, a gesture when the story gives it a line, and it clears fallen foes off the mat (`Mini.Skitter`). 2026-10-02: Quaternius’s Ultimate Animated Animals (Kathleen, 2026-10-01: “Quaternius animals, not KayKit skeletons”), standing above the map a little right of the GM screen and walking between spots near it (`Content.Companions.Roaming`); the picks are in `CompanionModels`. Not yet: hints (`HintLadder`) and camp scenes (`Campfire`) - no campaign loads hints or camp nodes yet, and the sample has none; barks - no bark bank is loaded.)*
+- `[~]` **Companion mini** — *(2026-11-03 refresh: barks are loaded and said (task I).)* Quaternius creature, idle presence + hints (off-map token). *(2026-10-01: `game/Table/CompanionFigure.cs`, idles dealt by `Idling`, moods from `CompanionMind` watching the fight, a rest and the hero being down, a gesture when the story gives it a line, and it clears fallen foes off the mat (`Mini.Skitter`). 2026-10-02: Quaternius’s Ultimate Animated Animals (Kathleen, 2026-10-01: “Quaternius animals, not KayKit skeletons”), standing above the map a little right of the GM screen and walking between spots near it (`Content.Companions.Roaming`); the picks are in `CompanionModels`. Not yet: hints (`HintLadder`) and camp scenes (`Campfire`) - no campaign loads hints or camp nodes yet, and the sample has none; barks - no bark bank is loaded.)*
 - `[~]` **Mini rendering on grid** — heroes + monsters, palette-unified. *(2026-09-24: a monster stands as its statblock's mini — goblin, bandit, guard, zombie, wolf, rat, spider so far (`MiniModels`); props stand on their squares.)*
 - `[~]` **Camera + lighting** for the table.
 
@@ -140,13 +150,14 @@ done.**
 
 ## 9. Campaign format & Workshop
 
-- `[~]` **Campaign format** — scenes, encounters, maps, NPCs, dialogue, tables as data. *(Encounter and loot tables, merchants, the GM screen and map props load from a pack; a whole campaign plays — `CampaignRun`, `campaigns/sample_millbrook`.)*
-- `[~]` **MAP BUILDER (wanted early).** *(2026-09-24: the palette from data and the tool modes — `PropCatalogue`, `MapEditor` — on `MapDraft`; the Godot editor screen is not built.)* In-engine visual editor: shows the grid + a palette of the
+- `[x]` **Campaign format** — *(2026-11-03 refresh: chapters, characters, story, maps, fights, encounters, loot, shops and lucky rolls are all campaign data the Workshop writes and the game plays (tasks I to Q).)* scenes, encounters, maps, NPCs, dialogue, tables as data. *(Encounter and loot tables, merchants, the GM screen and map props load from a pack; a whole campaign plays — `CampaignRun`, `campaigns/sample_millbrook`.)*
+- `[x]` **MAP BUILDER (wanted early).** *(2026-11-03 refresh: built in tasks F, L, M2 and M3: paint, fill, props and buildings, walls and doors (archways and windows in M4), spawns and the start, the map's people, templates, undo, the problems list with Go there, and Play this map.)* *(2026-09-24: the palette from data and the tool modes — `PropCatalogue`, `MapEditor` — on `MapDraft`; the Godot editor screen is not built.)* In-engine visual editor: shows the grid + a palette of the
   Quaternius/asset library; **click/drag to place** floor tiles, walls, props, and monster/spawn markers on
   squares; save as a campaign map file. Purpose: you *and* Workshop authors build maps **without touching
   Godot or hand-authoring map data**. Keep it simple — paint tiles, place props, set spawns, no scripting.
   Build a usable version **early** (it's also your own authoring tool) even before Workshop upload exists.
-- `[ ]` **Steam Workshop integration** — upload / subscribe / load user campaigns.
+- `[~]` **Workshop: making campaigns in the game** *(2026-11-03 refresh: the hub and a campaign's setup (task M), its fights, encounters, loot, shops and lucky rolls (N), the story editor (O, P) and play-testing from any card (Q) are built; a player's campaigns load from My campaigns.)*
+- `[ ]` **Steam Workshop integration** — upload / subscribe / load user campaigns. *(2026-11-03: task R, next.)*
 - `[~]` **Content policy** — *(draft for you: `_design_docs/CONTENT_POLICY_DRAFT.md`)* — authors may not upload WotC Product Identity or copyrighted adventures; asset-redistribution rules (Admurin/Quaternius: reference-by-id, don't repackage raw).
 
 ## 10. Game-wide UI / UX
@@ -156,7 +167,7 @@ done.**
 - `[~]` **Settings.** *(Game half built and wired — `GameSettings` + `SettingsPanel`: enemy-turn speed, skip physical dice, camera follow, reaction policies, saved as JSON. The Access half (`game/Access/Adjustments`) has no page yet.)*
 - `[~]` **Tutorial / onboarding** — ask beginner/intermediate/advanced → matching replayable tutorial campaign. *(Picker built — `TutorialPicker`: a campaign tagged `tutorial_beginner` etc. fills each level; the test campaigns sit under it. The tutorials themselves are content, not written.)*
 - `[x]` **UI theme** — *(2026-09-24: `game/ui/lanorim_theme.tres`, the project default — Alegreya SC UI, EB Garamond cards, both narration candidates as variations. Icons not yet.)* — Kenney UI kit (panels/buttons/borders); **icons** game-icons.net (CC-BY, credit authors); **fonts** (EB Garamond cards / Alegreya SC UI / storytelling font).
-- `[~]` **Accessibility** — in v1, at the highest depth feasible.
+- `[~]` **Accessibility** — in v1, at the highest depth feasible. *(2026-11-03 refresh: F1 help, F2 where are we, F3 the reader, Tab reaching the table's pieces, every act rebindable on the Controls page, no hover-only text, the sheet read aloud (2026-10-03 answers, task CS). Still open: an Access page for the other adjustments.)*
 
 ## 11. Audio
 
@@ -166,7 +177,7 @@ done.**
 
 ## 12. Content to author (the actual v1 game)
 
-- `[~]` **SRD data entry** — the 7 classes, 7 species, 123 spells, monster set, items as structured data (AI-assistable, but real volume).
+- `[~]` **SRD data entry** — the 7 classes, 7 species, 122 spells (2026-11-03: Wish left v1), monster set, items as structured data (AI-assistable, but real volume).
 - `[ ]` **3 tutorial campaigns** — beginner / intermediate / advanced, replayable.
 - `[ ]` **A handful of one-shots** — self-contained short adventures.
 - `[ ]` **A couple of level-block campaigns** — mid-length arcs over a level range.
@@ -179,7 +190,7 @@ done.**
 - `[ ]` **Steam page + AI-content disclosure** (coding-AI exempt; provenance in ../THIRD_PARTY.md).
 - `[ ]` **Legal review** — exact SRD CC-BY attribution wording + placement; store copy implies no affiliation.
 - `[~]` **Demo build + Steam demo App ID** *(the edition logic is built — `Edition.cs`/`DemoCut`, `demo.json` picks the content; Steam side not)* — separate free app; integrated button or own page; disable achievements, shared-cloud saves, end-screen CTA, content survey. *Ships early, before full v1.*
-- `[ ]` **Build / packaging** — PC/Steam first.
+- `[~]` **Build / packaging** — PC/Steam first. *(2026-11-03 refresh: export presets, a release build that leaves the dev hooks out, and `check-export.ps1` exist (tasks F, J); no export has run yet, the templates weren't installed. Packaging and Steam are task R.)*
 
 ---
 

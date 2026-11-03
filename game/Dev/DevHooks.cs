@@ -101,7 +101,7 @@ namespace Game.Dev
             new("--mood", "<mood>", Where.Table, false, "with --companion, it feels that (pleased, alert, quiet, watching)"),
             new("--mood-after", "<seconds>", Where.Table, false, "with --mood, so many seconds in (2 otherwise)"),
             new("--corners", "", Where.Table, false, "a cross of walls on the map, so every kind of wall post is on the table"),
-            new("--wall-styles", "", Where.Table, false, "every wall style in a row of its own, two walls, its door (where it has one), two more and a corner, on grass (cc_task_m3)"),
+            new("--wall-styles", "", Where.Table, false, "every wall style in a row of its own: walls, its door, archway and window (where it has them), and a corner, on grass (cc_task_m3, m4)"),
             new("--open-door", "", Where.Table, false, "the map's door swung open"),
 
             // the probes and the checks

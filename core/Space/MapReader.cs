@@ -35,6 +35,8 @@ namespace Core.Space
             ('|', Edge.Wall, true, false, "wall, up a line between two columns"),
             ('-', Edge.Wall, false, true, "wall, along a line between two rows"),
             ('x', Edge.Door, true, true, "door, shut"),
+            ('a', Edge.Archway, true, true, "archway, open and never shut"),
+            ('w', Edge.Window, true, true, "window, seen through and not walked through"),
         };
 
         public static string Legend
