@@ -1,0 +1,37 @@
+{
+  "tables": [
+    {
+      "id": "granary_pouch",
+      "entries": [
+        {
+          "id": "old_pouch",
+          "kind": "find",
+          "silver": "5",
+          "items": [
+            {
+              "item": "potion_of_healing",
+              "count": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rat_nest",
+      "entries": [
+        {
+          "id": "few_coppers",
+          "kind": "find",
+          "weight": 2,
+          "copper": "2d10"
+        },
+        {
+          "id": "lost_silver",
+          "kind": "find",
+          "weight": 1,
+          "silver": "1d6"
+        }
+      ]
+    }
+  ]
+}

@@ -32,8 +32,13 @@ namespace Content.Dialogue
         // a node with one of these is a camp scene, offered on a night that matches
         public const string TopicHeader = "topic";
 
+        // a node with one of these is said at a moment in a fight, not jumped to (FightCues.cs)
+        public const string CueHeader = "cue";
+
         // Yarn's own, and not ours to set
         public const string TitleHeader = "title";
+
+        readonly Dictionary<Cue, string> _cues = new Dictionary<Cue, string>();
 
         readonly Dictionary<string, DialogueLine> _lines =
             new Dictionary<string, DialogueLine>(StringComparer.Ordinal);
@@ -67,6 +72,15 @@ namespace Content.Dialogue
 
         public IEnumerable<string> CampNodes =>
             _topics.Keys.OrderBy(n => n, StringComparer.Ordinal);
+
+        public IReadOnlyCollection<Cue> Cues => _cues.Keys;
+
+        // the lines of the node written for this moment of this fight, in order; none when nobody wrote one
+        public IReadOnlyList<DialogueLine> CueLines(Cue cue) =>
+            _cues.TryGetValue(cue, out string node)
+                ? _lines.Values.Where(l => l.Node == node).OrderBy(l => l.File, StringComparer.Ordinal)
+                        .ThenBy(l => l.Line).ToList()
+                : Array.Empty<DialogueLine>();
 
         public DialogueLine Line(string yarnId) =>
             yarnId != null && _lines.TryGetValue(yarnId, out DialogueLine line) ? line : null;
@@ -255,6 +269,8 @@ namespace Content.Dialogue
 
                 _speakers[node.Key] = speaker;
 
+                ReadCue(node.Key, Header(node.Value, CueHeader), file);
+
                 string topic = Header(node.Value, TopicHeader);
 
                 if (topic == null) continue;
@@ -271,6 +287,26 @@ namespace Content.Dialogue
 
                 _topics[node.Key] = about;
             }
+        }
+
+        void ReadCue(string node, string header, string file)
+        {
+            if (header == null) return;
+
+            if (!Cue.TryParse(header, out Cue cue, out string problem))
+            {
+                _problems.Add(new ContentProblem(file, node + "." + CueHeader, problem));
+                return;
+            }
+
+            if (_cues.TryGetValue(cue, out string first))
+            {
+                _problems.Add(new ContentProblem(file, node + "." + CueHeader,
+                    $"'{cue}' is already node '{first}'s moment - one node a moment, so the order is plain"));
+                return;
+            }
+
+            _cues[cue] = node;
         }
 
         void ReadLines(IDictionary<string, StringInfo> table)

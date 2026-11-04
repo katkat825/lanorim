@@ -1,0 +1,41 @@
+{
+  "format": 2,
+  "name": "Hollin North Road",
+  "columns": 10,
+  "rows": 5,
+  "map": "\n+-+-+-+-+-+-+-+-+-+-+\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n . . . . . . . . . .\n+ + + + + + + + + + +\n @ . . . . . . . . 1\n+ + + + + + + + + + +\n . . . . . . . . . .\n+ + + + + + + + + + +\n|. . . . . . . . . .|\n+-+-+-+-+-+-+-+-+-+-+\n",
+  "ground": "gggggggggg\ndddddddddd\ndddddddddd\ndddddddddd\ngggggggggg\n",
+  "walls": "\n+h+h+h+h+h+h+h+h+h+h+\nh. . . . . . . . . .h\n+ + + + + + + + + + +\n . . . . . . . . . .\n+ + + + + + + + + + +\n . . . . . . . . . .\n+ + + + + + + + + + +\n . . . . . . . . . .\n+ + + + + + + + + + +\nh. . . . . . . . . .h\n+h+h+h+h+h+h+h+h+h+h+\n",
+  "props": [
+    {
+      "id": "bush_large",
+      "x": 2,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "bush_large",
+      "x": 5,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "tree_clump",
+      "x": 7,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "bush_large",
+      "x": 1,
+      "y": 4,
+      "turn": 0
+    },
+    {
+      "id": "bush_large",
+      "x": 6,
+      "y": 4,
+      "turn": 0
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "tables": [
+    {
+      "id": "set_pieces",
+      "entries": [
+        {
+          "id": "granary_rat",
+          "level": 1,
+          "difficulty": "low",
+          "kind": "fight",
+          "map": "granary_floor",
+          "monsters": [
+            {
+              "monster": "giant_rat"
+            }
+          ]
+        },
+        {
+          "id": "granary_loft_rats",
+          "level": 1,
+          "difficulty": "low",
+          "kind": "fight",
+          "map": "granary_loft",
+          "monsters": [
+            {
+              "monster": "giant_rat",
+              "count": "2"
+            }
+          ]
+        },
+        {
+          "id": "chicken_thief",
+          "level": 1,
+          "difficulty": "low",
+          "kind": "fight",
+          "map": "dobb_farm",
+          "monsters": [
+            {
+              "monster": "bandit"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "north_road",
+      "trigger": {
+        "roll": "1d20",
+        "at_least": 8
+      },
+      "entries": [
+        {
+          "id": "birds",
+          "kind": "line",
+          "weight": 3
+        },
+        {
+          "id": "wolf",
+          "level": 1,
+          "difficulty": "low",
+          "kind": "fight",
+          "map": "north_road",
+          "monsters": [
+            {
+              "monster": "wolf"
+            }
+          ],
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

@@ -64,9 +64,36 @@ namespace Game.Play
 
         void SeesTheHerosRoll(Core.Resolution.Attempt roll) => _mind?.Sees(roll);
 
+        // --- the story's lines at a moment in a fight (FightCues.cs) -----------------------------------------
+        //
+        // said one after another, each held for as long as it takes to read, past the chatter's cooldown and the
+        // player's chatter setting: they are the story's lines, not barks. Each is in the fight's log too, so a line
+        // the player was too busy to read is still there
+        readonly System.Collections.Generic.Queue<string> _cued = new();
+        double _cueIn;
+
+        void Cue(System.Collections.Generic.IReadOnlyList<DialogueLine> lines)
+        {
+            foreach (DialogueLine line in lines) _cued.Enqueue(line.Key);
+
+            GD.Print($"play    cue: {lines.Count} line(s) from {lines[0].Node}");
+        }
+
+        void TickCues(double delta)
+        {
+            if ((_cueIn -= delta) > 0 || _cued.Count == 0) return;
+
+            string key = _cued.Dequeue();
+
+            Bark(key);
+            _cueIn = GameState.Access.Time(BarkText.Plain(Game.Screens.Ui.Say(key))) + 0.5;
+        }
+
         // a held reaction runs out on the main thread's clock, which is also the chatter's
         void TickCompanion(double delta)
         {
+            TickCues(delta);
+
             _mind?.Tick(delta);
 
             if (_sayBark == null || (_sayBarkIn -= delta) > 0) return;

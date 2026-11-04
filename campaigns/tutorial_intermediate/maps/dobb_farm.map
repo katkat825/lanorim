@@ -1,0 +1,47 @@
+{
+  "format": 2,
+  "name": "Dobb Farm",
+  "columns": 10,
+  "rows": 7,
+  "map": "\n+-+-+-+-+-+-+-+-+-+-+\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n|. . . . . . 1 . . .|\n+ + + + + + + + + + +\n|. . . . . . . . . .|\n+ + + + + + + + + + +\n . . . . . . . . . .|\n+ + + + + + + + + + +\n @ . . . . . . . . .|\n+-+-+-+-+-+-+-+-+-+-+\n",
+  "ground": "gggggggggg\ngggggggggg\nggdddddggg\nggdddddggg\nggdddddggg\ndddddddggg\ndddggggggg\n",
+  "walls": "\n+e+e+e+e+e+e+e+e+e+e+\ne. . . . . . . . . .e\n+ + + + + + + + + + +\ne. . . . . . . . . .e\n+ + + + + + + + + + +\ne. . . . . . . . . .e\n+ + + + + + + + + + +\ne. . . . . . . . . .e\n+ + + + + + + + + + +\ne. . . . . . . . . .e\n+ + + + + + + + + + +\n . . . . . . . . . .e\n+ + + + + + + + + + +\n . . . . . . . . . .e\n+e+e+e+e+e+e+e+e+e+e+\n",
+  "props": [
+    {
+      "id": "house_small",
+      "x": 0,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "barn_small",
+      "x": 7,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "chicken_coop",
+      "x": 4,
+      "y": 1,
+      "turn": 0
+    },
+    {
+      "id": "bucket",
+      "x": 3,
+      "y": 4,
+      "turn": 0
+    },
+    {
+      "id": "farm_crate",
+      "x": 5,
+      "y": 5,
+      "turn": 0
+    },
+    {
+      "id": "log_pile",
+      "x": 7,
+      "y": 6,
+      "turn": 0
+    }
+  ]
+}

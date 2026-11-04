@@ -1,0 +1,186 @@
+title: hollin
+speaker: dm
+---
+<<declare $gate_choice = "">>
+First time at a table like this? Let me show you the ropes. When someone's talking, read it, then Continue. If you're ever lost, F1 shows the help, and F2 says where we are. #line:comp_ropes #speaker:companion
+This is sort of like an interactive story where you're the hero. Or the villain, but that's rare. The one behind the screen there is the Game Master. We call them the GM. They tell the story and play all the parts except your character. #line:comp_the_gm #speaker:companion
+The road to Hollin is muddy with ruts carved out from cart wheels. It's a small village with only a dozen or so houses, a granary, a general store, and a tavern. There's a wooden gate across the wall, but it's old and worn, looking like it's mostly just for show. #line:road_to_hollin
+A man in battered armor leans against the gate eating an apple. #line:pell_at_gate
+Afternoon. You the one I got that letter about? Good. I'm Sergeant Pell and I'm the watch. All of the watch. #line:pell_hello #speaker:pell
+He's all of the watch? The entirety of it? #line:comp_all_the_watch #speaker:companion
+Pell finishes the apple and throws the core to the roadside. #line:apple_core
+Before I can let you in, the gate sticks. Haven't been able to get it open after the rain last night. #line:pell_gate_sticks #speaker:pell
+Now you choose what to do. There's no wrong answer, just pick what your character would do. #line:comp_choose #speaker:companion
+-> "I'll kick it loose." #line:opt_kick
+    <<set $gate_choice to "kick">>
+-> "Is there a trick to it?" #line:opt_trick
+    <<set $gate_choice to "trick">>
+-> "I'm sure you can do it." #line:opt_you_do_it
+    <<set $gate_choice to "persuade">>
+These are the dice. They're named by how many sides they have: a d4, d6, d8, d10, d12, and the big one is a d20. The d20 answers 'does it work?' and the others answer 'how much?', like how hard a sword hits. #line:comp_the_dice #speaker:companion
+Trying something difficult is a skill check. You roll the d20 and add how good you are at that skill. If the total reaches the number the GM set, 5 here, you succeed. Higher is always better. Throw the d20 with the Space bar. #line:comp_skill_check #speaker:companion
+<<if $gate_choice == "kick">>
+    <<check athletics 5>>
+    <<if $passed>>
+        The gate swings open with a small crack. You check but the gate doesn't appear to be damaged. #line:kick_pass
+    <<else>>
+        The gate doesn't move. Pell kicks the bottom corner and the gate swings open fast. You lose your balance and fall into the mud. #line:kick_fail
+    <<endif>>
+<<elseif $gate_choice == "trick">>
+    <<check investigation 5>>
+    <<if $passed>>
+        The bottom corner appears swollen. You give that corner a slight tap and the gate swings open. #line:trick_pass
+    <<else>>
+        You look over it for a while. Pell sighs, kicks the bottom corner, and the gate swings open easily. #line:trick_fail
+    <<endif>>
+<<else>>
+    <<check persuasion 5>>
+    <<if $passed>>
+        Pell sighs, kicks the bottom corner, and the gate swings open easily. #line:persuade_pass
+    <<else>>
+        Pell looks at you with disdain. Then he sighs, and tells you to kick the bottom corner. You follow his instruction and the gate swings open easily. #line:persuade_fail
+    <<endif>>
+<<endif>>
+<<jump errand>>
+===
+title: errand
+speaker: dm
+---
+Pell walks you to the granary. It's a tall barn with a slightly rusted weathervane in the shape of a rooster. #line:to_the_granary
+There's rats in the granary. Big ones. The miller won't go in, and I've got a bad knee. #line:pell_rats #speaker:pell
+Before you head in, let's see what you can do. Hit the Esc key to open the pause menu. Then select the Character Sheet. That's you, on paper. #line:comp_open_sheet #speaker:companion
+The six big numbers are your ability scores: how strong, quick, tough, clever, wise, and charming you are. The small number beside each of these is the Modifier. The modifier is what gets added to a d20 roll. #line:comp_abilities #speaker:companion
+Skills are things you can do for checks. Trained ones add a bit more. #line:comp_skills #speaker:companion
+Hit points, also known as HP, are how much damage or harm you can take before you fall. Rest and healing spells and potions bring them back. Armor Class is how hard you are to hit. An attack's roll has to reach that number to hit you at all. #line:comp_hp_ac #speaker:companion
+And your Class is what kind of hero you are. It decides what types of things you can do and what types of actions you can take. Go ahead and close this to go back to the game. #line:comp_class #speaker:companion
+You can have this. Not sure who left it behind. #line:pell_old_pack #speaker:pell
+Pell tosses an old pack at you. You open it up and find a couple of torches, a pouch with 10 gp, and some moldy food. You toss the food into a nearby pile of other rotting food and trash. #line:old_pack
+<<give torch 2>>
+<<gold 10>>
+Oh, nice. We got some Gold. "gp" is short for gold pieces. #line:comp_gold #speaker:companion
+The Pack, which is also in the pause menu, is everything that you're carrying. Things you hold or wear are Equipped. #line:comp_pack #speaker:companion
+We won't need the torches. Let's find a shop and sell those and see what else we can buy. #line:comp_find_shop #speaker:companion
+The potion's 50gp. See how its Buy button is grey? Hover over it and it will tell you why. Grey always does that. #line:comp_grey_button #speaker:companion
+Let's sell the torches and buy the rope. Rope is always useful. Click the Sell button next to the torches. Then click the Buy button next to the rope. #line:comp_sell_buy #speaker:companion
+<<shop hollin_store>>
+You step back outside to see Pell impatiently waiting for you. He nods at the granary, tells you to get to it, and heads back to the gate. #line:pell_waiting
+<<jump granary>>
+===
+title: granary
+speaker: dm
+---
+The granary door stands slightly ajar. As you approach you can smell dust and old bread. Something squeaks inside. You push the door open and step inside. #line:granary_door
+<<fight granary_rat>>
+The rat is very still and very large. It's about the size of a small dog. #line:rat_still
+You hear more skittering up in the loft. #line:skittering
+Q and E turn the table and the wheel zooms, if you want a different view next time. #line:comp_q_and_e #speaker:companion
+Now we get loot, if there is any, whatever's left lying around after a fight. It goes in your pack automatically. #line:comp_loot #speaker:companion
+Looking around after the fight, you find a pouch under the feed trough that someone dropped long ago. Inside you find a few coins and a healing potion. #line:trough_pouch
+<<loot granary_pouch>>
+Great, a healing potion. Drinking that will also roll dice. You roll two d4s plus 2 and get that many hit points back. #line:comp_potion #speaker:companion
+The skittering continues above you. As you climb the ladder to the loft, a sack splits and a cloud of grain dust rolls down over you. #line:grain_dust
+This is a saving throw. A check is for when you're trying to do something. A save is for when something is happening to you, and you roll your d20 to try to avoid or reduce the effect. #line:comp_save #speaker:companion
+<<save con 10>>
+<<if $passed>>
+    You hold your breath until the dust settles. You wipe the dust off your face and continue up the ladder. #line:dust_pass
+<<else>>
+    You cough uncontrollably until your eyes are watering. You don't take any damage, but need to pause a moment to catch your breath. You wipe the dust off your face and continue up the ladder. #line:dust_fail
+<<endif>>
+You look around the loft and spot two more rats. #line:two_more_rats
+Time to roll that d20 for initiative again. #line:comp_initiative_again #speaker:companion
+<<fight granary_loft_rats>>
+The loft is now quiet. As you look around to make sure you got them all you find a nest of shredded sacking. Buried in that nest you find one very old wheel of cheese. #line:rat_nest
+I knew I lost some cheese somewhere. #line:comp_cheese #speaker:companion
+<<loot rat_nest>>
+<<jump rest_and_road>>
+===
+title: rest_and_road
+speaker: dm
+---
+You leave the granary and sit down on the steps to catch your breath. Pell limps over and looks down at you. #line:granary_steps
+Rats are gone? Good. I've got another job for you. Farmer Dobb's package has been sitting at my post for almost a week. His farm is up the north road. Take it, and I'll pay you for the job when you get back here. #line:pell_package #speaker:pell
+Let's sit here a minute first and take a short rest. Your class gives you Hit Dice for this. You roll one of them and get that many hit points back. #line:comp_short_rest #speaker:companion
+<<rest short>>
+You head north out of the village. The road is lined with hedges enclosing sheep pastures. #line:north_road
+<<roll 1d20 heard>>
+Did you hear those dice? Sometimes the GM will roll behind the screen. You don't get to see those rolls. #line:comp_hear_dice #speaker:companion
+<<if $roll >= 11>>
+    The clouds break and the sun warms the road. One of the sheep in a nearby pasture prances along with you on the other side of the hedge for a minute before being distracted by a passing butterfly. #line:sun_breaks
+<<else>>
+    It starts to drizzle and you begin to smell the wet sheep in the nearby pastures. #line:drizzle
+<<endif>>
+<<encounter north_road>>
+That was probably the GM rolling to see if we encounter anything on the road. It's usually nothing. #line:comp_encounter_roll #speaker:companion
+<<if $encounter == "wolf">>
+    A thin wolf steps out of the hedge. Its stomach starts rumbling while it stares at you, preparing to lunge. #line:wolf
+    If a fight is going very badly, you can run. Walk to the edge of the map and pick Flee. The story will remember, but you live to fight another day. #line:comp_flee #speaker:companion
+    <<fight wolf>>
+    <<if $fight == "fled">>
+        You back away down the road. The wolf lets you go. You decide to make camp for the night. #line:wolf_fled
+    <<else>>
+        The wolf runs off limping. You let him go. #line:wolf_won
+    <<endif>>
+<<elseif $encounter == "birds">>
+    A flock of small, dark birds takes flight as you approach. As soon as you've walked by they settle back down in the ditch and begin arguing over whatever it is they've found. #line:birds
+<<else>>
+    You hear distant bird calls. The road is otherwise quiet. #line:road_quiet
+<<endif>>
+<<jump farm>>
+===
+title: farm
+speaker: dm
+---
+<<declare $farm_fight = false>>
+The Dobb farm has a small cottage, a barn, and a lot of chickens. A man in a muddy coat is walking towards you with a chicken under each arm. #line:dobb_farm
+He sees you and freezes. #line:thief_freezes
+These are... my chickens. #line:thief_my_chickens #speaker:thief
+I don't think those are his chickens. Talking can save the day sometimes too. Pick whichever you want to say. Each one is a different skill check. #line:comp_talking #speaker:companion
+-> "Put the chickens down and leave." #line:opt_leave
+    <<check intimidation 12>>
+    <<if $passed>>
+        He drops the chickens and runs off. #line:leave_pass
+    <<else>>
+        He laughs and draws his weapon. #line:leave_fail
+        <<set $farm_fight to true>>
+    <<endif>>
+-> "You look hungry. Set the chickens down and let's see if Dobb needs some work done in exchange for food." #line:opt_hungry
+    <<check persuasion 12>>
+    <<if $passed>>
+        He sets the chickens down. Dobb comes out of the cottage and says he could use some help with the fences. #line:hungry_pass
+    <<else>>
+        He sneers at you and draws his weapon. #line:hungry_fail
+        <<set $farm_fight to true>>
+    <<endif>>
+-> "You asked for it!" #line:opt_asked_for_it
+    <<set $farm_fight to true>>
+<<if $farm_fight>>
+    <<fight chicken_thief>>
+    <<if $fight == "fled">>
+        You come back an hour later. The man is gone. So are the two chickens. Dobb shrugs and says that the man looked hungry. #line:thief_fled
+    <<else>>
+        The man surrenders and sits down in the mud. Dobb comes over with some rope and secures him with a sigh. #line:thief_won
+    <<endif>>
+<<endif>>
+You hand Dobb the package. He opens it and pulls out a new pair of boots. With a smile, he puts them on right there. #line:boots
+Thank you. Give Pell my thanks too. #line:dobb_thanks #speaker:dobb
+<<jump home>>
+===
+title: home
+speaker: dm
+---
+You have an uneventful trip back to Hollin village. #line:trip_back
+Pell is leaning up against the gate again, eating another apple. You tell him about the package delivery and the thief. #line:pell_again
+Got the rats, got the boots. The chickens are Dobb's problem. Here's what I owe you. #line:pell_pays #speaker:pell
+Pell hands you a pouch with 20 gp and a potion of healing. #line:pell_pouch
+<<gold 20>>
+<<give potion_of_healing 1>>
+You get stronger as the story goes by gaining levels. The story decides when you level up and this story says you level up now. You get more hit points and sometimes something new. #line:comp_levels #speaker:companion
+<<level 2>>
+Pell gives you a small smile and offers you his spare room for the night. #line:spare_room
+Oh, so he does know how to smile. I was wondering. #line:comp_smile #speaker:companion
+Good, you can take a long rest. Everything comes back with a long rest. Full health, full skills, full spell slots, all of it. The game saves automatically when you rest. You can also save or load a save any time from the pause menu. #line:comp_long_rest #speaker:companion
+<<rest long>>
+In the morning, Pell walks you to the gate which opens easily. #line:morning
+Thanks for the help. Off you go, then. #line:pell_off_you_go #speaker:pell
+That should be everything you need to know to get started. The main menu has more adventures. Play around with creating new characters and trying out different classes. #line:comp_the_end #speaker:companion
+===

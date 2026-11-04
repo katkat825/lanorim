@@ -1,0 +1,112 @@
+keys,en
+actor.dobb.name,Dobb
+actor.pell.name,Pell
+actor.thief.name,Man in a muddy coat
+campaign.tutorial_intermediate.description,"Know roughly how a tabletop RPG goes? A quick refresher on the rules, and how this table plays them."
+campaign.tutorial_intermediate.name,Tutorial: played a little
+dialogue.companion.line.tutorial_intermediate.comp_abilities,"Six ability scores, and the small number beside each is the modifier that goes on your d20 rolls. Skills you're trained in add a bit more."
+dialogue.companion.line.tutorial_intermediate.comp_all_the_watch,He's all of the watch? The entirety of it?
+dialogue.companion.line.tutorial_intermediate.comp_cheese,I knew I lost some cheese somewhere.
+dialogue.companion.line.tutorial_intermediate.comp_choose,"When the GM hands you a note, that's your choice. Pick what your character would do."
+dialogue.companion.line.tutorial_intermediate.comp_find_shop,We won't need the torches. Let's find a shop and sell those and see what else we can buy.
+dialogue.companion.line.tutorial_intermediate.comp_flee,"If a fight is going very badly, you can run. Walk to the edge of the map and pick Flee. The story will remember, but you live to fight another day."
+dialogue.companion.line.tutorial_intermediate.comp_gold,"Oh, nice. We got some gold."
+dialogue.companion.line.tutorial_intermediate.comp_grey_button,The potion's 50gp. See how its Buy button is grey? Hover over it and it will tell you why. Grey always does that.
+dialogue.companion.line.tutorial_intermediate.comp_hear_dice,Did you hear those dice? Sometimes the GM will roll behind the screen. You don't get to see those rolls.
+dialogue.companion.line.tutorial_intermediate.comp_hp_ac,"Hit points are how much you can take before you fall, and Armor Class is what an attack has to reach to hit you. Your class decides what you can do in a fight. Go ahead and close this to go back to the game."
+dialogue.companion.line.tutorial_intermediate.comp_levels,"Some campaigns level you up with XP, and some level you up when the story says so. This one goes by the story, and it says now. More hit points, and sometimes something new."
+dialogue.companion.line.tutorial_intermediate.comp_long_rest,"A long rest brings everything back: hit points, Hit Dice, spell slots, all of it. The game saves automatically when you rest. You can also save or load any time from the pause menu."
+dialogue.companion.line.tutorial_intermediate.comp_loot,Any loot goes in your pack automatically.
+dialogue.companion.line.tutorial_intermediate.comp_open_sheet,"Before you head in, let's see what you can do. Hit the Esc key to open the pause menu. Then select the Character Sheet."
+dialogue.companion.line.tutorial_intermediate.comp_pack,"The Pack, which is also in the pause menu, is everything that you're carrying. Things you hold or wear are Equipped."
+dialogue.companion.line.tutorial_intermediate.comp_potion,"Great, a healing potion. That's 2d4 plus 2 hit points back."
+dialogue.companion.line.tutorial_intermediate.comp_q_and_e,"Q and E turn the table and the wheel zooms, if you want a different view next time."
+dialogue.companion.line.tutorial_intermediate.comp_ropes,"Played one of these before? Good, then you know the drill. I'll just show you how this table works. When someone's talking, read it, then Continue. If you're ever lost, F1 shows the help, and F2 says where we are."
+dialogue.companion.line.tutorial_intermediate.comp_save,A saving throw. Checks are for things you try; saves are for things that happen to you.
+dialogue.companion.line.tutorial_intermediate.comp_sell_buy,Let's sell the torches and buy the rope. Rope is always useful. Click the Sell button next to the torches. Then click the Buy button next to the rope.
+dialogue.companion.line.tutorial_intermediate.comp_short_rest,Let's take a short rest first. Roll one of your class's Hit Dice and get that many hit points back.
+dialogue.companion.line.tutorial_intermediate.comp_skill_check,"A skill check is a d20 plus your bonus in that skill. Reach the number the GM set, 5 here, and you've got it. Throw the d20 with the Space bar."
+dialogue.companion.line.tutorial_intermediate.comp_smile,"Oh, so he does know how to smile. I was wondering."
+dialogue.companion.line.tutorial_intermediate.comp_talking,I don't think those are his chickens. Talking can save the day sometimes too. Each option is a different skill check.
+dialogue.companion.line.tutorial_intermediate.comp_the_end,"That's the table. The main menu has more adventures, and you can make new characters and try out different classes."
+dialogue.companion.line.tutorial_intermediate.cue_loft_advantage,"Next to another rat, it attacks with advantage: two d20s, keep the better. Disadvantage keeps the worse."
+dialogue.companion.line.tutorial_intermediate.cue_loft_bar,"If you get hurt and want to heal up, you can find any healing potions on the bottom bar. You can also find any tricks or skills your class gives you on there. Hover over any of the buttons to see what it does."
+dialogue.companion.line.tutorial_intermediate.cue_loft_door,There's a door in the middle there. You can open it by clicking the More Actions.
+dialogue.companion.line.tutorial_intermediate.cue_loft_grain,"The different colored squares are spilled grain. It's difficult terrain, so it costs double movement. You can see how much movement you have left under the bottom bar."
+dialogue.companion.line.tutorial_intermediate.cue_loft_opportunity,"Walking away from an enemy gives it an opportunity attack. Disengage, in More Actions, lets you leave safely. Dash lets you go twice as far."
+dialogue.companion.line.tutorial_intermediate.cue_loft_spells,"If you're a caster your spells are on the bar too. Cantrips are free; other spells use slots or points, and those come back when you rest."
+dialogue.companion.line.tutorial_intermediate.cue_rat_attack_roll,"Beat the rat's Armor Class and you hit, then roll your weapon's damage die. A natural 20 is a critical hit: roll the damage dice twice."
+dialogue.companion.line.tutorial_intermediate.cue_rat_end_turn,"Go ahead and take your other action now by hitting the rat again. When you've done what you want and can do, click the End Turn button on the bottom bar."
+dialogue.companion.line.tutorial_intermediate.cue_rat_initiative,Roll initiative. Higher goes first.
+dialogue.companion.line.tutorial_intermediate.cue_rat_its_turn,The GM rolls for the rat behind the screen.
+dialogue.companion.line.tutorial_intermediate.cue_rat_lit_squares,The lit squares are where you can walk to. Just click one of those to walk to it. You probably want to stand next to the rat so you can hit it.
+dialogue.companion.line.tutorial_intermediate.cue_rat_map,"Here's the granary floor. Each square is five feet. That's you, and that's the rat."
+dialogue.companion.line.tutorial_intermediate.cue_rat_two_actions,"In Lanorim you get two actions a turn, plus a bonus action and a reaction. The dots under the bottom bar are what you have left. Movement is separate."
+dialogue.companion.line.tutorial_intermediate.cue_rat_weapon,Your weapon is on the bottom toolbar. Hover over it to see your chances to hit. Click on it and then the rat to hit.
+dialogue.companion.line.tutorial_intermediate.cue_thief_zero_hp,"If you drop to 0 hit points, you roll a single saving throw at the start of your turn. 10 or higher and you're back up. Lower, and it depends on the story: sometimes you start over from the last save, and sometimes the story keeps going but takes a different turn."
+dialogue.dm.line.tutorial_intermediate.apple_core,Pell finishes the apple and throws the core to the roadside.
+dialogue.dm.line.tutorial_intermediate.birds,"A flock of small, dark birds takes flight as you approach. As soon as you've walked by they settle back down in the ditch and begin arguing over whatever it is they've found."
+dialogue.dm.line.tutorial_intermediate.boots,"You hand Dobb the package. He opens it and pulls out a new pair of boots. With a smile, he puts them on right there."
+dialogue.dm.line.tutorial_intermediate.dobb_farm,"The Dobb farm has a small cottage, a barn, and a lot of chickens. A man in a muddy coat is walking towards you with a chicken under each arm."
+dialogue.dm.line.tutorial_intermediate.drizzle,It starts to drizzle and you begin to smell the wet sheep in the nearby pastures.
+dialogue.dm.line.tutorial_intermediate.dust_fail,"You cough uncontrollably until your eyes are watering. You don't take any damage, but need to pause a moment to catch your breath. You wipe the dust off your face and continue up the ladder."
+dialogue.dm.line.tutorial_intermediate.dust_pass,You hold your breath until the dust settles. You wipe the dust off your face and continue up the ladder.
+dialogue.dm.line.tutorial_intermediate.grain_dust,"The skittering continues above you. As you climb the ladder to the loft, a sack splits and a cloud of grain dust rolls down over you."
+dialogue.dm.line.tutorial_intermediate.granary_door,The granary door stands slightly ajar. As you approach you can smell dust and old bread. Something squeaks inside. You push the door open and step inside.
+dialogue.dm.line.tutorial_intermediate.granary_steps,You leave the granary and sit down on the steps to catch your breath. Pell limps over and looks down at you.
+dialogue.dm.line.tutorial_intermediate.hungry_fail,He sneers at you and draws his weapon.
+dialogue.dm.line.tutorial_intermediate.hungry_pass,He sets the chickens down. Dobb comes out of the cottage and says he could use some help with the fences.
+dialogue.dm.line.tutorial_intermediate.kick_fail,The gate doesn't move. Pell kicks the bottom corner and the gate swings open fast. You lose your balance and fall into the mud.
+dialogue.dm.line.tutorial_intermediate.kick_pass,The gate swings open with a small crack. You check but the gate doesn't appear to be damaged.
+dialogue.dm.line.tutorial_intermediate.leave_fail,He laughs and draws his weapon.
+dialogue.dm.line.tutorial_intermediate.leave_pass,He drops the chickens and runs off.
+dialogue.dm.line.tutorial_intermediate.morning,"In the morning, Pell walks you to the gate which opens easily."
+dialogue.dm.line.tutorial_intermediate.north_road,You head north out of the village. The road is lined with hedges enclosing sheep pastures.
+dialogue.dm.line.tutorial_intermediate.old_pack,"Pell tosses an old pack at you. You open it up and find a couple of torches, a pouch with 10 gp, and some moldy food. You toss the food into a nearby pile of other rotting food and trash."
+dialogue.dm.line.tutorial_intermediate.opt_asked_for_it,"""You asked for it!"""
+dialogue.dm.line.tutorial_intermediate.opt_hungry,"""You look hungry. Set the chickens down and let's see if Dobb needs some work done in exchange for food."""
+dialogue.dm.line.tutorial_intermediate.opt_kick,"""I'll kick it loose."""
+dialogue.dm.line.tutorial_intermediate.opt_leave,"""Put the chickens down and leave."""
+dialogue.dm.line.tutorial_intermediate.opt_trick,"""Is there a trick to it?"""
+dialogue.dm.line.tutorial_intermediate.opt_you_do_it,"""I'm sure you can do it."""
+dialogue.dm.line.tutorial_intermediate.pell_again,"Pell is leaning up against the gate again, eating another apple. You tell him about the package delivery and the thief."
+dialogue.dm.line.tutorial_intermediate.pell_at_gate,A man in battered armor leans against the gate eating an apple.
+dialogue.dm.line.tutorial_intermediate.pell_pouch,Pell hands you a pouch with 20 gp and a potion of healing.
+dialogue.dm.line.tutorial_intermediate.pell_waiting,"You step back outside to see Pell impatiently waiting for you. He nods at the granary, tells you to get to it, and heads back to the gate."
+dialogue.dm.line.tutorial_intermediate.persuade_fail,"Pell looks at you with disdain. Then he sighs, and tells you to kick the bottom corner. You follow his instruction and the gate swings open easily."
+dialogue.dm.line.tutorial_intermediate.persuade_pass,"Pell sighs, kicks the bottom corner, and the gate swings open easily."
+dialogue.dm.line.tutorial_intermediate.rat_nest,The loft is now quiet. As you look around to make sure you got them all you find a nest of shredded sacking. Buried in that nest you find one very old wheel of cheese.
+dialogue.dm.line.tutorial_intermediate.rat_still,The rat is very still and very large. It's about the size of a small dog.
+dialogue.dm.line.tutorial_intermediate.road_quiet,You hear distant bird calls. The road is otherwise quiet.
+dialogue.dm.line.tutorial_intermediate.road_to_hollin,"The road to Hollin is muddy with ruts carved out from cart wheels. It's a small village with only a dozen or so houses, a granary, a general store, and a tavern. There's a wooden gate across the wall, but it's old and worn, looking like it's mostly just for show."
+dialogue.dm.line.tutorial_intermediate.skittering,You hear more skittering up in the loft.
+dialogue.dm.line.tutorial_intermediate.spare_room,Pell gives you a small smile and offers you his spare room for the night.
+dialogue.dm.line.tutorial_intermediate.sun_breaks,The clouds break and the sun warms the road. One of the sheep in a nearby pasture prances along with you on the other side of the hedge for a minute before being distracted by a passing butterfly.
+dialogue.dm.line.tutorial_intermediate.thief_fled,You come back an hour later. The man is gone. So are the two chickens. Dobb shrugs and says that the man looked hungry.
+dialogue.dm.line.tutorial_intermediate.thief_freezes,He sees you and freezes.
+dialogue.dm.line.tutorial_intermediate.thief_won,The man surrenders and sits down in the mud. Dobb comes over with some rope and secures him with a sigh.
+dialogue.dm.line.tutorial_intermediate.to_the_granary,Pell walks you to the granary. It's a tall barn with a slightly rusted weathervane in the shape of a rooster.
+dialogue.dm.line.tutorial_intermediate.trick_fail,"You look over it for a while. Pell sighs, kicks the bottom corner, and the gate swings open easily."
+dialogue.dm.line.tutorial_intermediate.trick_pass,The bottom corner appears swollen. You give that corner a slight tap and the gate swings open.
+dialogue.dm.line.tutorial_intermediate.trip_back,You have an uneventful trip back to Hollin village.
+dialogue.dm.line.tutorial_intermediate.trough_pouch,"Looking around after the fight, you find a pouch under the feed trough that someone dropped long ago. Inside you find a few coins and a healing potion."
+dialogue.dm.line.tutorial_intermediate.two_more_rats,You look around the loft and spot two more rats.
+dialogue.dm.line.tutorial_intermediate.wolf,"A thin wolf steps out of the hedge. Its stomach starts rumbling while it stares at you, preparing to lunge."
+dialogue.dm.line.tutorial_intermediate.wolf_fled,You back away down the road. The wolf lets you go. You decide to make camp for the night.
+dialogue.dm.line.tutorial_intermediate.wolf_won,The wolf runs off limping. You let him go.
+dialogue.dobb.line.tutorial_intermediate.dobb_thanks,Thank you. Give Pell my thanks too.
+dialogue.pell.line.tutorial_intermediate.pell_gate_sticks,"Before I can let you in, the gate sticks. Haven't been able to get it open after the rain last night."
+dialogue.pell.line.tutorial_intermediate.pell_hello,Afternoon. You the one I got that letter about? Good. I'm Sergeant Pell and I'm the watch. All of the watch.
+dialogue.pell.line.tutorial_intermediate.pell_off_you_go,"Thanks for the help. Off you go, then."
+dialogue.pell.line.tutorial_intermediate.pell_old_pack,You can have this. Not sure who left it behind.
+dialogue.pell.line.tutorial_intermediate.pell_package,"Rats are gone? Good. I've got another job for you. Farmer Dobb's package has been sitting at my post for almost a week. His farm is up the north road. Take it, and I'll pay you for the job when you get back here."
+dialogue.pell.line.tutorial_intermediate.pell_pays,"Got the rats, got the boots. The chickens are Dobb's problem. Here's what I owe you."
+dialogue.pell.line.tutorial_intermediate.pell_rats,"There's rats in the granary. Big ones. The miller won't go in, and I've got a bad knee."
+dialogue.thief.line.tutorial_intermediate.thief_my_chickens,These are... my chickens.
+encounter.north_road.line.birds,"A flock of small, dark birds in the ditch."
+encounter.north_road.line.wolf,"A thin, hungry wolf steps out of the hedge."
+encounter.set_pieces.line.chicken_thief,The man in the muddy coat draws his weapon.
+encounter.set_pieces.line.granary_loft_rats,Two more rats in the loft.
+encounter.set_pieces.line.granary_rat,A rat the size of a small dog.
+merchant.hollin_store.name,Hollin General Store
+quest.tutorial_intermediate.hollin.title,Errands in Hollin

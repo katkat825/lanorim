@@ -1,0 +1,60 @@
+title: cue_rat_map
+speaker: companion
+cue: granary_rat start
+---
+Here's the granary floor. Each square is five feet. That's you, and that's the rat. #line:cue_rat_map
+Roll initiative. Higher goes first. #line:cue_rat_initiative
+===
+title: cue_rat_first_turn
+speaker: companion
+cue: granary_rat hero_turn 1
+---
+In Lanorim you get two actions a turn, plus a bonus action and a reaction. The dots under the bottom bar are what you have left. Movement is separate. #line:cue_rat_two_actions
+The lit squares are where you can walk to. Just click one of those to walk to it. You probably want to stand next to the rat so you can hit it. #line:cue_rat_lit_squares
+Your weapon is on the bottom toolbar. Hover over it to see your chances to hit. Click on it and then the rat to hit. #line:cue_rat_weapon
+===
+title: cue_rat_first_attack
+speaker: companion
+cue: granary_rat hero_attack 1
+---
+Beat the rat's Armor Class and you hit, then roll your weapon's damage die. A natural 20 is a critical hit: roll the damage dice twice. #line:cue_rat_attack_roll
+Go ahead and take your other action now by hitting the rat again. When you've done what you want and can do, click the End Turn button on the bottom bar. #line:cue_rat_end_turn
+===
+title: cue_rat_turn
+speaker: companion
+cue: granary_rat foe_turn 1
+---
+The GM rolls for the rat behind the screen. #line:cue_rat_its_turn
+===
+title: cue_loft_start
+speaker: companion
+cue: granary_loft_rats start
+---
+The different colored squares are spilled grain. It's difficult terrain, so it costs double movement. You can see how much movement you have left under the bottom bar. #line:cue_loft_grain
+Walking away from an enemy gives it an opportunity attack. Disengage, in More Actions, lets you leave safely. Dash lets you go twice as far. #line:cue_loft_opportunity
+===
+title: cue_loft_first_rat
+speaker: companion
+cue: granary_loft_rats foe_turn 1
+---
+If you get hurt and want to heal up, you can find any healing potions on the bottom bar. You can also find any tricks or skills your class gives you on there. Hover over any of the buttons to see what it does. #line:cue_loft_bar
+===
+title: cue_loft_second_rat
+speaker: companion
+cue: granary_loft_rats foe_turn 2
+---
+Next to another rat, it attacks with advantage: two d20s, keep the better. Disadvantage keeps the worse. #line:cue_loft_advantage
+===
+title: cue_loft_second_turn
+speaker: companion
+cue: granary_loft_rats hero_turn 2
+---
+There's a door in the middle there. You can open it by clicking the More Actions. #line:cue_loft_door
+If you're a caster your spells are on the bar too. Cantrips are free; other spells use slots or points, and those come back when you rest. #line:cue_loft_spells
+===
+title: cue_thief_first_turn
+speaker: companion
+cue: chicken_thief hero_turn 1
+---
+If you drop to 0 hit points, you roll a single saving throw at the start of your turn. 10 or higher and you're back up. Lower, and it depends on the story: sometimes you start over from the last save, and sometimes the story keeps going but takes a different turn. #line:cue_thief_zero_hp
+===

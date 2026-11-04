@@ -1,0 +1,40 @@
+title: cue_rat_first_turn
+speaker: companion
+cue: granary_rat hero_turn 1
+---
+Here's the big difference. In Lanorim you get two actions a turn, plus a bonus action and a reaction. Monsters still get one. The dots under the bottom bar are what you have left. Movement is separate. #line:cue_rat_two_actions
+The lit squares are where you can walk to. Just click one of those to walk to it. You probably want to stand next to the rat so you can hit it. #line:cue_rat_lit_squares
+Your weapon is on the bottom toolbar. Hover over it to see your chances to hit. Click on it and then the rat to hit. #line:cue_rat_weapon
+===
+title: cue_rat_first_attack
+speaker: companion
+cue: granary_rat hero_attack 1
+---
+Go ahead and take your other action now by hitting the rat again. When you've done what you want and can do, click the End Turn button on the bottom bar. #line:cue_rat_end_turn
+===
+title: cue_loft_start
+speaker: companion
+cue: granary_loft_rats start
+---
+The different colored squares are spilled grain, which is difficult terrain. You can see how much movement you have left under the bottom bar. #line:cue_loft_grain
+Disengage and Dash are in More Actions. #line:cue_loft_opportunity
+===
+title: cue_loft_first_rat
+speaker: companion
+cue: granary_loft_rats foe_turn 1
+---
+Healing potions are on the bottom bar, along with your class's features. Hover over any of the buttons to see what it does. #line:cue_loft_bar
+===
+title: cue_loft_second_turn
+speaker: companion
+cue: granary_loft_rats hero_turn 2
+---
+There's a door in the middle there. You can open it by clicking the More Actions. #line:cue_loft_door
+If you're a caster, your spells are on the bar too. #line:cue_loft_spells
+===
+title: cue_thief_first_turn
+speaker: companion
+cue: chicken_thief hero_turn 1
+---
+One more difference. There are no three death saves here. At 0 hit points you roll a single saving throw at the start of your turn: 10 or higher and you're back up. Lower, and it depends on the campaign: back to the last save, or the story carries on a different way. #line:cue_thief_zero_hp
+===

@@ -253,3 +253,30 @@ format, and a hand-made campaign opens in the Workshop too.
 - **A test** plays the campaign as the page has it from `user://workshop_test/<id>/`, its saves beside it; nothing it does
   reaches the campaign's folder or the player's saves. The test hero and what it remembers are kept per campaign in
   `.draft/test.json`.
+
+## 12. Lines at a moment in a fight
+
+*Added 2026-11-04 for the tutorials.* `<<fight>>` stops the story until the fight is over, so a story can't talk during
+one. A node with a `cue:` header is **said at a moment in a fight** instead of being jumped to: its lines, in order, in
+the companion's bubble and the fight's log, each held long enough to read. Its commands, options and branches are not
+read, only its lines.
+
+```
+title: rat_first_turn
+speaker: companion
+cue: granary_rat hero_turn 1
+---
+The lit squares are where you can walk to. #line:cue_rat_lit_squares
+===
+```
+
+| Moment | When |
+|---|---|
+| `start` | the fight's first moment, once initiative is rolled (no number) |
+| `hero_turn N` | the hero's Nth turn |
+| `foe_turn N` | the Nth turn any foe takes, whoever's it is |
+| `hero_attack N` | the Nth time the hero's attack or spell is settled, hit or miss |
+
+The first word is the fight's id (`<<fight granary_rat>>`, or the entry an `<<encounter>>` picked). One node a moment.
+The tutorials (`campaigns/tutorial_*/dialogue/fight_cues.yarn`) are the model.
+

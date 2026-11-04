@@ -1,0 +1,25 @@
+{
+  "id": "tutorial_expert",
+  "kind": "campaign",
+  "format": 1,
+  "engine": "0.1",
+  "author": "Maps & Math Rocks",
+  "tags": [
+    "tutorial_advanced"
+  ],
+  "chapters": [
+    {
+      "id": "hollin",
+      "maps": [
+        "hollin_village",
+        "granary_floor",
+        "granary_loft",
+        "north_road",
+        "dobb_farm"
+      ]
+    }
+  ],
+  "start": "hollin",
+  "gm_screen": "plains",
+  "starting_shop": false
+}

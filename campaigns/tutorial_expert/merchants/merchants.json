@@ -1,0 +1,15 @@
+{
+  "merchants": [
+    {
+      "id": "hollin_store",
+      "stock": [
+        "potion_of_healing",
+        "rope",
+        "torch",
+        "dagger",
+        "shield"
+      ],
+      "sell_percent": 50
+    }
+  ]
+}

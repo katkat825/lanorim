@@ -2109,7 +2109,7 @@ ui.book.quit,Quit
 ui.book.settings,Settings
 ui.book.slots_full,All five characters are in use. Delete one to start another.
 ui.book.test_campaign,Test campaign
-ui.book.tutorials,Tutorials
+ui.book.tutorials,Tutorial
 ui.book.workshop,Workshop
 ui.caption.behind.name,Something is rolled behind the screen. You are not shown it.
 ui.caption.busy.name,"Pages, a pencil, dice going back in the cup."
@@ -2797,15 +2797,15 @@ ui.spells.search,Search by name
 ui.spells.title,Spells
 ui.table.came_round,"You come round a long while later, sore but whole. The day is done."
 ui.table.turn_hint,{0} and {1} turn the table; the wheel or {2} and {3} zoom
-ui.tutorial.advanced,Advanced
-ui.tutorial.advanced_blurb,"Positioning, concentration and resources over a long day."
-ui.tutorial.beginner,Beginner
-ui.tutorial.beginner_blurb,"Never played a tabletop game? Start here: moving, checks, and your first fight."
-ui.tutorial.intermediate,Intermediate
-ui.tutorial.intermediate_blurb,"Reactions, spells and conditions, and reading a monster."
+ui.tutorial.advanced,I know the rules well
+ui.tutorial.advanced_blurb,"Just the controls, and the places Lanorim plays differently."
+ui.tutorial.beginner,I've never played one
+ui.tutorial.beginner_blurb,"Start here: what the dice, the GM and your hero are, and every control."
+ui.tutorial.intermediate,I've played a little
+ui.tutorial.intermediate_blurb,"You know roughly how a game goes. A refresher on the rules, and how this table plays them."
 ui.tutorial.not_yet,Not written yet.
 ui.tutorial.tests,Test campaigns
-ui.tutorial.title,Learn to play
+ui.tutorial.title,How well do you know tabletop roleplaying games?
 ui.where.book,"The main menu, or a campaign's pages."
 ui.where.campaign,{0}.
 ui.where.foes,Enemies still standing: {0}.

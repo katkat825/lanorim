@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Content.Combat;
+using Content.Dialogue;
 using Core.Combat;
 using Game.Screens;
 using Godot;
@@ -32,7 +33,11 @@ namespace Game.Play
                 show.Casting += (caster, spell, at, changes) => MainQueue.Post(() => _caption.CastCaption(caster, spell, at, changes));
                 show.Narrating += (caster, spell) => MainQueue.Post(() => _caption.Narration(caster, spell));
 
-                Battle battle = Run.BattleFor(GameState.Resolver, chooser, new Observers(log, show, _mind));
+                // the story's lines for a moment of this fight: the tutorials' "on your first turn" (FightCues.cs)
+                var cues = new CueWatcher(Run.Fight?.Entry?.Id, Run.Hero.Actor, Run.Book == null ? null : Run.Book.CueLines);
+                cues.Said += lines => MainQueue.Post(() => Cue(lines));
+
+                Battle battle = Run.BattleFor(GameState.Resolver, chooser, new Observers(log, show, _mind, cues));
 
                 if (battle == null)
                 {
@@ -107,6 +112,7 @@ namespace Game.Play
         void FightOver(Outcome outcome)
         {
             _readied = false;
+            _cued.Clear();
 
             if (outcome == Outcome.HeroesLost) _deaths++;
 

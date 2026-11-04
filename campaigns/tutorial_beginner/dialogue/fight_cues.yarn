@@ -1,0 +1,63 @@
+title: cue_rat_map
+speaker: companion
+cue: granary_rat start
+---
+This is the granary floor, drawn on the map. Each square is five feet, about one step. The little figure is you. And the one that looks like a rat is, the rat. They're called minis. #line:cue_rat_map
+Fights are turn-based. Everyone gets a turn, and when everyone's had one turn, that's a round, and it starts again from the top. #line:cue_rat_rounds
+We roll for initiative, meaning you roll your d20 and the GM rolls a d20 for each enemy. The higher the roll the earlier you get to take your turn. #line:cue_rat_initiative
+===
+title: cue_rat_first_turn
+speaker: companion
+cue: granary_rat hero_turn 1
+---
+The lit squares are where you can walk to. Just click one of those to walk to it. You probably want to stand next to the rat so you can hit it. #line:cue_rat_lit_squares
+Your weapon is on the bottom toolbar. Hover over it to see your chances to hit. Click on it and then the rat to hit. #line:cue_rat_weapon
+===
+title: cue_rat_first_attack
+speaker: companion
+cue: granary_rat hero_attack 1
+---
+Now you roll a d20 and you try to get higher than the rat's Armor Class, AC. If you hit, you roll your weapon's die for damage. Different weapons have different damage die: a dagger's a d4, a longsword is a d8, etc. #line:cue_rat_attack_roll
+If you roll a 20 on the die itself that's a critical hit and you roll the damage dice twice. #line:cue_rat_critical
+A weapon attack is usually an action. Some classes will have other options. Most items and skills will tell you if they cost an action, a bonus action, or a reaction. #line:cue_rat_action
+In Lanorim you get two actions, a bonus action, and a reaction. The dots under the bottom bar are what you have left of those each turn. Movement is separate. #line:cue_rat_two_actions
+Go ahead and take your other action now by hitting the rat again. When you've done what you want and can do, click the End Turn button on the bottom bar. #line:cue_rat_end_turn
+===
+title: cue_rat_turn
+speaker: companion
+cue: granary_rat foe_turn 1
+---
+Now it's the rat's turn. The GM rolls for it behind the screen. #line:cue_rat_its_turn
+===
+title: cue_loft_start
+speaker: companion
+cue: granary_loft_rats start
+---
+The different colored squares on the floor are spilled grain. It's slippery so it's considered difficult terrain meaning it costs double the movement to go across those. You can see how much movement you have left under the bottom bar. #line:cue_loft_grain
+Walking away from an enemy next to you gives it a free swing as a reaction. That free swing is called an opportunity attack. Disengage, in More Actions, lets you leave safely. Dash lets you go twice as far. #line:cue_loft_opportunity
+===
+title: cue_loft_first_rat
+speaker: companion
+cue: granary_loft_rats foe_turn 1
+---
+If you get hurt and want to heal up, you can find any healing potions on the bottom bar. You can also find any tricks or skills your class gives you on there. Hover over any of the buttons to see what it does. #line:cue_loft_bar
+===
+title: cue_loft_second_rat
+speaker: companion
+cue: granary_loft_rats foe_turn 2
+---
+When a rat's next to another rat, it rolls two d20s and keeps the better one. That's called advantage. Disadvantage is when you roll two dice and keep the worse one. #line:cue_loft_advantage
+===
+title: cue_loft_second_turn
+speaker: companion
+cue: granary_loft_rats hero_turn 2
+---
+There's a door in the middle there. You can open it by clicking the More Actions. #line:cue_loft_door
+If you're a caster you'll also find your spells on the bar. The cantrips are spells you can cast all day long. Other spells use a spell slot or points and you get those back when you rest. #line:cue_loft_spells
+===
+title: cue_thief_first_turn
+speaker: companion
+cue: chicken_thief hero_turn 1
+---
+If you drop down to 0 hit points then on the start of your turn you roll a single saving throw. If you get a ten or higher you come back. If you get lower than it depends on the story you're playing. Sometimes you start over from the last save point. Other times you keep going with the story, but the story might take a different turn. #line:cue_thief_zero_hp
+===

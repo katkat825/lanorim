@@ -165,7 +165,7 @@ done.**
 - `[x]` **Main menu = campaign book** (table of contents). *(2026-09-24 — `CampaignBook` + `game/Screens/Launch.cs`, the main scene: pages, five character slots each, Continue, test campaigns labelled at the back. Needs eyes.)*
 - `[x]` **Character-creation flow** — whatever's easiest; guided. *(Logic + the screen, 2026-09-24 — `CreationScreen`: one page a step, Next greyed with the reason. Needs eyes.)*
 - `[~]` **Settings.** *(Game half built and wired — `GameSettings` + `SettingsPanel`: enemy-turn speed, skip physical dice, camera follow, reaction policies, saved as JSON. The Access half (`game/Access/Adjustments`) has no page yet.)*
-- `[~]` **Tutorial / onboarding** — ask beginner/intermediate/advanced → matching replayable tutorial campaign. *(Picker built — `TutorialPicker`: a campaign tagged `tutorial_beginner` etc. fills each level; the test campaigns sit under it. The tutorials themselves are content, not written.)*
+- `[x]` **Tutorial / onboarding** — ask beginner/intermediate/advanced → matching replayable tutorial campaign. *(The book's one Tutorial page asks how well the player knows tabletop RPGs and starts the matching campaign, `campaigns/tutorial_beginner`, `_intermediate` or `_expert` (2026-11-04).)*
 - `[x]` **UI theme** — *(2026-09-24: `game/ui/lanorim_theme.tres`, the project default — Alegreya SC UI, EB Garamond cards, both narration candidates as variations. Icons not yet.)* — Kenney UI kit (panels/buttons/borders); **icons** game-icons.net (CC-BY, credit authors); **fonts** (EB Garamond cards / Alegreya SC UI / storytelling font).
 - `[~]` **Accessibility** — in v1, at the highest depth feasible. *(2026-11-03 refresh: F1 help, F2 where are we, F3 the reader, Tab reaching the table's pieces, every act rebindable on the Controls page, no hover-only text, the sheet read aloud (2026-10-03 answers, task CS). Still open: an Access page for the other adjustments.)*
 
@@ -178,7 +178,7 @@ done.**
 ## 12. Content to author (the actual v1 game)
 
 - `[~]` **SRD data entry** — the 7 classes, 7 species, 122 spells (2026-11-03: Wish left v1), monster set, items as structured data (AI-assistable, but real volume).
-- `[ ]` **3 tutorial campaigns** — beginner / intermediate / advanced, replayable.
+- `[~]` **3 tutorial campaigns** — beginner / intermediate / advanced, replayable. *(Kathleen's three scripts are in the game (2026-11-04, `tools/make_tutorials.py`); the maps are placeholders to redraw.)*
 - `[ ]` **A handful of one-shots** — self-contained short adventures.
 - `[ ]` **A couple of level-block campaigns** — mid-length arcs over a level range.
 - `[ ]` **One epic level 1–20 campaign** — the flagship.

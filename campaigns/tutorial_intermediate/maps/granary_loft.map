@@ -1,0 +1,47 @@
+{
+  "format": 2,
+  "name": "Granary Loft",
+  "columns": 8,
+  "rows": 6,
+  "map": "\n+-+-+-+-+-+-+-+-+\n|@ . . .|. ~ ~ .|\n+ + + + + + + + +\n|. . . .x. ~ ~ 1|\n+ + + + + + + + +\n|. . . .|. . . .|\n+-+ +-+-+ + + + +\n|. . . . . . . .|\n+ + + + + + + + +\n|. ~ ~ . . . . 2|\n+ + + + + + + + +\n|. ~ ~ . . . . .|\n+-+-+-+-+-+-+-+-+\n",
+  "ground": "pppppppp\npppppppp\npppppppp\npppppppp\npppppppp\npppppppp\n",
+  "walls": "\n+t+t+t+t+t+t+t+t+\nt. . . .t. . . .t\n+ + + + + + + + +\nt. . . .t. . . .t\n+ + + + + + + + +\nt. . . .t. . . .t\n+t+ +t+t+ + + + +\nt. . . . . . . .t\n+ + + + + + + + +\nt. . . . . . . .t\n+ + + + + + + + +\nt. . . . . . . .t\n+t+t+t+t+t+t+t+t+\n",
+  "props": [
+    {
+      "id": "stairs",
+      "x": 1,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "crates_stacked",
+      "x": 6,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "crates_stacked",
+      "x": 6,
+      "y": 4,
+      "turn": 0
+    },
+    {
+      "id": "sack",
+      "x": 0,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "sack",
+      "x": 4,
+      "y": 5,
+      "turn": 0
+    },
+    {
+      "id": "barrel",
+      "x": 3,
+      "y": 5,
+      "turn": 0
+    }
+  ]
+}

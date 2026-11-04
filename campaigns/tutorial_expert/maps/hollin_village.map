@@ -1,0 +1,70 @@
+{
+  "format": 2,
+  "name": "Hollin Village",
+  "columns": 14,
+  "rows": 10,
+  "map": "\n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . @ . . . . . . . \n+ + + + + + + + + + + + + + +\n",
+  "ground": "ggggggddgggggg\nggggggddgggggg\nggggccddgggggg\nggggccddgggggg\nggggccddgggggg\nggggggddgggggg\nggggggddgggggg\nggggggddgggggg\nggggggddgggggg\nggggggddgggggg\n",
+  "props": [
+    {
+      "id": "inn",
+      "x": 1,
+      "y": 1,
+      "turn": 0
+    },
+    {
+      "id": "barn",
+      "x": 9,
+      "y": 1,
+      "turn": 0
+    },
+    {
+      "id": "well",
+      "x": 5,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "house_small",
+      "x": 1,
+      "y": 5,
+      "turn": 0
+    },
+    {
+      "id": "stall",
+      "x": 4,
+      "y": 6,
+      "turn": 0
+    },
+    {
+      "id": "house_small",
+      "x": 10,
+      "y": 6,
+      "turn": 0
+    },
+    {
+      "id": "house",
+      "x": 12,
+      "y": 6,
+      "turn": 0
+    },
+    {
+      "id": "gatehouse",
+      "x": 5,
+      "y": 8,
+      "turn": 0
+    },
+    {
+      "id": "tree_clump",
+      "x": 0,
+      "y": 8,
+      "turn": 0
+    },
+    {
+      "id": "barrel_apples",
+      "x": 3,
+      "y": 5,
+      "turn": 0
+    }
+  ]
+}
