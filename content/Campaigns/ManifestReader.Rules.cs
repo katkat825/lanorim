@@ -9,7 +9,7 @@ namespace Content.Campaigns
     public static partial class ManifestReader
     {
         // the campaign's play rules (CampaignRules), each one left out meaning the game's default
-        static readonly string[] RuleFields = { "defeat", "leveling", "characters", "starting_shop", "consequences" };
+        static readonly string[] RuleFields = { "defeat", "leveling", "characters", "starting_shop", "consequences", ArenaField };
 
         static CampaignRules Rules(JsonElement root, string file, List<ContentProblem> problems)
         {
@@ -51,6 +51,7 @@ namespace Content.Campaigns
                 Characters = characters,
                 StartingShop = shop,
                 Consequences = Word(root, "consequences", rules.Consequences, file, problems),
+                Arena = Arena(root, file, problems),
             };
         }
 

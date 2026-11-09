@@ -61,6 +61,8 @@ namespace Content.Campaigns
 
             IReadOnlyList<Core.Resolution.Consequence> consequences = ReadConsequences(folder, manifest, problems);
 
+            IReadOnlyList<Content.Challengers.ChallengerType> challengers = ReadChallengers(folder, monsters, maps, problems);
+
             return new Package(folder, manifest.Id, manifest, monsters, items, spells, maps,
                                encounters, loot, problems)
             {
@@ -68,6 +70,7 @@ namespace Content.Campaigns
                 Scenery = scenery,
                 Barks = barks,
                 Consequences = consequences,
+                Challengers = challengers,
             };
         }
 

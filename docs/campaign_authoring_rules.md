@@ -85,6 +85,16 @@ And these about the hero, read-only and always current (`HeroVariables`, `conten
 | `$hero_figure` | which of the class's two minis the player picked: 1 or 2 |
 | `$hero_name` | the name the player gave |
 
+And these about the arena (`ArenaVariables`, `content/Dialogue/ArenaVariables.cs`; cc_task_cg), read-only in the same
+way. Section 13 says how the arena works:
+
+| Variable | Holds |
+|---|---|
+| `$reputation` | the hero's reputation, 0 and up |
+| `$challenger` | who `<<challengers>>` picked, what `<<fight {$challenger}>>` fights; `""` when the player went back to the story |
+| `$challenger_name` | the picked challenger's name: `{$challenger_name}` in a line shows the name itself ("Grik the Knife") |
+| `$challenger_special` | true when the pick is one of your hand-written special fights |
+
 And one function: **`has_item("rope")`** is true when the item is in the pack or worn.
 
 ```
@@ -105,6 +115,7 @@ And one function: **`has_item("rope")`** is true when the item is in the pack or
 | `<<armory id>>` | a loadout screen, not a shop: a merchant with `"armory": true`, §8 |
 | `<<xp 50>>` | experience points, in a campaign that levels by XP; ignored with a warning in a milestone one |
 | `<<level 3>>` | as before, milestone levelling; ignored with a warning in a campaign that levels by XP |
+| `<<challengers>>` | the arena's roster (cc_task_cg, §13): the player picks a challenger or goes back to the story. `$challenger` says who |
 
 **The GM screen rattles rarely now** (cc_task_i Part 1): for an encounter table (`<<encounter>>`, or a `<<fight>>` that
 names a table) and a `<<roll ... heard>>`, and never more than once every five minutes of play. An enemy's attacks,
@@ -142,6 +153,7 @@ Each of these is optional; left out, the campaign plays as the game always has.
 | `leveling` | `"milestone"` (default), `"xp"` | xp: a won fight gives its monsters' XP (the SRD's XP by challenge rating, all of it to the solo hero), `<<xp n>>` gives more, and the hero levels at the SRD's Character Advancement thresholds (300, 900, 2,700...). XP shows on the sheet. A lost, yielded or fled fight gives none |
 | `characters` | 1 to 20 (default 5) | how many characters the campaign holds |
 | `starting_shop` | `true` (default), `false` | false: a new hero goes straight into the story, wearing the best of what it has |
+| `challengers` | an object (§13) | the arena's numbers: reputation for a win and a loss, the roster's size, a won bout's XP |
 | `consequences` | `"add"` (default), `"replace"` | the campaign's own `consequences/*.json` (the shape of `content/srd/consequences/pool.json`) are added to the game's nat-1 / nat-20 pool while it runs, or replace it. An entry can be flavour only: `"kind": "flavour"`, a line and no effect. Added ones can't reuse a game id; a replacing pool needs a boon and a bane |
 
 **Yield:** in a fight where defeat continues and the map has no way off, "Yield" is in More actions. It ends the bout
@@ -280,3 +292,162 @@ The lit squares are where you can walk to. #line:cue_rat_lit_squares
 The first word is the fight's id (`<<fight granary_rat>>`, or the entry an `<<encounter>>` picked). One node a moment.
 The tutorials (`campaigns/tutorial_*/dialogue/fight_cues.yarn`) are the model.
 
+
+## 13. The arena: generated challengers
+
+*Added 2026-11-04 (`cc_task_cg`).* A campaign like the Crucible offers a **roster** of challengers to fight: drawn from
+your lists, fitted to the hero's level, and growing with the hero's reputation. Waves (several groups with no break)
+aren't built yet.
+
+### Your lists, and the importer
+
+Write the lists in the vault, `campaign_authoring/The Crucible/Challengers/*.md`, one file per list. Each challenger
+type is a `# heading`, then a `stats:` line, then numbered `## descriptions` and numbered `## names`. **Any name goes
+with any description**, so keep both free of anything that has to match the other (pronouns, a species).
+
+```
+# goblin warrior
+stats: a single goblin warrior
+
+## descriptions
+1. A wiry goblin with a chipped sword and an oversized helmet.
+
+## names
+1. Grik the Knife
+```
+
+Then bring them into the campaign:
+
+```
+python tools/import_challengers.py campaigns/<your_campaign>
+python tools/import_challengers.py campaigns/<your_campaign> --check     # is the campaign behind the vault?
+```
+
+It writes `challengers/<file>.json` (`normal_fights.json` for `Normal Fights.md`) and puts every name and description
+in the campaign's locale as `challenger.<type>.name.001` and `challenger.<type>.description.001`. The type's id is its
+heading in snake case (`goblin_warrior`). It never changes the vault. Run it again whenever you change a list: it
+rewrites those rows and leaves every other row alone. The Workshop's table editor doesn't edit challengers; the vault is
+where they live.
+
+### The `stats:` line
+
+| Shape | Written | What the arena does |
+|---|---|---|
+| a single | `a single goblin warrior`, `one guard`, `a guard`, `mage` | one monster. In the fight it goes by the challenger's name ("Grik the Knife") in the turn banner and the log |
+| a single, one of several | `a single thug or scout`, `gladiator or berserker` | one monster, whichever of these fits the hero's level each time one is drawn (any of them that fits, at random; the closest when none does) |
+| a fixed group | `two guards`, `2 guards`, `two guards and a goblin warrior` | exactly those. The monsters keep their own statblock names in the fight |
+| a team | `team of goblin warrior, goblin archer` | drawn from these when the roster is drawn, to a budget for the hero's level (below). Its `## names` are the team's names; the members keep their statblock names |
+
+Monsters are named by their statblock name in English, as the game shows it (`monster.<id>.name`: "Goblin Warrior",
+"Guard", "Goblin Archer"), or by their id in words, singular or with an -s or -es. A count left out is one. A name that
+matches nothing, or more than one monster, is refused with the file and the line. The importer lists every line it
+refuses, and then writes nothing.
+
+### Names and descriptions for any stat block
+
+A `# heading` with no `stats:` line is a **shared list**: names and descriptions that go with any stat block. Its
+`## Single Challengers` and `## Teams` sections each have a `### Names` and a `### Descriptions`:
+
+```
+# Generic
+these can be used for any stat block
+
+## Single Challengers
+### Names
+1. Ash the Undying
+### Descriptions
+1. A confident challenger steps forward, eager to begin.
+
+## Teams
+### Names
+1. The Rusty Blades
+### Descriptions
+1. A small group of challengers enter the arena.
+```
+
+They are drawn **beside each type's own lists, as if they were part of them**: every single draws its name and its
+description from its own and the singles' shared list together, and every group and team from its own and the teams'
+shared list. A shared list is never a challenger by itself. In the campaign it is a challenger type with no
+`monsters` (`generic_single`, `generic_team`: the heading and the section's shape), keyed like any other
+(`challenger.generic_single.name.001`). So a type can have short lists of its own, or none of its own beyond one line,
+and still offer plenty of names; the shared descriptions should say nothing a particular stat block would contradict.
+
+### Reputation and the roster's size
+
+The hero's reputation starts at 0 and never goes below it. A won bout adds 5 and a lost one takes 2 (the Crucible's
+Prose.md). **A yielded bout counts as a lost one, and so does a fled one.** Reputation sets how many challengers are
+offered: 2, one more for every 10 reputation, 6 at most. `$reputation` reads it (§5). All of it can be tuned in
+pack.json, each part optional:
+
+```
+"challengers": {
+  "win": 5, "loss": -2,
+  "roster": { "least": 2, "every": 10, "most": 6 },
+  "bout_xp": { "share": 0.25, "low": 0.75, "moderate": 1, "high": 1.5 }
+}
+```
+
+### The roster
+
+- **Drawn from the run's dice and saved**, so a reload doesn't reroll it. Each challenger is a type, its next name and
+  its next description. Neither list repeats until it runs out.
+- **Fitted to the hero's level** by the solo budget (§1). A single or a group has the difficulty its XP comes to: low,
+  moderate or high. One **over a high fight's budget, or under half a low one's**, is left out. When that leaves no
+  type at all, the closest ones are offered, as low or high. A team is drawn to a difficulty picked at random (low,
+  moderate or high), within the enemy cap. The roster shows each challenger's difficulty in the Workshop's words: Easy,
+  Medium, Hard.
+- **After each bout the roster is drawn again**, at the size the hero's reputation now allows. The one the hero beat
+  leaves. One they lost to or yielded to stays, for a rematch.
+
+### Special fights
+
+A hand-written fight in `encounters/` can also be a challenger:
+
+```
+{ "id": "spear_trial", "kind": "fight", "map": "pit", "monsters": [ { "monster": "guard" } ],
+  "challenger": { "reputation": 10, "trigger": { "roll": "1d2", "at_least": 2 } } }
+```
+
+It goes on the roster from that reputation (0 when it's left out). Each time the roster is drawn, its trigger (the
+encounter table's own shape) is rolled, and it appears when the roll makes it. No trigger means every time. Specials
+take their places on the roster first. It needs two locale rows, `challenger.<id>.name` and `challenger.<id>.description`,
+and is otherwise an ordinary fight: its own `"defeat"`, its loot, and whatever the story does before it (its own
+`<<armory>>` with only spears in it, say). Once beaten it doesn't come back. It isn't held to the level band; it's yours.
+
+### The story's side
+
+```
+title: the_sands
+---
+<<challengers>>
+<<if $challenger == "">>
+    You head for the quartermaster. #line:to_the_racks
+    <<armory crucible_racks>>
+    <<jump the_sands>>
+<<endif>>
+<<if $challenger_special>>
+    <<armory spears_only>>
+<<endif>>
+{$hero_name} faces {$challenger_name}! #line:announce_1
+<<fight {$challenger}>>
+<<jump the_sands>>
+===
+```
+
+The locale's English for `announce_1` is `{0} faces {1}!`. **`<<challengers>>`** opens the roster. The player clicks a
+name to see its details (description, difficulty, one opponent or a team, who steps into the arena) and presses Fight,
+or goes **Back to the story**. **`<<fight {$challenger}>>`** fights the pick, and `$fight` is won, lost or yielded as
+ever.
+
+**Naming the challenger in a line:** `{$challenger_name}` holds the name's locale key, and a line shows the key's words.
+That works in any line. It is also how the Announcer pool (`Line Pools/Announcer.md`, with its `{hero}` and
+`{challenger}`) can come in later: each pool line becomes a Yarn line with `{$hero_name}` and `{$challenger_name}` in
+it, and `{hero}` and `{challenger}` in its English become `{0}` and `{1}`. Importing the pool itself isn't built yet.
+
+### A bout's XP
+
+In a campaign that levels by XP (§8), **a won bout gives a quarter of the XP the hero needs to go from their level to
+the next, times ¾ for a low challenger, 1 for moderate and 1½ for high. It replaces the monsters' own XP for that bout.
+It doesn't add to it.** That comes to about 4 bouts a level at every level: 5 or 6 if the player always picks easy ones,
+3 if they always pick hard ones. A lost or yielded bout gives none. `<<xp>>` still gives more on top. The share and the
+three multipliers are pack.json's `bout_xp`. `dotnet run --project sim -- bouts` prints the table.

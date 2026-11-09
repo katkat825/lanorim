@@ -15,6 +15,9 @@ namespace Content.Play
         // a merchant's counter - the shop screen, and back
         Shop,
 
+        // the arena's roster (cc_task_cg Part 6): pick a challenger, or go back to the story
+        Roster,
+
         // the hero died: the death screen, and reload
         Dead,
 

@@ -49,7 +49,7 @@ namespace Content.Screens
                 if (turn != null)
                     said.Add(ReferenceEquals(turn, fight.Hero.Actor)
                         ? new Said(YourTurnKey)
-                        : new Said(TheirTurnKey, fight.Battle.StatblockOf(turn)?.NameKey ?? turn.Id));
+                        : new Said(TheirTurnKey, fight.Battle.NameKeyOf(turn) ?? turn.Id));
 
                 Actor hero = fight.Hero.Actor;
                 said.Add(new Said(HealthKey, run?.Hero?.Name ?? hero.Id, hero.Health.Current, hero.Health.Maximum));

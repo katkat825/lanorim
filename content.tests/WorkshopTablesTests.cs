@@ -110,7 +110,8 @@ namespace Content.Tests
             foreach (string file in Directory.EnumerateFiles(folder, "*.json", SearchOption.AllDirectories).Where(f => !f.EndsWith("pack.json")))
             {
                 string rel = Path.GetRelativePath(folder, file);
-                if (rel.StartsWith("maps") || rel.StartsWith("barks")) continue;
+                // the arena's challengers come from the vault by tools/import_challengers.py; the table editor doesn't edit them
+                if (rel.StartsWith("maps") || rel.StartsWith("barks") || rel.StartsWith("challengers")) continue;
 
                 Assert.True(File.Exists(Path.Combine(again, rel)), $"{rel} was written");
                 Assert.Equal(Readers(rel, File.ReadAllText(file)), Readers(rel, File.ReadAllText(Path.Combine(again, rel))));

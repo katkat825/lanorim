@@ -29,7 +29,22 @@ namespace Content.Dialogue
             _rng = rng ?? throw new ArgumentNullException(nameof(rng));
         }
 
+        // A BAG PICKED UP WHERE A SAVE LEFT IT (cc_task_cg 3.1: the arena's names don't come round again after a load):
+        // what was left of its deal, in order, and the last one out
+        public ShuffleBag(int count, IRng rng, IEnumerable<int> unheard, int last) : this(count, rng)
+        {
+            foreach (int index in unheard ?? Array.Empty<int>())
+                if (index >= 1 && index <= count) _dealt.Add(index);
+
+            _last = last;
+        }
+
         public int Count { get; }
+
+        // what is left of this deal, in the order it comes, and the last one dealt: what a save keeps
+        public IReadOnlyList<int> Unheard => _dealt.GetRange(_at, _dealt.Count - _at);
+
+        public int Last => _last;
 
         // how many are left before the bank comes round again; the bag is empty at zero
         public int Left => _dealt.Count - _at;

@@ -30,6 +30,7 @@ namespace Content.Screens
                 .Concat(CombatHud.Keys())
                 .Concat(GameSettings.Keys())
                 .Concat(DeathView.Keys())
+                .Concat(RosterView.Keys())
                 .Concat(Whereabouts.Keys())
                 .Concat(HelpCard.Keys())
                 .Concat(AccessWords.Keys())

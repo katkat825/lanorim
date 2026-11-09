@@ -37,7 +37,7 @@ namespace Game.Play
                 string says = ReferenceEquals(piece, hero)
                     ? Ui.Say(AccessWords.YouKey, piece.Health.Current, piece.Health.Maximum)
                     : Ui.Say(field.Distance(hero, piece) <= 1 ? AccessWords.BesideKey : AccessWords.PieceKey,
-                             Ui.Say(Battle.StatblockOf(piece)?.NameKey ?? piece.Id),
+                             Ui.Say(Battle.NameKeyOf(piece) ?? piece.Id),
                              piece.Health.Current, piece.Health.Maximum, field.Distance(hero, piece));
 
                 reach.Add(new Reachable(says, () => Board.Pulse(at), () => { if (HerosMove) Click(at); }));

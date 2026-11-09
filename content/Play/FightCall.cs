@@ -17,5 +17,8 @@ namespace Content.Play
         public MapLayout Map { get; init; }
 
         public string Loot => Entry?.Loot ?? "";
+
+        // the arena's challenger this bout is against (cc_task_cg), or null for an ordinary fight
+        public Challengers.Challenger Challenger { get; init; }
     }
 }

@@ -91,10 +91,12 @@ namespace Core.Tables
                               IReadOnlyList<Band> monsters = null, string map = null,
                               string loot = null, Combat.Morale morale = Combat.Morale.None,
                               int level = 0, EncounterDifficulty difficulty = EncounterDifficulty.Moderate,
-                              Combat.Defeat defeat = Combat.Defeat.Unsaid)
+                              Combat.Defeat defeat = Combat.Defeat.Unsaid,
+                              ChallengerTerms challenger = null)
         {
             Morale = morale;
             Defeat = defeat;
+            Challenger = challenger;
             Level = level;
             Difficulty = difficulty;
             Id = id ?? "";
@@ -132,6 +134,9 @@ namespace Core.Tables
         public int Level { get; }
 
         public EncounterDifficulty Difficulty { get; }
+
+        // a fight the arena's roster can offer, from a reputation (cc_task_cg 3.4); null for an ordinary one
+        public ChallengerTerms Challenger { get; }
 
         public bool Speaks => Kind != EntryKind.Nothing;
 

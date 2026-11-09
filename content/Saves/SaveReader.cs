@@ -81,6 +81,9 @@ namespace Content.Saves
 
                 if (root.Has("hero")) save.Hero = Hero(root.GetProperty("hero"), file, problems);
 
+                if (root.Has("arena") && root.GetProperty("arena").ValueKind == JsonValueKind.Object)
+                    save.Arena = ArenaSaves.Read(root.GetProperty("arena"), file, problems);
+
                 if (root.Has("foes"))
                     foreach (JsonElement one in root.GetProperty("foes").EnumerateArray())
                         save.Foes.Add(Actor(one, file, problems));

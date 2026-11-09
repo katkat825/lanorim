@@ -1,0 +1,18 @@
+title: roster
+speaker: dm
+---
+<<challengers>>
+<<if $challenger == "">>
+    You walk back to the racks. #line:roster_back
+<<else>>
+    {$hero_name} faces {$challenger_name}! #line:announce
+    <<fight {$challenger}>>
+    <<if $fight == "won">>
+        The crowd chants for you, and {$challenger_name} limps away. #line:bout_won
+    <<else>>
+        {$challenger_name} raises both arms to the crowd. #line:bout_lost
+    <<endif>>
+<<endif>>
+Reputation {$reputation}. #line:reputation
+<<jump roster>>
+===

@@ -276,8 +276,15 @@ namespace Content.Dialogue
 
                 return Substitutions.Count == 0
                     ? text.Get(key)
-                    : text.Format(key, Substitutions.Cast<object>().ToArray());
+                    : text.Format(key, Substitutions.Select(s => (object)Resolved(text, s)).ToArray());
             }
+
+            // A SUBSTITUTION THAT IS ITSELF A KEY SAYS ITS WORDS (cc_task_cg 5.2): {$challenger_name} holds the
+            // challenger's name key, and the line shows "Grik the Knife". anything else is said as it is
+            static string Resolved(ILocalizer text, string substitution) =>
+                substitution != null && substitution.Contains('.') && !substitution.Contains(' ') && text.Has(substitution)
+                    ? text.Get(substitution)
+                    : substitution;
 
             public override string ToString() => Key;
         }

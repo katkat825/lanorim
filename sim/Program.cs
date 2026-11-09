@@ -36,6 +36,7 @@ namespace Sim
                 case "trace": return Classes.Trace(args.Skip(1).ToArray(), Find);
                 case "versus": return Versus.Run(args.Skip(1).ToArray(), Find);
                 case "rattles": return Rattles.Run(args.Skip(1).ToArray(), Find);
+                case "bouts": return Bouts.Run(args.Skip(1).ToArray());
                 case "help": return Help();
 
                 default:
@@ -53,6 +54,7 @@ namespace Sim
             Console.WriteLine("sim balance [runs]  play fights and print the win tables");
             Console.WriteLine("sim classes [runs] [class]  every class, levels 1-5, against the sample campaign's fights");
             Console.WriteLine("sim mage-balance [runs]     a mage at 1-3: Mage Armor pre-cast, d6 or d8 hit die, enemy damage 100/85/75%");
+            Console.WriteLine("sim bouts [careers] [level] won arena bouts per level under the bout XP rule (cc_task_cg)");
             return 0;
         }
 

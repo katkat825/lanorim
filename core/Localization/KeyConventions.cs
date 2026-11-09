@@ -35,6 +35,9 @@ namespace Core.Localization
         public const string ConsequenceNs = "consequence";
         public const string EncounterNs = "encounter";
 
+        // the arena's challengers (cc_task_cg): a type's numbered names and descriptions, a special fight's own two
+        public const string ChallengerNs = "challenger";
+
         public const string DialogueNs = "dialogue";
         public const string CombatNs = "combat";
         public const string QuestNs = "quest";
@@ -50,7 +53,7 @@ namespace Core.Localization
             ActorNs, AbilityNs, SkillNs, ConditionNs, DamageNs,
             ClassNs, SpeciesNs, BackgroundNs, FeatureNs,
             SpellNs, ItemNs, MonsterNs, FormNs,
-            DifficultyNs, ConsequenceNs, EncounterNs,
+            DifficultyNs, ConsequenceNs, EncounterNs, ChallengerNs,
             DialogueNs, CombatNs, QuestNs, CampaignNs, MerchantNs, UiNs, PropNs,
         };
 

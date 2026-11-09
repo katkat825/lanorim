@@ -40,6 +40,13 @@ namespace Content.Combat
         public Monster StatblockOf(Actor actor) =>
             actor != null && _statblocks.TryGetValue(actor, out Monster m) ? m : null;
 
+        // THE NAME A MONSTER GOES BY IN THIS FIGHT, as a key: its own when the fight gave it one (the arena's lone
+        // challenger, "Grik the Knife", cc_task_cg 5.3), else its statblock's. null for the hero and anyone else
+        public string NameKeyOf(Actor actor) =>
+            actor != null && _names.TryGetValue(actor, out string own) ? own : StatblockOf(actor)?.NameKey;
+
+        readonly Dictionary<Actor, string> _names = new Dictionary<Actor, string>();
+
         public ITactics BrainOf(Actor actor) =>
             actor != null && _brains.TryGetValue(actor, out ITactics brain) ? brain : null;
 
@@ -100,12 +107,16 @@ namespace Content.Combat
         // a fight with morale (cc_task_h 3.4)
         public readonly struct Foe
         {
-            public Foe(Monster monster, Cell at, bool leader = false)
+            public Foe(Monster monster, Cell at, bool leader = false, string nameKey = null)
             {
                 Monster = monster;
                 At = at;
                 Leader = leader;
+                NameKey = nameKey;
             }
+
+            // its own name in this fight, a key; null for its statblock's
+            public string NameKey { get; }
 
             public bool Leader { get; }
 
@@ -170,6 +181,8 @@ namespace Content.Combat
                 used.Add(at);
 
                 battle._statblocks[actor] = foe.Monster;
+
+                if (!string.IsNullOrEmpty(foe.NameKey)) battle._names[actor] = foe.NameKey;
 
                 // the leader a "leader" morale watches: the one marked, else the first (Holding)
                 if (foe.Leader || battle._leader == null) battle._leader = actor;

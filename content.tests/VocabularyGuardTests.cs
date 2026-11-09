@@ -73,6 +73,9 @@ namespace Content.Tests
             Add("consequence", ConsequenceReader.Keys);
             Add("encounter", Content.Encounters.EncounterReader.EntryKeys);
             Add("encounter.monster", Content.Encounters.EncounterReader.MonsterKeys);
+            Add("encounter.challenger", Content.Encounters.EncounterReader.ChallengerKeys);
+            Add("challenger", Content.Challengers.ChallengerReader.Keys);
+            Add("challenger.monster", Content.Challengers.ChallengerReader.MonsterKeys);
 
             return keys;
         }
@@ -242,6 +245,8 @@ namespace Content.Tests
                 "monster.action" => inArray("actions"),
                 "encounter" => inArray("entries") && o.TryGetProperty("kind", out _),
                 "encounter.monster" => inArray("monsters") && o.TryGetProperty("monster", out _),
+                "challenger" => path.Count == 2 && inArray("challengers"),
+                "challenger.monster" => inArray("monsters") && path.Count > 0 && path[0] == "challengers",
                 _ => under(where.Substring(where.LastIndexOf('.') + 1)) &&
                      (where.StartsWith("effect.") || where.StartsWith("linger.") || where.StartsWith("boon.") ||
                       where.StartsWith("item.") || where.StartsWith("monster.") || where.StartsWith("feature.") ||
@@ -418,6 +423,7 @@ namespace Content.Tests
             ["GameSettings.cs"] = "the player's settings, written by the game",
             ["MapDraft.cs"] = "the map editor's own file, written by MapDraft.Save",
             ["EffectWords.cs"] = "reads an effect SpellReader.ReadEffect has checked (Keyed.OnlyKnown with KeysFor)",
+            ["ArenaSaves.cs"] = "the arena's part of a save, written by ArenaSaves.Write (cc_task_cg)",
             ["SrdSpellNames.cs"] = "the SRD's own names and class lists, written from the SRD text by tools/srd_spell_lists.py, not by an author",
         };
 

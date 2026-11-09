@@ -138,7 +138,7 @@ namespace Content.Tests
             }
         }
 
-        static (int, string) Python(params string[] args)
+        internal static (int, string) Python(params string[] args)
         {
             string root = Root();
             var start = new ProcessStartInfo("python") { WorkingDirectory = root, RedirectStandardOutput = true, RedirectStandardError = true };
@@ -151,7 +151,7 @@ namespace Content.Tests
             return (python.ExitCode, output);
         }
 
-        static string Root()
+        internal static string Root()
         {
             for (var here = new DirectoryInfo(AppContext.BaseDirectory); here != null; here = here.Parent)
                 if (File.Exists(Path.Combine(here.FullName, "tools", "import_barks.py"))) return here.FullName;

@@ -61,6 +61,11 @@ namespace Game.Play
                     OpenShop();
                     break;
 
+                case Scene.Roster:
+                    _dialogue.Visible = false;
+                    OpenRoster();
+                    break;
+
                 case Scene.Dead:
                     _dialogue.Visible = false;
                     Died();

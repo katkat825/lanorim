@@ -81,6 +81,39 @@ namespace Content.Campaigns
             if (rules.Characters != game.Characters) json.WriteNumber("characters", rules.Characters);
             if (rules.StartingShop != game.StartingShop) json.WriteBoolean("starting_shop", rules.StartingShop);
             if (rules.Consequences != game.Consequences) json.WriteString("consequences", EnumWords.Name(rules.Consequences));
+            if (!rules.Arena.IsDefault) Arena(json, rules.Arena);
+        }
+
+        // the arena's numbers (cc_task_cg), only the ones changed from the game's, under the reader's names
+        static void Arena(Utf8JsonWriter json, Challengers.ArenaRules arena)
+        {
+            Challengers.ArenaRules game = Challengers.ArenaRules.Default;
+
+            json.WriteStartObject(ManifestReader.ArenaField);
+
+            if (arena.Win != game.Win) json.WriteNumber("win", arena.Win);
+            if (arena.Loss != game.Loss) json.WriteNumber("loss", arena.Loss);
+
+            if (arena.Least != game.Least || arena.Every != game.Every || arena.Most != game.Most)
+            {
+                json.WriteStartObject("roster");
+                if (arena.Least != game.Least) json.WriteNumber("least", arena.Least);
+                if (arena.Every != game.Every) json.WriteNumber("every", arena.Every);
+                if (arena.Most != game.Most) json.WriteNumber("most", arena.Most);
+                json.WriteEndObject();
+            }
+
+            if (arena.Share != game.Share || arena.Low != game.Low || arena.Moderate != game.Moderate || arena.High != game.High)
+            {
+                json.WriteStartObject("bout_xp");
+                if (arena.Share != game.Share) json.WriteNumber("share", arena.Share);
+                if (arena.Low != game.Low) json.WriteNumber("low", arena.Low);
+                if (arena.Moderate != game.Moderate) json.WriteNumber("moderate", arena.Moderate);
+                if (arena.High != game.High) json.WriteNumber("high", arena.High);
+                json.WriteEndObject();
+            }
+
+            json.WriteEndObject();
         }
     }
 }

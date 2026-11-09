@@ -559,6 +559,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `difficulty` | `low` \| `moderate` \| `high` | how hard the fight is meant to be at that level, the SRD's Combat Encounter Difficulty; moderate when unsaid (cc_task_h 3.5) | | encounter | the DC ladder's words (`Difficulty`) are a check's, and the player's Story/Standard/Hard is a setting, not data |
 | `morale` | `none` \| `leader` \| `half` | when the enemies break and run (or surrender with nowhere to run): when the leader falls, or half of them are down. none is to the end (cc_task_h 3.4) | | reserved: no shipped fight has one yet; a campaign's author decides it per fight | nothing said when a fight ends but its outcome; morale is a fight's, not a monster's |
 | `defeat` | `death` \| `continues` | what losing this fight means: death is the death screen; continues goes back to the story with `$fight` "lost", the hero brought round, and a failed death save a knockout. unsaid is the campaign's `defeat` in pack.json (cc_task_i 3.1) | | reserved: no shipped fight has one yet; the Crucible pack is Kathleen's | `morale` is when the enemies give up; this is what happens when the hero does |
+| `challenger` | `encounter.challenger` | this hand-written fight is also offered on the arena's roster, beside the generated challengers, with its own name and description keys `challenger.<id>.name` and `.description` (cc_task_cg 3.4) | | reserved: the Crucible pack is Kathleen's | a challenger type (`challengers/`) is generated from her lists; this is one fight she wrote, which keeps everything a fight entry has |
 
 ### `encounter.monster`: one band in a fight's `monsters`
 
@@ -567,6 +568,31 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `monster` | id | the statblock | | encounter | existing |
 | `count` | dice | how many | | encounter | existing |
 | `leader` | flag | the first of this band leads: its fall breaks a `"morale": "leader"` fight. none marked, the fight's first monster leads (cc_task_h 3.4) | | reserved: no shipped fight has a morale yet | a statblock's `tags` are the creature's in every fight; leading is this fight's |
+
+### `encounter.challenger`: a fight entry's `challenger`, the terms it goes on the roster by (cc_task_cg 3.4)
+
+| key | type / values | meaning in plain words | replaces (old keys) | used by | why not an existing key |
+|---|---|---|---|---|---|
+| `reputation` | number, 0 and up | the reputation it appears on the roster from; 0 when unsaid | | reserved: the Crucible pack is Kathleen's | a fight's `level` is the hero's, for the budget check; this is the arena's standing |
+| `trigger` | the encounter table's `trigger`: `{ "roll": "1d2", "at_least": 2 }` | rolled each time the roster is drawn: it appears when the roll makes it. no trigger is every time | | reserved: the Crucible pack is Kathleen's | existing: the table's own trigger, read by the same reader; `weight` is a share of one table's picks, not a chance on its own |
+
+### `challenger`: one challenger type in a campaign's `challengers/` (`ChallengerReader`; written by `tools/import_challengers.py`)
+
+| key | type / values | meaning in plain words | replaces (old keys) | used by | why not an existing key |
+|---|---|---|---|---|---|
+| `id` | id | the type, from the vault's `# heading`: its keys are `challenger.<id>.name.001` and `challenger.<id>.description.001` | | reserved: the Crucible pack is Kathleen's | existing |
+| `shape` | `single` \| `group` \| `team` | one monster (it goes by the challenger's name in the fight; with several `monsters`, whichever of them fits the hero's level), a fixed group, or a team drawn from its monsters to a budget for the hero's level. a shared list's is the shape it serves: single, or team (for groups and teams) | | reserved: the Crucible pack is Kathleen's | an encounter entry's `kind` is what a pick is (fight, line, nothing); this is who a fight puts in the arena |
+| `monsters` | list of `challenger.monster` | who steps into the arena: a single's one (or the ones it is one of), a group's bands, a team's pool. left out, the type is a shared list: names and descriptions every type of its shape draws from beside its own (Kathleen's "Generic") | | reserved: the Crucible pack is Kathleen's | existing: an encounter's `monsters` |
+| `names` | number | how many numbered names its locale has (a team's are team names) | | reserved: the Crucible pack is Kathleen's | a bark bank's count per pool is a bank's; these are one type's |
+| `descriptions` | number | how many numbered descriptions; any name goes with any description | | reserved: the Crucible pack is Kathleen's | as `names` |
+| `map` | id | the map its bouts are fought on; unsaid, the campaign's first | | reserved: the Crucible pack is Kathleen's | existing: an encounter's `map` |
+
+### `challenger.monster`: one band in a challenger type's `monsters`
+
+| key | type / values | meaning in plain words | replaces (old keys) | used by | why not an existing key |
+|---|---|---|---|---|---|
+| `monster` | id | the statblock | | reserved: the Crucible pack is Kathleen's | existing: `encounter.monster` |
+| `count` | dice | how many, for a single or a group; a team's have none | | reserved: the Crucible pack is Kathleen's | existing: `encounter.monster` |
 
 ### `attack`: an attack, wherever it is written - an item's `weapon`, a statblock's `attacks`, a Wild Shape form's `attacks` (`AttackReader`)
 

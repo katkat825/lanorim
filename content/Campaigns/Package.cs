@@ -67,7 +67,7 @@ namespace Content.Campaigns
         {
             MonstersFolder, ItemsFolder, SpellsFolder, MapsFolder, EncountersFolder, LootFolder,
             LocaleFolder, AssetsFolder, DialogueFolder, MinisFolder, ModelsFolder, AudioFolder,
-            MerchantsFolder, BarksFolder, ConsequencesFolder,
+            MerchantsFolder, BarksFolder, ConsequencesFolder, ChallengersFolder,
         };
 
         // read, but nothing is done with them yet. (dialogue/ is read by DialogueBook when a campaign
@@ -153,6 +153,7 @@ namespace Content.Campaigns
                 .Concat(Merchants.Select(m => m.NameKey))
                 .Concat(Barks.Keys())
                 .Concat(Consequences.SelectMany(c => c.Keys()))
+                .Concat(ChallengerKeys())
                 .Distinct();
 
         // its own consequences, and the pool they make with the game's while it runs: added to it, or in place of it

@@ -159,6 +159,11 @@ namespace Content.Dialogue
             Declare(RequestVariables.LootCopper, Types.Number, 0f),
         };
 
+        // everything the engine declares for every campaign: the answers, and what the story reads of the hero and the
+        // arena
+        static IEnumerable<Declaration> Declared =>
+            EngineVariables.Concat(HeroVariables.Declarations).Concat(ArenaVariables.Declarations);
+
         static Declaration Declare(string name, IType type, IConvertible value) =>
             new DeclarationBuilder().WithName(name).WithType(type).WithDefaultValue(value)
                                     .WithDescription("set by the table when it answers a campaign's ask")
@@ -180,6 +185,12 @@ namespace Content.Dialogue
                     _problems.Add(ContentProblem.Caution(source.FileName, variable,
                         $"{variable} is the hero's, read-only - setting it does nothing"));
 
+            // nor the arena's (cc_task_cg): reputation moves with the bouts, and $challenger with <<challengers>>
+            foreach (CompilationJob.File source in sources)
+                foreach (string variable in ArenaVariables.Names.Where(v => source.Source.Contains("<<set " + v + " ")))
+                    _problems.Add(ContentProblem.Caution(source.FileName, variable,
+                        $"{variable} is the arena's, read-only - setting it does nothing"));
+
             var library = new Yarn.Library();
             HeroVariables.Declare(library);
 
@@ -193,7 +204,7 @@ namespace Content.Dialogue
                     // the variables the table answers into (Asks.cs), declared here so a campaign
                     // reads $passed without having to declare it, and cannot declare it as
                     // something else; and what it can read about the hero (cc_task_i 4.1)
-                    VariableDeclarations = EngineVariables.Concat(HeroVariables.Declarations).ToList(),
+                    VariableDeclarations = Declared.ToList(),
                 });
             }
             catch (Exception threw)
@@ -211,7 +222,7 @@ namespace Content.Dialogue
                 // the table's variables are declared for every campaign, and a campaign that never
                 // reads one is not doing anything wrong - that one notice is Yarn's, not the author's
                 if (complaint.Severity != Diagnostic.DiagnosticSeverity.Error &&
-                    EngineVariables.Concat(HeroVariables.Declarations).Any(v => complaint.Message.Contains($"'{v.Name}'")) &&
+                    Declared.Any(v => complaint.Message.Contains($"'{v.Name}'")) &&
                     complaint.Message.Contains("never used"))
                     continue;
 

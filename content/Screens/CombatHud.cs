@@ -66,9 +66,7 @@ namespace Content.Screens
 
         // a monster's name for "the goblin's turn", or null for the hero or nobody
         public string TurnShownNameKey =>
-            TurnShown != null && !ShowsHerosTurn && Session.Battle.StatblockOf(TurnShown) is { } monster
-                ? KeyConventions.MonsterName(monster.Id)
-                : null;
+            TurnShown != null && !ShowsHerosTurn ? Session.Battle.NameKeyOf(TurnShown) : null;
 
         public static readonly string TheirTurnKey = ScreenKeys.Key("combat", "their_turn");
 
@@ -86,9 +84,7 @@ namespace Content.Screens
                                 Actor = roll.Actor,
                                 Hero = roll.Actor == Session.Hero.Actor,
                                 Name = roll.Actor == Session.Hero.Actor ? Session.Hero.Name : "",
-                                NameKey = Session.Battle.StatblockOf(roll.Actor) is { } monster
-                                              ? KeyConventions.MonsterName(monster.Id)
-                                              : null,
+                                NameKey = Session.Battle.NameKeyOf(roll.Actor),
                                 Current = roll.Actor == now,
                                 Initiative = roll.Total,
                                 HitPoints = HitPointsOf(roll.Actor),

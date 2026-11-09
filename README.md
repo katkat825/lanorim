@@ -124,6 +124,21 @@ for a pool folder the game doesn't know yet. Run it as often as you like; `.\che
 
 `dotnet run --project sim -- rattles [plays] [class]` counts how often the GM screen rattles in the sample campaign.
 
+### The arena's challengers
+
+Kathleen writes the challenger lists in her vault (`../campaign_authoring/The Crucible/Challengers/*.md`). To bring them
+into a campaign:
+
+```bash
+python tools/import_challengers.py campaigns/<campaign>
+```
+
+It reads the vault and never writes to it; it writes `<campaign>/challengers/<file>.json` and the names and descriptions
+into the campaign's own locale (`challenger.<type>.name.001`), every other row untouched. A `stats:` line it can't read
+stops it with the file and line, and nothing is written. `--check` writes nothing and fails if the campaign is behind
+the vault. The shapes, the roster and the bout XP rule are `docs/campaign_authoring_rules.md` §13;
+`dotnet run --project sim -- bouts` prints how many won bouts a level takes.
+
 These need Godot, and find it themselves under `C:\Godot` (or `$env:GODOT_ROOT`):
 
 ```powershell

@@ -71,6 +71,10 @@ namespace Content.Dialogue
         // <<bark nearby>> - the companion says a line from one of its bark pools (cc_task_i 2.3). nothing to
         // answer; the story goes straight on
         Bark,
+
+        // <<challengers>> - the arena's roster (cc_task_cg Part 5): a scene, like a shop. the player picks one, or
+        // walks away to the story; $challenger says who, and <<fight {$challenger}>> fights them
+        Challengers,
     }
 
     public sealed class Request
@@ -128,6 +132,7 @@ namespace Content.Dialogue
                 ["rest"] = RequestKind.Rest,
                 ["bark"] = RequestKind.Bark,
                 ["armory"] = RequestKind.Armory,
+                ["challengers"] = RequestKind.Challengers,
             };
 
         // null when it is not an engine verb at all; a problem when it is one written wrong
@@ -146,6 +151,7 @@ namespace Content.Dialogue
                 RequestKind.Roll => ReadRoll,
                 RequestKind.Rest => ReadRest,
                 RequestKind.Bark => ReadBark,
+                RequestKind.Challengers => ReadBare,
                 RequestKind.Encounter or RequestKind.Fight or RequestKind.Loot or RequestKind.Shop or RequestKind.Armory => ReadId,
                 RequestKind.Give => ReadGive,
                 RequestKind.Gold or RequestKind.Silver or RequestKind.Copper or RequestKind.Level or RequestKind.Xp
@@ -222,6 +228,10 @@ namespace Content.Dialogue
             request.Id = pool.Id();
             return null;
         }
+
+        // a verb that takes nothing: <<challengers>>
+        static string ReadBare(Request request, string[] words, string command) =>
+            words.Length == 1 ? null : $"'{command}' - it is <<{words[0]}>>, with nothing after it";
 
         static string ReadId(Request request, string[] words, string command)
         {

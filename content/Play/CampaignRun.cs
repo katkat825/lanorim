@@ -38,7 +38,7 @@ namespace Content.Play
             Referee = new Referee(hero, heroDice ?? new StandardResolver(_gm), Screen, library, pack);
 
             // what the story can read about the hero, live (cc_task_i 4.1)
-            _store = new StoryVariables { Live = name => HeroVariables.Read(Hero, name) };
+            _store = new StoryVariables { Live = name => HeroVariables.Read(Hero, name) ?? ArenaVariables.Read(Arena, name) };
             Talk = new Conversation(Book, _store) { NodeStarted = Entered };
             Talk.Lets(HeroVariables.HasItem, id => HeroVariables.Has(Hero, id));
 

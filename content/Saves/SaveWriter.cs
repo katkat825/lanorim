@@ -74,6 +74,12 @@ namespace Content.Saves
                     WriteHero(json, save.Hero);
                 }
 
+                if (save.Arena != null)
+                {
+                    json.WritePropertyName("arena");
+                    ArenaSaves.Write(json, save.Arena);
+                }
+
                 json.WritePropertyName("foes");
                 json.WriteStartArray();
 

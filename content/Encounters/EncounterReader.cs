@@ -42,6 +42,7 @@ namespace Content.Encounters
             return new EncounterTable(id, trigger, entries, visibility);
         }
 
+        // a table's trigger, or a challenger's (cc_task_cg 3.4): the same shape, under the object that holds it
         static Trigger ReadTrigger(JsonElement table, string id, List<string> problems)
         {
             if (!table.Has("trigger")) return Trigger.Always;
@@ -79,7 +80,12 @@ namespace Content.Encounters
         }
 
         public static readonly IReadOnlyList<string> EntryKeys =
-            new[] { "id", "kind", "weight", "monsters", "map", "loot", "morale", "level", "difficulty", "defeat" };
+            new[] { "id", "kind", "weight", "monsters", "map", "loot", "morale", "level", "difficulty", "defeat", ChallengerKey };
+
+        // a fight the arena's roster offers (cc_task_cg 3.4): { "reputation": 10, "trigger": { ... } }
+        public const string ChallengerKey = "challenger";
+
+        public static readonly IReadOnlyList<string> ChallengerKeys = new[] { "reputation", "trigger" };
 
         // a monster entry's flag: the leader whose fall breaks a "morale": "leader" fight (cc_task_h 3.4)
         const string LeaderFlag = "leader";
@@ -136,6 +142,8 @@ namespace Content.Encounters
             if (monsters.Count(m => m.Leader) > 1)
                 problems.Add($"{where}: one leader to a fight - {monsters.Count(m => m.Leader)} are marked");
 
+            ChallengerTerms challenger = ReadChallenger(entry, kind, where, problems);
+
             string map = entry.Text("map");
 
             if (map.Length > 0 && !Json.IsId(map))
@@ -160,7 +168,33 @@ namespace Content.Encounters
                     break;
             }
 
-            return new EncounterEntry(id, kind, weight, monsters, map, loot, morale, System.Math.Max(0, level), difficulty, defeat);
+            return new EncounterEntry(id, kind, weight, monsters, map, loot, morale, System.Math.Max(0, level), difficulty, defeat,
+                                      challenger);
+        }
+
+        // "challenger": { "reputation": 10, "trigger": { "roll": "1d2", "at_least": 2 } } - both optional: from
+        // reputation 0, and always when the roster is drawn
+        static ChallengerTerms ReadChallenger(JsonElement entry, EntryKind kind, string where, List<string> problems)
+        {
+            if (!entry.Has(ChallengerKey)) return null;
+
+            JsonElement terms = entry.GetProperty(ChallengerKey);
+
+            if (terms.ValueKind != JsonValueKind.Object)
+            {
+                problems.Add($"{where}: 'challenger' is an object - {{ \"reputation\": 10 }}, and {{ }} for one from the start");
+                return null;
+            }
+
+            Keyed.OnlyKnown(terms, ChallengerKeys, $"{where}.challenger", problems);
+
+            if (kind != EntryKind.Fight) problems.Add($"{where}: only a fight can be a challenger");
+
+            int reputation = terms.Number("reputation", 0);
+
+            if (reputation < 0) problems.Add($"{where}: a challenger's 'reputation' is 0 or more, not {reputation}");
+
+            return new ChallengerTerms(reputation, ReadTrigger(terms, $"{where}.challenger", problems));
         }
     }
 }

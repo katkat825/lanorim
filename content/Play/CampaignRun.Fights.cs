@@ -23,6 +23,9 @@ namespace Content.Play
         // fight entry in one of the campaign's tables (or the one an <<encounter>> just picked)
         FightCall Call(string id)
         {
+            // the arena's challenger, picked from the roster (cc_task_cg)
+            if (ChallengerCall(id) is FightCall bout) return bout;
+
             EncounterTable table = Pack.Encounter(id);
 
             TableRoll rolled = table != null ? Screen.Consult(table) : null;
@@ -54,7 +57,7 @@ namespace Content.Play
             return Framed(rolled.Entry, rolled.Group);
         }
 
-        FightCall Framed(EncounterEntry entry, IReadOnlyList<Mustered> group)
+        FightCall Framed(EncounterEntry entry, IReadOnlyList<Mustered> group, Challengers.Challenger challenger = null)
         {
             string map = entry.Map.Length > 0 ? entry.Map : MapId;
 
@@ -66,7 +69,7 @@ namespace Content.Play
                 layout = Pack.Maps[map];
             }
 
-            return new FightCall { Entry = entry, Group = group, MapId = map, Map = layout };
+            return new FightCall { Entry = entry, Group = group, MapId = map, Map = layout, Challenger = challenger };
         }
 
         // XP LEVELLING (cc_task_i 3.4): a won fight's XP is its monsters', the SRD's Experience Points by Challenge
@@ -74,7 +77,7 @@ namespace Content.Play
         public int FightXp =>
             Fight?.Group.Sum(band => Find(band.Monster) is Monster monster ? Encounters.FightBudget.Xp(monster) * band.Count : 0) ?? 0;
 
-        Monster Find(string id) =>
+        public Monster Find(string id) =>
             Pack.Monsters.FirstOrDefault(m => m.Id == id) ?? Library.Bestiary.Find(id);
 
         // the battle being fought, for what EndFight asks of it (did they break?)
@@ -101,7 +104,7 @@ namespace Content.Play
                 for (int i = 0; i < band.Count; i++, slot++)
                     foes.Add(new Battle.Foe(monster,
                                             Fight.Map.SpawnAt(slot) ?? Fight.Map.SpawnAt(1) ??
-                                            new Cell(Fight.Map.Columns - 2, 1), leads && i == 0));
+                                            new Cell(Fight.Map.Columns - 2, 1), leads && i == 0, Named));
             }
 
             var observers = new Observers(observer, Day);
@@ -118,6 +121,10 @@ namespace Content.Play
 
             return battle;
         }
+
+        // a lone challenger goes by their own name in the fight, in the turn banner and the log (cc_task_cg 5.3); a
+        // group's and a team's members keep their statblocks'
+        string Named => Fight?.Challenger is { Alone: true } one ? one.NameKey : null;
 
         // what losing the fight being fought means: its own word, else the campaign's (cc_task_i 3.1)
         public Defeat DefeatHere => (Pack.Manifest?.Rules ?? Campaigns.CampaignRules.Default).For(Fight?.Entry);
@@ -138,8 +145,11 @@ namespace Content.Play
             // a knockout, not death: brought round on 1 hit point, and what the story does next is the story's
             if (outcome == Outcome.HeroesLost && (Hero.Actor.IsDead || Hero.Actor.IsDown)) Hero.Actor.Raise();
 
+            // a bout's XP is the arena's, in place of its monsters' (cc_task_cg Part 4)
             if (outcome == Outcome.HeroesWon && Pack.Manifest?.Rules.Leveling == Campaigns.Leveling.Xp)
-                Hero.Earn(FightXp);
+                Hero.Earn(Fight?.Challenger != null ? BoutXp : FightXp);
+
+            Bout(outcome);
 
             Spoils = null;
 

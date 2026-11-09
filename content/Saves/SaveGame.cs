@@ -77,6 +77,10 @@ namespace Content.Saves
         // the player's own words for a manual save; empty for an autosave
         public string Label { get; set; } = "";
 
+        // THE ARENA (cc_task_cg): reputation, the roster, the pick - as it is when the save is made, like the hero.
+        // null for a campaign that never used it
+        public Challengers.Arena Arena { get; set; }
+
         public IList<SavedActor> Foes { get; } = new List<SavedActor>();
 
         public IList<SavedDie> Felt { get; } = new List<SavedDie>();

@@ -100,6 +100,8 @@ namespace Content.Play
             // a merchant's counter, or an armory's racks (cc_task_i 3.3): both the shop scene, which knows which
             if (request.Kind is RequestKind.Shop or RequestKind.Armory) return ShopAsked(request);
 
+            if (request.Kind == RequestKind.Challengers) return RosterAsked();
+
             Referees(request);
             return null;
         }

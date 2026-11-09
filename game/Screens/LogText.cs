@@ -25,7 +25,8 @@ namespace Game.Screens
 
             if (battle != null && ReferenceEquals(actor, battle.Hero.Actor)) return heroName;
 
-            if (battle?.StatblockOf(actor) is { } monster) return Ui.Say(KeyConventions.MonsterName(monster.Id));
+            // the fight's own name for it (the arena's lone challenger, cc_task_cg 5.3), else its statblock's
+            if (battle?.NameKeyOf(actor) is string key) return Ui.Say(key);
 
             return actor.Id;
         }

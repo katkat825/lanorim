@@ -35,6 +35,9 @@ namespace Content.Play
             foreach (KeyValuePair<string, bool> f in _entryFlags) game.Flags[f.Key] = f.Value;
             foreach (string step in _steps) game.Steps.Add(step);
 
+            // the arena as it is now, like the hero (cc_task_cg): a campaign that never used it saves none
+            if (Arena.Drawn || Arena.Reputation > 0 || Arena.Picked != null) game.Arena = Arena.Copy();
+
             return game;
         }
 
@@ -73,6 +76,7 @@ namespace Content.Play
             foreach (KeyValuePair<string, string> w in save.Words) run._store.SetValue(w.Key, w.Value);
             foreach (KeyValuePair<string, bool> f in save.Flags) run._store.SetValue(f.Key, f.Value);
 
+            run.Restore(save.Arena);
             run._resumeAt = save.Node;
             run._replay = save.Steps.ToList();
 

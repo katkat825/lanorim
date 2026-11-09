@@ -129,7 +129,8 @@ namespace Content.Workshop.Tables
 
         public Dictionary<string, string> Kept { get; set; } = new();
 
-        public static string[] Keys => EncounterReader.EntryKeys.ToArray();
+        // every key but a special challenger's terms (cc_task_cg 3.4), which the editor doesn't edit: kept as written
+        public static string[] Keys => EncounterReader.EntryKeys.Where(k => k != EncounterReader.ChallengerKey).ToArray();
 
         public static EncounterDraft Read(JsonObject entry, string where, List<string> told)
         {

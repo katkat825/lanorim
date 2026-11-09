@@ -1,17 +1,51 @@
 keys,en
 campaign.crucible_fixture.description,A test arena: an armory and a bout that goes on after defeat.
 campaign.crucible_fixture.name,The Crucible (test fixture)
+challenger.bruiser.description.001,A bruiser who has fought in every pit on the coast.
+challenger.bruiser.name.001,Old Knuckles
+challenger.generic_single.description.001,"A confident challenger steps forward, eager to begin."
+challenger.generic_single.name.001,Ash the Undying
+challenger.generic_single.name.002,The Last Laugh
+challenger.generic_team.description.001,A small group of challengers enter the arena.
+challenger.generic_team.name.001,The Rusty Blades
+challenger.goblin_warrior.description.001,A wiry goblin with a chipped sword and an oversized helmet.
+challenger.goblin_warrior.description.002,A goblin wearing armor that appears to have been assembled from spare kitchen parts.
+challenger.goblin_warrior.name.001,Grik the Knife
+challenger.goblin_warrior.name.002,Snag
+challenger.goblin_warrior.name.003,Wizzle
+challenger.guard.description.001,A guard with polished armor and immaculate equipment.
+challenger.guard.description.002,A nervous guard who repeatedly adjusts their grip on their weapon.
+challenger.guard.name.001,Aldric the Steadfast
+challenger.guard.name.002,Kessa the Quick
+challenger.guard.name.003,Lothar
+challenger.guard_pair.description.001,Two guards who finish each other's sentences.
+challenger.guard_pair.name.001,The Westhaven Twins
+challenger.ogre.description.001,An ogre who has eaten the last three challengers.
+challenger.ogre.name.001,Big Mott
+challenger.raiders.description.001,A crew that fights for whoever paid last.
+challenger.raiders.description.002,A mob that has never agreed on a plan.
+challenger.raiders.name.001,The Skrat Tribe Raiders
+challenger.raiders.name.002,The North River Crew
+challenger.spear_trial.description,"A guard of the arena, and only spears in the racks."
+challenger.spear_trial.name,The Spear Trial
 consequence.sand_in_your_eye.line,"Sand in your eye. Nothing comes of it, but the crowd laughs."
 consequence.sand_in_your_eye.name,Sand in your eye
 consequence.the_crowd_chants_your_name.line,The crowd chants your name.
 consequence.the_crowd_chants_your_name.name,The crowd chants your name
 dialogue.bonded_wolf.bark.victory.crucible_fixture.001,The crowd loved that!
+dialogue.dm.line.crucible_fixture.announce,{0} faces {1}!
+dialogue.dm.line.crucible_fixture.bout_lost,{0} raises both arms to the crowd.
+dialogue.dm.line.crucible_fixture.bout_won,"The crowd chants for you, and {0} limps away."
 dialogue.dm.line.crucible_fixture.day_over,That is the day's bout.
 dialogue.dm.line.crucible_fixture.lost,"You wake on the sand, and the crowd has gone home."
 dialogue.dm.line.crucible_fixture.racks,The quartermaster waves you at the racks.
+dialogue.dm.line.crucible_fixture.reputation,Reputation {0}.
+dialogue.dm.line.crucible_fixture.roster_back,You walk back to the racks.
 dialogue.dm.line.crucible_fixture.won,The crowd roars.
 dialogue.dm.line.crucible_fixture.yielded,"You raise a hand, and the bout is over."
 encounter.bouts.line.first_bout,Two goblins step onto the sand.
+encounter.bouts.line.spear_trial,A guard of the arena levels a spear.
 encounter.bouts.line.to_the_death,A goblin with nothing to lose.
 merchant.racks.name,The racks
 quest.crucible_fixture.arena.title,The arena
+quest.crucible_fixture.roster.title,The roster

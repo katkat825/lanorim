@@ -1,0 +1,94 @@
+{
+  "challengers": [
+    {
+      "id": "goblin_warrior",
+      "shape": "single",
+      "monsters": [
+        {
+          "monster": "goblin",
+          "count": "1"
+        }
+      ],
+      "names": 3,
+      "descriptions": 2
+    },
+    {
+      "id": "guard",
+      "shape": "single",
+      "monsters": [
+        {
+          "monster": "guard",
+          "count": "1"
+        }
+      ],
+      "names": 3,
+      "descriptions": 2
+    },
+    {
+      "id": "guard_pair",
+      "shape": "group",
+      "monsters": [
+        {
+          "monster": "guard",
+          "count": "2"
+        }
+      ],
+      "names": 1,
+      "descriptions": 1
+    },
+    {
+      "id": "raiders",
+      "shape": "team",
+      "monsters": [
+        {
+          "monster": "goblin"
+        },
+        {
+          "monster": "guard"
+        }
+      ],
+      "names": 2,
+      "descriptions": 2
+    },
+    {
+      "id": "ogre",
+      "shape": "single",
+      "monsters": [
+        {
+          "monster": "ogre",
+          "count": "1"
+        }
+      ],
+      "names": 1,
+      "descriptions": 1
+    },
+    {
+      "id": "bruiser",
+      "shape": "single",
+      "monsters": [
+        {
+          "monster": "goblin",
+          "count": "1"
+        },
+        {
+          "monster": "ogre",
+          "count": "1"
+        }
+      ],
+      "names": 1,
+      "descriptions": 1
+    },
+    {
+      "id": "generic_single",
+      "shape": "single",
+      "names": 2,
+      "descriptions": 1
+    },
+    {
+      "id": "generic_team",
+      "shape": "team",
+      "names": 1,
+      "descriptions": 1
+    }
+  ]
+}

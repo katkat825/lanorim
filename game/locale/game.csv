@@ -1207,7 +1207,7 @@ monster.giant_rat.name,Giant Rat
 monster.giant_spider.description,26 hit points; Armor Class 14; speed 30 feet; Spider Bite for 1d8 piercing.
 monster.giant_spider.name,Giant Spider
 monster.goblin.description,10 hit points; Armor Class 15; speed 30 feet; Scimitar for 1d6 slashing; Goblin Shortbow for 1d6 piercing.
-monster.goblin.name,Goblin
+monster.goblin.name,Goblin Warrior
 monster.goblin_archer.description,7 hit points; Armor Class 13; speed 30 feet; Goblin Shortbow for 1d6 piercing; Goblin Dagger for 1d4 piercing.
 monster.goblin_archer.name,Goblin Archer
 monster.goblin_boss.description,21 hit points; Armor Class 17; speed 30 feet; Scimitar for 1d6 slashing; Goblin Shortbow for 1d6 piercing; attacks 2 times a turn.
@@ -2615,6 +2615,18 @@ ui.reaction_prompt.turns_the_hit.name,That turns the hit.
 ui.recharge.long_rest.name,Every use back on a long rest
 ui.recharge.one_per_short_rest.name,"One use back on a short rest, every use on a long rest"
 ui.recharge.short_rest.name,Every use back on a short or long rest
+ui.roster.alone,One opponent
+ui.roster.back,Back to the story
+ui.roster.choose,Choose a challenger to see the details.
+ui.roster.empty,No challengers are waiting today.
+ui.roster.fight,Fight
+ui.roster.group,A group
+ui.roster.member,{0} × {1}
+ui.roster.reputation,Reputation: {0}
+ui.roster.special,Special fight
+ui.roster.team,A team
+ui.roster.title,Challengers
+ui.roster.who,Who steps into the arena
 ui.school.abjuration.name,Abjuration
 ui.school.conjuration.name,Conjuration
 ui.school.divination.name,Divination
@@ -2965,6 +2977,7 @@ ui.workshop.difficulty_low,Easy
 ui.workshop.difficulty_moderate,Medium
 ui.workshop.does_armory,open the armory {0}
 ui.workshop.does_bark,have the companion speak up: {0}
+ui.workshop.does_challengers,open the arena's roster
 ui.workshop.does_check,"check {0}, DC {1}"
 ui.workshop.does_copper,give {0} copper
 ui.workshop.does_encounter,roll on {0}

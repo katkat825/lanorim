@@ -25,6 +25,9 @@ namespace Content.Campaigns
         // the campaign's consequences/: added to the game-wide pool, or in place of it
         public Layering Consequences { get; init; } = Layering.Add;
 
+        // the arena's numbers, "challengers" (cc_task_cg): reputation, the roster's size, a bout's XP
+        public Challengers.ArenaRules Arena { get; init; } = Challengers.ArenaRules.Default;
+
         // what losing this fight means: the fight's own word, else the campaign's
         public Defeat For(Core.Tables.EncounterEntry fight) =>
             fight != null && fight.Defeat != Defeat.Unsaid ? fight.Defeat : Defeat;

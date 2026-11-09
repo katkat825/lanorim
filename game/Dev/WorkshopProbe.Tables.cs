@@ -35,7 +35,7 @@ namespace Game.Dev
 
             Expect(Meter() == "Green", $"one goblin at level 1 is about right ({Meter()})");
 
-            Pick("AddMonster_" + Fight + "_List", "Goblin");
+            Pick("AddMonster_" + Fight + "_List", "Goblin Warrior");
             Press("AddMonster_" + Fight + "_Add");
             Expect(Tables.Fight(Fight).Fight?.Monsters.Count == 2, "a second monster from the picker");
             Expect(Meter() == "Amber", $"and the meter goes amber ({Meter()})");
