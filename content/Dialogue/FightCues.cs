@@ -59,7 +59,7 @@ namespace Content.Dialogue
 
             string[] words = (text ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-            if (words.Length < 2 || !ContentIdLike(words[0]) || !EnumWords.TryParse(words[1], out CueMoment moment))
+            if (words.Length < 2 || !Schema.Json.IsId(words[0]) || !EnumWords.TryParse(words[1], out CueMoment moment))
             {
                 problem = $"'{text}' - a cue is a fight and a moment: 'granary_rat start', 'granary_rat hero_turn 1'. " +
                           $"The moments are {string.Join(", ", EnumWords.Ids<CueMoment>())}";
@@ -85,8 +85,6 @@ namespace Content.Dialogue
             cue = new Cue(words[0], moment, count);
             return true;
         }
-
-        static bool ContentIdLike(string word) => Campaigns.ContentId.IsLocal(word);
 
         public bool Equals(Cue other) =>
             string.Equals(Fight, other.Fight, StringComparison.Ordinal) && Moment == other.Moment && Count == other.Count;

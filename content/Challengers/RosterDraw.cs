@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Content.Dialogue;
+using Content.Encounters;
 using Content.Monsters;
 using Core.Dice;
 using Core.Tables;
@@ -21,13 +22,18 @@ namespace Content.Challengers
         readonly IReadOnlyList<ChallengerType> _types;
         readonly Func<string, Monster> _find;
         readonly IRng _rng;
+        readonly IReadOnlyList<string> _bestiary;
 
-        public RosterDraw(Arena arena, IReadOnlyList<ChallengerType> types, Func<string, Monster> find, IRng rng)
+        // bestiary: every statblock the campaign can field (the SRD's and its own), what the shared lists put in the
+        // arena under their names when no type claims it; none, and the shared lists only serve types with no lists
+        public RosterDraw(Arena arena, IReadOnlyList<ChallengerType> types, Func<string, Monster> find, IRng rng,
+                          IEnumerable<string> bestiary = null)
         {
             _arena = arena ?? throw new ArgumentNullException(nameof(arena));
             _types = types ?? Array.Empty<ChallengerType>();
             _find = find ?? (_ => null);
             _rng = rng ?? throw new ArgumentNullException(nameof(rng));
+            _bestiary = (bestiary ?? Enumerable.Empty<string>()).Distinct().ToList();
         }
 
         // keep: the one the hero lost to, kept for a rematch. beaten: the one they just beat, which this draw doesn't
@@ -68,7 +74,8 @@ namespace Content.Challengers
                     continue;
                 }
 
-                // a single that is one of several ("a single thug or scout"): one of those that fit, this time
+                // a single that is one of several ("a single thug or scout"): one of those that fit, this time; a team
+                // of any stat block: the stat block it is drawn from, this time
                 IReadOnlyList<Mustered> group = choices?[_rng.Roll(choices.Count) - 1];
 
                 Challenger drawn = Generated(type, group, names, level, roster);
@@ -92,9 +99,16 @@ namespace Content.Challengers
         {
             var priced = new List<(ChallengerType Type, IReadOnlyList<Mustered> Group, double Off)>();
 
-            foreach (ChallengerType t in _types.Where(t => !t.Shared && t.NameKeys(_types).Count > 0 &&
-                                                           t.DescriptionKeys(_types).Count > 0))
+            foreach (ChallengerType t in Fielding().Where(t => t.NameKeys(_types).Count > 0 && t.DescriptionKeys(_types).Count > 0))
             {
+                if (t.Shape == ChallengerShape.Team && AnyStatBlock(t))
+                {
+                    // a team of one stat block, any the budget can put two of in the arena
+                    foreach (Band b in t.Monsters.Where(b => Fits(b.Monster, 2, level)))
+                        priced.Add((t, new[] { new Mustered(b.Monster, 1) }, 0));
+                    continue;
+                }
+
                 if (t.Shape == ChallengerShape.Team)
                 {
                     priced.Add((t, null, 0));
@@ -115,11 +129,35 @@ namespace Content.Challengers
 
             return priced.Where(p => p.Off == closest)
                          .GroupBy(p => p.Type)
-                         .Select(g => (g.Key, g.Key.Shape == ChallengerShape.Team
+                         .Select(g => (g.Key, g.Key.Shape == ChallengerShape.Team && !AnyStatBlock(g.Key)
                                                   ? null
                                                   : (IReadOnlyList<IReadOnlyList<Mustered>>)g.Select(p => p.Group).ToList()))
                          .ToList();
         }
+
+        // THE TYPES THAT CAN STEP INTO THE ARENA: every type with monsters, and each shared list as a type of its own
+        // over the stat blocks no type claims (ChallengerType.Claims): "a plain gladiator uses the shared lists"
+        IEnumerable<ChallengerType> Fielding()
+        {
+            var unclaimed = _bestiary.Where(m => _find(m) != null && !_types.Any(t => t.Claims(m)))
+                                     .Select(m => new Band(m, Core.Dice.DiceRoll.Flat(1)))
+                                     .ToList();
+
+            foreach (ChallengerType t in _types)
+            {
+                if (!t.Shared) yield return t;
+                else if (unclaimed.Count > 0 && t.Shape != ChallengerShape.Group)
+                    yield return new ChallengerType(t.Id, t.Shape, unclaimed, t.Names, t.Descriptions);
+            }
+        }
+
+        // a shared list standing in for the stat blocks no type claims (Fielding), not a type of Kathleen's
+        bool AnyStatBlock(ChallengerType t) => _types.Any(o => o.Shared && o.Id == t.Id);
+
+        // so many of one stat block are within a high fight's budget and the cap
+        bool Fits(string monster, int count, int level) =>
+            _find(monster) is Monster m && count <= FightBudget.Cap(level) &&
+            FightBudget.Xp(m) * count <= FightBudget.BudgetFor(level, EncounterDifficulty.High);
 
         Challenger Special(EncounterEntry entry, int level)
         {
@@ -156,7 +194,9 @@ namespace Content.Challengers
 
             if (roster.Any(c => c.Id == id)) return null;
 
-            group ??= ChallengerFit.Team(type.Monsters, _find, level, _rng, out _);
+            if (type.Shape == ChallengerShape.Team)
+                group = ChallengerFit.Team(group?.Select(m => new Band(m.Monster, Core.Dice.DiceRoll.Flat(1))).ToList() ??
+                                           type.Monsters, _find, level, _rng, out _);
 
             int xp = ChallengerFit.XpOf(group, _find);
 

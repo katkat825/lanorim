@@ -11,7 +11,7 @@ namespace Content.Challengers
     public sealed class ChallengerType
     {
         public ChallengerType(string id, ChallengerShape shape, IReadOnlyList<Band> monsters, int names,
-                              int descriptions, string map = null)
+                              int descriptions, string map = null, ChallengerKind kind = ChallengerKind.Own)
         {
             Id = id ?? "";
             Shape = shape;
@@ -19,6 +19,7 @@ namespace Content.Challengers
             Names = Math.Max(0, names);
             Descriptions = Math.Max(0, descriptions);
             Map = map ?? "";
+            Kind = kind;
         }
 
         public string Id { get; }
@@ -37,6 +38,14 @@ namespace Content.Challengers
         // entry that names none)
         public string Map { get; }
 
+        // whether it claims its stat blocks (Own, the default) or is a champion of them
+        public ChallengerKind Kind { get; }
+
+        // A TYPE CLAIMS ITS STAT BLOCKS: they are offered under its own lists and no shared list's. A champion type
+        // doesn't, so a plain gladiator, berserker or mage is still offered under the shared lists (Kathleen, 2026-11-09)
+        public bool Claims(string monster) =>
+            !Shared && Kind == ChallengerKind.Own && Monsters.Any(b => b.Monster == monster);
+
         // A SHARED LIST (cc_task_cg, Kathleen's "Generic"): names and descriptions with no monsters, for any stat block.
         // A single's shared list serves every single; a team's serves every group and team
         public bool Shared => Monsters.Count == 0;
@@ -45,18 +54,20 @@ namespace Content.Challengers
             Shared && other != null && !other.Shared &&
             Shape == (other.Shape == ChallengerShape.Single ? ChallengerShape.Single : ChallengerShape.Team);
 
-        // every name a challenger of this type can have: its own, then each shared list's that serves it
+        // EVERY NAME A CHALLENGER OF THIS TYPE CAN HAVE: its own list when it has one; a type with none takes the
+        // shared list that serves its shape (Kathleen, 2026-11-09: no more mixing the two)
         public IReadOnlyList<string> NameKeys(IEnumerable<ChallengerType> all) =>
-            Enumerable.Range(1, Names).Select(NameKey)
-                      .Concat((all ?? Enumerable.Empty<ChallengerType>()).Where(t => t.Serves(this))
-                                  .SelectMany(t => Enumerable.Range(1, t.Names).Select(t.NameKey)))
-                      .ToList();
+            Names > 0
+                ? Enumerable.Range(1, Names).Select(NameKey).ToList()
+                : Serving(all).SelectMany(t => Enumerable.Range(1, t.Names).Select(t.NameKey)).ToList();
 
         public IReadOnlyList<string> DescriptionKeys(IEnumerable<ChallengerType> all) =>
-            Enumerable.Range(1, Descriptions).Select(DescriptionKey)
-                      .Concat((all ?? Enumerable.Empty<ChallengerType>()).Where(t => t.Serves(this))
-                                  .SelectMany(t => Enumerable.Range(1, t.Descriptions).Select(t.DescriptionKey)))
-                      .ToList();
+            Descriptions > 0
+                ? Enumerable.Range(1, Descriptions).Select(DescriptionKey).ToList()
+                : Serving(all).SelectMany(t => Enumerable.Range(1, t.Descriptions).Select(t.DescriptionKey)).ToList();
+
+        IEnumerable<ChallengerType> Serving(IEnumerable<ChallengerType> all) =>
+            Shared ? new[] { this } : (all ?? Enumerable.Empty<ChallengerType>()).Where(t => t.Serves(this));
 
         public string NameKey(int number) => Key(Id, "name", number);
 

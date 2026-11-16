@@ -54,15 +54,18 @@ namespace Content.Tests
         static IReadOnlyList<string> Ids(CampaignRun run) => run.Arena.Roster.Select(c => c.Id).ToList();
 
         // the drawing itself, without a story: a fresh arena at a reputation, drawn for a level
+        // bestiary: the stat blocks the shared lists can field when no type claims them (none, as most tests want)
         static Arena Drawn(int level, int seed, int reputation = 0, Package pack = null, ArenaRules rules = null,
-                           IReadOnlyList<ChallengerType> types = null)
+                           IReadOnlyList<ChallengerType> types = null, IEnumerable<string> bestiary = null)
         {
             pack ??= Pack();
             var arena = new Arena { Reputation = reputation };
-            new RosterDraw(arena, types ?? pack.Challengers, Find(pack), new SeededRng(seed))
+            new RosterDraw(arena, types ?? pack.Challengers, Find(pack), new SeededRng(seed), bestiary)
                 .Draw(level, rules ?? ArenaRules.Default, pack.SpecialChallengers);
             return arena;
         }
+
+        static IEnumerable<string> Bestiary() => Srd.Bestiary.All.Select(m => m.Id);
 
         static Func<string, Content.Monsters.Monster> Find(Package pack) =>
             id => pack.Monsters.FirstOrDefault(m => m.Id == id) ?? Srd.Bestiary.Find(id);
@@ -118,7 +121,7 @@ namespace Content.Tests
         [Theory]
         [InlineData("stats: three gobbos", "'gobbos' is not a monster")]
         [InlineData("stats: a single goblin or two guards", "'or' is between single monsters")]
-        [InlineData("stats: a single thug or scout", "'scout' is not a monster")]
+        [InlineData("stats: a single thug or scout", "'thug' is not a monster")]
         [InlineData("stats: team of goblin, wibbler", "'wibbler' is not a monster")]
         public void ABadStatsLineIsAnErrorThatNamesTheLineAndWritesNothing(string line, string says)
         {
@@ -154,7 +157,7 @@ namespace Content.Tests
         {
             Package pack = Pack();
 
-            Assert.Equal(8, pack.Challengers.Count);
+            Assert.Equal(10, pack.Challengers.Count);
             Assert.Equal(new[] { "generic_single", "generic_team" }, pack.Challengers.Where(t => t.Shared).Select(t => t.Id));
             Assert.Equal(new[] { "goblin", "ogre" }, pack.Challengers.Single(t => t.Id == "bruiser").Monsters.Select(b => b.Monster));
 

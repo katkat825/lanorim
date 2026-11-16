@@ -365,12 +365,35 @@ these can be used for any stat block
 1. A small group of challengers enter the arena.
 ```
 
-They are drawn **beside each type's own lists, as if they were part of them**: every single draws its name and its
-description from its own and the singles' shared list together, and every group and team from its own and the teams'
-shared list. A shared list is never a challenger by itself. In the campaign it is a challenger type with no
-`monsters` (`generic_single`, `generic_team`: the heading and the section's shape), keyed like any other
-(`challenger.generic_single.name.001`). So a type can have short lists of its own, or none of its own beyond one line,
-and still offer plenty of names; the shared descriptions should say nothing a particular stat block would contradict.
+*Changed 2026-11-09 (Kathleen).* They are used in two ways:
+
+- **A type with no list of its own takes the shared one.** A type uses its own names and descriptions when it has them;
+  only a type with no `## names` (or no `## descriptions`) takes the shared list for its shape: the singles' for a
+  single, the teams' for a group or a team. The two are never mixed.
+- **Every stat block no type claims is offered under the shared lists.** A type claims the stat blocks in its `stats:`
+  line: a goblin is only ever offered as your goblin type. Every other stat block in the game (the SRD's and the
+  campaign's own) can step into the arena with a shared name: as a single, whichever of them fits the hero's level, or
+  as a team of one of them, drawn to a budget. So a plain gladiator, berserker or mage (next to your champions of them) is "Ash the Undying" or "The
+  Rusty Blades".
+
+In the campaign each shared list is a challenger type with no `monsters` (`generic_single`, `generic_team`: the heading
+and the section's shape), keyed like any other (`challenger.generic_single.name.001`). The shared descriptions should
+say nothing a particular stat block would contradict, because any stat block can wear them.
+
+### Champions
+
+A `kind: champion` line under a type's `stats:` line makes it **a champion of its stat blocks** instead of their owner:
+
+```
+# Champion (melee)
+stats: gladiator or berserker
+kind: champion
+```
+
+A champion's challengers are those stat blocks with the champion's own names and descriptions, standing as the stat
+blocks' own minis. Unlike any other type, **a champion doesn't claim them**, so a plain gladiator, berserker or mage
+still comes up under the shared lists as well. Without the line, the type claims its stat blocks like any other. In the
+campaign it is `"kind": "champion"` (the default is `"own"`).
 
 ### Reputation and the roster's size
 

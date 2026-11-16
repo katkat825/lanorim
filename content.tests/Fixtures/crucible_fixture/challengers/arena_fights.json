@@ -79,6 +79,31 @@
       "descriptions": 1
     },
     {
+      "id": "bandit_pair",
+      "shape": "group",
+      "monsters": [
+        {
+          "monster": "bandit",
+          "count": "2"
+        }
+      ],
+      "names": 0,
+      "descriptions": 0
+    },
+    {
+      "id": "ogre_champion",
+      "shape": "single",
+      "monsters": [
+        {
+          "monster": "ogre",
+          "count": "1"
+        }
+      ],
+      "kind": "champion",
+      "names": 1,
+      "descriptions": 1
+    },
+    {
       "id": "generic_single",
       "shape": "single",
       "names": 2,

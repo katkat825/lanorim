@@ -20,9 +20,13 @@ The `stats:` line, in one of three shapes (docs/campaign_authoring_rules.md sect
     two guards / 2 guards / two guards and a goblin warrior     a fixed group; the monsters keep their own names
     team of goblin warrior, goblin archer   drawn from these to a budget for the hero's level when the roster is drawn
 
+A type claims the stat blocks in its stats: line: they are offered only under its lists. A `kind: champion` line under
+the stats: line makes it a champion of them instead, and a plain gladiator is still offered under the shared lists.
+
 A heading with no stats: line is a SHARED LIST, names and descriptions for any stat block: its '## Single Challengers'
-and '## Teams' sections, each with '### Names' and '### Descriptions'. Every single draws from the singles' list beside
-its own, and every group and team from the teams' list.
+and '## Teams' sections, each with '### Names' and '### Descriptions'. A type uses its own lists; one with none of its
+own takes the shared one for its shape (the singles' for a single, the teams' for a group or a team). And every stat
+block no type claims is offered under the shared lists too: one of them as a single, or a team of one of them.
 
 A monster is named by its English statblock name, matched against monster.<id>.name in the game's locale and the
 pack's (case and a plural -s or -es don't matter), or by its id written as words. A name that matches nothing, or more
@@ -59,6 +63,12 @@ HEADING = re.compile(r'^#\s+(.*?)\s*$')
 SECTION = re.compile(r'^##\s+(.*?)\s*$')
 LIST = re.compile(r'^###\s+(.*?)\s*$')
 STATS = re.compile(r'^\s*stats\s*:\s*(.*?)\s*$', re.IGNORECASE)
+# a challenger type's row, challenger.<type>.name.001: the importer's own, all of them written from the vault
+NUMBERED_KEY = re.compile(r'^challenger\.[a-z0-9_]+\.(name|description)\.\d{3}$')
+KIND = re.compile(r'^\s*kind\s*:\s*(.*?)\s*$', re.IGNORECASE)
+
+# what a kind: line may say: a champion of its stat blocks leaves the plain ones to the shared lists
+KINDS = ('champion',)
 COUNTED = re.compile(r'^(a single|an|a|one|single|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+(.+)$',
                      re.IGNORECASE)
 
@@ -191,14 +201,18 @@ def blocks_of(path, problems):
         where = f'{file}:{number}'
         heading = HEADING.match(line)
         if heading:
-            current = {'heading': heading.group(1), 'where': where, 'stats': None, 'sections': [], 'list': None}
+            current = {'heading': heading.group(1), 'where': where, 'stats': None, 'kind': None, 'sections': [],
+                       'list': None}
             blocks.append(current)
             continue
         if current is None:
             continue
         stat, section, sub, item = STATS.match(line), SECTION.match(line), LIST.match(line), NUMBERED.match(line)
+        kind = KIND.match(line)
         if stat:
             current['stats'] = (stat.group(1), where)
+        elif kind:
+            current['kind'] = (snake(kind.group(1)), where)
         elif section:
             current['sections'].append({'name': section.group(1), 'where': where, 'names': [], 'descriptions': []})
             current['list'] = snake(section.group(1)) if snake(section.group(1)) in ('names', 'descriptions') else None
@@ -229,12 +243,17 @@ def read_list(path, names, problems):
                                       "'## names'")
                     for what in lists:
                         lists[what] += section[what]
+                if b['kind'] and b['kind'][0] not in KINDS:
+                    raise Problem(f"{b['kind'][1]}: 'kind: {b['kind'][0]}' - the kind a type can be is "
+                                  f"{', '.join(KINDS)} (leave it out for one of its own)")
                 types.append({'id': snake(b['heading']), 'heading': b['heading'], 'where': b['where'], 'shape': shape,
-                              'monsters': monsters, **lists})
+                              'monsters': monsters, 'kind': b['kind'][0] if b['kind'] else '', **lists})
                 continue
             kept = [s for s in b['sections'] if s['names'] or s['descriptions']]
             if not kept:
                 raise Problem(f"{b['where']}: '# {b['heading']}' has no stats: line")
+            if b['kind']:
+                raise Problem(f"{b['kind'][1]}: a list for any stat block has no kind")
             for section in kept:
                 shape = shared_shape(section['name'], section['where'])
                 types.append({'id': snake(b['heading']) + '_' + shape, 'heading': f"{b['heading']} / {section['name']}",
@@ -244,7 +263,7 @@ def read_list(path, names, problems):
             problems.extend(str(problem).split('\n'))
     for t in types:
         for what in ('descriptions', 'names'):
-            if not t[what]:
+            if not t[what] and not t['monsters']:
                 problems.append(f"{t['where']}: '# {t['heading']}' has no numbered {what}")
     ids = [t['id'] for t in types]
     for twice in sorted({i for i in ids if ids.count(i) > 1}):
@@ -258,6 +277,8 @@ def challengers_json(types):
         entry = {'id': t['id'], 'shape': t['shape']}
         if t['monsters']:
             entry['monsters'] = t['monsters']
+        if t.get('kind'):
+            entry['kind'] = t['kind']
         entry.update({'names': len(t['names']), 'descriptions': len(t['descriptions'])})
         entries.append(entry)
     return json.dumps({'challengers': entries}, indent=2, ensure_ascii=False) + '\n'
@@ -270,13 +291,12 @@ def render_row(key, text):
 
 
 def new_locale(old, types):
-    """the pack's locale with every imported type's rows replaced, every other row as it was, kept sorted by key"""
+    """the pack's locale with every challenger type's rows written again from the vault - a type renamed or gone takes
+    its rows with it - and every other row as it was (a special fight's un-numbered challenger.<id>.name too), sorted"""
     newline = '\r\n' if '\r\n' in old else '\n'
     lines = old.split(newline) if old else ['keys,en']
     header, body = lines[0], [l for l in lines[1:] if l]
-    ours = {t['id'] for t in types}
-    kept = [l for l in body if not (l.startswith('challenger.') and l.split('.')[1] in ours
-                                    and l.split(',', 1)[0].split('.')[2] in ('name', 'description'))]
+    kept = [l for l in body if not NUMBERED_KEY.match(l.split(',', 1)[0])]
     rows = []
     for t in types:
         for what, key in (('names', 'name'), ('descriptions', 'description')):
@@ -286,16 +306,32 @@ def new_locale(old, types):
     return newline.join([header] + every) + newline
 
 
-def said(t):
-    """one type, as the report says it"""
-    counts = f"{len(t['names'])} names, {len(t['descriptions'])} descriptions"
+def serving(t, every):
+    """the shared lists a type without lists of its own takes: the singles' for a single, the teams' otherwise"""
+    shape = 'single' if t['shape'] == 'single' else 'team'
+    return [s for s in every if not s['monsters'] and s['shape'] == shape]
+
+
+def said(t, every):
+    """one type, as the report says it: who, which lists, and whether it claims its stat blocks"""
+    def lists(what):
+        if t[what]:
+            return f"its own {len(t[what])} {what}"
+        shared = serving(t, every)
+        return f"{what} from {', '.join(s['id'] for s in shared)}" if shared else f"no {what}"
+
     if not t['monsters']:
-        return f"{t['id']}: shared by every {t['shape']}, {counts}"
+        return (f"{t['id']}: list for any stat block, serving every {'single' if t['shape'] == 'single' else 'group and team'}"
+                f" (and every stat block no type claims), {len(t['names'])} names, {len(t['descriptions'])} descriptions")
     if t['shape'] == 'single':
-        return f"{t['id']}: single, {' or '.join(m['monster'] for m in t['monsters'])}, {counts}"
-    if t['shape'] == 'team':
-        return f"{t['id']}: team of {', '.join(m['monster'] for m in t['monsters'])}, {counts}"
-    return f"{t['id']}: group of {', '.join(m['count'] + ' ' + m['monster'] for m in t['monsters'])}, {counts}"
+        who = 'single, ' + ' or '.join(m['monster'] for m in t['monsters'])
+    elif t['shape'] == 'team':
+        who = 'team of ' + ', '.join(m['monster'] for m in t['monsters'])
+    else:
+        who = 'group of ' + ', '.join(m['count'] + ' ' + m['monster'] for m in t['monsters'])
+    claim = ("a champion: its stat blocks are still offered plain under the shared lists" if t.get('kind') == 'champion'
+             else "claims its stat blocks")
+    return f"{t['id']}: {who}; {lists('names')}, {lists('descriptions')}; {claim}"
 
 
 def pack_id(pack):
@@ -331,7 +367,14 @@ def main():
         every.extend(types)
 
     for t in every:
-        print(said(t))
+        print(said(t, every))
+
+    # a type with no list of its own takes the shared one for its shape; with none, it could never be offered
+    for t in every:
+        for what in ('names', 'descriptions'):
+            if t['monsters'] and not t[what] and not serving(t, every):
+                problems.append(f"{t['where']}: '# {t['heading']}' has no numbered {what}, and there is no list for any "
+                                f"stat block of its shape to take them from")
 
     if problems:
         for problem in problems:

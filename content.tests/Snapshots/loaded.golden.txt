@@ -5,7 +5,7 @@ species 19
 species features 43
 items 78
 items with boons 2
-monsters 23
+monsters 26
 monster actions 1
 problems 0
 spell aid 2 effects 1

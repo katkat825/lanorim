@@ -22,6 +22,8 @@ challenger.guard_pair.description.001,Two guards who finish each other's sentenc
 challenger.guard_pair.name.001,The Westhaven Twins
 challenger.ogre.description.001,An ogre who has eaten the last three challengers.
 challenger.ogre.name.001,Big Mott
+challenger.ogre_champion.description.001,An ogre who has never lost in front of a crowd.
+challenger.ogre_champion.name.001,Grumm the Champion
 challenger.raiders.description.001,A crew that fights for whoever paid last.
 challenger.raiders.description.002,A mob that has never agreed on a plan.
 challenger.raiders.name.001,The Skrat Tribe Raiders

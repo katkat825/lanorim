@@ -286,6 +286,44 @@
       "attacks": [
         {"id": "arcane_burst", "damage": "3d8", "damage_type": "force", "ability": "int", "range": 24, "long_range": 24, "thrown": true}
       ]
+    },
+
+    {
+      "id": "scout", "hit_points": 16, "armor_class": 13, "speed": 30,
+      "challenge_times_ten": 5, "hit_die": "d8", "mini": "bandit",
+      "tags": ["humanoid"],
+      "scores": {"str": 11, "dex": 14, "con": 12, "int": 11, "wis": 13, "cha": 11},
+      "skills": ["nature", "perception", "stealth", "survival"],
+      "expertise": ["nature", "perception", "stealth", "survival"],
+      "multiattack": ["scout_shortsword|scout_longbow", "scout_shortsword|scout_longbow"],
+      "attacks": [
+        {"id": "scout_shortsword", "weapon": "shortsword", "held": true},
+        {"id": "scout_longbow", "weapon": "longbow", "held": true}
+      ]
+    },
+
+    {
+      "id": "berserker", "traits": ["bloodied_fury"], "hit_points": 67, "armor_class": 13, "speed": 30,
+      "challenge_times_ten": 20, "hit_die": "d8", "mini": "bandit",
+      "tags": ["humanoid"],
+      "scores": {"str": 16, "dex": 12, "con": 17, "int": 9, "wis": 11, "cha": 9},
+      "attacks": [
+        {"id": "berserker_greataxe", "weapon": "greataxe", "held": true}
+      ]
+    },
+
+    {
+      "id": "gladiator", "hit_points": 112, "armor_class": 16, "speed": 30,
+      "challenge_times_ten": 50, "hit_die": "d8", "mini": "guard",
+      "tags": ["humanoid"],
+      "scores": {"str": 18, "dex": 15, "con": 16, "int": 10, "wis": 12, "cha": 15},
+      "saves": ["str", "dex", "con"],
+      "skills": ["athletics", "performance"],
+      "expertise": ["athletics"],
+      "multiattack": ["gladiator_spear", "gladiator_spear", "gladiator_spear"],
+      "attacks": [
+        {"id": "gladiator_spear", "weapon": "spear", "damage": "2d6", "held": true}
+      ]
     }
   ]
 }

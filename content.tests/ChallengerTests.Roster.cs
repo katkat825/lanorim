@@ -119,7 +119,7 @@ namespace Content.Tests
                 // level 5: a goblin (50) or a guard (25) is under half a low fight's 500; the ogre fits now. (a special
                 // fight is the author's own, so it isn't held to the band)
                 Assert.All(Drawn(5, seed, reputation: 40).Roster.Where(c => !c.Special),
-                           c => Assert.Contains(c.Type, new[] { "ogre", "raiders", "bruiser" }));
+                           c => Assert.Contains(c.Type, new[] { "ogre", "raiders", "bruiser", "ogre_champion" }));
             }
 
             // nothing fits at all: the closest ones are offered, and the roster says how hard they are
@@ -319,40 +319,110 @@ namespace Content.Tests
         }
         // --- Kathleen's lists of 2026-11-05: generic names for any stat block, and "a single thug or scout" ---------------
 
+        // --- Kathleen, 2026-11-09: a type's own lists first; the shared lists for the rest, and for any stat block --------
+
         [Fact]
-        public void ASharedListsNamesAndDescriptionsAreDrawnBesideATypesOwn()
+        public void ATypeUsesItsOwnListsAndOneWithNoneTakesTheSharedList()
         {
             Package pack = Pack();
             ChallengerType goblin = pack.Challengers.Single(t => t.Id == "goblin_warrior");
+            ChallengerType pair = pack.Challengers.Single(t => t.Id == "bandit_pair");
 
-            // a single draws from the singles' shared list, a group and a team from the teams'
-            Assert.Equal(3 + 2, goblin.NameKeys(pack.Challengers).Count);
-            Assert.Equal(2 + 1, goblin.DescriptionKeys(pack.Challengers).Count);
-            Assert.Equal(2 + 1, pack.Challengers.Single(t => t.Id == "raiders").NameKeys(pack.Challengers).Count);
-            Assert.Equal(1 + 1, pack.Challengers.Single(t => t.Id == "guard_pair").NameKeys(pack.Challengers).Count);
+            // its own, and nothing shared mixed in
+            Assert.Equal(3, goblin.NameKeys(pack.Challengers).Count);
+            Assert.All(goblin.NameKeys(pack.Challengers), k => Assert.StartsWith("challenger.goblin_warrior.", k));
+
+            // none of its own: a group takes the teams' shared list
+            Assert.Equal((0, 0), (pair.Names, pair.Descriptions));
+            Assert.Equal(new[] { "challenger.generic_team.name.001" }, pair.NameKeys(pack.Challengers));
+            Assert.Equal(new[] { "challenger.generic_team.description.001" }, pair.DescriptionKeys(pack.Challengers));
 
             var drawn = Enumerable.Range(1, 30).SelectMany(seed => Drawn(1, seed, reputation: 40).Roster)
                                   .Where(c => !c.Special).ToList();
 
-            Assert.Contains(drawn, c => c.NameKey.StartsWith("challenger.generic_single.name."));
-            Assert.Contains(drawn, c => c.DescriptionKey.StartsWith("challenger.generic_single.description."));
-            Assert.All(drawn.Where(c => c.Shape == ChallengerShape.Single),
-                       c => Assert.DoesNotContain("generic_team", c.NameKey));
-            Assert.All(drawn.Where(c => c.Shape != ChallengerShape.Single),
-                       c => Assert.DoesNotContain("generic_single", c.NameKey));
+            Assert.All(drawn.Where(c => c.Type is "goblin_warrior" or "guard" or "raiders"),
+                       c => Assert.DoesNotContain("generic", c.NameKey));
+            Assert.Contains(drawn, c => c.Type == "bandit_pair" && c.NameKey == "challenger.generic_team.name.001");
 
-            // the generic list is never a challenger of its own, and every key a challenger says has English
-            Assert.DoesNotContain(drawn, c => c.Type.StartsWith("generic"));
             ILocalizer words = Words();
             Assert.All(drawn, c => Assert.True(words.Has(c.NameKey) && words.Has(c.DescriptionKey), c.ToString()));
+        }
 
-            // and a save keeps which shared name it was
-            Challenger generic = drawn.First(c => c.NameKey.Contains("generic"));
-            var arena = new Arena();
-            arena.Roster.Add(generic);
-            Read<SaveGame> back = SaveReader.Parse(SaveWriter.Write(new SaveGame { Format = 1, Arena = arena }));
-            Assert.Equal(generic.NameKey, back.Value.Arena.Roster.Single().NameKey);
-            Assert.Equal(generic.DescriptionKey, back.Value.Arena.Roster.Single().DescriptionKey);
+        [Fact]
+        public void AStatBlockNoTypeClaimsIsOfferedUnderTheSharedLists()
+        {
+            Package pack = Pack();
+
+            // claimed: goblin (goblin_warrior, bruiser), guard, ogre (the plain ogre type), bandit (bandit_pair). the ogre
+            // champion is a champion, so it claims nothing
+            string[] claimed = { "goblin", "guard", "ogre", "bandit" };
+            Assert.False(pack.Challengers.Single(t => t.Id == "ogre_champion").Claims("ogre"));
+
+            var drawn = Enumerable.Range(1, 40).SelectMany(seed => Drawn(1, seed, reputation: 40, bestiary: Bestiary()).Roster)
+                                  .Where(c => c.Type.StartsWith("generic")).ToList();
+
+            List<Challenger> singles = drawn.Where(c => c.Type == "generic_single").ToList();
+            Assert.NotEmpty(singles);
+            Assert.All(singles, c =>
+            {
+                Assert.True(c.Alone);
+                Assert.DoesNotContain(c.Group.Single().Monster, claimed);
+                Assert.StartsWith("challenger.generic_single.name.", c.NameKey);
+                Assert.True(ChallengerFit.Fits(c.Xp, 1), c.ToString());
+            });
+
+            // a team of any stat block: one stat block, more than one of it, within the budget and the cap
+            List<Challenger> teams = drawn.Where(c => c.Type == "generic_team").ToList();
+            Assert.NotEmpty(teams);
+            Assert.All(teams, c =>
+            {
+                Assert.Single(c.Group);
+                Assert.DoesNotContain(c.Group.Single().Monster, claimed);
+                Assert.InRange(c.Enemies, 1, FightBudget.Cap(1));
+                Assert.True(c.Xp <= FightBudget.BudgetFor(1, EncounterDifficulty.High), c.ToString());
+            });
+
+            // the new SRD stat blocks are among them at their levels: a scout fits level 1
+            Assert.Contains(singles, c => c.Group.Single().Monster == "scout");
+        }
+
+        [Fact]
+        public void AChampionLeavesItsStatBlocksToTheSharedListsToo()
+        {
+            Package pack = Pack();
+            ChallengerType champion = pack.Challengers.Single(t => t.Id == "ogre_champion");
+
+            Assert.Equal(ChallengerKind.Champion, champion.Kind);
+            Assert.Equal(ChallengerKind.Own, pack.Challengers.Single(t => t.Id == "ogre").Kind);
+
+            // with only the champion for ogres, a plain ogre still comes up under the shared lists at level 5; with the
+            // plain ogre type as well, it doesn't
+            ChallengerType[] alone = pack.Challengers.Where(t => t.Id == "ogre_champion" || t.Shared).ToArray();
+            var plain = Enumerable.Range(1, 30).SelectMany(seed => Drawn(5, seed, reputation: 40, types: alone,
+                                                                         bestiary: new[] { "ogre" }).Roster).ToList();
+
+            Assert.Contains(plain, c => c.Type == "ogre_champion" && c.NameKey == "challenger.ogre_champion.name.001");
+            Assert.Contains(plain, c => c.Type == "generic_single" && c.Group.Single().Monster == "ogre");
+
+            ChallengerType[] claimed = pack.Challengers.Where(t => t.Id is "ogre_champion" or "ogre" || t.Shared).ToArray();
+            Assert.DoesNotContain(Enumerable.Range(1, 30).SelectMany(seed => Drawn(5, seed, reputation: 40, types: claimed,
+                                                                                   bestiary: new[] { "ogre" }).Roster),
+                                  c => c.Type.StartsWith("generic"));
+
+            // a champion fights as its stat block: the ogre's name key and mini are the statblock's, its name the champion's
+            Assert.All(plain.Where(c => c.Type == "ogre_champion"), c => Assert.Equal("ogre", c.Group.Single().Monster));
+        }
+
+        [Fact]
+        public void AKindWrittenWrongIsRefused()
+        {
+            ChallengerReader.Entries.TryRead(@"{""challengers"":[
+                {""id"":""a"",""shape"":""single"",""monsters"":[{""monster"":""ogre""}],""names"":1,""descriptions"":1,""kind"":""hero""},
+                {""id"":""b"",""shape"":""single"",""names"":1,""descriptions"":1,""kind"":""champion""}]}",
+                                             out _, out IReadOnlyList<string> problems);
+
+            Assert.Contains(problems, p => p.StartsWith("a:") && p.Contains("'hero' is not a kind"));
+            Assert.Contains(problems, p => p.StartsWith("b:") && p.Contains("no champion"));
         }
 
         [Fact]

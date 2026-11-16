@@ -1190,6 +1190,8 @@ merchant.nothing_to_sell.line,You haven't got one of those.
 merchant.pack_full.line,You couldn't carry another thing. Make some room first.
 monster.bandit.description,11 hit points; Armor Class 12; speed 30 feet; Bandit Scimitar for 1d6 slashing; Bandit Crossbow for 1d8 piercing.
 monster.bandit.name,Bandit
+monster.berserker.description,67 hit points; Armor Class 13; speed 30 feet; Berserker Greataxe for 1d12 slashing.
+monster.berserker.name,Berserker
 monster.boar.description,13 hit points; Armor Class 11; speed 40 feet; Boar Gore for 1d6 piercing.
 monster.boar.name,Boar
 monster.brown_bear.description,22 hit points; Armor Class 11; speed 40 feet; Bear Bite for 1d8 piercing; Bear Claw for 1d4 slashing; attacks 2 times a turn.
@@ -1206,6 +1208,8 @@ monster.giant_rat.description,7 hit points; Armor Class 13; speed 30 feet; Rat B
 monster.giant_rat.name,Giant Rat
 monster.giant_spider.description,26 hit points; Armor Class 14; speed 30 feet; Spider Bite for 1d8 piercing.
 monster.giant_spider.name,Giant Spider
+monster.gladiator.description,112 hit points; Armor Class 16; speed 30 feet; Gladiator Spear for 2d6 piercing; attacks 3 times a turn.
+monster.gladiator.name,Gladiator
 monster.goblin.description,10 hit points; Armor Class 15; speed 30 feet; Scimitar for 1d6 slashing; Goblin Shortbow for 1d6 piercing.
 monster.goblin.name,Goblin Warrior
 monster.goblin_archer.description,7 hit points; Armor Class 13; speed 30 feet; Goblin Shortbow for 1d6 piercing; Goblin Dagger for 1d4 piercing.
@@ -1226,6 +1230,8 @@ monster.owlbear.description,59 hit points; Armor Class 13; speed 40 feet; Owlbea
 monster.owlbear.name,Owlbear
 monster.priest.description,38 hit points; Armor Class 13; speed 30 feet; Priest Mace for 1d6 bludgeoning; Radiant Flame for 2d10 radiant; attacks 2 times a turn.
 monster.priest.name,Priest
+monster.scout.description,16 hit points; Armor Class 13; speed 30 feet; Scout Shortsword for 1d6 piercing; Scout Longbow for 1d8 piercing; attacks 2 times a turn.
+monster.scout.name,Scout
 monster.skeleton.description,13 hit points; Armor Class 14; speed 30 feet; Rusted Shortsword for 1d6 piercing; Shortbow for 1d6 piercing; takes no poison damage; takes double bludgeoning damage.
 monster.skeleton.name,Skeleton
 monster.werewolf.description,71 hit points; Armor Class 15; speed 30 feet; Claw for 2d6 slashing; Werewolf Bite for 2d8 piercing; Longbow for 2d8 piercing; attacks 2 times a turn.

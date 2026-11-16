@@ -54,6 +54,9 @@ namespace Content.Tests
                 ["owlbear"] = "owlbear_rend + owlbear_rend",
                 ["priest"] = "priest_mace|radiant_flame + priest_mace|radiant_flame",
                 ["mage"] = "any + any + any",
+                // SRD 5.2.1, checked 2026-11-09 (cc_task_cg): Scout p.322, Gladiator p.289
+                ["scout"] = "scout_shortsword|scout_longbow + scout_shortsword|scout_longbow",
+                ["gladiator"] = "gladiator_spear + gladiator_spear + gladiator_spear",
                 // not an SRD 5.2.1 statblock at all - see the 2026-09-25 run log
                 ["death_knight"] = "any + any",
             };

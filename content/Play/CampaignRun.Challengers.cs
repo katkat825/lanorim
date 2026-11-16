@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Content.Challengers;
 using Content.Dialogue;
@@ -61,7 +62,11 @@ namespace Content.Play
         }
 
         void DrawRoster(Challenger keep = null, Challenger beaten = null) =>
-            new RosterDraw(Arena, Pack.Challengers, Find, _gm).Draw(Hero.Level, ArenaRules, Pack.SpecialChallengers, keep, beaten);
+            new RosterDraw(Arena, Pack.Challengers, Find, _gm, Statblocks)
+                .Draw(Hero.Level, ArenaRules, Pack.SpecialChallengers, keep, beaten);
+
+        // every statblock this campaign can field: its own and the SRD's
+        IEnumerable<string> Statblocks => Pack.Monsters.Select(m => m.Id).Concat(Library.Bestiary.All.Select(m => m.Id));
 
         // <<fight {$challenger}>>: a challenger on the roster (or the one just fought, for a story that fights again),
         // framed like any fight. a special is its own entry, its counts rolled as ever; a generated one is the group the

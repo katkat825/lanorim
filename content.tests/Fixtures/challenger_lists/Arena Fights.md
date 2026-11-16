@@ -60,6 +60,19 @@ stats: a single goblin warrior or ogre
 ## names
 1. Old Knuckles
 
+# bandit pair
+stats: two bandits
+
+# ogre champion
+stats: a single ogre
+kind: champion
+
+## descriptions
+1. An ogre who has never lost in front of a crowd.
+
+## names
+1. Grumm the Champion
+
 # Generic
 these can be used for any stat block
 

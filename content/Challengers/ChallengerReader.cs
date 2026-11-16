@@ -14,7 +14,7 @@ namespace Content.Challengers
     public static class ChallengerReader
     {
         public static readonly IReadOnlyList<string> Keys =
-            new[] { "id", "shape", "monsters", "names", "descriptions", "map" };
+            new[] { "id", "shape", "monsters", "names", "descriptions", "map", "kind" };
 
         // a monster in a challenger's list: which, and how many (a team's counts are its draw's, so it says none)
         public static readonly IReadOnlyList<string> MonsterKeys = new[] { "monster", "count" };
@@ -54,14 +54,29 @@ namespace Content.Challengers
             int names = entry.Number("names", 0);
             int descriptions = entry.Number("descriptions", 0);
 
-            if (names < 1) problems.Add($"{id}: 'names' is how many numbered names it has, at least 1");
-            if (descriptions < 1) problems.Add($"{id}: 'descriptions' is how many numbered descriptions it has, at least 1");
+            // a type may have no list of its own (it takes the shared one); a shared list is nothing without one
+            bool shared = monsters.Count == 0 && !entry.Has("monsters");
+
+            if (names < 0 || shared && names < 1)
+                problems.Add($"{id}: 'names' is how many numbered names it has" + (shared ? ", at least 1" : ", 0 or more"));
+            if (descriptions < 0 || shared && descriptions < 1)
+                problems.Add($"{id}: 'descriptions' is how many numbered descriptions it has" +
+                             (shared ? ", at least 1" : ", 0 or more"));
 
             string map = entry.Text("map");
 
             if (map.Length > 0 && !Json.IsId(map)) problems.Add($"{id}: '{map}' is not a map id");
 
-            return new ChallengerType(id, shape, monsters, names, descriptions, map);
+            // a champion of its stat blocks, which leaves them to the shared lists too (Kathleen, 2026-11-09)
+            ChallengerKind kind = ChallengerKind.Own;
+
+            if (entry.Has("kind") && !EnumWords.TryName(entry.Text("kind"), out kind))
+                problems.Add($"{id}: '{entry.Text("kind")}' is not a kind - own or champion");
+
+            if (kind != ChallengerKind.Own && monsters.Count == 0)
+                problems.Add($"{id}: a list for any stat block is no champion");
+
+            return new ChallengerType(id, shape, monsters, names, descriptions, map, kind);
         }
     }
 }
