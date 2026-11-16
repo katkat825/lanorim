@@ -1,0 +1,66 @@
+title: the_meeting
+speaker: dm
+---
+<<map the_meeting>>
+You've been traveling for several days now. You don't have anywhere in particular you're trying to go, just enjoying the countryside. #line:start
+As the day wanes, you see a bridge up the road a little ways. It's not a very large bridge and spans what is either a large creek or a small river, you're not sure. #line:the_meeting_1
+Shortly before the bridge, you hear hushed voices off in the woods. You pause for a moment to listen, but can't quite make out the words. #line:the_meeting_2
+You step off the road towards the voices and come to a forest clearing where several people have gathered. From the clothes they wear they're mostly villagers and farmers, and not very prosperous ones. #line:the_meeting_3
+...comes down and demands I make a new massive roasting spit. Then takes it with no payment. Says it's for the new taxes. #line:the_meeting_4 #speaker:barnaby
+Probably for my prized sow. He took her too. Didn't give me a choice. #line:the_meeting_5 #speaker:tobias
+Little Tobias the Younger told me Lord Pissledown took one of the pigs, but he didn't tell me it was Her Royal Hoggness! The nerve! #line:the_meeting_6 #speaker:mabel
+Only a year since the lordling came here and already the taxes... Oi, who're you? #line:the_meeting_7 #speaker:barnaby
+The man in the blacksmith's apron turns to you, waiting for an answer. #line:the_meeting_8
+Barnaby, leave off. Can't you see this is just a traveler. #line:the_meeting_9 #speaker:mabel
+Probably an adventurer. #line:the_meeting_10 #speaker:tobias
+Or one of his lordship's spies. #line:the_meeting_11 #speaker:barnaby
+Barnaby glares at you, still waiting for an answer. #line:the_meeting_12
+<<jump meeting_answer>>
+===
+title: meeting_answer
+speaker: dm
+---
+-> I'm just traveling. Who's Lord Pissledown? #line:the_meeting_13
+    <<set $clearing_stayed to true>>
+    <<jump meeting_explained>>
+-> I'm an adventurer. Sounds like you could use some help. #line:the_meeting_14
+    <<set $clearing_stayed to true>>
+    <<jump meeting_explained>>
+-> Just a traveler. I'll be on my way now. #line:the_meeting_15
+    <<jump meeting_leave>>
+===
+title: meeting_leave
+speaker: dm
+---
+Ignore the villagers and continue? #line:meeting_leave_ask
+-> Yes, continue down the road. #line:meeting_leave_yes
+    <<set $clearing_left to true>>
+    You leave the villagers behind and head down the road to the nearest village in the darkening twilight. #line:meeting_leave_go
+    <<jump briarwood_arrival>>
+-> No, stay and answer them. #line:meeting_leave_no
+    <<jump meeting_answer>>
+===
+title: meeting_explained
+speaker: dm
+---
+Lord Percival Thistledown— #line:feast_note_1_a_or_b_1 #speaker:mabel
+Pompous jerk. #line:feast_note_1_a_or_b_2 #speaker:tobias
+Tobias! #line:feast_note_1_a_or_b_3 #speaker:barnaby
+What? He is. #line:feast_note_1_a_or_b_4 #speaker:tobias
+My students call him Petty Percy Pissledown. #line:feast_note_1_a_or_b_5 #speaker:mabel
+You let them?! What if someone tells his lordship? #line:meeting_let_them #speaker:barnaby
+Of course I can't condone it. I just pretend not to hear it. #line:meeting_pretend #speaker:mabel
+And hide the laugh? #line:meeting_hide_laugh #speaker:tobias
+Well, you have to appreciate the alliteration. Hehehe. #line:meeting_alliteration #speaker:mabel
+No, you don't have to appreciate it. You don't want his lordship bringing you up on charges for that! #line:meeting_charges #speaker:barnaby
+Charges? #line:meeting_charges_q #speaker:tobias
+Yeah, alliteration is when you get in trouble for something even if you haven't done it. #line:meeting_barnaby_wrong #speaker:barnaby
+You're thinking of allegation, Barnaby. Alliteration is just when several words start with the same sound. #line:meeting_allegation #speaker:mabel
+Whatever, still not worth the risk. #line:meeting_not_worth #speaker:barnaby
+As Barnaby, Mabel, and Tobias argue their way to an explanation, the sun sets and the clearing darkens. Mabel lights a lantern so you can still see the clearing. #line:meeting_lantern
+You eventually get the idea that Lord Percival Thistledown, aka Lord Pissledown, became lord of a small cluster of villages almost a year ago. He has raised taxes three times already this year. #line:meeting_the_idea
+He decided to hold a lavish celebration later this month. To make the celebration as memorable as possible, he's raised taxes for a fourth time. #line:meeting_fourth_time
+The villagers never ask for help. They seem to be at a loss for what can be done about the situation. #line:meeting_no_help
+You head to the nearest village with them. Mabel's lantern lights the road before you as their argument changes to whether the coming winter will be worse than usual. #line:meeting_walk
+<<jump briarwood_arrival>>
+===

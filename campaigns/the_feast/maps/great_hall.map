@@ -1,0 +1,131 @@
+{
+  "format": 2,
+  "name": "Thistledown Great Hall",
+  "columns": 14,
+  "rows": 10,
+  "map": "\n+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n|. . . . . . . . . . . . . .|\n+ + + + + + + + + + + + + + +\n|. . . . . . . . . . . . . .|\n+ + + + + + + + + + + + + + +\n|. . . . . . . . . . . . . .|\n+ + + + + + + + + + + + + + +\n|. . . . . . . . . . . . . .|\n+ + + + + + + + + + + + + + +\n|. . . . . . . . . . . . . .|\n+ + + + + + + + + + + + + + +\n|. . . . . . . . . . . . . .|\n+ + + + + + + + + + + + + + +\n|. . . . . . . . . . . . . .|\n+ + + + + + + + + + + + + + +\n|. . . . . . . . . . . . . .|\n+ + + + + + + + + + + + + + +\n|. . . . . . . . . . . . . .x\n+ + + + + + + + + + + + + + +\n|. . . . . . . @ . . . . . .|\n+-+-+-+-+-+-+-+x+-+-+-+-+-+-+\n",
+  "ground": "ssssssssssssss\nssssssssssssss\nssssssssssssss\nssssssssssssss\nssssssssssssss\nssssssssssssss\nssssssssssssss\nssssssssssssss\nssssssssssssss\nssssssssssssss\n",
+  "walls": "\n+f+f+f+f+f+f+f+f+f+f+f+f+f+f+\nf. . . . . . . . . . . . . .f\n+ + + + + + + + + + + + + + +\nf. . . . . . . . . . . . . .f\n+ + + + + + + + + + + + + + +\nf. . . . . . . . . . . . . .f\n+ + + + + + + + + + + + + + +\nf. . . . . . . . . . . . . .f\n+ + + + + + + + + + + + + + +\nf. . . . . . . . . . . . . .f\n+ + + + + + + + + + + + + + +\nf. . . . . . . . . . . . . .f\n+ + + + + + + + + + + + + + +\nf. . . . . . . . . . . . . .f\n+ + + + + + + + + + + + + + +\nf. . . . . . . . . . . . . .f\n+ + + + + + + + + + + + + + +\nf. . . . . . . . . . . . . .f\n+ + + + + + + + + + + + + + +\nf. . . . . . . . . . . . . .f\n+f+f+f+f+f+f+f+f+f+f+f+f+f+f+\n",
+  "props": [
+    {
+      "id": "fireplace",
+      "x": 0,
+      "y": 4,
+      "turn": 1
+    },
+    {
+      "id": "fireplace",
+      "x": 13,
+      "y": 4,
+      "turn": 3
+    },
+    {
+      "id": "table_large",
+      "x": 5,
+      "y": 1,
+      "turn": 0
+    },
+    {
+      "id": "table_large",
+      "x": 7,
+      "y": 1,
+      "turn": 0
+    },
+    {
+      "id": "chair_high",
+      "x": 6,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "carpet",
+      "x": 9,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 3,
+      "y": 4,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 4,
+      "y": 4,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 5,
+      "y": 4,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 8,
+      "y": 4,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 9,
+      "y": 4,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 10,
+      "y": 4,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 3,
+      "y": 7,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 4,
+      "y": 7,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 9,
+      "y": 7,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 10,
+      "y": 7,
+      "turn": 0
+    },
+    {
+      "id": "candlestick_triple",
+      "x": 1,
+      "y": 1,
+      "turn": 0
+    },
+    {
+      "id": "candlestick_triple",
+      "x": 12,
+      "y": 1,
+      "turn": 0
+    },
+    {
+      "id": "banner",
+      "x": 3,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "banner",
+      "x": 10,
+      "y": 0,
+      "turn": 0
+    }
+  ]
+}

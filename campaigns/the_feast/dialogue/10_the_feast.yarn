@@ -1,0 +1,30 @@
+title: the_feast_green
+speaker: dm
+---
+<<map briarwood_inn>>
+By the time the sun comes up, everything has been unloaded from the carts and stowed out of sight. All day the smell of food cooking comes from all over Briarwood. None so strong as the smell of meat cooking coming from the inn. #line:feast_morning
+About an hour before sunset, you head to the inn. The tables and all but two of the chairs are gone. The bar is empty except for a single note on the counter that just says "The green." #line:feast_note
+A young boy comes running in and grabs the last chair. He stops short as he sees you. After a second, he tells you that everybody is already at the village green. #line:feast_boy
+You grab the last remaining chair and follow him out of the inn and down the street. #line:feast_last_chair
+<<map village_green>>
+People are still arriving from the other villages under Lord Percival's control. Some of them have come to collect their carts or some of the winter provisions. All of them stay to eat. #line:feast_arrivals
+Abel is standing by a handful of large barrels. Seeing you, he knocks the bung in with a mallet. He pours the first tankard of ale and hands it to you. This ale isn't watered down at all. #line:feast_abel_ale
+The tables fill up with food. There's bread, butter, ham, apples, cheese, pies, and a lot more. It all smells wonderful. #line:feast_tables
+Nell goes up and down the tables with a pie dish, cutting slices for anyone who wants one. A young girl follows behind her, fetching another pie when she runs out. #line:feast_nell
+Harold sits next to Elsie with Grist across from both of them. #line:feast_harold_elsie
+You carried two of the large sacks. #line:feast_grist_sacks #speaker:grist
+Yes, sir. #line:feast_harold_yes_1 #speaker:harold
+At the same time. All the way down the hill. #line:feast_grist_same_time #speaker:grist
+Yes, sir. #line:feast_harold_yes_2 #speaker:harold
+Grist looks at him for a moment longer. #line:feast_grist_looks
+Two days, at sunrise. I could use a man like you. #line:feast_grist_hires #speaker:grist
+Yes, sir. Thank you, sir. #line:feast_harold_thanks #speaker:harold
+Grist nods briefly and digs in to his food. Harold squeezes Elsie's hand and they grin at each other. #line:feast_grin
+Tobias sits at the end of the table with his son and his sow. Her Royal Hoggness is wearing a pink ribbon and eating a windfall of apples out of a wooden bowl. #line:feast_tobias_sow
+At sunset, Mabel stands up on a bench and bangs two pots together to get everyone's attention. Her students, led by Tobias the Younger, line up in front of the fire. #line:feast_mabel_pots
+We have a new song for everyone. The children wrote it themselves. #line:feast_new_song #speaker:mabel
+Is it alliterative? #line:feast_alliterative #speaker:barnaby
+It's very alliterative. #line:feast_very_alliterative #speaker:mabel
+The song is about a pig, a pompous lord, and a pastry swan. It has everybody laughing by the end. #line:feast_song
+The feast goes on until the fire burns down to coals and goes out. #line:feast_end
+===

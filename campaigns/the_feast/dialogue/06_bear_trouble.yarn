@@ -1,0 +1,83 @@
+title: hunt_for_food
+speaker: dm
+---
+Maisie hands you the bow from behind the bar and a handful of arrows. #line:hunt_bow
+<<map briarwood_pond>>
+As the sun lowers to the west, you head out into the countryside. You follow a stream to a small pond. #line:hunt_stream
+There's a clump of bushes positioned where you can be out of sight, but still have a clear view of the pond. You work your way into the bushes and wait. #line:hunt_bushes
+A small flock of geese come in just as the sun touches the western horizon. You take aim and fire. #line:hunt_geese
+The geese startle into the air leaving behind the one you shot. You don't have time to take down a second goose. #line:hunt_one_goose
+You go retrieve your goose and turn to head back to the inn when you hear a rustle from the trees getting closer. #line:hunt_rustle
+<<set $hunting to true>>
+<<jump bear_trouble>>
+===
+title: bear_trouble
+speaker: dm
+---
+<<map briarwood_pond>>
+<<set $bear_fight to false>>
+<<if $hunting>>
+    The rustling seems to be coming from the direction of a small clearing you passed earlier while you were looking for game. #line:bear_from_clearing
+<<else>>
+    You search the woods for the bear that's been causing trouble on the farm. #line:bear_search
+    As the sun touches the horizon, you hear a rustling from the trees. It seems to be coming from the direction of a small clearing you passed earlier in your search. #line:bear_rustling
+<<endif>>
+-> Investigate the noise. #line:bear_opt_investigate
+    <<check investigation 8>>
+    <<if $passed>>
+        The rustling gets louder as you come to a small clearing. A bear is rooting through the underbrush. He looks up as you approach. #line:bear_investigate_pass
+    <<else>>
+        The rustling gets louder as you come to a small clearing. You look around as you enter the clearing but don't see anything. A loud roar comes from directly behind you. #line:bear_investigate_fail
+    <<endif>>
+    <<set $bear_fight to true>>
+-> Duck back into the bushes and hide. #line:bear_opt_hide
+    <<check stealth 8>>
+    <<if $passed>>
+        The rustling gets louder as something approaches. A large bear comes into sight from behind a tree. #line:bear_hide_pass
+        -> Stay hidden. #line:bear_opt_stay_hidden
+            The bear snuffles along the edge of the pond, then lumbers back into the trees. You wait until the rustling has faded completely before you head back to the village. It will be back, and so can you. #line:bear_stayed_hidden
+            <<set $hunting to false>>
+            <<jump village_hub>>
+        -> Attack. #line:bear_opt_attack
+            <<set $bear_fight to true>>
+    <<else>>
+        The rustling gets louder as something approaches. A large bear comes into sight from behind a tree. He sniffs the air and looks directly at you. #line:bear_hide_fail
+        <<set $bear_fight to true>>
+    <<endif>>
+-> Watch and wait. #line:bear_opt_wait
+    <<set $bear_fight to true>>
+<<if $bear_fight>>
+    <<fight pond_bear>>
+<<endif>>
+<<jump bear_after>>
+===
+title: bear_after
+speaker: dm
+---
+<<set $hunting to false>>
+<<if $fight == "won">>
+    <<set $bear_won to true>>
+    Tobias comes running up just as the bear falls. He has a pitchfork in hand, brandishing it before him. #line:bear_won_tobias
+    What's going on? #line:bear_won_whats_going_on #speaker:tobias
+    Tobias stops short and slowly lowers his pitchfork as he sees the dead bear. #line:bear_won_lowers
+    You did it! You took it down! Here, I owe you. That beast won't be troubling us anymore. #line:bear_won_thanks #speaker:tobias
+    Tobias hands you a healing potion. You add it to your supplies and help him get the bear onto the makeshift cart Tobias had made out of a wheelbarrow and some wood. #line:bear_won_potion
+    <<give potion_of_healing 1>>
+    Together you bring the meat back to the village and deposit the bounty by the inn's kitchen door. #line:bear_won_meat
+    Maisie comes running out and exclaims in glee at the sight. She tells you to head inside and she'll take it from here. #line:bear_won_maisie
+    <<rest long>>
+    The next day you come in to the inn to the delicious smell of roasting meat. Maisie has a huge smile on her face as she approaches with a heaping platter of meat. #line:bear_won_roast
+    The best of the roast is for you. Thank you! Best meal I've had in a long time, and it's all thanks to you. #line:bear_won_best_roast #speaker:maisie
+<<elseif $fight == "fled">>
+    You flee back to the road and almost run into Tobias. #line:bear_fled_road
+    Tobias is pulling a makeshift cart made out of a wheelbarrow and some wood. He tells you to hop in and he'll pull you back to the inn since he's heading there anyway. #line:bear_fled_cart
+    You can always try again tomorrow. #line:bear_fled_tomorrow #speaker:tobias
+    <<rest long>>
+<<else>>
+    Tobias shakes you awake some time later and helps you sit up. #line:bear_lost_wake
+    He steadies and guides you into a makeshift cart he made out of a wheelbarrow and some wood. He tells you he'll pull you back to the inn since he's heading there anyway. #line:bear_lost_cart
+    You can always try again tomorrow. #line:bear_lost_tomorrow #speaker:tobias
+    <<rest long>>
+<<endif>>
+<<jump village_hub>>
+===

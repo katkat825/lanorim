@@ -1,0 +1,417 @@
+keys,en
+actor.abel.name,Abel
+actor.amos.name,Amos Harker
+actor.barnaby.name,Barnaby
+actor.elsie.name,Elsie
+actor.grist.name,Grist
+actor.harold.name,Harold
+actor.hester.name,Hester
+actor.lionel.name,Lionel Spratt
+actor.lord_percival_thistledown.name,Lord Percival
+actor.mabel.name,Mabel
+actor.maisie.name,Maisie
+actor.nell.name,Nell
+actor.rufus.name,Rufus Pickle
+actor.tobias.name,Tobias
+campaign.the_feast.description,"A level 1 one-shot adventure. Lord Percival Thistledown is throwing himself a grand celebration, and the villagers are paying for it. Literally. With winter approaching, the self-important lord has seized livestock, grain, supplies, and even farm carts to fund a week of extravagant festivities. Meanwhile, his subjects are struggling to put food on their tables. But the villagers of Briarwood have had enough. With a little courage, a questionable plan, and the help of a passing adventurer, they might just pull off the most audacious feast in the lord's history. A lighthearted fantasy heist featuring colorful villagers, ridiculous nobility, questionable disguises, and a chance to give an entire village something worth celebrating."
+campaign.the_feast.name,The Feast
+dialogue.abel.line.the_feast.village_inn_abel_says,"Back here in the middle of the day? Well, I suppose there are worse places to be."
+dialogue.amos.line.the_feast.amos_find_you,I thought I might find you here.
+dialogue.amos.line.the_feast.amos_says_maisie,Maisie.
+dialogue.amos.line.the_feast.race_all_rise,"All rise for His Lordship, the Honorable Lord Percival Thistledown."
+dialogue.barnaby.line.the_feast.feast_alliterative,Is it alliterative?
+dialogue.barnaby.line.the_feast.feast_note_1_a_or_b_3,Tobias!
+dialogue.barnaby.line.the_feast.invite_barnaby,Mabel says come by the inn tonight. After dark.
+dialogue.barnaby.line.the_feast.meeting_barnaby_wrong,"Yeah, alliteration is when you get in trouble for something even if you haven't done it."
+dialogue.barnaby.line.the_feast.meeting_charges,"No, you don't have to appreciate it. You don't want his lordship bringing you up on charges for that!"
+dialogue.barnaby.line.the_feast.meeting_let_them,You let them?! What if someone tells his lordship?
+dialogue.barnaby.line.the_feast.meeting_not_worth,"Whatever, still not worth the risk."
+dialogue.barnaby.line.the_feast.open_three_winters,That's three winters.
+dialogue.barnaby.line.the_feast.plan_all_of_it_a,All of it?
+dialogue.barnaby.line.the_feast.plan_all_of_it_c,All of it?
+dialogue.barnaby.line.the_feast.plan_barnaby_stocks,I don't know about this plan. None in my family ever been in the stocks. Not sure it's worth the risk.
+dialogue.barnaby.line.the_feast.plan_not_a_horse,"I'm a blacksmith, not a horse."
+dialogue.barnaby.line.the_feast.race_lap3_barnaby,Tobias! Pull! PULL!
+dialogue.barnaby.line.the_feast.the_meeting_11,Or one of his lordship's spies.
+dialogue.barnaby.line.the_feast.the_meeting_4,...comes down and demands I make a new massive roasting spit. Then takes it with no payment. Says it's for the new taxes.
+dialogue.barnaby.line.the_feast.the_meeting_7,"Only a year since the lordling came here and already the taxes... Oi, who're you?"
+dialogue.barnaby.line.the_feast.yard_my_spit,That's my spit!
+dialogue.dm.line.the_feast.amos_knockout_fail,Amos dodges your blow and yells for the guards.
+dialogue.dm.line.the_feast.amos_knockout_pass,Amos falls to the ground at your feet. He's still breathing and will likely be out for at least an hour. Barnaby and Tobias move him into the storehouse and set him on the pile of turnips.
+dialogue.dm.line.the_feast.amos_looks,Amos looks at the open storehouse door and then at you.
+dialogue.dm.line.the_feast.amos_opt_knockout,Take him out quickly before he can call for the guards.
+dialogue.dm.line.the_feast.amos_opt_persuade,"""Your ma is also living on the leftovers, Amos."""
+dialogue.dm.line.the_feast.amos_persuade_fail,Amos shakes his head before calling for the guards.
+dialogue.dm.line.the_feast.amos_persuade_pass,Amos is quiet for a long moment. Then he tells Maisie to make sure his mother gets the best ham and goes back inside.
+dialogue.dm.line.the_feast.banquet_whistle,You make it out to the cold night air of the kitchen yard. A soft whistle comes from the back gate as you open it to let in your helpers.
+dialogue.dm.line.the_feast.bear_fled_cart,Tobias is pulling a makeshift cart made out of a wheelbarrow and some wood. He tells you to hop in and he'll pull you back to the inn since he's heading there anyway.
+dialogue.dm.line.the_feast.bear_fled_road,You flee back to the road and almost run into Tobias.
+dialogue.dm.line.the_feast.bear_from_clearing,The rustling seems to be coming from the direction of a small clearing you passed earlier while you were looking for game.
+dialogue.dm.line.the_feast.bear_hide_fail,The rustling gets louder as something approaches. A large bear comes into sight from behind a tree. He sniffs the air and looks directly at you.
+dialogue.dm.line.the_feast.bear_hide_pass,The rustling gets louder as something approaches. A large bear comes into sight from behind a tree.
+dialogue.dm.line.the_feast.bear_investigate_fail,The rustling gets louder as you come to a small clearing. You look around as you enter the clearing but don't see anything. A loud roar comes from directly behind you.
+dialogue.dm.line.the_feast.bear_investigate_pass,The rustling gets louder as you come to a small clearing. A bear is rooting through the underbrush. He looks up as you approach.
+dialogue.dm.line.the_feast.bear_lost_cart,He steadies and guides you into a makeshift cart he made out of a wheelbarrow and some wood. He tells you he'll pull you back to the inn since he's heading there anyway.
+dialogue.dm.line.the_feast.bear_lost_wake,Tobias shakes you awake some time later and helps you sit up.
+dialogue.dm.line.the_feast.bear_opt_attack,Attack.
+dialogue.dm.line.the_feast.bear_opt_hide,Duck back into the bushes and hide.
+dialogue.dm.line.the_feast.bear_opt_investigate,Investigate the noise.
+dialogue.dm.line.the_feast.bear_opt_stay_hidden,Stay hidden.
+dialogue.dm.line.the_feast.bear_opt_wait,Watch and wait.
+dialogue.dm.line.the_feast.bear_rustling,"As the sun touches the horizon, you hear a rustling from the trees. It seems to be coming from the direction of a small clearing you passed earlier in your search."
+dialogue.dm.line.the_feast.bear_search,You search the woods for the bear that's been causing trouble on the farm.
+dialogue.dm.line.the_feast.bear_stayed_hidden,"The bear snuffles along the edge of the pond, then lumbers back into the trees. You wait until the rustling has faded completely before you head back to the village. It will be back, and so can you."
+dialogue.dm.line.the_feast.bear_won_lowers,Tobias stops short and slowly lowers his pitchfork as he sees the dead bear.
+dialogue.dm.line.the_feast.bear_won_maisie,Maisie comes running out and exclaims in glee at the sight. She tells you to head inside and she'll take it from here.
+dialogue.dm.line.the_feast.bear_won_meat,Together you bring the meat back to the village and deposit the bounty by the inn's kitchen door.
+dialogue.dm.line.the_feast.bear_won_potion,Tobias hands you a healing potion. You add it to your supplies and help him get the bear onto the makeshift cart Tobias had made out of a wheelbarrow and some wood.
+dialogue.dm.line.the_feast.bear_won_roast,The next day you come in to the inn to the delicious smell of roasting meat. Maisie has a huge smile on her face as she approaches with a heaping platter of meat.
+dialogue.dm.line.the_feast.bear_won_tobias,"Tobias comes running up just as the bear falls. He has a pitchfork in hand, brandishing it before him."
+dialogue.dm.line.the_feast.done_boy_pig,"A boy comes running out of the kitchen leading a pig, loudly announcing that he got her."
+dialogue.dm.line.the_feast.done_hester,"Hester comes out from the kitchen, wiping her hands on her apron. She checks the boar on the spit and declares that it's done."
+dialogue.dm.line.the_feast.done_spit,Barnaby and Grist each grab an end of the spit and carry boar and spit out the back gate. Both are grinning ear to ear as they pass you.
+dialogue.dm.line.the_feast.done_tobias_hugs,"Tobias jumps up and runs over, throwing his arms around Her Royal Hoggness with tears in his eyes. The pig pushes her nose into him in affection."
+dialogue.dm.line.the_feast.done_tobias_leads,"Tobias, still crying in joy, leads his pig out the gate behind them."
+dialogue.dm.line.the_feast.door_force_fail,"The hatch gives all at once and you fall head first, landing on a pile of turnips. When you can see again, you make your way to the iron door and open it from the inside, letting the rest of the group in."
+dialogue.dm.line.the_feast.door_force_pass,"The hatch gives with a dull crack. You manage to wriggle through and open the iron door from the inside, letting the rest of the group in."
+dialogue.dm.line.the_feast.door_key,The long iron key turns in the lock on the first try. Grist pats you on the shoulder and Tobias lets out a whispered cheer.
+dialogue.dm.line.the_feast.door_locked,"The iron storehouse door is locked. You go around the side and find a small service hatch, just big enough for a person to slip through. The hatch is stuck tight."
+dialogue.dm.line.the_feast.door_opt_force,Force the hatch open.
+dialogue.dm.line.the_feast.door_opt_pick,Pick the lock on the storehouse door.
+dialogue.dm.line.the_feast.door_pick_fail,"Something snaps inside the lock and it won't budge. You head over to force the service hatch open. The hatch gives all at once and you fall head first, landing on a pile of turnips. When you can see again, you make your way to the iron door and open it from the inside, letting the rest of the group in."
+dialogue.dm.line.the_feast.door_pick_pass,The lock clicks open. Harold seems to look at you a bit differently after that.
+dialogue.dm.line.the_feast.feast_abel_ale,"Abel is standing by a handful of large barrels. Seeing you, he knocks the bung in with a mallet. He pours the first tankard of ale and hands it to you. This ale isn't watered down at all."
+dialogue.dm.line.the_feast.feast_arrivals,People are still arriving from the other villages under Lord Percival's control. Some of them have come to collect their carts or some of the winter provisions. All of them stay to eat.
+dialogue.dm.line.the_feast.feast_boy,"A young boy comes running in and grabs the last chair. He stops short as he sees you. After a second, he tells you that everybody is already at the village green."
+dialogue.dm.line.the_feast.feast_end,The feast goes on until the fire burns down to coals and goes out.
+dialogue.dm.line.the_feast.feast_grin,Grist nods briefly and digs in to his food. Harold squeezes Elsie's hand and they grin at each other.
+dialogue.dm.line.the_feast.feast_grist_looks,Grist looks at him for a moment longer.
+dialogue.dm.line.the_feast.feast_harold_elsie,Harold sits next to Elsie with Grist across from both of them.
+dialogue.dm.line.the_feast.feast_last_chair,You grab the last remaining chair and follow him out of the inn and down the street.
+dialogue.dm.line.the_feast.feast_mabel_pots,"At sunset, Mabel stands up on a bench and bangs two pots together to get everyone's attention. Her students, led by Tobias the Younger, line up in front of the fire."
+dialogue.dm.line.the_feast.feast_morning,"By the time the sun comes up, everything has been unloaded from the carts and stowed out of sight. All day the smell of food cooking comes from all over Briarwood. None so strong as the smell of meat cooking coming from the inn."
+dialogue.dm.line.the_feast.feast_nell,"Nell goes up and down the tables with a pie dish, cutting slices for anyone who wants one. A young girl follows behind her, fetching another pie when she runs out."
+dialogue.dm.line.the_feast.feast_note,"About an hour before sunset, you head to the inn. The tables and all but two of the chairs are gone. The bar is empty except for a single note on the counter that just says ""The green."""
+dialogue.dm.line.the_feast.feast_song,"The song is about a pig, a pompous lord, and a pastry swan. It has everybody laughing by the end."
+dialogue.dm.line.the_feast.feast_tables,"The tables fill up with food. There's bread, butter, ham, apples, cheese, pies, and a lot more. It all smells wonderful."
+dialogue.dm.line.the_feast.feast_tobias_sow,Tobias sits at the end of the table with his son and his sow. Her Royal Hoggness is wearing a pink ribbon and eating a windfall of apples out of a wooden bowl.
+dialogue.dm.line.the_feast.guards_fled,You look around and see that the villagers with you have not been idle. The last of the carts is already rolling out the back gate. You run for them and jump onto one of the carts.
+dialogue.dm.line.the_feast.guards_lost,You come to on the ground outside the storehouse. Your head still aches and you groan. Tobias is sitting next to you.
+dialogue.dm.line.the_feast.guards_lost_gone,You look around the kitchen yard. The guards are nowhere to be seen.
+dialogue.dm.line.the_feast.guards_won,The guards break and run back into the house. Amos is nowhere to be seen.
+dialogue.dm.line.the_feast.guest_flatter_fail,Lord Percival gives you a suspicious look before turning back to other guests. Amos keeps an eye on you for the rest of the evening.
+dialogue.dm.line.the_feast.guest_flatter_pass,Lord Percival gives you a big smile. He tells you about the house for a very long time. During this monologue you discover which key on Amos's belt is the storehouse key.
+dialogue.dm.line.the_feast.guest_insight_fail,You mention that the hall is very warm. The lord frowns and tells you that it's supposed to be warm. Amos keeps an eye on you for the rest of the evening.
+dialogue.dm.line.the_feast.guest_insight_pass,You realize that he doesn't actually want to know your opinion. He wants to tell you about it. You let him rattle on for some time. During this monologue you discover which key on Amos's belt is the storehouse key.
+dialogue.dm.line.the_feast.guest_leans,The lord leans across his nephew to speak to you.
+dialogue.dm.line.the_feast.guest_opt_flatter,"""I've never seen anything like it, my lord."""
+dialogue.dm.line.the_feast.guest_opt_insight,Work out what answer he's really looking for.
+dialogue.dm.line.the_feast.guest_seated,A footman takes your cloak as you enter the manor. He leads you into the great hall and up to the high table. He seats you two chairs over from what looks almost like a throne. Lionel Spratt is already occupying the seat between you and what must be Lord Percival's chair.
+dialogue.dm.line.the_feast.hall_food,"Everywhere you look, there's more food. Platters of roast meat, bread still steaming from the ovens, seven types of cheese, apples baked in honey, and more. In the middle of the high table is a beautiful swan made out of pastry."
+dialogue.dm.line.the_feast.hall_percival_sits,"Lord Percival gives the pig a quick pet on the head as he sits down. The pig ignores him. Amos, the steward, follows closely on his heels and takes a place standing behind his lordship's chair all evening."
+dialogue.dm.line.the_feast.hall_server_mutters,One of the servers walking by the cushion mutters under their breath about Lord Pissledown having wanted to roast a thin breeding sow instead of a boar.
+dialogue.dm.line.the_feast.hall_smell,"After weeks of thin soup, the smell hits you like a punch to the gut."
+dialogue.dm.line.the_feast.hall_smell_hunting,"After weeks of thin soup with occasional additions of meat from your hunting, the smell hits you like a punch to the gut."
+dialogue.dm.line.the_feast.hall_sow,"Beside Lord Percival's chair, on a velvet cushion, sits a pink sow wearing a pink ribbon and a velvet leash. She's eating apples off of a silver platter."
+dialogue.dm.line.the_feast.hall_too_warm,The great hall feels too warm. There's a fire at either end and more candles than the entire village of Briarwood likely has.
+dialogue.dm.line.the_feast.hunt_bow,Maisie hands you the bow from behind the bar and a handful of arrows.
+dialogue.dm.line.the_feast.hunt_bushes,"There's a clump of bushes positioned where you can be out of sight, but still have a clear view of the pond. You work your way into the bushes and wait."
+dialogue.dm.line.the_feast.hunt_geese,A small flock of geese come in just as the sun touches the western horizon. You take aim and fire.
+dialogue.dm.line.the_feast.hunt_one_goose,The geese startle into the air leaving behind the one you shot. You don't have time to take down a second goose.
+dialogue.dm.line.the_feast.hunt_rustle,You go retrieve your goose and turn to head back to the inn when you hear a rustle from the trees getting closer.
+dialogue.dm.line.the_feast.hunt_stream,"As the sun lowers to the west, you head out into the countryside. You follow a stream to a small pond."
+dialogue.dm.line.the_feast.inn_board,You approach the village of Briarwood just after sunset. On a post next to the road is an announcement board with several notices on it.
+dialogue.dm.line.the_feast.inn_enter,"As you enter the inn, the barkeep nods and goes back to drying a tankard he's just washed. The wash basin is full of steaming, soapy water which matches the unusual cleanliness of the rest of the public room."
+dialogue.dm.line.the_feast.inn_maisie_returns,Maisie smiles brightly at you as she sets down a bowl and a tankard.
+dialogue.dm.line.the_feast.inn_mostly_water,The taste of mostly water in both food and drink might have something to do with why they're on the house.
+dialogue.dm.line.the_feast.inn_notice_1_a,"BY ORDER OF HIS LORDSHIP, THE HONOURABLE LORD PERCIVAL THISTLEDOWN."
+dialogue.dm.line.the_feast.inn_notice_1_b,"Let it be known throughout the land that a GRAND CELEBRATION shall be held at Thistledown Manor on the final week of this month, the twelfth month of the most beloved Lord Percival Thistledown's first glorious year of governance."
+dialogue.dm.line.the_feast.inn_notice_1_c,The festivities shall commence with a chariot race. Contestants shall mount chariots pulled by servants and race to the finish line. The winner shall receive the honor of sitting at the great Lord's table during the banquet on the final night of the celebration.
+dialogue.dm.line.the_feast.inn_notice_1_d,"Leading up to this week of festivities, all villagers are reminded of their obligations heretofore declared in the recent Celebratory Provisioning Levy."
+dialogue.dm.line.the_feast.inn_notice_1_e,"All outstanding contributions of coin, livestock, grain, produce, and farm carts must be surrendered to The Great Lord Thistledown's appointed celebration requirements gathering collectors upon their request."
+dialogue.dm.line.the_feast.inn_notice_1_f,LONG MAY THE ILLUSTRIOUS LORD THISTLEDOWN PROSPER!
+dialogue.dm.line.the_feast.inn_notice_1_intro,"The first notice is the largest, written in an ornate hand."
+dialogue.dm.line.the_feast.inn_notice_2_a,"Lost Wedding Ring. Lost my wedding ring somewhere near the old mill yesterday afternoon. Reward offered. Don't have much coin, but I can mend clothes and make a good plowman's pie. Nell."
+dialogue.dm.line.the_feast.inn_notice_2_b,PS. Please don't tell my husband. I'll never hear the end of it.
+dialogue.dm.line.the_feast.inn_notice_2_intro,A smaller notice is pinned beneath it.
+dialogue.dm.line.the_feast.inn_opt_ale,"Ale and a room for the night, please."
+dialogue.dm.line.the_feast.inn_opt_ale_soup,"Ale and soup, please. And a room for the night."
+dialogue.dm.line.the_feast.inn_opt_continue,Continue to the village.
+dialogue.dm.line.the_feast.inn_opt_ring,Look for the ring in the morning.
+dialogue.dm.line.the_feast.inn_opt_room,"Just a room for the night, please."
+dialogue.dm.line.the_feast.inn_seat,A serving wench smiles at you and gestures towards a table she just finished cleaning. You walk past a few tables where people are eating a thin soup and drinking from tankards and take a seat at the indicated table.
+dialogue.dm.line.the_feast.inn_sign,You continue down the road until you see a larger building with a faded sign hanging lopsided off one hinge. A painted tankard and bed are still mostly visible on the sign.
+dialogue.dm.line.the_feast.inn_snip_harold,"""Harold still courting the miller's daughter?"" ""Sure is. Waiting till he gets more money."" ""Ain't likely to happen."""
+dialogue.dm.line.the_feast.inn_snip_maisie,"""Pretty girl, Maisie."" ""Needs to get some more meat on her bones."" ""We all need more meat on our bones."" ""Too true."""
+dialogue.dm.line.the_feast.inn_snip_soup,"""Soup's thin today."" ""Soup's been thin for months."" ""But it's harvest. Sorry state of affairs."""
+dialogue.dm.line.the_feast.inn_snippets,Snippets of conversation reach you as you wait for Maisie to return.
+dialogue.dm.line.the_feast.invite_barnaby_walk,"Barnaby falls into step beside you on the walk back. He stays quiet for a bit. Then, looking around to make sure nobody else is near, leans towards you to whisper."
+dialogue.dm.line.the_feast.invite_wander,You wander around the town and surrounding area for the rest of the day.
+dialogue.dm.line.the_feast.kitchen_hester_apron,"One of the manor's servants lets you in the back gate and you follow them to the kitchen's back door. Hester, the cook and Maisie's cousin, looks you up and down then hands you an apron and thrusts a platter of roast meat at you."
+dialogue.dm.line.the_feast.kitchen_into_hall,You carry the platter out into the great hall.
+dialogue.dm.line.the_feast.kitchen_set_off,"On the last night of the celebration, you set off up the hill for the manor's back gate."
+dialogue.dm.line.the_feast.kitchen_week,"The celebration begins at the manor. From the village, you can hear music and laughter drifting down from the manor every night."
+dialogue.dm.line.the_feast.meeting_fourth_time,"He decided to hold a lavish celebration later this month. To make the celebration as memorable as possible, he's raised taxes for a fourth time."
+dialogue.dm.line.the_feast.meeting_lantern,"As Barnaby, Mabel, and Tobias argue their way to an explanation, the sun sets and the clearing darkens. Mabel lights a lantern so you can still see the clearing."
+dialogue.dm.line.the_feast.meeting_leave_ask,Ignore the villagers and continue?
+dialogue.dm.line.the_feast.meeting_leave_go,You leave the villagers behind and head down the road to the nearest village in the darkening twilight.
+dialogue.dm.line.the_feast.meeting_leave_no,"No, stay and answer them."
+dialogue.dm.line.the_feast.meeting_leave_yes,"Yes, continue down the road."
+dialogue.dm.line.the_feast.meeting_no_help,The villagers never ask for help. They seem to be at a loss for what can be done about the situation.
+dialogue.dm.line.the_feast.meeting_the_idea,"You eventually get the idea that Lord Percival Thistledown, aka Lord Pissledown, became lord of a small cluster of villages almost a year ago. He has raised taxes three times already this year."
+dialogue.dm.line.the_feast.meeting_walk,You head to the nearest village with them. Mabel's lantern lights the road before you as their argument changes to whether the coming winter will be worse than usual.
+dialogue.dm.line.the_feast.mill_crowd,A small crowd is gathered at the edge of the mill yard watching as two men load sacks of flour onto a farm cart. A third man with flour dusting his hair and clothing stands in the doorway watching.
+dialogue.dm.line.the_feast.mill_fight_fled,You come back a little while later to find the cart and flour gone. Grist is sitting on his doorstep with his head in his hands.
+dialogue.dm.line.the_feast.mill_fight_lost,"Grist helps you back up and leads you over to sit on the doorstep. The collectors head up the lane with the cart, quickly moving out of sight."
+dialogue.dm.line.the_feast.mill_fight_won,Rufus drops his blade and runs for the lane. His partner looks at the cart and then runs after him.
+dialogue.dm.line.the_feast.mill_gaze,"Rufus shrugs and, ignoring the miller's question, glares around the crowd again. His gaze lands on you."
+dialogue.dm.line.the_feast.mill_harold_elsie,"The crowd starts breaking up, most heading back towards the village. Harold stays by the millpond with Elsie. She brushes non-existent flour off his sleeve in a nervous gesture."
+dialogue.dm.line.the_feast.mill_intimidate_fail,Rufus smirks at you and nudges his partner. They both set down what they're holding and draw their weapons.
+dialogue.dm.line.the_feast.mill_intimidate_pass,"Rufus looks at you for a moment longer. His partner is staring down at his own boots. The crowd around you is starting to look angry. Rufus and his partner each grab a single sack of flour off of the cart and quickly head up the lane, not quite running."
+dialogue.dm.line.the_feast.mill_lane,"After breakfast, you follow the lane out to the edge of Briarwood. The mill sits on the bend of a stream just past the last of the cottages."
+dialogue.dm.line.the_feast.mill_ledger,One of the collectors stops and picks up a ledger from the front of the cart. He glares about at the watching crowd before turning a page. He mutters to himself as he writes in the ledger.
+dialogue.dm.line.the_feast.mill_ledger_fail,Rufus stares at you in surprise as you take the ledger out of his hand. His partner sneers at you and draws a short blade.
+dialogue.dm.line.the_feast.mill_ledger_pass,"Rufus stares at you in surprise as you take the ledger out of his hand. In cramped handwriting you can make out that Grist's name is also listed on last week's page with ""PAID IN FULL"" printed clearly beside it. Rufus mutters about clerical errors as he and his partner head up the lane empty handed."
+dialogue.dm.line.the_feast.mill_opt_intimidate,"""That's more flour than a single feast could need."""
+dialogue.dm.line.the_feast.mill_opt_ledger,"""Mind if I take a look at that ledger?"""
+dialogue.dm.line.the_feast.mill_opt_step_between,Step between Rufus and the cart.
+dialogue.dm.line.the_feast.mill_porridge,Abel is raking out the hearth and doesn't even glance your way as you pass him. Maisie gives you a bright smile and nods at a nearby table. She sets a bowl of porridge in front of you. It's mostly just hot water with a scattering of oats.
+dialogue.dm.line.the_feast.mill_wake,"The next morning, you wake up with a slight twinge in your neck. The bed was lumpy, but it was a free bed. You stretch and bend to work out the twinge and then head down to the public room."
+dialogue.dm.line.the_feast.open_grist_sack,Grist puts his hand on one of the sacks of flour that has his name stamped on it.
+dialogue.dm.line.the_feast.open_lantern,"Someone shines a lantern towards the doorway. You see sacks of grain up to the ceiling, barrels of produce, crocks of butter, cheeses stacked like firewood, meats hanging from the beams."
+dialogue.dm.line.the_feast.pig_chaos,"The pig looks at all the food. She climbs up on the high table. A lady screams, plates go everywhere, and every servant in the hall converges on the pig."
+dialogue.dm.line.the_feast.pig_fail,"The pig doesn't move except to eat the food in front of her. By the time you give up, Amos has noticed and follows you to the kitchen."
+dialogue.dm.line.the_feast.pig_keys,You manage to get ahold of Amos's key ring and head to the kitchen unseen.
+dialogue.dm.line.the_feast.pig_unseen,You head to the kitchen unseen.
+dialogue.dm.line.the_feast.plan_abel_door,"You make your way back to the inn after watching a beautiful sunset from the top of a nearby hill. Abel is standing in front of the door, blocking the way. He opens the door for you and follows you inside."
+dialogue.dm.line.the_feast.plan_abel_locks,"Abel locks the door behind him, looks around the room, nods once, and heads to the bar to start pouring drinks."
+dialogue.dm.line.the_feast.plan_arms,"She looks at Barnaby. Then pointedly looks down at his arms. Barnaby looks at his arms, so does Tobias. Barnaby gulps and looks at you."
+dialogue.dm.line.the_feast.plan_barnaby_plops_a,Barnaby plops down into a nearby chair and puts his head in his hands.
+dialogue.dm.line.the_feast.plan_barnaby_plops_b,Barnaby plops down into a nearby chair and puts his head in his hands.
+dialogue.dm.line.the_feast.plan_comes_together,"Over the course of the evening a plan comes together. Mostly by everyone arguing about it, but it does come together."
+dialogue.dm.line.the_feast.plan_crowd,There are more people here than you would expect. Mabel is sitting at a table in the middle of the room. Everyone else seems to be waiting nervously.
+dialogue.dm.line.the_feast.plan_crowd_leaves,Abel unbars the door and the crowd heads out in smaller groups so it doesn't look like a meeting. Maisie gathers up the still mostly full dishes and tankards.
+dialogue.dm.line.the_feast.plan_hush,"In the hush that follows Mabel's words, everyone turns to look at you. You get the distinct impression that this meeting was planned specifically with you in mind."
+dialogue.dm.line.the_feast.plan_inside,Only one thing is needed: someone on the inside to open the storehouse and kitchen yard.
+dialogue.dm.line.the_feast.plan_nell_grabs,"A woman in a patched shawl grabs your hand on the way past, her eyes tearing up just a little."
+dialogue.dm.line.the_feast.plan_nell_pie,She hands you a towel-wrapped dish. The plowman's pie smells delicious.
+dialogue.dm.line.the_feast.plan_opt_guards,"""How many guards does he have?"""
+dialogue.dm.line.the_feast.plan_opt_have_plan,"""It sounds like you already have a plan."""
+dialogue.dm.line.the_feast.plan_opt_kitchen,"""I'll go in through the kitchens."""
+dialogue.dm.line.the_feast.plan_opt_race,"""We enter the race."""
+dialogue.dm.line.the_feast.plan_opt_take_back,"""Then we take it back. All of it."""
+dialogue.dm.line.the_feast.plan_pie_shared,You share it around. There is just enough for everyone to get a slice. It tastes just as good as it smells.
+dialogue.dm.line.the_feast.plan_quiet_days,The next several days are quiet. There is nothing left for the collectors to gather from this village.
+dialogue.dm.line.the_feast.plan_seat,Mabel calls you over and gestures to a seat next to her where there is already a tankard waiting for you.
+dialogue.dm.line.the_feast.plan_spoon,Mabel taps a wooden spoon on the table until everyone turns to look at her.
+dialogue.dm.line.the_feast.plan_the_banquet,The banquet is on the last night of the week-long celebration. Everyone in the manor will be in the great hall. All of the carts taken by the collectors are sitting in the yard right next to the kitchen and the storehouse. Those carts could be loaded up and halfway to Briarwood by the time anyone in the manor realized it.
+dialogue.dm.line.the_feast.plan_younger_grins,Tobias the Younger grins for the first time all night.
+dialogue.dm.line.the_feast.race_already_standing,The villagers are already standing and the nobles in the stands don't get up off the benches.
+dialogue.dm.line.the_feast.race_amos_whisper,"Tobias whispers to you that this is Amos Harker, the steward, who has keys for everything."
+dialogue.dm.line.the_feast.race_chariots,"Villagers line the hedges along the drive, not seeming to react much to the four ""chariots"" lined up at the start. Mostly these are just farm carts with the backs cut off and painted in sloppy bright colors."
+dialogue.dm.line.the_feast.race_clapping,"Amos starts clapping. Lord Percival smiles a bit wider. Clearly this is what he was waiting for. After a minute, the crowd claps as well."
+dialogue.dm.line.the_feast.race_first_day,It's the first day of the celebration. The sun shines brightly down on Thistledown Manor in the cold autumn air. Someone has hung garlands and other decorations from every window.
+dialogue.dm.line.the_feast.race_fountain,A stone drive loops around a fountain in front of the house. A statue of a fish spits water into the basin of the fountain. Its nose shows the distinct signs of recent repairs.
+dialogue.dm.line.the_feast.race_godfrey,Sir Godfrey Bunting is a large man with two very nervous footmen waiting at his cart.
+dialogue.dm.line.the_feast.race_grist_cart,As you approach this cart you see GRIST on the side where the gold paint hasn't completely covered. Barnaby grumbles under his breath and glares at Tobias. Tobias just grins at you.
+dialogue.dm.line.the_feast.race_lap1_bucks,"The cart bucks over the stone drive. The cart was designed for pulling grain and flour, not a rider."
+dialogue.dm.line.the_feast.race_lap1_fail,"The cart hits a rut. You land hard on your backside and scramble back up to see Lady Prudence passing you, still knitting."
+dialogue.dm.line.the_feast.race_lap1_opt_balance,Move with the cart and keep your balance.
+dialogue.dm.line.the_feast.race_lap1_opt_brace,Brace yourself and hold on tight.
+dialogue.dm.line.the_feast.race_lap1_pass,You brace yourself as the two men settle into a steady trot. Lady Prudence is still knitting as you pass by her.
+dialogue.dm.line.the_feast.race_lap2_godfrey,"You pull up alongside Sir Godfrey. He sneers at you as he directs his servants to collide into your cart and calls out ""Make way, peasant!"""
+dialogue.dm.line.the_feast.race_lap2_king_fail,"Sir Godfrey scoffs at you as his cart hits yours. Barnaby and Tobias get you back on track just before you hit the fountain, but Sir Godfrey pulls ahead of you."
+dialogue.dm.line.the_feast.race_lap2_king_pass,Sir Godfrey looks at the crowd. His footmen slow down to look as well and you quickly leave them behind.
+dialogue.dm.line.the_feast.race_lap2_opt_king,"""Is that the king in the stands?"""
+dialogue.dm.line.the_feast.race_lap2_opt_timing,Time it so Sir Godfrey's footmen miss your cart.
+dialogue.dm.line.the_feast.race_lap2_timing_fail,"Your timing is just a hair off and his cart clips yours. Barnaby and Tobias get you back on track just before you hit the fountain, but Sir Godfrey pulls ahead of you."
+dialogue.dm.line.the_feast.race_lap2_timing_pass,"You watch the footmen coming and slow down just in time. Sir Godfrey's cart flies across your path, just missing you. His men can't stop in time to avoid the fountain and he sails over the front of it and into the water."
+dialogue.dm.line.the_feast.race_lap3_fail,Tobias stares at the pig for a long moment before he starts really pulling again. You catch up to Lionel's cart when the finish line is just ahead of you.
+dialogue.dm.line.the_feast.race_lap3_lionel,Lionel Spratt is out in front. He's down to three men and you don't see any sign of the fourth.
+dialogue.dm.line.the_feast.race_lap3_opt_jump,Jump down and shake Tobias out of it.
+dialogue.dm.line.the_feast.race_lap3_opt_persuade,"""Tobias! We'll get her back. Pull!"""
+dialogue.dm.line.the_feast.race_lap3_pass,"Tobias starts with a jerk and leans back into the shafts. You draw level with Lionel's cart and it's neck and neck to the finish line, neither of you gaining a significant lead."
+dialogue.dm.line.the_feast.race_lap3_pig,"As you come to the halfway point of this last lap, a pig goes squealing through the crowd with a kitchen helper in pursuit."
+dialogue.dm.line.the_feast.race_lap3_slows,Your cart slows considerably as Tobias stares at the pig.
+dialogue.dm.line.the_feast.race_lionel,"Lionel Spratt has four men between the shafts of his cart. He clears his throat pointedly and one of the servants, with a start, informs you that Lionel is Lord Percival's nephew."
+dialogue.dm.line.the_feast.race_livery,Barnaby and Tobias are already standing between the shafts of one of the carts. They're wearing borrowed livery and Barnaby's barely fits.
+dialogue.dm.line.the_feast.race_lost_finish,"Lionel pulls ahead of you at the last moment, crossing the finish line first, but just barely."
+dialogue.dm.line.the_feast.race_lost_silent,"The crowd along the hedges is mostly silent, but one or two applaud his win as Barnaby and Tobias slow to a stop, panting as they sit down right where they are."
+dialogue.dm.line.the_feast.race_percival_climbs,"Lord Percival climbs up on the stand, taking his time about it. His purple velvet clothing almost hides the thick chain of office around his neck. He lifts one gloved hand and looks out over the crowd."
+dialogue.dm.line.the_feast.race_prudence,"Lady Prudence Kettle is being pulled by her gardener and his son, who don't seem surprised that she is knitting something."
+dialogue.dm.line.the_feast.race_riders,There are three more carts lined up alongside yours and the other three riders call out introductions.
+dialogue.dm.line.the_feast.race_start,"Amos lifts a lace handkerchief high in the air. He lets it drop, signaling the start of the race. Barnaby and Tobias lean in and the cart lurches forward."
+dialogue.dm.line.the_feast.race_steward,"You and the other riders fall silent as a man steps up onto the stand, scroll in hand. The ring of keys at his belt jingles every time he moves."
+dialogue.dm.line.the_feast.race_week,"The celebration continues for the rest of the week. From the village, you can hear music and laughter drifting down from the manor every night."
+dialogue.dm.line.the_feast.race_won_cheer,"The crowd along the hedges cheers as Barnaby and Tobias slow to a stop, panting as they sit down right where they are."
+dialogue.dm.line.the_feast.race_won_finish,"You pull ahead of Lionel at the last moment, crossing the finish line first, but just barely."
+dialogue.dm.line.the_feast.race_won_gracious,"Lord Percival looks at you, then at the two men who pulled your ""chariot"" and decides to be gracious."
+dialogue.dm.line.the_feast.ring_fail,"You don't see anything by the pond edge so you lean over the sluice for a better look. The bank gives way under you and you slide down into the water up to your waist. Shivering, you climb out to see the glint of something shiny on your sleeve. Brushing the rest of the mud off, you see it's a copper ring."
+dialogue.dm.line.the_feast.ring_opt_investigation,Work out where she'd most likely have dropped it.
+dialogue.dm.line.the_feast.ring_opt_perception,Search the mud along the pond edge.
+dialogue.dm.line.the_feast.ring_pass,"Something glitters in the mud. You move a reed out of the way and pick it up. It's a plain copper ring, worn thin on one side."
+dialogue.dm.line.the_feast.ring_pond_edge,You remember the notice about Nell's ring and walk over to the edge of the millpond. The ground near the sluice gate is now trampled mud from the milling crowd.
+dialogue.dm.line.the_feast.serving_hester_hatch,You bring the empty platter back to the kitchen and ask Hester about other ways into the storehouse. She tells you about a service hatch with a broken lock. Nobody ever bothered with it since the hatch has been stuck for years.
+dialogue.dm.line.the_feast.serving_keys_jingle,"As you set a platter down on the high table, the steward, Amos, leans forward to whisper in the lord's ear. His ring of keys jingles right next to you."
+dialogue.dm.line.the_feast.serving_lift_fail,Amos turns at just the wrong moment. You pretend you were reaching for something else and leave the keys. He keeps an eye on you for the rest of the night.
+dialogue.dm.line.the_feast.serving_lift_pass,You muffle the keys in your apron and head back to the kitchen. Hester holds onto the keys for you until you're ready for the next phase of the plan.
+dialogue.dm.line.the_feast.serving_next_platter,You bring the next platter out to the great hall just in time.
+dialogue.dm.line.the_feast.serving_nobody_looks,"You carry platters back and forth from the kitchen. Hester was right, nobody even looks at you."
+dialogue.dm.line.the_feast.serving_opt_leave,Leave the keys. Hester will probably know another way in.
+dialogue.dm.line.the_feast.serving_opt_lift,Lift the keys while he's whispering.
+dialogue.dm.line.the_feast.song_children,Mabel comes in through the side door with eight children behind her. Tobias the Younger is in the front row and gives you a grin.
+dialogue.dm.line.the_feast.song_glass,Lord Percival taps his glass with a knife and the hall slowly falls quiet.
+dialogue.dm.line.the_feast.song_kitchen_followed,You head out to the kitchen. Amos follows behind you.
+dialogue.dm.line.the_feast.song_kitchen_keys,Everyone is still focused on holding in their laughter or outrage. You manage to get ahold of Amos's key ring and head to the kitchen unseen as the children start on a third rendition at his lordship's insistence.
+dialogue.dm.line.the_feast.song_kitchen_unseen,Everyone is still focused on holding in their laughter or outrage. You make it to the kitchen unseen as the children start on a third rendition at his lordship's insistence.
+dialogue.dm.line.the_feast.song_laughter,"Amos starts looking at Mabel with suspicion as the children sing it again louder. Mabel puts her hand over her mouth to stifle her laughter. Several of the servants quickly go back to the kitchen, also covering their laughter."
+dialogue.dm.line.the_feast.song_now,You feel that now is the time to enact the plan.
+dialogue.dm.line.the_feast.song_opt_kitchen,Head to the kitchen.
+dialogue.dm.line.the_feast.song_opt_leash,Let the pig off her leash.
+dialogue.dm.line.the_feast.song_opt_roll,Offer the pig a bread roll and see what she does.
+dialogue.dm.line.the_feast.song_silence,There is a long silence as everyone watches his lordship to see his reaction.
+dialogue.dm.line.the_feast.song_start,The children start singing.
+dialogue.dm.line.the_feast.song_verse,"""Proud Percival, our prosperous peer, pinches provisions from the poor. Plump of purse and pink of cheek, pray he picks our pockets more."""
+dialogue.dm.line.the_feast.start,"You've been traveling for several days now. You don't have anywhere in particular you're trying to go, just enjoying the countryside."
+dialogue.dm.line.the_feast.the_meeting_1,"As the day wanes, you see a bridge up the road a little ways. It's not a very large bridge and spans what is either a large creek or a small river, you're not sure."
+dialogue.dm.line.the_feast.the_meeting_12,"Barnaby glares at you, still waiting for an answer."
+dialogue.dm.line.the_feast.the_meeting_13,I'm just traveling. Who's Lord Pissledown?
+dialogue.dm.line.the_feast.the_meeting_14,I'm an adventurer. Sounds like you could use some help.
+dialogue.dm.line.the_feast.the_meeting_15,Just a traveler. I'll be on my way now.
+dialogue.dm.line.the_feast.the_meeting_2,"Shortly before the bridge, you hear hushed voices off in the woods. You pause for a moment to listen, but can't quite make out the words."
+dialogue.dm.line.the_feast.the_meeting_3,"You step off the road towards the voices and come to a forest clearing where several people have gathered. From the clothes they wear they're mostly villagers and farmers, and not very prosperous ones."
+dialogue.dm.line.the_feast.the_meeting_8,"The man in the blacksmith's apron turns to you, waiting for an answer."
+dialogue.dm.line.the_feast.village_ask,What would you like to do before the celebration?
+dialogue.dm.line.the_feast.village_days,The days leading up to Lord Percival's grand celebration pass slowly. The collectors have stopped coming to Briarwood. There's little enough left for them to take.
+dialogue.dm.line.the_feast.village_explore,"With no pressing obligations before the celebration begins, you decide to spend some time exploring the village and surrounding countryside."
+dialogue.dm.line.the_feast.village_farm_after_bear,"Tobias waves from the roof of the barn, a hammer in one hand. Her Royal Hoggness's empty pen still has fresh straw in it."
+dialogue.dm.line.the_feast.village_farm_again,Tobias looks up from a fence post the bear knocked over in the night.
+dialogue.dm.line.the_feast.village_farm_hammer,The sound of a hammer rings out as you approach the farmhouse. You go around to the back of the house where the banging is coming from.
+dialogue.dm.line.the_feast.village_farm_opt_bear,"""I'll take care of your bear."""
+dialogue.dm.line.the_feast.village_farm_opt_later,Not right now.
+dialogue.dm.line.the_feast.village_farm_repairs,"As you help Tobias with that and a couple of other repairs, he tells you about the bear that keeps coming onto the farm and causing damage."
+dialogue.dm.line.the_feast.village_farm_repairs_after,"You help Tobias with that and a couple of other repairs. He talks about the bear the whole time, and how glad he is it won't be back."
+dialogue.dm.line.the_feast.village_grim,Life in the village continues as best it can. Every once in a while someone mentions the upcoming celebration with a grim face.
+dialogue.dm.line.the_feast.village_inn_abel,"Abel is behind the bar, polishing a tankard that looks perfectly clean already."
+dialogue.dm.line.the_feast.village_inn_again,"Abel is still behind the bar, polishing the same perfectly clean tankard."
+dialogue.dm.line.the_feast.village_inn_bow_again,"Maisie glances at the bow behind the bar, then at you."
+dialogue.dm.line.the_feast.village_inn_maisie_basket,Maisie comes out of the kitchen carrying a small basket. She glances over at a bow leaning just behind the bar.
+dialogue.dm.line.the_feast.village_inn_maisie_humming,"Maisie waves at you from the kitchen door, still humming."
+dialogue.dm.line.the_feast.village_inn_opt_hunt,"""I could go hunting for you."""
+dialogue.dm.line.the_feast.village_inn_opt_later,Maybe another time.
+dialogue.dm.line.the_feast.village_mill_fail,You can't get the blockage to budge. Grist jumps in and together you manage to get it moved. It gives with a crack and you fall face-first into the mill wheel. You need to sit for a few minutes afterwards until you stop seeing stars.
+dialogue.dm.line.the_feast.village_mill_opt_lever,Find a lever and wedge it between the wheel and the blockage.
+dialogue.dm.line.the_feast.village_mill_opt_push,Push the blockage out of the way.
+dialogue.dm.line.the_feast.village_mill_pass,The blockage gives way and the wheel starts moving again with a creak.
+dialogue.dm.line.the_feast.village_mill_silent,The mill wheel is silent and still as you approach. Grist is on the pond edge. He stops pacing and turns to you as you approach.
+dialogue.dm.line.the_feast.village_mill_wade,You go into the mill pond to see if you can get it taken care of.
+dialogue.dm.line.the_feast.village_opt_farm,Visit Tobias's farm.
+dialogue.dm.line.the_feast.village_opt_inn,Visit the inn.
+dialogue.dm.line.the_feast.village_opt_mill,Visit Grist's mill.
+dialogue.dm.line.the_feast.village_opt_skip,Skip exploration and proceed with the plan.
+dialogue.dm.line.the_feast.yard_food_fail,You see glowing eyes in the darkness of the kennel door before one of the largest hounds you've ever seen comes out of the doorway without a sound.
+dialogue.dm.line.the_feast.yard_food_pass,The hound slinks out of the kennel to grab the food you tossed. It snatches the food up and runs back into the kennel without a sound.
+dialogue.dm.line.the_feast.yard_gate_creaks,"The back gate creaks as you open it to let in Barnaby, Tobias, Grist, Harold, and Maisie. It creaks again as Maisie closes it behind her."
+dialogue.dm.line.the_feast.yard_hound_fled,You back out of the yard with the hound snapping at your heels. Barnaby swings the gate shut on its nose.
+dialogue.dm.line.the_feast.yard_hound_fled_back,"After a few minutes, you sneak back in through the gate and take a roundabout route to the storehouse."
+dialogue.dm.line.the_feast.yard_hound_lost,You wake up to Grist and Barnaby closing the back gate with the hound on the outside. Maisie is beside you holding you in a sitting position and handing you a cup.
+dialogue.dm.line.the_feast.yard_hound_lost_drink,The drink tastes horrible as you force yourself to swallow the entire contents. Maisie gives you a sympathetic look.
+dialogue.dm.line.the_feast.yard_hound_lost_rested,She's definitely right about that. You feel like you just got a good night's sleep.
+dialogue.dm.line.the_feast.yard_hound_won,The hound lies still in the straw. Harold lets out a sigh of relief as Maisie stifles a nervous giggle.
+dialogue.dm.line.the_feast.yard_intro,"The kitchen yard is a trampled dirt area with several farm carts, a storehouse, a kennel, and the back gate. You also see a very large boar being roasted over coals on a new-looking spit."
+dialogue.dm.line.the_feast.yard_kennel,As you approach the kennel you hear the deep breathing of something large asleep.
+dialogue.dm.line.the_feast.yard_opt_attack,Take it out before it wakes up.
+dialogue.dm.line.the_feast.yard_opt_food,Toss a bit of food to it to keep it calm.
+dialogue.dm.line.the_feast.yard_opt_sneak,Step quietly and stay downwind of the kennel.
+dialogue.dm.line.the_feast.yard_sneak_fail,You see glowing eyes in the darkness of the kennel door before one of the largest hounds you've ever seen comes out of the doorway without a sound.
+dialogue.dm.line.the_feast.yard_sneak_pass,"The hound rolls over and makes a weird noise, but doesn't wake up."
+dialogue.elsie.line.the_feast.ring_elsie,That's Nell's. She was out here a couple days ago looking for it. And again yesterday.
+dialogue.grist.line.the_feast.feast_grist_hires,"Two days, at sunrise. I could use a man like you."
+dialogue.grist.line.the_feast.feast_grist_sacks,You carried two of the large sacks.
+dialogue.grist.line.the_feast.feast_grist_same_time,At the same time. All the way down the hill.
+dialogue.grist.line.the_feast.invite_grist,You the one they were talking about? {0}? Come by the inn tonight. After dark.
+dialogue.grist.line.the_feast.mill_fled_grist,"I don't blame you for running. Tough buggers, those collectors."
+dialogue.grist.line.the_feast.mill_grist_storehouse,They've been taking darn near everything they can get their hands on. Bringing it all up to the manor. My sister's lass works up there. Says they're putting everything in the kitchen storehouse.
+dialogue.grist.line.the_feast.mill_lost_grist,"Thanks for trying anyway. Tough buggers, those collectors."
+dialogue.grist.line.the_feast.mill_my_cart,That's my cart!
+dialogue.grist.line.the_feast.mill_no_cart,How am I supposed to get grain without a cart?
+dialogue.grist.line.the_feast.plan_grist_spring,How many of us will see the spring again if we don't?
+dialogue.grist.line.the_feast.village_mill_stuck,"It's stuck. I can make out something blocking it, but can't get whatever it is to budge."
+dialogue.grist.line.the_feast.yard_keep_down,"We know, Barnaby. Keep your voice down."
+dialogue.harold.line.the_feast.feast_harold_thanks,"Yes, sir. Thank you, sir."
+dialogue.harold.line.the_feast.feast_harold_yes_1,"Yes, sir."
+dialogue.harold.line.the_feast.feast_harold_yes_2,"Yes, sir."
+dialogue.hester.line.the_feast.kitchen_hester_says,Don't drop it and don't talk to anyone. You should be fine.
+dialogue.lionel.line.the_feast.race_won_lionel,"Uncle, it's not fair. Do you see the muscles on that blacksmith?"
+dialogue.lord_percival_thistledown.line.the_feast.guest_percival_asks,You must have seen a great many manors in your travels. How does the great Thistledown Manor compare?
+dialogue.lord_percival_thistledown.line.the_feast.race_speech_1,"My people. One year ago today, I came to you eager to make a difference. Today I am your lord, your benefactor, your friend. The bounty of Thistledown has never been greater!"
+dialogue.lord_percival_thistledown.line.the_feast.race_speech_2,"In honor of my first glorious year, I give you this week-long celebration. Let us partake of the festivities with the long-awaited chariot race. Three laps around the fountain. Begin!"
+dialogue.lord_percival_thistledown.line.the_feast.race_won_percival,A stranger! How marvelous! My guests shall be pleased. You shall sit at my table for the grand banquet.
+dialogue.lord_percival_thistledown.line.the_feast.race_won_tiresome,"Don't be tiresome, Lionel."
+dialogue.lord_percival_thistledown.line.the_feast.song_again,Marvelous! Again!
+dialogue.lord_percival_thistledown.line.the_feast.song_tribute,"And now, the children of Briarwood have prepared a tribute in my honor."
+dialogue.mabel.line.the_feast.feast_new_song,We have a new song for everyone. The children wrote it themselves.
+dialogue.mabel.line.the_feast.feast_note_1_a_or_b_1,Lord Percival Thistledown—
+dialogue.mabel.line.the_feast.feast_note_1_a_or_b_5,My students call him Petty Percy Pissledown.
+dialogue.mabel.line.the_feast.feast_very_alliterative,It's very alliterative.
+dialogue.mabel.line.the_feast.meeting_allegation,"You're thinking of allegation, Barnaby. Alliteration is just when several words start with the same sound."
+dialogue.mabel.line.the_feast.meeting_alliteration,"Well, you have to appreciate the alliteration. Hehehe."
+dialogue.mabel.line.the_feast.meeting_pretend,Of course I can't condone it. I just pretend not to hear it.
+dialogue.mabel.line.the_feast.plan_all_of_it_b,ALL OF IT!
+dialogue.mabel.line.the_feast.plan_all_of_it_d,ALL OF IT!
+dialogue.mabel.line.the_feast.plan_everyone_cousin,"Everyone's your cousin, Tobias."
+dialogue.mabel.line.the_feast.plan_guards_eight,Eight. Don't forget about the ones at the gate.
+dialogue.mabel.line.the_feast.plan_mabel_banquet,"The banquet, Tobias. Lord Pissledown has our grain, flour, carts, vegetables..."
+dialogue.mabel.line.the_feast.plan_mabel_race,Or you win the race. The notice says the winner sits at his lordship's table. Doubt Petty Percy knows one servant from another.
+dialogue.mabel.line.the_feast.plan_mabel_right,"Right. So, we all know why we're here."
+dialogue.mabel.line.the_feast.plan_mabel_winter,And Her Royal Hoggness. He's going to use all of it up in a week while we'll be stuck with almost nothing through the winter.
+dialogue.mabel.line.the_feast.plan_repossession,"It's not stealing, it's repossession."
+dialogue.mabel.line.the_feast.plan_song,There's one more thing. The children have been rehearsing a song for the festivities.
+dialogue.mabel.line.the_feast.plan_take_it_all,We take it all back.
+dialogue.mabel.line.the_feast.the_meeting_6,"Little Tobias the Younger told me Lord Pissledown took one of the pigs, but he didn't tell me it was Her Royal Hoggness! The nerve!"
+dialogue.mabel.line.the_feast.the_meeting_9,"Barnaby, leave off. Can't you see this is just a traveler."
+dialogue.maisie.line.the_feast.amos_his_ma,Of course. His ma lives two doors down from the inn.
+dialogue.maisie.line.the_feast.amos_maisie,Amos.
+dialogue.maisie.line.the_feast.bear_won_best_roast,"The best of the roast is for you. Thank you! Best meal I've had in a long time, and it's all thanks to you."
+dialogue.maisie.line.the_feast.inn_ale_anyway,I'll get you an ale anyway. Wait right here.
+dialogue.maisie.line.the_feast.inn_coming_1,Coming right up.
+dialogue.maisie.line.the_feast.inn_coming_2,Coming right up.
+dialogue.maisie.line.the_feast.inn_maisie_hello,"Haven't seen you around here before. I'm Maisie. What can I get for you? We have ale and soup. Bread's gone, sorry to say."
+dialogue.maisie.line.the_feast.inn_on_the_house,"On the house. Abel there says nobody's ever using the rooms anyway, so you may as well. Nice to see a new face and it'd be good to have the company."
+dialogue.maisie.line.the_feast.mill_maisie_news,Barnaby was by at first light. Says the collectors are out at Grist's mill. Half the village went to watch. I suppose there's nothing else to do.
+dialogue.maisie.line.the_feast.plan_maisie_hester,"Hester, my cousin! She's been cook there since before his lordship took over the place. Not sure why she stayed, but I'm sure she'll let you in the back as kitchen help. Nobody sees the kitchen helpers."
+dialogue.maisie.line.the_feast.village_inn_maisie_brother,I wish my older brother was still nearby. He was a great hunter and I could really go for some fresh meat.
+dialogue.maisie.line.the_feast.yard_hound_lost_maisie,"I know, it tastes just awful, but it does its job."
+dialogue.nell.line.the_feast.plan_nell_thanks,Elsie said you found my ring? Thank you so much!
+dialogue.rufus.line.the_feast.mill_not_anymore,Not anymore.
+dialogue.rufus.line.the_feast.mill_rufus_asks,I don't remember seeing you here before. You're not on my list. Name and occupation?
+dialogue.rufus.line.the_feast.mill_rufus_reads,"Appointed celebration requirements gathering collector: Rufus Pickle. Collected: six sacks of milled flour and one cart. From: Oswald Grist, miller."
+dialogue.tobias.line.the_feast.amos_tobias_know,You know him?
+dialogue.tobias.line.the_feast.bear_fled_tomorrow,You can always try again tomorrow.
+dialogue.tobias.line.the_feast.bear_lost_tomorrow,You can always try again tomorrow.
+dialogue.tobias.line.the_feast.bear_won_thanks,"You did it! You took it down! Here, I owe you. That beast won't be troubling us anymore."
+dialogue.tobias.line.the_feast.bear_won_whats_going_on,What's going on?
+dialogue.tobias.line.the_feast.feast_note_1_a_or_b_2,Pompous jerk.
+dialogue.tobias.line.the_feast.feast_note_1_a_or_b_4,What? He is.
+dialogue.tobias.line.the_feast.guards_lost_tobias,"It took both of them to drag you out here. Between your distraction and the time it took them to get you out here, we got the carts loaded up and out."
+dialogue.tobias.line.the_feast.meeting_charges_q,Charges?
+dialogue.tobias.line.the_feast.meeting_hide_laugh,And hide the laugh?
+dialogue.tobias.line.the_feast.mill_tobias_carts,Except for the carts. Leaving them out in the open next to the storehouse.
+dialogue.tobias.line.the_feast.open_our_winter,That's our winter.
+dialogue.tobias.line.the_feast.plan_built_like,So is everyone else who'll be pulling. You're built like a horse anyway.
+dialogue.tobias.line.the_feast.plan_guards_cousins,The two at the gate don't count. They're my cousins.
+dialogue.tobias.line.the_feast.plan_guards_six,Six.
+dialogue.tobias.line.the_feast.plan_tobias_ale,For the ale!
+dialogue.tobias.line.the_feast.plan_tobias_hoggness,Her Royal Hoggness.
+dialogue.tobias.line.the_feast.race_lap3_tobias,Her Royal Hoggness?
+dialogue.tobias.line.the_feast.race_lost_backup,At least we have a backup plan. Kitchen help it is.
+dialogue.tobias.line.the_feast.the_meeting_10,Probably an adventurer.
+dialogue.tobias.line.the_feast.the_meeting_5,Probably for my prized sow. He took her too. Didn't give me a choice.
+dialogue.tobias.line.the_feast.village_farm_any_luck,Any luck with that bear?
+dialogue.tobias.line.the_feast.village_farm_ask,"Even the bears don't have food, I guess. Any chance I can convince you to take the bear out? The wife got me a healing potion just in case it gets me. You can have it if you take down the bear."
+dialogue.tobias.line.the_feast.village_farm_shutter,Great! Hold this shutter in place while I re-attach the hinges.
+encounter.set_pieces.line.kitchen_guards,Two of his lordship's guards.
+encounter.set_pieces.line.kitchen_hound,One of the largest hounds you've ever seen.
+encounter.set_pieces.line.mill_collectors,Rufus Pickle and his partner draw their blades.
+encounter.set_pieces.line.pond_bear,"A bear, as hungry as everyone else this winter."
+quest.the_feast.the_meeting.title,The Feast

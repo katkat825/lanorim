@@ -1,0 +1,53 @@
+{
+  "format": 2,
+  "name": "Tobias's Farm",
+  "columns": 12,
+  "rows": 9,
+  "map": "\n+-+-+-+-+-+-+-+-+-+-+-+-+\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . @ . . . . . .|\n+-+-+-+-+-+ + +-+-+-+-+-+\n",
+  "ground": "gggggggggggg\ngggggggggggg\ngggggggggggg\nggggddddgggg\nggggddddgggg\nggggddddgggg\nggggddddgggg\nggggddddgggg\nggggddddgggg\n",
+  "walls": "\n+e+e+e+e+e+e+e+e+e+e+e+e+\ne. . . . . . . . . . . .e\n+ + + + + + + + + + + + +\ne. . . . . . . . . . . .e\n+ + + + + + + + + + + + +\ne. . . . . . . . . . . .e\n+ + + + + + + + + + + + +\ne. . . . . . . . . . . .e\n+ + + + + + + + + + + + +\ne. . . . . . . . . . . .e\n+ + + + + + + + + + + + +\ne. . . . . . . . . . . .e\n+ + + + + + + + + + + + +\ne. . . . . . . . . . . .e\n+ + + + + + + + + + + + +\ne. . . . . . . . . . . .e\n+ + + + + + + + + + + + +\ne. . . . . . . . . . . .e\n+e+e+e+e+e+ + +e+e+e+e+e+\n",
+  "props": [
+    {
+      "id": "farmstead",
+      "x": 0,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "barn_small",
+      "x": 8,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "ploughed_field",
+      "x": 8,
+      "y": 5,
+      "turn": 0
+    },
+    {
+      "id": "chicken_coop",
+      "x": 4,
+      "y": 1,
+      "turn": 0
+    },
+    {
+      "id": "wagon",
+      "x": 3,
+      "y": 4,
+      "turn": 0
+    },
+    {
+      "id": "log_pile",
+      "x": 0,
+      "y": 7,
+      "turn": 0
+    },
+    {
+      "id": "bucket",
+      "x": 6,
+      "y": 3,
+      "turn": 0
+    }
+  ]
+}

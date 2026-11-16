@@ -1,0 +1,93 @@
+title: mill_morning
+speaker: dm
+---
+The next morning, you wake up with a slight twinge in your neck. The bed was lumpy, but it was a free bed. You stretch and bend to work out the twinge and then head down to the public room. #line:mill_wake
+Abel is raking out the hearth and doesn't even glance your way as you pass him. Maisie gives you a bright smile and nods at a nearby table. She sets a bowl of porridge in front of you. It's mostly just hot water with a scattering of oats. #line:mill_porridge
+Barnaby was by at first light. Says the collectors are out at Grist's mill. Half the village went to watch. I suppose there's nothing else to do. #line:mill_maisie_news #speaker:maisie
+<<jump mill_yard>>
+===
+title: mill_yard
+speaker: dm
+---
+After breakfast, you follow the lane out to the edge of Briarwood. The mill sits on the bend of a stream just past the last of the cottages. #line:mill_lane
+<<map mill_yard>>
+A small crowd is gathered at the edge of the mill yard watching as two men load sacks of flour onto a farm cart. A third man with flour dusting his hair and clothing stands in the doorway watching. #line:mill_crowd
+One of the collectors stops and picks up a ledger from the front of the cart. He glares about at the watching crowd before turning a page. He mutters to himself as he writes in the ledger. #line:mill_ledger
+Appointed celebration requirements gathering collector: Rufus Pickle. Collected: six sacks of milled flour and one cart. From: Oswald Grist, miller. #line:mill_rufus_reads #speaker:rufus
+That's my cart! #line:mill_my_cart #speaker:grist
+Not anymore. #line:mill_not_anymore #speaker:rufus
+How am I supposed to get grain without a cart? #line:mill_no_cart #speaker:grist
+Rufus shrugs and, ignoring the miller's question, glares around the crowd again. His gaze lands on you. #line:mill_gaze
+I don't remember seeing you here before. You're not on my list. Name and occupation? #line:mill_rufus_asks #speaker:rufus
+-> "That's more flour than a single feast could need." #line:mill_opt_intimidate
+    <<check intimidation 12>>
+    <<if $passed>>
+        Rufus looks at you for a moment longer. His partner is staring down at his own boots. The crowd around you is starting to look angry. Rufus and his partner each grab a single sack of flour off of the cart and quickly head up the lane, not quite running. #line:mill_intimidate_pass
+    <<else>>
+        Rufus smirks at you and nudges his partner. They both set down what they're holding and draw their weapons. #line:mill_intimidate_fail
+        <<set $mill_fight to true>>
+    <<endif>>
+-> "Mind if I take a look at that ledger?" #line:mill_opt_ledger
+    <<check investigation 12>>
+    <<if $passed>>
+        Rufus stares at you in surprise as you take the ledger out of his hand. In cramped handwriting you can make out that Grist's name is also listed on last week's page with "PAID IN FULL" printed clearly beside it. Rufus mutters about clerical errors as he and his partner head up the lane empty handed. #line:mill_ledger_pass
+    <<else>>
+        Rufus stares at you in surprise as you take the ledger out of his hand. His partner sneers at you and draws a short blade. #line:mill_ledger_fail
+        <<set $mill_fight to true>>
+    <<endif>>
+-> Step between Rufus and the cart. #line:mill_opt_step_between
+    <<set $mill_fight to true>>
+<<if $mill_fight>>
+    <<fight mill_collectors>>
+    <<if $fight == "won">>
+        Rufus drops his blade and runs for the lane. His partner looks at the cart and then runs after him. #line:mill_fight_won
+    <<elseif $fight == "fled">>
+        You come back a little while later to find the cart and flour gone. Grist is sitting on his doorstep with his head in his hands. #line:mill_fight_fled
+        I don't blame you for running. Tough buggers, those collectors. #line:mill_fled_grist #speaker:grist
+    <<else>>
+        Grist helps you back up and leads you over to sit on the doorstep. The collectors head up the lane with the cart, quickly moving out of sight. #line:mill_fight_lost
+        Thanks for trying anyway. Tough buggers, those collectors. #line:mill_lost_grist #speaker:grist
+    <<endif>>
+<<endif>>
+<<jump mill_after>>
+===
+title: mill_after
+speaker: dm
+---
+They've been taking darn near everything they can get their hands on. Bringing it all up to the manor. My sister's lass works up there. Says they're putting everything in the kitchen storehouse. #line:mill_grist_storehouse #speaker:grist
+Except for the carts. Leaving them out in the open next to the storehouse. #line:mill_tobias_carts #speaker:tobias
+The crowd starts breaking up, most heading back towards the village. Harold stays by the millpond with Elsie. She brushes non-existent flour off his sleeve in a nervous gesture. #line:mill_harold_elsie
+<<if $ring_quest>>
+    <<jump mill_ring>>
+<<endif>>
+<<jump mill_invitation>>
+===
+title: mill_ring
+speaker: dm
+---
+You remember the notice about Nell's ring and walk over to the edge of the millpond. The ground near the sluice gate is now trampled mud from the milling crowd. #line:ring_pond_edge
+-> Search the mud along the pond edge. #line:ring_opt_perception
+    <<check perception 8>>
+-> Work out where she'd most likely have dropped it. #line:ring_opt_investigation
+    <<check investigation 8>>
+<<if $passed>>
+    Something glitters in the mud. You move a reed out of the way and pick it up. It's a plain copper ring, worn thin on one side. #line:ring_pass
+<<else>>
+    You don't see anything by the pond edge so you lean over the sluice for a better look. The bank gives way under you and you slide down into the water up to your waist. Shivering, you climb out to see the glint of something shiny on your sleeve. Brushing the rest of the mud off, you see it's a copper ring. #line:ring_fail
+<<endif>>
+<<set $ring_found to true>>
+That's Nell's. She was out here a couple days ago looking for it. And again yesterday. #line:ring_elsie #speaker:elsie
+<<jump mill_invitation>>
+===
+title: mill_invitation
+speaker: dm
+---
+<<if $clearing_stayed>>
+    Barnaby falls into step beside you on the walk back. He stays quiet for a bit. Then, looking around to make sure nobody else is near, leans towards you to whisper. #line:invite_barnaby_walk
+    Mabel says come by the inn tonight. After dark. #line:invite_barnaby #speaker:barnaby
+<<else>>
+    You the one they were talking about? {$hero_name}? Come by the inn tonight. After dark. #line:invite_grist #speaker:grist
+<<endif>>
+You wander around the town and surrounding area for the rest of the day. #line:invite_wander
+<<jump the_plan>>
+===

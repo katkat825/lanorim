@@ -1,0 +1,129 @@
+title: storehouse
+speaker: dm
+---
+<<map kitchen_yard>>
+The kitchen yard is a trampled dirt area with several farm carts, a storehouse, a kennel, and the back gate. You also see a very large boar being roasted over coals on a new-looking spit. #line:yard_intro
+The back gate creaks as you open it to let in Barnaby, Tobias, Grist, Harold, and Maisie. It creaks again as Maisie closes it behind her. #line:yard_gate_creaks
+That's my spit! #line:yard_my_spit #speaker:barnaby
+We know, Barnaby. Keep your voice down. #line:yard_keep_down #speaker:grist
+As you approach the kennel you hear the deep breathing of something large asleep. #line:yard_kennel
+-> Step quietly and stay downwind of the kennel. #line:yard_opt_sneak
+    <<check stealth 12>>
+    <<if $passed>>
+        The hound rolls over and makes a weird noise, but doesn't wake up. #line:yard_sneak_pass
+    <<else>>
+        You see glowing eyes in the darkness of the kennel door before one of the largest hounds you've ever seen comes out of the doorway without a sound. #line:yard_sneak_fail
+        <<set $hound_fight to true>>
+    <<endif>>
+-> Toss a bit of food to it to keep it calm. #line:yard_opt_food
+    <<check animal_handling 12>>
+    <<if $passed>>
+        The hound slinks out of the kennel to grab the food you tossed. It snatches the food up and runs back into the kennel without a sound. #line:yard_food_pass
+    <<else>>
+        You see glowing eyes in the darkness of the kennel door before one of the largest hounds you've ever seen comes out of the doorway without a sound. #line:yard_food_fail
+        <<set $hound_fight to true>>
+    <<endif>>
+-> Take it out before it wakes up. #line:yard_opt_attack
+    <<set $hound_fight to true>>
+<<if $hound_fight>>
+    <<fight kitchen_hound>>
+    <<if $fight == "won">>
+        The hound lies still in the straw. Harold lets out a sigh of relief as Maisie stifles a nervous giggle. #line:yard_hound_won
+    <<elseif $fight == "fled">>
+        You back out of the yard with the hound snapping at your heels. Barnaby swings the gate shut on its nose. #line:yard_hound_fled
+        After a few minutes, you sneak back in through the gate and take a roundabout route to the storehouse. #line:yard_hound_fled_back
+    <<else>>
+        You wake up to Grist and Barnaby closing the back gate with the hound on the outside. Maisie is beside you holding you in a sitting position and handing you a cup. #line:yard_hound_lost
+        The drink tastes horrible as you force yourself to swallow the entire contents. Maisie gives you a sympathetic look. #line:yard_hound_lost_drink
+        I know, it tastes just awful, but it does its job. #line:yard_hound_lost_maisie #speaker:maisie
+        She's definitely right about that. You feel like you just got a good night's sleep. #line:yard_hound_lost_rested
+        <<rest long>>
+    <<endif>>
+<<endif>>
+<<jump storehouse_door>>
+===
+title: storehouse_door
+speaker: dm
+---
+<<if $storehouse_key>>
+    The long iron key turns in the lock on the first try. Grist pats you on the shoulder and Tobias lets out a whispered cheer. #line:door_key
+    <<jump storehouse_open>>
+<<endif>>
+The iron storehouse door is locked. You go around the side and find a small service hatch, just big enough for a person to slip through. The hatch is stuck tight. #line:door_locked
+-> Force the hatch open. #line:door_opt_force
+    <<check athletics 10>>
+    <<if $passed>>
+        The hatch gives with a dull crack. You manage to wriggle through and open the iron door from the inside, letting the rest of the group in. #line:door_force_pass
+    <<else>>
+        The hatch gives all at once and you fall head first, landing on a pile of turnips. When you can see again, you make your way to the iron door and open it from the inside, letting the rest of the group in. #line:door_force_fail
+    <<endif>>
+-> Pick the lock on the storehouse door. #line:door_opt_pick
+    <<check sleight_of_hand 10>>
+    <<if $passed>>
+        The lock clicks open. Harold seems to look at you a bit differently after that. #line:door_pick_pass
+    <<else>>
+        Something snaps inside the lock and it won't budge. You head over to force the service hatch open. The hatch gives all at once and you fall head first, landing on a pile of turnips. When you can see again, you make your way to the iron door and open it from the inside, letting the rest of the group in. #line:door_pick_fail
+    <<endif>>
+<<jump storehouse_open>>
+===
+title: storehouse_open
+speaker: dm
+---
+Someone shines a lantern towards the doorway. You see sacks of grain up to the ceiling, barrels of produce, crocks of butter, cheeses stacked like firewood, meats hanging from the beams. #line:open_lantern
+Grist puts his hand on one of the sacks of flour that has his name stamped on it. #line:open_grist_sack
+That's our winter. #line:open_our_winter #speaker:tobias
+That's three winters. #line:open_three_winters #speaker:barnaby
+<<if $amos_follows>>
+    <<jump storehouse_amos>>
+<<endif>>
+<<jump storehouse_done>>
+===
+title: storehouse_amos
+speaker: dm
+---
+I thought I might find you here. #line:amos_find_you #speaker:amos
+Amos. #line:amos_maisie #speaker:maisie
+Maisie. #line:amos_says_maisie #speaker:amos
+You know him? #line:amos_tobias_know #speaker:tobias
+Of course. His ma lives two doors down from the inn. #line:amos_his_ma #speaker:maisie
+Amos looks at the open storehouse door and then at you. #line:amos_looks
+-> "Your ma is also living on the leftovers, Amos." #line:amos_opt_persuade
+    <<check persuasion 12>>
+    <<if $passed>>
+        Amos is quiet for a long moment. Then he tells Maisie to make sure his mother gets the best ham and goes back inside. #line:amos_persuade_pass
+    <<else>>
+        Amos shakes his head before calling for the guards. #line:amos_persuade_fail
+        <<set $guard_fight to true>>
+    <<endif>>
+-> Take him out quickly before he can call for the guards. #line:amos_opt_knockout
+    <<check dex 12>>
+    <<if $passed>>
+        Amos falls to the ground at your feet. He's still breathing and will likely be out for at least an hour. Barnaby and Tobias move him into the storehouse and set him on the pile of turnips. #line:amos_knockout_pass
+    <<else>>
+        Amos dodges your blow and yells for the guards. #line:amos_knockout_fail
+        <<set $guard_fight to true>>
+    <<endif>>
+<<if $guard_fight>>
+    <<fight kitchen_guards>>
+    <<if $fight == "won">>
+        The guards break and run back into the house. Amos is nowhere to be seen. #line:guards_won
+    <<elseif $fight == "fled">>
+        You look around and see that the villagers with you have not been idle. The last of the carts is already rolling out the back gate. You run for them and jump onto one of the carts. #line:guards_fled
+    <<else>>
+        You come to on the ground outside the storehouse. Your head still aches and you groan. Tobias is sitting next to you. #line:guards_lost
+        It took both of them to drag you out here. Between your distraction and the time it took them to get you out here, we got the carts loaded up and out. #line:guards_lost_tobias #speaker:tobias
+        You look around the kitchen yard. The guards are nowhere to be seen. #line:guards_lost_gone
+    <<endif>>
+<<endif>>
+<<jump storehouse_done>>
+===
+title: storehouse_done
+speaker: dm
+---
+Hester comes out from the kitchen, wiping her hands on her apron. She checks the boar on the spit and declares that it's done. #line:done_hester
+A boy comes running out of the kitchen leading a pig, loudly announcing that he got her. #line:done_boy_pig
+Tobias jumps up and runs over, throwing his arms around Her Royal Hoggness with tears in his eyes. The pig pushes her nose into him in affection. #line:done_tobias_hugs
+Barnaby and Grist each grab an end of the spit and carry boar and spit out the back gate. Both are grinning ear to ear as they pass you. #line:done_spit
+Tobias, still crying in joy, leads his pig out the gate behind them. #line:done_tobias_leads
+<<jump the_feast_green>>
+===

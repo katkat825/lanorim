@@ -1,0 +1,64 @@
+{
+  "tables": [
+    {
+      "id": "set_pieces",
+      "entries": [
+        {
+          "id": "mill_collectors",
+          "level": 1,
+          "difficulty": "low",
+          "kind": "fight",
+          "map": "mill_yard",
+          "monsters": [
+            {
+              "monster": "bandit",
+              "leader": true
+            },
+            {
+              "monster": "bandit"
+            }
+          ],
+          "morale": "leader"
+        },
+        {
+          "id": "pond_bear",
+          "level": 1,
+          "difficulty": "high",
+          "kind": "fight",
+          "map": "briarwood_pond",
+          "monsters": [
+            {
+              "monster": "black_bear"
+            }
+          ]
+        },
+        {
+          "id": "kitchen_hound",
+          "level": 1,
+          "difficulty": "low",
+          "kind": "fight",
+          "map": "kitchen_yard",
+          "monsters": [
+            {
+              "monster": "wolf"
+            }
+          ]
+        },
+        {
+          "id": "kitchen_guards",
+          "level": 1,
+          "difficulty": "low",
+          "kind": "fight",
+          "map": "kitchen_yard_guards",
+          "monsters": [
+            {
+              "monster": "guard",
+              "count": "2"
+            }
+          ],
+          "morale": "half"
+        }
+      ]
+    }
+  ]
+}

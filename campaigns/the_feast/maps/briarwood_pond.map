@@ -1,0 +1,70 @@
+{
+  "format": 2,
+  "name": "Briarwood Pond",
+  "columns": 14,
+  "rows": 10,
+  "map": "\n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . 1 . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . _ _ _ . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . _ _ _ . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . @ . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + +\n",
+  "ground": "gggggggggggggg\ngggggggggggggg\ngggggggggggggg\ngggggggggggggg\nggggwwwwwggggg\nggggwwwwwggggg\nggggwwwwwggggg\nggggwwwwwggggg\ngggggggggggggg\ngggggggggggggg\n",
+  "props": [
+    {
+      "id": "bush_large",
+      "x": 1,
+      "y": 7,
+      "turn": 0
+    },
+    {
+      "id": "bush_large",
+      "x": 3,
+      "y": 8,
+      "turn": 0
+    },
+    {
+      "id": "oak_1",
+      "x": 13,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "pine_1",
+      "x": 12,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "oak_2",
+      "x": 8,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "pine_2",
+      "x": 0,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "tree_clump",
+      "x": 0,
+      "y": 2,
+      "turn": 0
+    },
+    {
+      "id": "birch_1",
+      "x": 13,
+      "y": 6,
+      "turn": 0
+    },
+    {
+      "id": "rock_medium_1",
+      "x": 9,
+      "y": 8,
+      "turn": 0
+    },
+    {
+      "id": "fern",
+      "x": 11,
+      "y": 7,
+      "turn": 0
+    }
+  ]
+}

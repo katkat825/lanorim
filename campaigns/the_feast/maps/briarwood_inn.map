@@ -1,0 +1,119 @@
+{
+  "format": 2,
+  "name": "Briarwood Inn",
+  "columns": 12,
+  "rows": 9,
+  "map": "\n+-+-+-+-+-+-+-+-+-+-+-+-+\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . . . . . . .|\n+ + + + + + + + + + + + +\n|. . . . . . @ . . . . .|\n+-+-+-+-+-+-+x+-+-+-+-+-+\n",
+  "ground": "pppppppppppp\npppppppppppp\npppppppppppp\npppppppppppp\npppppppppppp\npppppppppppp\npppppppppppp\npppppppppppp\npppppppppppp\n",
+  "walls": "\n+p+p+p+p+p+p+p+p+p+p+p+p+\np. . . . . . . . . . . .p\n+ + + + + + + + + + + + +\np. . . . . . . . . . . .p\n+ + + + + + + + + + + + +\np. . . . . . . . . . . .p\n+ + + + + + + + + + + + +\np. . . . . . . . . . . .p\n+ + + + + + + + + + + + +\np. . . . . . . . . . . .p\n+ + + + + + + + + + + + +\np. . . . . . . . . . . .p\n+ + + + + + + + + + + + +\np. . . . . . . . . . . .p\n+ + + + + + + + + + + + +\np. . . . . . . . . . . .p\n+ + + + + + + + + + + + +\np. . . . . . . . . . . .p\n+p+p+p+p+p+p+p+p+p+p+p+p+\n",
+  "props": [
+    {
+      "id": "fireplace",
+      "x": 0,
+      "y": 3,
+      "turn": 1
+    },
+    {
+      "id": "kitchen_counter",
+      "x": 3,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "kitchen_counter",
+      "x": 4,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "kitchen_counter",
+      "x": 5,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "keg",
+      "x": 6,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "barrel",
+      "x": 7,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "stairs",
+      "x": 11,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "table_round",
+      "x": 3,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "chair_wooden",
+      "x": 2,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "chair_wooden",
+      "x": 4,
+      "y": 3,
+      "turn": 2
+    },
+    {
+      "id": "table_round",
+      "x": 8,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "chair_wooden",
+      "x": 7,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "chair_wooden",
+      "x": 9,
+      "y": 3,
+      "turn": 2
+    },
+    {
+      "id": "table_round",
+      "x": 3,
+      "y": 6,
+      "turn": 0
+    },
+    {
+      "id": "chair_wooden",
+      "x": 2,
+      "y": 6,
+      "turn": 0
+    },
+    {
+      "id": "table_round",
+      "x": 9,
+      "y": 6,
+      "turn": 0
+    },
+    {
+      "id": "chair_wooden",
+      "x": 10,
+      "y": 6,
+      "turn": 2
+    },
+    {
+      "id": "candlestick",
+      "x": 6,
+      "y": 4,
+      "turn": 0
+    }
+  ]
+}

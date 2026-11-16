@@ -1,0 +1,33 @@
+title: feast_memory
+speaker: dm
+---
+// what the story remembers, declared for the Yarn compiler. Nothing jumps here.
+// Scene 1
+<<declare $clearing_stayed = false>>
+<<declare $clearing_left = false>>
+// Scenes 2-4: Nell's ring
+<<declare $ring_quest = false>>
+<<declare $ring_found = false>>
+// Scene 3
+<<declare $mill_fight = false>>
+// Scene 4: the plan
+<<declare $enter_race = false>>
+<<declare $enter_kitchen = false>>
+// Scene 4.5: the village
+<<declare $visited_inn = false>>
+<<declare $visited_mill = false>>
+<<declare $visited_farm = false>>
+<<declare $hunting = false>>
+<<declare $bear_won = false>>
+<<declare $bear_fight = false>>
+// Scene 5: the race
+<<declare $race_passes = 0>>
+<<declare $race_won = false>>
+<<declare $race_lost = false>>
+// Scenes 6-7: the banquet and the storehouse
+<<declare $storehouse_key = false>>
+<<declare $amos_notices = false>>
+<<declare $amos_follows = false>>
+<<declare $hound_fight = false>>
+<<declare $guard_fight = false>>
+===

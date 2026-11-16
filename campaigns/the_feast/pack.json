@@ -1,0 +1,31 @@
+{
+  "id": "the_feast",
+  "kind": "campaign",
+  "format": 1,
+  "engine": "0.1",
+  "author": "Maps & Math Rocks",
+  "tags": [
+    "short"
+  ],
+  "chapters": [
+    {
+      "id": "the_meeting",
+      "maps": [
+        "the_meeting",
+        "briarwood",
+        "briarwood_inn",
+        "mill_yard",
+        "tobias_farm",
+        "briarwood_pond",
+        "manor_drive",
+        "great_hall",
+        "kitchen_yard",
+        "kitchen_yard_guards",
+        "village_green"
+      ]
+    }
+  ],
+  "start": "the_meeting",
+  "gm_screen": "plains",
+  "defeat": "continues"
+}

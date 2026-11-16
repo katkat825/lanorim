@@ -1,0 +1,62 @@
+title: the_plan
+speaker: dm
+---
+<<map briarwood_inn>>
+You make your way back to the inn after watching a beautiful sunset from the top of a nearby hill. Abel is standing in front of the door, blocking the way. He opens the door for you and follows you inside. #line:plan_abel_door
+Abel locks the door behind him, looks around the room, nods once, and heads to the bar to start pouring drinks. #line:plan_abel_locks
+There are more people here than you would expect. Mabel is sitting at a table in the middle of the room. Everyone else seems to be waiting nervously. #line:plan_crowd
+Mabel calls you over and gestures to a seat next to her where there is already a tankard waiting for you. #line:plan_seat
+<<if $ring_found>>
+    A woman in a patched shawl grabs your hand on the way past, her eyes tearing up just a little. #line:plan_nell_grabs
+    Elsie said you found my ring? Thank you so much! #line:plan_nell_thanks #speaker:nell
+    She hands you a towel-wrapped dish. The plowman's pie smells delicious. #line:plan_nell_pie
+    You share it around. There is just enough for everyone to get a slice. It tastes just as good as it smells. #line:plan_pie_shared
+<<endif>>
+Mabel taps a wooden spoon on the table until everyone turns to look at her. #line:plan_spoon
+Right. So, we all know why we're here. #line:plan_mabel_right #speaker:mabel
+For the ale! #line:plan_tobias_ale #speaker:tobias
+The banquet, Tobias. Lord Pissledown has our grain, flour, carts, vegetables... #line:plan_mabel_banquet #speaker:mabel
+Her Royal Hoggness. #line:plan_tobias_hoggness #speaker:tobias
+And Her Royal Hoggness. He's going to use all of it up in a week while we'll be stuck with almost nothing through the winter. #line:plan_mabel_winter #speaker:mabel
+I don't know about this plan. None in my family ever been in the stocks. Not sure it's worth the risk. #line:plan_barnaby_stocks #speaker:barnaby
+How many of us will see the spring again if we don't? #line:plan_grist_spring #speaker:grist
+It's not stealing, it's repossession. #line:plan_repossession #speaker:mabel
+In the hush that follows Mabel's words, everyone turns to look at you. You get the distinct impression that this meeting was planned specifically with you in mind. #line:plan_hush
+-> "Then we take it back. All of it." #line:plan_opt_take_back
+    All of it? #line:plan_all_of_it_a #speaker:barnaby
+    ALL OF IT! #line:plan_all_of_it_b #speaker:mabel
+    Barnaby plops down into a nearby chair and puts his head in his hands. #line:plan_barnaby_plops_a
+-> "It sounds like you already have a plan." #line:plan_opt_have_plan
+    We take it all back. #line:plan_take_it_all #speaker:mabel
+    All of it? #line:plan_all_of_it_c #speaker:barnaby
+    ALL OF IT! #line:plan_all_of_it_d #speaker:mabel
+    Barnaby plops down into a nearby chair and puts his head in his hands. #line:plan_barnaby_plops_b
+-> "How many guards does he have?" #line:plan_opt_guards
+    Six. #line:plan_guards_six #speaker:tobias
+    Eight. Don't forget about the ones at the gate. #line:plan_guards_eight #speaker:mabel
+    The two at the gate don't count. They're my cousins. #line:plan_guards_cousins #speaker:tobias
+    Everyone's your cousin, Tobias. #line:plan_everyone_cousin #speaker:mabel
+<<jump plan_together>>
+===
+title: plan_together
+speaker: dm
+---
+Over the course of the evening a plan comes together. Mostly by everyone arguing about it, but it does come together. #line:plan_comes_together
+The banquet is on the last night of the week-long celebration. Everyone in the manor will be in the great hall. All of the carts taken by the collectors are sitting in the yard right next to the kitchen and the storehouse. Those carts could be loaded up and halfway to Briarwood by the time anyone in the manor realized it. #line:plan_the_banquet
+Only one thing is needed: someone on the inside to open the storehouse and kitchen yard. #line:plan_inside
+Hester, my cousin! She's been cook there since before his lordship took over the place. Not sure why she stayed, but I'm sure she'll let you in the back as kitchen help. Nobody sees the kitchen helpers. #line:plan_maisie_hester #speaker:maisie
+Or you win the race. The notice says the winner sits at his lordship's table. Doubt Petty Percy knows one servant from another. #line:plan_mabel_race #speaker:mabel
+She looks at Barnaby. Then pointedly looks down at his arms. Barnaby looks at his arms, so does Tobias. Barnaby gulps and looks at you. #line:plan_arms
+I'm a blacksmith, not a horse. #line:plan_not_a_horse #speaker:barnaby
+So is everyone else who'll be pulling. You're built like a horse anyway. #line:plan_built_like #speaker:tobias
+-> "We enter the race." #line:plan_opt_race
+    <<set $enter_race to true>>
+-> "I'll go in through the kitchens." #line:plan_opt_kitchen
+    <<set $enter_kitchen to true>>
+There's one more thing. The children have been rehearsing a song for the festivities. #line:plan_song #speaker:mabel
+Tobias the Younger grins for the first time all night. #line:plan_younger_grins
+Abel unbars the door and the crowd heads out in smaller groups so it doesn't look like a meeting. Maisie gathers up the still mostly full dishes and tankards. #line:plan_crowd_leaves
+The next several days are quiet. There is nothing left for the collectors to gather from this village. #line:plan_quiet_days
+<<rest long>>
+<<jump before_celebration>>
+===

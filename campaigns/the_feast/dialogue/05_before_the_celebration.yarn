@@ -1,0 +1,106 @@
+title: before_celebration
+speaker: dm
+---
+<<map briarwood>>
+The days leading up to Lord Percival's grand celebration pass slowly. The collectors have stopped coming to Briarwood. There's little enough left for them to take. #line:village_days
+Life in the village continues as best it can. Every once in a while someone mentions the upcoming celebration with a grim face. #line:village_grim
+With no pressing obligations before the celebration begins, you decide to spend some time exploring the village and surrounding countryside. #line:village_explore
+<<jump village_hub>>
+===
+title: village_hub
+speaker: dm
+---
+<<map briarwood>>
+What would you like to do before the celebration? #line:village_ask
+-> Visit the inn. #line:village_opt_inn
+    <<jump village_inn>>
+-> Visit Grist's mill. <<if not $visited_mill>> #line:village_opt_mill
+    <<jump village_mill>>
+-> Visit Tobias's farm. #line:village_opt_farm
+    <<jump village_farm>>
+-> Skip exploration and proceed with the plan. #line:village_opt_skip
+    <<jump celebration_begins>>
+===
+title: village_inn
+speaker: dm
+---
+<<map briarwood_inn>>
+<<if $visited_inn>>
+    Abel is still behind the bar, polishing the same perfectly clean tankard. #line:village_inn_again
+    <<if $bear_won>>
+        Maisie waves at you from the kitchen door, still humming. #line:village_inn_maisie_humming
+        <<jump village_hub>>
+    <<endif>>
+    Maisie glances at the bow behind the bar, then at you. #line:village_inn_bow_again
+<<else>>
+    <<set $visited_inn to true>>
+    Abel is behind the bar, polishing a tankard that looks perfectly clean already. #line:village_inn_abel
+    Back here in the middle of the day? Well, I suppose there are worse places to be. #line:village_inn_abel_says #speaker:abel
+    <<if $bear_won>>
+        <<jump village_hub>>
+    <<endif>>
+    Maisie comes out of the kitchen carrying a small basket. She glances over at a bow leaning just behind the bar. #line:village_inn_maisie_basket
+    I wish my older brother was still nearby. He was a great hunter and I could really go for some fresh meat. #line:village_inn_maisie_brother #speaker:maisie
+<<endif>>
+-> "I could go hunting for you." #line:village_inn_opt_hunt
+    <<jump hunt_for_food>>
+-> Maybe another time. #line:village_inn_opt_later
+    <<jump village_hub>>
+===
+title: village_farm
+speaker: dm
+---
+<<map tobias_farm>>
+<<if $visited_farm>>
+    <<if $bear_won>>
+        Tobias waves from the roof of the barn, a hammer in one hand. Her Royal Hoggness's empty pen still has fresh straw in it. #line:village_farm_after_bear
+        <<jump village_hub>>
+    <<endif>>
+    Tobias looks up from a fence post the bear knocked over in the night. #line:village_farm_again
+    Any luck with that bear? #line:village_farm_any_luck #speaker:tobias
+<<else>>
+    <<set $visited_farm to true>>
+    The sound of a hammer rings out as you approach the farmhouse. You go around to the back of the house where the banging is coming from. #line:village_farm_hammer
+    Great! Hold this shutter in place while I re-attach the hinges. #line:village_farm_shutter #speaker:tobias
+    <<if $bear_won>>
+        You help Tobias with that and a couple of other repairs. He talks about the bear the whole time, and how glad he is it won't be back. #line:village_farm_repairs_after
+        <<jump village_hub>>
+    <<endif>>
+    As you help Tobias with that and a couple of other repairs, he tells you about the bear that keeps coming onto the farm and causing damage. #line:village_farm_repairs
+    Even the bears don't have food, I guess. Any chance I can convince you to take the bear out? The wife got me a healing potion just in case it gets me. You can have it if you take down the bear. #line:village_farm_ask #speaker:tobias
+<<endif>>
+-> "I'll take care of your bear." #line:village_farm_opt_bear
+    <<jump bear_trouble>>
+-> Not right now. #line:village_farm_opt_later
+    <<jump village_hub>>
+===
+title: village_mill
+speaker: dm
+---
+<<set $visited_mill to true>>
+<<map mill_yard>>
+The mill wheel is silent and still as you approach. Grist is on the pond edge. He stops pacing and turns to you as you approach. #line:village_mill_silent
+It's stuck. I can make out something blocking it, but can't get whatever it is to budge. #line:village_mill_stuck #speaker:grist
+You go into the mill pond to see if you can get it taken care of. #line:village_mill_wade
+-> Push the blockage out of the way. #line:village_mill_opt_push
+    <<check athletics 12>>
+-> Find a lever and wedge it between the wheel and the blockage. #line:village_mill_opt_lever
+    <<check investigation 12>>
+<<if $passed>>
+    The blockage gives way and the wheel starts moving again with a creak. #line:village_mill_pass
+<<else>>
+    You can't get the blockage to budge. Grist jumps in and together you manage to get it moved. It gives with a crack and you fall face-first into the mill wheel. You need to sit for a few minutes afterwards until you stop seeing stars. #line:village_mill_fail
+<<endif>>
+<<jump village_hub>>
+===
+title: celebration_begins
+speaker: dm
+---
+<<if $enter_race>>
+    <<jump the_race>>
+<<endif>>
+The celebration begins at the manor. From the village, you can hear music and laughter drifting down from the manor every night. #line:kitchen_week
+On the last night of the celebration, you set off up the hill for the manor's back gate. #line:kitchen_set_off
+<<rest long>>
+<<jump banquet_kitchen>>
+===

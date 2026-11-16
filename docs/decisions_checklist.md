@@ -38,8 +38,8 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   and 1 reaction. This is what keeps one hero against a group fair. (Answers run-log question 15.)
 - **[DECIDED] Death save** — single d20 ≥ 10, no mods, intentional solo delta.
   - **[DECIDED 2026-10-01] At 0 HP: the single death save** ("delta: at 0 hp do a single death saving throw"). (`09-25 Q3`)
-    **[OPEN 2026-10-03] Does damage taken while at 0 HP bring a save of its own?** Not built: the answer can be read
-    two ways (`_design_docs/OPEN_QUESTIONS.md`, top). As built, it doesn't: the save comes at the start of the turn.
+    **[DECIDED 2026-10-01, recorded here 2026-11-16] Damage taken while at 0 HP brings no save of its own:** the single
+    death save at the start of the turn is the whole rule, as built (`_design_docs/OPEN_QUESTIONS.md` §0: "as-built is already correct").
   - **[DEFERRED 2026-10-01] Massive damage** killing outright (SRD: damage at 0 HP equal to your HP maximum). (`09-25 Q3`; `deferred.md`)
 - **[DECIDED 2026-10-08] The solo deltas for the casters** (Kathleen: "the melee classes are already well speced for
   solo play, so we should focus more on the casters"; `cc_task_h` Part 3, `_design_docs/SOLO_BALANCE_IDEAS.md`). Each is
@@ -62,6 +62,11 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   - **Morale, per fight, by the campaign** (`"morale": "none" | "leader" | "half"` on a fight entry, `"leader": true`
     on a monster): broken, the enemies run for the nearest way off the map, or surrender with none; the fight is won
     and the story can read `$fight_broke`. None is the default. (3.4)
+- **[DECIDED 2026-11-16] Sneak Attack in solo play: whenever the rogue doesn't have Disadvantage** (Kathleen: "sneak attack
+  works if they don't have disadvantage"). SRD 5.2.1 (p.61) needs Advantage, or an ally next to the target and no
+  Disadvantage. A solo hero never has that ally, so this delta stands in for the second half. Still once a turn, still a
+  Finesse or Ranged weapon. It replaces the 11-03 offer to build Steady Aim (which stays narrate-only). Task H's sims had
+  the rogue weakest at level 1 (bandits 78%, goblin camp 45%). *To build:* `_design_docs/cc_task_sa-solo-sneak-attack.md`.
 - **[DECIDED 2026-10-08] The campaign authoring rules** (`docs/campaign_authoring_rules.md`): the **solo budget** (a
   fight's `level` and `difficulty` held to the SRD's XP Budget per Character for ONE character) and the **enemy cap**
   (2 at levels 1-2, 3 at 3-4, 4 at 5-10, 5 at 11+), and **two keys** (a check that gates the story has a second skill on
@@ -275,7 +280,7 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   Cleric). Details in `v1_class_roster.md`.
 - **[DECIDED] Save model** — reload-on-death. autosave on events plus manual saves, save all if feasible, otherwise last 10. 
 - **[DECIDED] Character-creation flow** — guided vs. freeform; order of picks. [DECIDED] whatever's easiest
-- **[OPEN] Encounter & map authoring format** — how a campaign places monsters and lays out a fight. *(Build status 2026-09-24: maps + spawns exist in the map format; a story starts a fight with `<<fight id>>`; encounter tables name a monster group and a map. The authoring UI is the map builder.)*
+- **[DECIDED] Encounter & map authoring format** — how a campaign places monsters and lays out a fight. *(Build status 2026-09-24: maps + spawns exist in the map format; a story starts a fight with `<<fight id>>`; encounter tables name a monster group and a map. The authoring UI is the map builder.)*
 - **[DECIDED] Dialog presentation** — popup with Continue button.
 - **[DECIDED-ish] Tutorial / onboarding.** - tutorial campaigns. ask player how familiar they are with ttrpg (beginner, intermediate, advanced) and select related tutorial campaign. tutorial campaigns are replayable
 - **[DECIDED] Fleeing combat** — an option? [DECIDED-ish] whatever is more expected and is easier. *(Built 2026-09-24: step off an open edge of the map; provokes opportunity attacks unless you Disengage; a closed map can't be fled.)*
@@ -423,3 +428,209 @@ additive (currently deferred; v1 is flat 40 slots) · global inventory / lost-an
   - **Archway and Window** join Wall and Door as kinds of line in the map builder's Walls and doors.
 - **[DECIDED 2026-11-03] Any equip from any source costs an action during a fight** (Kathleen, on the CS run log): the
   sheet's Swap, the HUD's, and the pack's Equip, Off hand and Unequip. Free outside a fight.
+
+## 9. 2026-11-16: closed, and questions for you
+
+*Written by Claude (Cowork), 2026-11-16, after checking the repo as of today's commit (`79f8b81`). Everything still open
+from the 11-03 review is here except the Crucible (its own doc, `_design_docs/crucible_procgen_assessment.md`) and
+Steam/R. Each question has my suggestion. Answer inline, the way you do in OPEN_QUESTIONS.*
+
+### Closed today
+
+- **[DECIDED 2026-11-16] Sneak Attack in solo play** works whenever the rogue doesn't have Disadvantage (§1). The code
+  change is `_design_docs/cc_task_sa-solo-sneak-attack.md`.
+- **[DECIDED 2026-11-16] The M4 follow-ups are fine as they are** (`RUN_LOG_2026-11-03_m4.md`, Questions 1–5):
+  - no stone archway or window for the dungeon;
+  - no timber window;
+  - one wooden village arch for all three village styles;
+  - no pillars beside an archway or a window;
+  - a removed NPC that's saved again becomes a prop, with a warning.
+- **[DECIDED 2026-11-16] The four visual checks from 10-27 are fine:**
+  - the village buildings' scale;
+  - the hover colours;
+  - the hair swatch on the Barbarian, Druid and Cleric;
+  - Recently deleted maps at the foot of the Chapters tab.
+
+  Anything new goes in `ui_issues_working-notes.md`.
+- **[DECIDED 2026-10-01, recorded 2026-11-16] Damage while at 0 HP:** no save of its own; the single death save at the
+  start of the turn is the whole rule, as built. You answered "as-built is already correct" (`OPEN_QUESTIONS.md` §0),
+  but §1 above still said [OPEN]. It's marked there now.
+
+### Balance
+
+- **[DECIDED 2026-11-16] Level 1 casters in the rat cellar: which fix?** Task H's sims (`RUN_LOG_2026-10-08_h.md`, 200
+  fights a cell, Standard, slot and keepsake on): Mage **75%** wins / 34% drops, Cleric **87 / 18**, Druid **86 /
+  19**. The target is 90% wins and under 25% drops. Story brings the Cleric and Druid in and the Mage to 82%. Every
+  caster meets the target in the level 2 fights, and nearly everything is won from level 3 on. So this is a level 1
+  problem, and mostly the Mage's.
+
+  **One caution on the numbers first.** In `sim classes`, the bot is a plain player on purpose:
+  - it never casts Mage Armor before the fight (only `sim mage-balance` does);
+  - it takes the first spells on offer at creation;
+  - it rates every option by damage only, so it never casts Sleep or other control;
+  - it walks in when nothing reaches, and never steps back out of melee.
+
+  A person playing a level 1 Mage would do better on at least the first point. With Mage Armor cast before the fight,
+  `mage-balance` had the level 1 Mage at 79% across the sample fights (not the rat cellar alone). So the bot explains
+  some of the gap, but probably not all of it. I couldn't run the sims here (Cowork can't build), so all of this is
+  from the 10-08 numbers.
+
+  Options:
+  - **A. Measure properly first, no rule change.** Teach the bot to cast its "before the fight" spell, and to keep a
+    ranged caster out of melee when it can. Then re-run the casters at level 1. If they reach 90%, nothing else
+    changes. *Effort:* small (the bot is one 240-line file, `content/Combat/AutoPlayer.cs`).
+  - **B. A caster's ward: temporary hit points at the start of each fight**, for the Mage, Cleric and Druid only. The
+    amount would be proficiency bonus + level (3 at level 1, 4 at level 2), at levels 1–4 only, so it fades out where
+    the sims say it isn't needed. It soaks the two rats' first bites, which is where a level 1 caster's run is lost.
+    It would go behind its own switch in `SoloRules`, like the slot and the keepsake. It's a delta, so the sheet says
+    "solo bonus". *Effort:* small. *Unknown:* how much it moves the Mage. The amount is a starting guess for the sims
+    to tune.
+  - **C. Leave the rules and fix it in the content.** Lower the enemy cap at level 1 from 2 to 1 for a Low fight (the
+    campaign check warns, never refuses), and let Story difficulty cover players who want it gentler. The catch: the
+    beginner tutorial's `granary_loft_rats` (two giant rats at level 1) would be warned about, and campaigns lose a
+    common opener.
+
+  **My recommendation: A and B as one small task.** Fix the bot first, so the numbers describe a person and not the
+  bot. Build the ward behind a switch, run the casters with it on and off, and you decide from that table. If A alone
+  gets them to 90%, you leave the ward off and it costs nothing. I'd avoid a bigger hit die (you declined it on 10-01)
+  and gentler enemy crits (they help the fighter too, who doesn't need it).
+
+  **decision** - measure properly. if needed than all casters get an additional skill: a free cantrip that gives prof bonus + level temp hp for 10 minutes and has 1 use per long rest.
+  *To build:* `_design_docs/cc_task_cb-caster-balance.md` (the bot first; the ward behind `SoloRules.CasterWard`, on only
+  if the casters still miss the target; working name "Lone Ward", for the Mage, Cleric and Druid like the extra slot).
+
+### From task I (barks, the Crucible's engine pieces)
+
+- **[DECIDED 2026-11-16] Story barks vs the cooldown.** A `<<bark>>` the story asks for still waits on the 20-second cooldown, so one
+  straight after a Victory line is dropped (`content/Companions/Chatter.cs`, `Allows`). *Suggestion:* a story bark
+  always plays and still starts the cooldown. An author who writes `<<bark>>` wants it said. 
+    - agreed
+  *To build:* `cc_task_nt-answers-11-16.md` Part 1.
+- **[DECIDED] "Hurt" for the Danger pool is Bloodied** (half hit points or less), the SRD's word. *Suggestion:* keep it.
+  If any damage counted, the companion would warn about a scratch. keep it
+- **[DECIDED] A knockout reads like a fall in the fight's log.** In a fight whose defeat continues (the Crucible), a failed
+  death save ends the bout, but the log and the board say what they always say. *Suggestion:* add a "knocked out" line
+  for those fights (small; locale plus one branch). 
+    - new pools added to campaign_authoring > Non-Campaign Authoring > Bark Pools > Knock-Out
+  *To build:* `cc_task_nt-answers-11-16.md` Part 2 (imports the pool, plays it on a knockout, and a "knocked out" log line).
+- **[DECIDED] More than 6 characters needs a layout pass.** `"characters"` takes up to 20, but the book's character page is
+  laid out for five. *Suggestion:* a scrolling list or a second page. That's your layout (#5), and it only matters once
+  the Crucible pack exists. 
+    - second page
+  *To build:* `cc_task_nt-answers-11-16.md` Part 3.
+- **[DEFERRED] Campaign consequences, please confirm.** Campaign-wide additions (or `"consequences": "replace"`) are built
+  (§8 above). Encounter- or NPC-scoped lines (the goat's own lines, only around the goat) aren't. *Suggestion:* confirm
+  what's built, and defer the scoped ones (`deferred.md`).
+  *Recorded 2026-11-16:* campaign-wide additions confirmed; scoped lines deferred (`cc_task_nt-answers-11-16.md` Part 6 adds them to `deferred.md`).
+
+### From task M
+
+- **[DECIDED] The Workshop is on panels over the open book**, not written on its pages like the contents and the map
+  builder (`deferred.md`). *Suggestion:* keep panels for v1. Cards, tabs and the problems panel don't fit a page's
+  column.
+    - keep as-is
+
+### The tutorials (engine asks A1, A3, A5, A7)
+
+Checked today: A2 (no starting shop) is built (`"starting_shop": false` in the beginner pack). A1, A3 and A5 aren't.
+A4 and A6 weren't on the 11-03 list.
+
+- **[DECIDED] A1, the beginner's ready-made hero.** You said (TUTORIAL_BEGINNER_CONTENTS 0.2): no choice, start as a
+  Barbarian or Fighter, and switch to a Mage later to show spells. Today the tutorial starts from normal character
+  creation. Two things to decide:
+  1. **Fighter or Barbarian?** *Suggestion:* Fighter. The bar is plain (no Rage to explain), and Second Wind teaches
+     "a thing your class gives you".
+  2. **Is the Mage switch in v1?** It needs a second ready-made hero and a story command that swaps the hero mid-
+     campaign, which nothing does yet. *Suggestion:* yes to the Fighter, defer the switch. Spells are taught by the
+     sheet's cards and the Spells page meanwhile. The other choice is a second, short ready-made Mage chapter.
+    - keep as-is 
+  *Recorded 2026-11-16 (Cowork's reading of "keep as-is"):* the beginner tutorial keeps ordinary character creation. No
+  ready-made hero and no Mage switch in v1.
+- **[DECIDED] A3, a "tip" command** (`<<tip sheet>>`, `<<tip dice>>`) that opens the help card at that section.
+  *Suggestion:* build it without the "highlight part of the screen" half. F1 help already exists, so it's small.
+    - go with your suggestion
+  *To build:* `cc_task_nt-answers-11-16.md` Part 4.
+- **[OPEN] A5, "the first time" companion lines:** the first natural 20, natural 1, crit, drop to 0, advantage roll and
+  condition, anywhere in the game. The bark bank is loaded now, which it wasn't when A5 was written.
+  *Suggestion:* yes. It does more for beginners than another tutorial scene. You'd write about 8 lines for each of the 5
+  voices (`DIALOG_POOLS.md` has the sizing). The engine side is a small task once the lines exist.
+- **[DECIDED] A7, telling the tutorials apart:** the picker offers one campaign per tier (`tutorial_beginner`,
+  `tutorial_intermediate`, `tutorial_expert`). Intermediate and Expert are trims of the same story, so neither assumes
+  the Beginner one was played. *Suggestion:* close it as done.
+    - go with your suggestion
+
+### The flagship 1–20 campaign ("The Lanorim Binding")
+
+Draft: `_design_docs/campaigns/vaquinar - m&mr campaign/`. Checked today: none of the custom stat blocks or engine asks
+below exist yet. `content/srd/monsters/lanorim.json` still holds only `goblin_archer` and `death_knight`. `<<silver>>`
+and `<<copper>>` are built (task K).
+
+- **[OPEN] Seven custom stat blocks:** Velmir (CR 14), Faolan (CR 8), the breach (CR 8), the old oak (CR 11), the
+  ward-sentinels (CR 8), Theron (CR 11), and the Warden of the Founding (CR 17, a copy of your `death_knight` retagged
+  `construct`). Who writes them, and how?
+  *Suggestion:*
+  - You write what each one *is* in a line or two: its signature move, and what it should feel like.
+  - Claude Code then builds each on an SRD 5.2.1 stat block of the same CR, using only what the engine already
+    plays: Multiattack, save-or-condition, recharge, resistance, and the spell system for casters. No legendary
+    actions (skipped for v1). They go in `lanorim.json`, marked `not_in_srd`.
+  - The Warden can be done now: it's a copy.
+  - Minis are yours.
+  - These only matter when the campaign is built. Is the flagship a v1 campaign, or after launch? That decides when.
+- **[OPEN] The engine asks.** Not scheduled. My read of each, cheapest first:
+  - **A round counter in a fight** (L18 `$pin_depth`): small. A read-only `$fight_round`.
+  - **Pronoun tokens** (`{they}` and the like): small. The hero has no pronouns yet, so it's a creation choice plus
+    tokens.
+  - **A social challenge** (three successes before three failures, L17): probably no engine work. Checks plus story
+    variables and a loop in Yarn can do it today. A Workshop block would be nice, not needed.
+  - **An ordered puzzle** (L15 garden): the same, Yarn variables.
+  - **A surge zone** (a spell gets +1 die, and spills on a 1–5): medium. A per-fight flag, and the spell code reads it.
+  - **Warp marks** (conditions with small tics): medium. A new condition kind with a per-turn tic.
+  - **A fight with a skill sequence alongside it** (L8, L13): large. Checks offered as an action inside a fight, with
+    the story reading the results.
+  - **A free-text line** (L20, optional): defer.
+
+  *Suggestion:* when the campaign is scheduled, do the round counter and pronouns as one small task, then write L15 and
+  L17 in Yarn to see if they need anything, and leave the interleave for last.
+
+  **[DECIDED]** - going a more traditional route with the flagship level 1-20 campaign.
+
+### Release prep (not Steam)
+
+From task F unless noted. These are the non-Steam half of shipping.
+
+- **[OPEN] Export templates, then `checks/check-export.ps1`.** Nothing has been exported yet as far as the repo shows.
+  You install Godot 4.7.1 .NET export templates (Editor → Manage Export Templates → Download and Install), then run
+  `.\checks\check-export.ps1` and `-Dev`. I can't see your Godot folder from here, so I don't know whether the
+  templates are installed. *Suggestion:* do it soon. It's the only check that tests the build a player gets.
+- **[DECIDED 2026-11-16] The publisher name.** `company_name` is blank in both presets (`game/export_presets.cfg`). *Suggestion:* the
+  studio or business name you'll sell under, the same one that goes on the store page later. It's yours. I won't
+  guess it.
+    - for now, go with Lanorim I guess
+  *To build:* `cc_task_nt-answers-11-16.md` Part 5 (company name "Lanorim" in both presets).
+- **[OPEN] The icon.** None yet, so the build shows Godot's (`application/icon` is empty in both presets, and `project.godot` sets no `config/icon`). It's yours
+  (#5). It needs a 256×256 `.ico` for Windows and a PNG for the project.
+- **[DECIDED] The SRD notice's link.** The credits join the PDF's wrapped `…/by/4.0/ legalcode` into
+  `https://creativecommons.org/licenses/by/4.0/legalcode`. *Suggestion:* accept it. That's Creative Commons' address for
+  the CC BY 4.0 legal code, and the space came from the PDF's line wrap. Keep it in the legal review's list.
+    - accept it
+  *Recorded:* `cc_task_nt-answers-11-16.md` Part 5 notes it in `srd_legal_decisions.md`.
+- **[DECIDED] Godot's licence.** Godot (MIT) is on the credits and in `THIRD_PARTY.md`. *Suggestion:* ship Godot's full MIT
+  licence text and its third-party notices, not only its name. MIT requires the copyright and permission notice in
+  every copy, and Godot's docs ask exports to include its licence. I'm fairly sure of this, but it belongs in the legal
+  review.
+    - go with your suggestion
+  *To build:* `cc_task_nt-answers-11-16.md` Part 5 (Godot's licence text and notices on the credits page).
+- **[DECIDED] Wood047's source** (the dice tray's wood). `THIRD_PARTY.md` lists it as ambientCG's (CC0), from its name only.
+  No download record was found. *Suggestion:* if you remember getting it from ambientCG, confirm. If not, download
+  Wood047 from ambientCG again, so the row is true.
+    - I remember downloading it from ambientCG
+  *To build:* `cc_task_nt-answers-11-16.md` Part 5 (the `THIRD_PARTY.md` row says confirmed).
+- **[OPEN] The Workshop content policy** (`_design_docs/CONTENT_POLICY_DRAFT.md`, still a draft from 09-24). It's the
+  rules for what players may upload. *Suggestion:* read it once and mark what you'd change. Its §7 (takedowns) is for a
+  lawyer. It has to be final before the Workshop is public, so it gates R's Workshop step.
+
+### Housekeeping
+
+- **[DECIDED] §3's "Encounter & map authoring format" still says [OPEN].** It's built: the map builder, encounter tables
+  and the Workshop's fights. *Suggestion:* mark it decided, as built.
+    - I've updated that to decided

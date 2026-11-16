@@ -1,0 +1,44 @@
+title: briarwood_arrival
+speaker: dm
+---
+<<map briarwood>>
+You approach the village of Briarwood just after sunset. On a post next to the road is an announcement board with several notices on it. #line:inn_board
+The first notice is the largest, written in an ornate hand. #line:inn_notice_1_intro
+BY ORDER OF HIS LORDSHIP, THE HONOURABLE LORD PERCIVAL THISTLEDOWN. #line:inn_notice_1_a
+Let it be known throughout the land that a GRAND CELEBRATION shall be held at Thistledown Manor on the final week of this month, the twelfth month of the most beloved Lord Percival Thistledown's first glorious year of governance. #line:inn_notice_1_b
+The festivities shall commence with a chariot race. Contestants shall mount chariots pulled by servants and race to the finish line. The winner shall receive the honor of sitting at the great Lord's table during the banquet on the final night of the celebration. #line:inn_notice_1_c
+Leading up to this week of festivities, all villagers are reminded of their obligations heretofore declared in the recent Celebratory Provisioning Levy. #line:inn_notice_1_d
+All outstanding contributions of coin, livestock, grain, produce, and farm carts must be surrendered to The Great Lord Thistledown's appointed celebration requirements gathering collectors upon their request. #line:inn_notice_1_e
+LONG MAY THE ILLUSTRIOUS LORD THISTLEDOWN PROSPER! #line:inn_notice_1_f
+A smaller notice is pinned beneath it. #line:inn_notice_2_intro
+Lost Wedding Ring. Lost my wedding ring somewhere near the old mill yesterday afternoon. Reward offered. Don't have much coin, but I can mend clothes and make a good plowman's pie. Nell. #line:inn_notice_2_a
+PS. Please don't tell my husband. I'll never hear the end of it. #line:inn_notice_2_b
+-> Look for the ring in the morning. #line:inn_opt_ring
+    <<set $ring_quest to true>>
+-> Continue to the village. #line:inn_opt_continue
+<<jump briarwood_inn>>
+===
+title: briarwood_inn
+speaker: dm
+---
+You continue down the road until you see a larger building with a faded sign hanging lopsided off one hinge. A painted tankard and bed are still mostly visible on the sign. #line:inn_sign
+<<map briarwood_inn>>
+As you enter the inn, the barkeep nods and goes back to drying a tankard he's just washed. The wash basin is full of steaming, soapy water which matches the unusual cleanliness of the rest of the public room. #line:inn_enter
+A serving wench smiles at you and gestures towards a table she just finished cleaning. You walk past a few tables where people are eating a thin soup and drinking from tankards and take a seat at the indicated table. #line:inn_seat
+Haven't seen you around here before. I'm Maisie. What can I get for you? We have ale and soup. Bread's gone, sorry to say. #line:inn_maisie_hello #speaker:maisie
+-> Ale and soup, please. And a room for the night. #line:inn_opt_ale_soup
+    Coming right up. #line:inn_coming_1 #speaker:maisie
+-> Ale and a room for the night, please. #line:inn_opt_ale
+    Coming right up. #line:inn_coming_2 #speaker:maisie
+-> Just a room for the night, please. #line:inn_opt_room
+    I'll get you an ale anyway. Wait right here. #line:inn_ale_anyway #speaker:maisie
+Snippets of conversation reach you as you wait for Maisie to return. #line:inn_snippets
+"Soup's thin today." "Soup's been thin for months." "But it's harvest. Sorry state of affairs." #line:inn_snip_soup
+"Pretty girl, Maisie." "Needs to get some more meat on her bones." "We all need more meat on our bones." "Too true." #line:inn_snip_maisie
+"Harold still courting the miller's daughter?" "Sure is. Waiting till he gets more money." "Ain't likely to happen." #line:inn_snip_harold
+Maisie smiles brightly at you as she sets down a bowl and a tankard. #line:inn_maisie_returns
+On the house. Abel there says nobody's ever using the rooms anyway, so you may as well. Nice to see a new face and it'd be good to have the company. #line:inn_on_the_house #speaker:maisie
+The taste of mostly water in both food and drink might have something to do with why they're on the house. #line:inn_mostly_water
+<<rest long>>
+<<jump mill_morning>>
+===

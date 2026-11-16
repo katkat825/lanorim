@@ -1,0 +1,106 @@
+title: the_race
+speaker: dm
+---
+<<map manor_drive>>
+It's the first day of the celebration. The sun shines brightly down on Thistledown Manor in the cold autumn air. Someone has hung garlands and other decorations from every window. #line:race_first_day
+A stone drive loops around a fountain in front of the house. A statue of a fish spits water into the basin of the fountain. Its nose shows the distinct signs of recent repairs. #line:race_fountain
+Villagers line the hedges along the drive, not seeming to react much to the four "chariots" lined up at the start. Mostly these are just farm carts with the backs cut off and painted in sloppy bright colors. #line:race_chariots
+Barnaby and Tobias are already standing between the shafts of one of the carts. They're wearing borrowed livery and Barnaby's barely fits. #line:race_livery
+As you approach this cart you see GRIST on the side where the gold paint hasn't completely covered. Barnaby grumbles under his breath and glares at Tobias. Tobias just grins at you. #line:race_grist_cart
+There are three more carts lined up alongside yours and the other three riders call out introductions. #line:race_riders
+Sir Godfrey Bunting is a large man with two very nervous footmen waiting at his cart. #line:race_godfrey
+Lady Prudence Kettle is being pulled by her gardener and his son, who don't seem surprised that she is knitting something. #line:race_prudence
+Lionel Spratt has four men between the shafts of his cart. He clears his throat pointedly and one of the servants, with a start, informs you that Lionel is Lord Percival's nephew. #line:race_lionel
+You and the other riders fall silent as a man steps up onto the stand, scroll in hand. The ring of keys at his belt jingles every time he moves. #line:race_steward
+Tobias whispers to you that this is Amos Harker, the steward, who has keys for everything. #line:race_amos_whisper
+All rise for His Lordship, the Honorable Lord Percival Thistledown. #line:race_all_rise #speaker:amos
+The villagers are already standing and the nobles in the stands don't get up off the benches. #line:race_already_standing
+Lord Percival climbs up on the stand, taking his time about it. His purple velvet clothing almost hides the thick chain of office around his neck. He lifts one gloved hand and looks out over the crowd. #line:race_percival_climbs
+Amos starts clapping. Lord Percival smiles a bit wider. Clearly this is what he was waiting for. After a minute, the crowd claps as well. #line:race_clapping
+My people. One year ago today, I came to you eager to make a difference. Today I am your lord, your benefactor, your friend. The bounty of Thistledown has never been greater! #line:race_speech_1 #speaker:lord_percival_thistledown
+In honor of my first glorious year, I give you this week-long celebration. Let us partake of the festivities with the long-awaited chariot race. Three laps around the fountain. Begin! #line:race_speech_2 #speaker:lord_percival_thistledown
+Amos lifts a lace handkerchief high in the air. He lets it drop, signaling the start of the race. Barnaby and Tobias lean in and the cart lurches forward. #line:race_start
+<<jump race_lap_1>>
+===
+title: race_lap_1
+speaker: dm
+---
+The cart bucks over the stone drive. The cart was designed for pulling grain and flour, not a rider. #line:race_lap1_bucks
+-> Brace yourself and hold on tight. #line:race_lap1_opt_brace
+    <<check athletics 12>>
+-> Move with the cart and keep your balance. #line:race_lap1_opt_balance
+    <<check acrobatics 12>>
+<<if $passed>>
+    <<set $race_passes to $race_passes + 1>>
+    You brace yourself as the two men settle into a steady trot. Lady Prudence is still knitting as you pass by her. #line:race_lap1_pass
+<<else>>
+    The cart hits a rut. You land hard on your backside and scramble back up to see Lady Prudence passing you, still knitting. #line:race_lap1_fail
+<<endif>>
+<<jump race_lap_2>>
+===
+title: race_lap_2
+speaker: dm
+---
+You pull up alongside Sir Godfrey. He sneers at you as he directs his servants to collide into your cart and calls out "Make way, peasant!" #line:race_lap2_godfrey
+-> "Is that the king in the stands?" #line:race_lap2_opt_king
+    <<check deception 12>>
+    <<if $passed>>
+        <<set $race_passes to $race_passes + 1>>
+        Sir Godfrey looks at the crowd. His footmen slow down to look as well and you quickly leave them behind. #line:race_lap2_king_pass
+    <<else>>
+        Sir Godfrey scoffs at you as his cart hits yours. Barnaby and Tobias get you back on track just before you hit the fountain, but Sir Godfrey pulls ahead of you. #line:race_lap2_king_fail
+    <<endif>>
+-> Time it so Sir Godfrey's footmen miss your cart. #line:race_lap2_opt_timing
+    <<check perception 12>>
+    <<if $passed>>
+        <<set $race_passes to $race_passes + 1>>
+        You watch the footmen coming and slow down just in time. Sir Godfrey's cart flies across your path, just missing you. His men can't stop in time to avoid the fountain and he sails over the front of it and into the water. #line:race_lap2_timing_pass
+    <<else>>
+        Your timing is just a hair off and his cart clips yours. Barnaby and Tobias get you back on track just before you hit the fountain, but Sir Godfrey pulls ahead of you. #line:race_lap2_timing_fail
+    <<endif>>
+<<jump race_lap_3>>
+===
+title: race_lap_3
+speaker: dm
+---
+Lionel Spratt is out in front. He's down to three men and you don't see any sign of the fourth. #line:race_lap3_lionel
+As you come to the halfway point of this last lap, a pig goes squealing through the crowd with a kitchen helper in pursuit. #line:race_lap3_pig
+Your cart slows considerably as Tobias stares at the pig. #line:race_lap3_slows
+Her Royal Hoggness? #line:race_lap3_tobias #speaker:tobias
+Tobias! Pull! PULL! #line:race_lap3_barnaby #speaker:barnaby
+-> "Tobias! We'll get her back. Pull!" #line:race_lap3_opt_persuade
+    <<check persuasion 12>>
+-> Jump down and shake Tobias out of it. #line:race_lap3_opt_jump
+    <<check acrobatics 12>>
+<<if $passed>>
+    <<set $race_passes to $race_passes + 1>>
+    Tobias starts with a jerk and leans back into the shafts. You draw level with Lionel's cart and it's neck and neck to the finish line, neither of you gaining a significant lead. #line:race_lap3_pass
+<<else>>
+    Tobias stares at the pig for a long moment before he starts really pulling again. You catch up to Lionel's cart when the finish line is just ahead of you. #line:race_lap3_fail
+<<endif>>
+<<jump race_finish>>
+===
+title: race_finish
+speaker: dm
+---
+<<if $race_passes >= 2>>
+    <<set $race_won to true>>
+    You pull ahead of Lionel at the last moment, crossing the finish line first, but just barely. #line:race_won_finish
+    The crowd along the hedges cheers as Barnaby and Tobias slow to a stop, panting as they sit down right where they are. #line:race_won_cheer
+    Lord Percival looks at you, then at the two men who pulled your "chariot" and decides to be gracious. #line:race_won_gracious
+    A stranger! How marvelous! My guests shall be pleased. You shall sit at my table for the grand banquet. #line:race_won_percival #speaker:lord_percival_thistledown
+    Uncle, it's not fair. Do you see the muscles on that blacksmith? #line:race_won_lionel #speaker:lionel
+    Don't be tiresome, Lionel. #line:race_won_tiresome #speaker:lord_percival_thistledown
+<<else>>
+    <<set $race_lost to true>>
+    Lionel pulls ahead of you at the last moment, crossing the finish line first, but just barely. #line:race_lost_finish
+    The crowd along the hedges is mostly silent, but one or two applaud his win as Barnaby and Tobias slow to a stop, panting as they sit down right where they are. #line:race_lost_silent
+    At least we have a backup plan. Kitchen help it is. #line:race_lost_backup #speaker:tobias
+<<endif>>
+The celebration continues for the rest of the week. From the village, you can hear music and laughter drifting down from the manor every night. #line:race_week
+<<rest long>>
+<<if $race_won>>
+    <<jump banquet_guest>>
+<<endif>>
+<<jump banquet_kitchen>>
+===

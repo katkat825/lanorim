@@ -1,0 +1,118 @@
+{
+  "format": 2,
+  "name": "Briarwood Village Green",
+  "columns": 16,
+  "rows": 12,
+  "map": "\n+ + + + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + + + +\n . . . . . . . . . . . . . . . . \n+ + + + + + + + + + + + + + + + +\n . . . . . . . . @ . . . . . . . \n+ + + + + + + + + + + + + + + + +\n",
+  "ground": "gggggggggggggggg\ngggggggggggggggg\ngggggggggggggggg\ngggggggggggggggg\ngggggggggggggggg\ngggggggggggggggg\ngggggggggggggggg\ngggggggggggggggg\ngggggggggggggggg\ngggggggddggggggg\ngggggggddggggggg\ngggggggddggggggg\n",
+  "props": [
+    {
+      "id": "campfire",
+      "x": 7,
+      "y": 5,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 3,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 4,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 5,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 10,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 11,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 12,
+      "y": 3,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 3,
+      "y": 8,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 4,
+      "y": 8,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 11,
+      "y": 8,
+      "turn": 0
+    },
+    {
+      "id": "table_long",
+      "x": 12,
+      "y": 8,
+      "turn": 0
+    },
+    {
+      "id": "keg",
+      "x": 14,
+      "y": 5,
+      "turn": 0
+    },
+    {
+      "id": "keg",
+      "x": 14,
+      "y": 6,
+      "turn": 0
+    },
+    {
+      "id": "barrel_apples",
+      "x": 1,
+      "y": 6,
+      "turn": 0
+    },
+    {
+      "id": "wagon",
+      "x": 0,
+      "y": 9,
+      "turn": 0
+    },
+    {
+      "id": "inn",
+      "x": 0,
+      "y": 0,
+      "turn": 0
+    },
+    {
+      "id": "well",
+      "x": 14,
+      "y": 1,
+      "turn": 0
+    },
+    {
+      "id": "house_small",
+      "x": 13,
+      "y": 10,
+      "turn": 0
+    }
+  ]
+}

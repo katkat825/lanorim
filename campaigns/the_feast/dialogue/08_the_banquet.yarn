@@ -1,0 +1,131 @@
+title: banquet_guest
+speaker: dm
+---
+<<map great_hall>>
+A footman takes your cloak as you enter the manor. He leads you into the great hall and up to the high table. He seats you two chairs over from what looks almost like a throne. Lionel Spratt is already occupying the seat between you and what must be Lord Percival's chair. #line:guest_seated
+<<jump banquet_hall>>
+===
+title: banquet_kitchen
+speaker: dm
+---
+<<map great_hall>>
+One of the manor's servants lets you in the back gate and you follow them to the kitchen's back door. Hester, the cook and Maisie's cousin, looks you up and down then hands you an apron and thrusts a platter of roast meat at you. #line:kitchen_hester_apron
+Don't drop it and don't talk to anyone. You should be fine. #line:kitchen_hester_says #speaker:hester
+You carry the platter out into the great hall. #line:kitchen_into_hall
+<<jump banquet_hall>>
+===
+title: banquet_hall
+speaker: dm
+---
+The great hall feels too warm. There's a fire at either end and more candles than the entire village of Briarwood likely has. #line:hall_too_warm
+Everywhere you look, there's more food. Platters of roast meat, bread still steaming from the ovens, seven types of cheese, apples baked in honey, and more. In the middle of the high table is a beautiful swan made out of pastry. #line:hall_food
+<<if $bear_won>>
+    After weeks of thin soup with occasional additions of meat from your hunting, the smell hits you like a punch to the gut. #line:hall_smell_hunting
+<<else>>
+    After weeks of thin soup, the smell hits you like a punch to the gut. #line:hall_smell
+<<endif>>
+Beside Lord Percival's chair, on a velvet cushion, sits a pink sow wearing a pink ribbon and a velvet leash. She's eating apples off of a silver platter. #line:hall_sow
+One of the servers walking by the cushion mutters under their breath about Lord Pissledown having wanted to roast a thin breeding sow instead of a boar. #line:hall_server_mutters
+Lord Percival gives the pig a quick pet on the head as he sits down. The pig ignores him. Amos, the steward, follows closely on his heels and takes a place standing behind his lordship's chair all evening. #line:hall_percival_sits
+<<if $race_won>>
+    <<jump banquet_guest_talk>>
+<<endif>>
+<<jump banquet_serving>>
+===
+title: banquet_guest_talk
+speaker: dm
+---
+The lord leans across his nephew to speak to you. #line:guest_leans
+You must have seen a great many manors in your travels. How does the great Thistledown Manor compare? #line:guest_percival_asks #speaker:lord_percival_thistledown
+-> "I've never seen anything like it, my lord." #line:guest_opt_flatter
+    <<check deception 8>>
+    <<if $passed>>
+        Lord Percival gives you a big smile. He tells you about the house for a very long time. During this monologue you discover which key on Amos's belt is the storehouse key. #line:guest_flatter_pass
+        <<set $storehouse_key to true>>
+    <<else>>
+        Lord Percival gives you a suspicious look before turning back to other guests. Amos keeps an eye on you for the rest of the evening. #line:guest_flatter_fail
+        <<set $amos_notices to true>>
+    <<endif>>
+-> Work out what answer he's really looking for. #line:guest_opt_insight
+    <<check insight 8>>
+    <<if $passed>>
+        You realize that he doesn't actually want to know your opinion. He wants to tell you about it. You let him rattle on for some time. During this monologue you discover which key on Amos's belt is the storehouse key. #line:guest_insight_pass
+        <<set $storehouse_key to true>>
+    <<else>>
+        You mention that the hall is very warm. The lord frowns and tells you that it's supposed to be warm. Amos keeps an eye on you for the rest of the evening. #line:guest_insight_fail
+        <<set $amos_notices to true>>
+    <<endif>>
+<<jump banquet_song>>
+===
+title: banquet_serving
+speaker: dm
+---
+You carry platters back and forth from the kitchen. Hester was right, nobody even looks at you. #line:serving_nobody_looks
+As you set a platter down on the high table, the steward, Amos, leans forward to whisper in the lord's ear. His ring of keys jingles right next to you. #line:serving_keys_jingle
+-> Lift the keys while he's whispering. #line:serving_opt_lift
+    <<check sleight_of_hand 12>>
+    <<if $passed>>
+        You muffle the keys in your apron and head back to the kitchen. Hester holds onto the keys for you until you're ready for the next phase of the plan. #line:serving_lift_pass
+        <<set $storehouse_key to true>>
+    <<else>>
+        Amos turns at just the wrong moment. You pretend you were reaching for something else and leave the keys. He keeps an eye on you for the rest of the night. #line:serving_lift_fail
+        <<set $amos_notices to true>>
+    <<endif>>
+-> Leave the keys. Hester will probably know another way in. #line:serving_opt_leave
+    You bring the empty platter back to the kitchen and ask Hester about other ways into the storehouse. She tells you about a service hatch with a broken lock. Nobody ever bothered with it since the hatch has been stuck for years. #line:serving_hester_hatch
+You bring the next platter out to the great hall just in time. #line:serving_next_platter
+<<jump banquet_song>>
+===
+title: banquet_song
+speaker: dm
+---
+Lord Percival taps his glass with a knife and the hall slowly falls quiet. #line:song_glass
+And now, the children of Briarwood have prepared a tribute in my honor. #line:song_tribute #speaker:lord_percival_thistledown
+Mabel comes in through the side door with eight children behind her. Tobias the Younger is in the front row and gives you a grin. #line:song_children
+The children start singing. #line:song_start
+"Proud Percival, our prosperous peer, pinches provisions from the poor. Plump of purse and pink of cheek, pray he picks our pockets more." #line:song_verse
+There is a long silence as everyone watches his lordship to see his reaction. #line:song_silence
+Marvelous! Again! #line:song_again #speaker:lord_percival_thistledown
+Amos starts looking at Mabel with suspicion as the children sing it again louder. Mabel puts her hand over her mouth to stifle her laughter. Several of the servants quickly go back to the kitchen, also covering their laughter. #line:song_laughter
+You feel that now is the time to enact the plan. #line:song_now
+-> Let the pig off her leash. #line:song_opt_leash
+    <<check sleight_of_hand 12>>
+    <<jump banquet_pig>>
+-> Offer the pig a bread roll and see what she does. #line:song_opt_roll
+    <<check animal_handling 12>>
+    <<jump banquet_pig>>
+-> Head to the kitchen. #line:song_opt_kitchen
+    <<if $amos_notices>>
+        You head out to the kitchen. Amos follows behind you. #line:song_kitchen_followed
+        <<set $amos_follows to true>>
+    <<elseif $race_won>>
+        Everyone is still focused on holding in their laughter or outrage. You manage to get ahold of Amos's key ring and head to the kitchen unseen as the children start on a third rendition at his lordship's insistence. #line:song_kitchen_keys
+        <<set $storehouse_key to true>>
+    <<else>>
+        Everyone is still focused on holding in their laughter or outrage. You make it to the kitchen unseen as the children start on a third rendition at his lordship's insistence. #line:song_kitchen_unseen
+    <<endif>>
+    <<jump banquet_out>>
+===
+title: banquet_pig
+speaker: dm
+---
+<<if $passed>>
+    The pig looks at all the food. She climbs up on the high table. A lady screams, plates go everywhere, and every servant in the hall converges on the pig. #line:pig_chaos
+    <<if $race_won>>
+        You manage to get ahold of Amos's key ring and head to the kitchen unseen. #line:pig_keys
+        <<set $storehouse_key to true>>
+    <<else>>
+        You head to the kitchen unseen. #line:pig_unseen
+    <<endif>>
+<<else>>
+    The pig doesn't move except to eat the food in front of her. By the time you give up, Amos has noticed and follows you to the kitchen. #line:pig_fail
+    <<set $amos_follows to true>>
+<<endif>>
+<<jump banquet_out>>
+===
+title: banquet_out
+speaker: dm
+---
+You make it out to the cold night air of the kitchen yard. A soft whistle comes from the back gate as you open it to let in your helpers. #line:banquet_whistle
+<<jump storehouse>>
+===
