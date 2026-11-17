@@ -16,7 +16,9 @@ namespace Content.Creation
         // every default creation offers, with the class, species and background already picked: learn says whether to
         // take the first spells too (a picture of the spell page wants them left)
         // `species` (cc_task_q's test hero): human unless asked; a species with lineages takes its first
-        public static void Defaults(Creation making, Library library, bool learn, string learnFirst = null, string species = "human")
+        // `learnFirst`: spells learned before the rest, in order (the sim's mage takes Mage Armor and Shield, cc_task_cb)
+        public static void Defaults(Creation making, Library library, bool learn, IReadOnlyList<string> learnFirst = null,
+                                    string species = "human")
         {
             Species.Kind kind = library.Kind(species) ?? library.Kind("human");
             making.Pick(kind);
@@ -29,14 +31,15 @@ namespace Content.Creation
 
             if (!learn) return;
 
-            if (learnFirst != null && library.Spells.Find(learnFirst) is { } first) making.Learn(first);
+            foreach (string id in learnFirst ?? Array.Empty<string>())
+                if (library.Spells.Find(id) is { } first) making.Learn(first);
 
             foreach (Core.Magic.Spell spell in making.SpellChoices.ToList())
                 if (making.CantripPicksLeft > 0 || making.SpellPicksLeft > 0) making.Learn(spell);
         }
 
         // the whole hero. `improve: false` leaves the improvements unpicked (the sim's MageBalance always has)
-        public static Hero Make(Library library, string cls, int level, string name, string learnFirst = null,
+        public static Hero Make(Library library, string cls, int level, string name, IReadOnlyList<string> learnFirst = null,
                                 bool improve = true, string species = "human")
         {
             var making = new Creation(library, library.Backgrounds);

@@ -136,10 +136,11 @@ namespace Content.Challengers
         }
 
         // THE TYPES THAT CAN STEP INTO THE ARENA: every type with monsters, and each shared list as a type of its own
-        // over the stat blocks no type claims (ChallengerType.Claims): "a plain gladiator uses the shared lists"
+        // over the stat blocks no type claims (ChallengerType.Claims): "a plain gladiator uses the shared lists". The
+        // shared lists draw only humanoids (ArenaFolk, cc_task_ca Part 1)
         IEnumerable<ChallengerType> Fielding()
         {
-            var unclaimed = _bestiary.Where(m => _find(m) != null && !_types.Any(t => t.Claims(m)))
+            var unclaimed = _bestiary.Where(m => ArenaFolk.Allows(_find(m)) && !_types.Any(t => t.Claims(m)))
                                      .Select(m => new Band(m, Core.Dice.DiceRoll.Flat(1)))
                                      .ToList();
 

@@ -39,13 +39,17 @@ namespace Content.Combat
             bool legal = LegalTargets().Contains(first);
             Attack attack = Selected.Attack;
 
-            bool close = Fight.Field.Distance(me, first) <= 1;
-            Advantage lean = Strike.Lean(me, first, close, Fight.Sees(me, first), Fight.Sees(first, me),
-                                         Fight.Band(me, first, attack));
+            Advantage lean = Fight.SwingLean(me, first, attack);
             int cover = Fight.Cover(me, first);
 
             double hit = AttackChance(attack.Modifier(me), first.ArmorClass + cover, lean);
             DiceRoll swing = attack.DamageFor(me);
+
+            // the riders the swing would carry (Sneak Attack), as Hero.Hit hands them over; a critical-only one
+            // isn't counted, as crits aren't (cc_task_sa)
+            double riders = Hero.RidersAt(Fight, Turn, first, attack)
+                                .Where(r => !r.OnlyOnCritical)
+                                .Sum(r => Math.Max(0, r.Amount.Average));
 
             return new Preview
             {
@@ -54,7 +58,7 @@ namespace Content.Combat
                 Targets = new[] { first },
                 HitChance = hit,
                 Damage = swing,
-                ExpectedDamage = hit * Math.Max(0, swing.Average),
+                ExpectedDamage = hit * (Math.Max(0, swing.Average) + riders),
             };
         }
 

@@ -42,5 +42,9 @@ namespace Content.Dialogue
         // danger ahead: a story's <<bark danger>>, and sometimes a fight's start (cc_task_i Part 2; Kathleen's
         // Bramble notes call it trouble_ahead)
         Danger,
+
+        // a bout lost by a knockout: a fight whose defeat continues, and the hero failed the death save (cc_task_nt
+        // Part 2; Kathleen's Knock-Out pool, 2026-11-16). A story-level moment, so it plays like a story's bark
+        KnockOut,
     }
 }

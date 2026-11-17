@@ -54,6 +54,15 @@ namespace Core.Combat
             return far || Crowded(attacker) ? Advantage.Disadvantage : Advantage.Flat;
         }
 
+        // the lean the attack roll will have, worked out before the roll the way Hit and Swing work it: the range
+        // band, a statblock's knacks, then everything Strike.Lean reads. Sneak Attack asks it, and so does the HUD's
+        // preview, so the two agree (cc_task_sa)
+        public Advantage SwingLean(Actor attacker, Actor target, Attack attack, Advantage extra = Advantage.Flat) =>
+            Strike.Lean(attacker, target, Field.Distance(attacker, target) <= 1, Sees(attacker, target),
+                        Sees(target, attacker),
+                        Band(attacker, target, attack).And(extra).And(KnackLean(attacker, target, attack)),
+                        FearInSight(attacker), attack);
+
         // SRD 5.2.1 Ranged Attacks in Close Combat: "within 5 feet of an enemy who can see you and
         // who doesn't have the Incapacitated condition" - weapons and spells alike
         public bool Crowded(Actor attacker) =>

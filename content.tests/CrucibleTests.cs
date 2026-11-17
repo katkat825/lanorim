@@ -381,9 +381,10 @@ namespace Content.Tests
             Assert.Equal(6, saves.FreeSlot("crucible_fixture", 8));
             Assert.Equal(-1, saves.FreeSlot("crucible_fixture"));
 
+            // the fixture is tagged "arena", so its page is the book's arena line, not one of its Pages (cc_task_ca Part 5)
             var book = new CampaignBook(new[] { Pack().Manifest }, saves);
-            Assert.True(book.Pages.Single().CanStartNew);
-            Assert.Equal(8, book.Pages.Single().Slots);
+            Assert.True(book.Arenas.Single().CanStartNew);
+            Assert.Equal(8, book.Arenas.Single().Slots);
         }
 
         [Fact]

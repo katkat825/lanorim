@@ -99,6 +99,13 @@ namespace Content.Screens
 
         public static readonly string ByKey = K("by");
 
+        // THE ENGINE'S AND THE RUNTIME'S OWN NOTICES, whole (cc_task_nt Part 5.2): Godot's MIT licence and its third-party
+        // notices, as Godot gives them at run time, and the .NET runtime's MIT licence and notices (game/licenses/)
+        public static readonly string EngineHeadingKey = K("engine_heading");
+        public static readonly string GodotLicenceKey = K("godot_licence");
+        public static readonly string DotnetLicenceKey = K("dotnet_licence");
+        public static readonly string BackKey = K("back");
+
         public static string SectionKey(CreditKind kind) => K("section_" + EnumWords.Id(kind));
 
         public static string RoleKey(CreditRole role) => K("role_" + EnumWords.Id(role));
@@ -106,7 +113,7 @@ namespace Content.Screens
         public static string LicenceKey(CreditLicence licence) => K("licence_" + EnumWords.Id(licence));
 
         public static IEnumerable<string> Keys() =>
-            new[] { TitleKey, NotAffiliatedKey, ByKey }
+            new[] { TitleKey, NotAffiliatedKey, ByKey, EngineHeadingKey, GodotLicenceKey, DotnetLicenceKey, BackKey }
                 .Concat(Enum.GetValues<CreditKind>().Select(SectionKey))
                 .Concat(Enum.GetValues<CreditRole>().Select(RoleKey))
                 .Concat(Enum.GetValues<CreditLicence>().Select(LicenceKey));

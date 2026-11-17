@@ -4,7 +4,7 @@
     python tools/import_barks.py --check    the same, writing nothing; exit 1 if the game is behind the vault
     python tools/import_barks.py --vault "D:/somewhere/Bark Pools"
 
-The vault (../campaign_authoring/Bark Pools by default) is READ, never written: one folder per pool, one file per
+The vault (../campaign_authoring/Non-Campaign Authoring/Bark Pools by default; Kathleen moved it there) is READ, never written: one folder per pool, one file per
 companion, `<Pool>/<companion>.md`:
 
     dragon                       line 1, the body
@@ -33,7 +33,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VAULT = os.path.join(os.path.dirname(ROOT), 'campaign_authoring', 'Bark Pools')
+VAULT = os.path.join(os.path.dirname(ROOT), 'campaign_authoring', 'Non-Campaign Authoring', 'Bark Pools')
 BANKS = os.path.join(ROOT, 'content', 'srd', 'barks')
 LOCALE = os.path.join(ROOT, 'game', 'locale', 'game.csv')
 POOLS_CS = os.path.join(ROOT, 'content', 'Dialogue', 'BarkPools.cs')
@@ -51,7 +51,9 @@ HEADER = re.compile(r'^\s*(class(\(es\))?|voice)\s*:', re.IGNORECASE)
 
 
 def snake(name):
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', name.strip()).replace(' ', '_').lower()
+    # 'Knock-Out' (her folder) and 'KnockOut' (the engine's) are both knock_out
+    name = re.sub(r'[\s-]+', '_', name.strip())
+    return re.sub(r'(?<![_^])(?<!^)(?=[A-Z])', '_', name).lower()
 
 
 def known_pools():

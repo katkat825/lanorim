@@ -48,7 +48,7 @@ namespace Game.Dev
 
             int east = 1;
 
-            foreach (string id in new[] { "goblin", "bandit", "giant_rat" })
+            foreach (string id in DevArgs.LineupOf ?? new[] { "goblin", "bandit", "giant_rat" })
             {
                 Content.Monsters.Monster monster = Content.Schema.Library.Srd().Bestiary.Find(id);
                 Actor actor = monster.Spawn();

@@ -128,8 +128,8 @@
       "weapon_proficiencies": ["simple", "martial_finesse_or_light"],
       "features": [
         { "id": "sneak_attack", "trait": "rider", "level": 1, "amount": "1d6", "per_level": "1d6",
-      "per_levels": 2, "when": "with_advantage",
-      "note": "SRD 5.2.1 (p.61-62): once per turn, a Finesse or Ranged weapon attack with Advantage (or an ally beside the target - no party in a solo game). The dice grow a d6 every two levels",
+      "per_levels": 2, "when": "unless_disadvantage",
+      "note": "SOLO DELTA (Kathleen, 2026-11-16, cc_task_sa): once per turn, a Finesse or Ranged weapon attack that isn't at Disadvantage. SRD 5.2.1 (p.61-62) asks for Advantage, or an ally next to the target and no Disadvantage; a solo hero never has that ally, so the second half could never fire, and this stands in for it. The dice grow a d6 every two levels",
       "once_per_turn": true, "needs_weapon": "finesse_or_ranged" },
         { "id": "expertise", "level": 1 },
         { "id": "cunning_action", "trait": "nimble", "level": 2,
@@ -174,6 +174,7 @@
       "gold": 5, "gold_instead": 55,
       "weapon_proficiencies": ["simple"],
       "features": [
+        { "id": "lone_ward", "level": 1 },
         { "id": "arcane_spellcasting", "trait": "spellcasting", "level": 1, "ability": "int",
       "progression": "full", "cantrips_by_level": {"1": 3, "4": 4, "10": 5},
       "known_by_level": {"1": 4, "2": 5, "3": 6, "4": 7, "5": 9, "6": 10, "7": 11, "8": 12, "9": 14, "10": 15, "11": 16, "12": 16, "13": 17, "14": 18, "15": 19, "16": 21, "17": 22, "18": 23, "19": 24, "20": 25} },
@@ -214,6 +215,7 @@
       "gold": 7, "gold_instead": 110,
       "weapon_proficiencies": ["simple"],
       "features": [
+        { "id": "lone_ward", "level": 1 },
         { "id": "divine_spellcasting", "trait": "spellcasting", "level": 1, "ability": "wis",
       "progression": "full", "cantrips_by_level": {"1": 3, "4": 4, "10": 5},
       "known_by_level": {"1": 4, "2": 5, "3": 6, "4": 7, "5": 9, "6": 10, "7": 11, "8": 12, "9": 14, "10": 15, "11": 16, "12": 16, "13": 17, "14": 17, "15": 18, "16": 18, "17": 19, "18": 20, "19": 21, "20": 22} },
@@ -323,6 +325,7 @@
       "tools": ["herbalism_kit"],
       "weapon_proficiencies": ["simple"],
       "features": [
+        { "id": "lone_ward", "level": 1 },
         { "id": "primal_spellcasting", "trait": "spellcasting", "level": 1, "ability": "wis",
       "progression": "full", "cantrips_by_level": {"1": 2, "4": 3, "10": 4},
       "known_by_level": {"1": 4, "2": 5, "3": 6, "4": 7, "5": 9, "6": 10, "7": 11, "8": 12, "9": 14, "10": 15, "11": 16, "12": 16, "13": 17, "14": 17, "15": 18, "16": 18, "17": 19, "18": 20, "19": 21, "20": 22} },

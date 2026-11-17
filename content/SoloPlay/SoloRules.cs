@@ -16,6 +16,19 @@ namespace Content.SoloPlay
         // 3.2: every hero carries a keepsake that stands them back up the first time they drop to 0 each long rest
         public static bool Keepsake { get; set; } = true;
 
+        // 3.4, Lone Ward (cc_task_cb Part 2; Kathleen 2026-11-16, "if needed then all casters get an additional skill"):
+        // the Mage, Cleric and Druid gain temporary hit points equal to proficiency bonus + level, once a long rest.
+        // The feature is data (content/srd/features/shared.json, `lone_ward`); this switch says whether a hero has it.
+        // On, from the sims of RUN_LOG_2026-11-16_cb.md: with the bot playing a caster as a person would, the Cleric and
+        // Druid still missed the level 1 target in the rat cellar (87% / 18% drops, 86.5% / 19%); with the ward all three
+        // meet it (Mage 94.5 / 8, Cleric 92.5 / 11, Druid 90.5 / 13)
+        public static bool CasterWard { get; set; } = true;
+
+        public const string WardId = "lone_ward";
+
+        // whether a feature the hero's data lists is on under the solo switches: only Lone Ward has one
+        public static bool Allows(string featureId) => featureId != WardId || CasterWard;
+
         // 3.3: the player's difficulty, which only the enemies feel. Set from the game's settings
         public static PlayDifficulty Difficulty { get; set; } = PlayDifficulty.Standard;
 

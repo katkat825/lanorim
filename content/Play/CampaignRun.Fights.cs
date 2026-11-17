@@ -115,6 +115,9 @@ namespace Content.Play
             // a bout that continues after defeat and has no way off the map can be yielded (cc_task_i 3.2)
             battle.Fight.Yieldable = DefeatHere == Defeat.Continues && !battle.Fight.Field.Exits.Any();
 
+            // a failed death save here is a knockout, not a death (cc_task_nt Part 2)
+            battle.Fight.Defeat = DefeatHere;
+
             _battle = battle;
 
             Day.Knows(battle.What);

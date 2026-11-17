@@ -49,8 +49,8 @@ namespace Content.Classes
         // a failed saving throw rerolled, with a bonus, so many times a long rest: Indomitable
         Reroll,
 
-        // a bonus action for a Dash and temporary hit points equal to the proficiency bonus, so
-        // many times a rest: the Orc's Adrenaline Rush
+        // temporary hit points (its amount, or the proficiency bonus) and the manoeuvres it lists, so
+        // many times a rest: the Orc's Adrenaline Rush (a Dash too), Lone Ward (cc_task_cb)
         Boost,
 
         // lets a bonus action be spent on Dash, Disengage or Hide. the Rogue's Cunning Action -

@@ -122,6 +122,11 @@ namespace Content.Items
 
         public bool IsEquippable => Slot != Slot.None;
 
+        // MAGICAL: it does something no mundane thing does - a boon while worn (a Ring of Protection), a spell (a wand), or
+        // a bonus to hit (a +1 weapon). The SRD's items carry no magic flag of their own; this is what makes one magic
+        // in the game's data. An armory never lends one (cc_task_ca Part 4)
+        public bool Magical => Boons.Count > 0 || !string.IsNullOrEmpty(CastsSpell) || (Attack?.AttackBonus ?? 0) > 0;
+
         // SRD 5.2.1 Light (p.89): a one-handed Light weapon may be held in the off hand, for the Light bonus attack
         // (cc_task_open-questions-answers.md 3.1; Kathleen: "there should already have been an off-hand")
         public bool FitsOffHand => Kind == ItemKind.Weapon && Slot == Slot.MainHand && Attack?.Light == true;

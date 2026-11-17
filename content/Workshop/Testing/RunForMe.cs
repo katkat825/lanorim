@@ -81,6 +81,10 @@ namespace Content.Workshop.Testing
                         run.LeaveShop();
                         break;
 
+                    case Scene.Tip:
+                        run.TipClosed();
+                        break;
+
                     case Scene.Fight:
                         if (run.Fight.MapId.Length > 0 && !pack.Maps.ContainsKey(run.Fight.MapId))
                         {

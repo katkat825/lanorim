@@ -23,6 +23,9 @@ namespace Content.Workshop
 
             problems.AddRange(DialogueBook.Read(Path.Combine(folder, Package.DialogueFolder), pack.Id).Problems);
 
+            // a <<map>> naming a map the campaign doesn't have (cc_task_tf Part 1)
+            problems.AddRange(StoryMaps.Problems(pack));
+
             LocaleSheet words = CampaignFiles.Sheet(folder, pack.Id);
 
             if (string.IsNullOrWhiteSpace(words.Get(pack.Manifest.NameKey)))

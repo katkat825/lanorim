@@ -16,10 +16,11 @@ namespace Content.Dialogue
             _ => situation,
         };
 
-        // the pools that speak in v1, highest first: the order a bark cuts in on another (cc_task_i 2.5)
+        // the pools that speak in v1, highest first: the order a bark cuts in on another (cc_task_i 2.5). Knock-Out
+        // (cc_task_nt, 2026-11-16) sits beside Victory, the other end of a bout; it always plays, as a story's bark
         static readonly Bark[] Order =
         {
-            Bark.Snag, Bark.Maxed, Bark.Danger, Bark.Victory, Bark.Secret, Bark.Camp, Bark.Nearby,
+            Bark.Snag, Bark.Maxed, Bark.Danger, Bark.Victory, Bark.KnockOut, Bark.Secret, Bark.Camp, Bark.Nearby,
         };
 
         public static IReadOnlyList<Bark> Spoken => Order;

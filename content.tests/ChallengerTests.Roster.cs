@@ -113,13 +113,13 @@ namespace Content.Tests
         {
             for (int seed = 1; seed <= 30; seed++)
             {
-                // level 1: the ogre (450 XP) is over a high fight's 100
-                Assert.DoesNotContain(Drawn(1, seed, reputation: 40).Roster, c => c.Type == "ogre");
+                // level 1: the bandit captain (450 XP) is over a high fight's 100 (it was the ogre until humanoids only, cc_task_ca)
+                Assert.DoesNotContain(Drawn(1, seed, reputation: 40).Roster, c => c.Type == "captain");
 
-                // level 5: a goblin (50) or a guard (25) is under half a low fight's 500; the ogre fits now. (a special
+                // level 5: a goblin (50) or a guard (25) is under half a low fight's 500; the captain fits now. (a special
                 // fight is the author's own, so it isn't held to the band)
                 Assert.All(Drawn(5, seed, reputation: 40).Roster.Where(c => !c.Special),
-                           c => Assert.Contains(c.Type, new[] { "ogre", "raiders", "bruiser", "ogre_champion" }));
+                           c => Assert.Contains(c.Type, new[] { "captain", "raiders", "bruiser", "captain_champion" }));
             }
 
             // nothing fits at all: the closest ones are offered, and the roster says how hard they are
@@ -353,10 +353,10 @@ namespace Content.Tests
         {
             Package pack = Pack();
 
-            // claimed: goblin (goblin_warrior, bruiser), guard, ogre (the plain ogre type), bandit (bandit_pair). the ogre
-            // champion is a champion, so it claims nothing
-            string[] claimed = { "goblin", "guard", "ogre", "bandit" };
-            Assert.False(pack.Challengers.Single(t => t.Id == "ogre_champion").Claims("ogre"));
+            // claimed: goblin (goblin_warrior, bruiser), guard, bandit_captain (the plain captain type), bandit (bandit_pair).
+            // the captain champion is a champion, so it claims nothing
+            string[] claimed = { "goblin", "guard", "bandit_captain", "bandit" };
+            Assert.False(pack.Challengers.Single(t => t.Id == "captain_champion").Claims("bandit_captain"));
 
             var drawn = Enumerable.Range(1, 40).SelectMany(seed => Drawn(1, seed, reputation: 40, bestiary: Bestiary()).Roster)
                                   .Where(c => c.Type.StartsWith("generic")).ToList();
@@ -390,27 +390,27 @@ namespace Content.Tests
         public void AChampionLeavesItsStatBlocksToTheSharedListsToo()
         {
             Package pack = Pack();
-            ChallengerType champion = pack.Challengers.Single(t => t.Id == "ogre_champion");
+            ChallengerType champion = pack.Challengers.Single(t => t.Id == "captain_champion");
 
             Assert.Equal(ChallengerKind.Champion, champion.Kind);
-            Assert.Equal(ChallengerKind.Own, pack.Challengers.Single(t => t.Id == "ogre").Kind);
+            Assert.Equal(ChallengerKind.Own, pack.Challengers.Single(t => t.Id == "captain").Kind);
 
-            // with only the champion for ogres, a plain ogre still comes up under the shared lists at level 5; with the
-            // plain ogre type as well, it doesn't
-            ChallengerType[] alone = pack.Challengers.Where(t => t.Id == "ogre_champion" || t.Shared).ToArray();
+            // with only the champion for bandit captains, a plain one still comes up under the shared lists at level 5; with
+            // the plain captain type as well, it doesn't
+            ChallengerType[] alone = pack.Challengers.Where(t => t.Id == "captain_champion" || t.Shared).ToArray();
             var plain = Enumerable.Range(1, 30).SelectMany(seed => Drawn(5, seed, reputation: 40, types: alone,
-                                                                         bestiary: new[] { "ogre" }).Roster).ToList();
+                                                                         bestiary: new[] { "bandit_captain" }).Roster).ToList();
 
-            Assert.Contains(plain, c => c.Type == "ogre_champion" && c.NameKey == "challenger.ogre_champion.name.001");
-            Assert.Contains(plain, c => c.Type == "generic_single" && c.Group.Single().Monster == "ogre");
+            Assert.Contains(plain, c => c.Type == "captain_champion" && c.NameKey == "challenger.captain_champion.name.001");
+            Assert.Contains(plain, c => c.Type == "generic_single" && c.Group.Single().Monster == "bandit_captain");
 
-            ChallengerType[] claimed = pack.Challengers.Where(t => t.Id is "ogre_champion" or "ogre" || t.Shared).ToArray();
+            ChallengerType[] claimed = pack.Challengers.Where(t => t.Id is "captain_champion" or "captain" || t.Shared).ToArray();
             Assert.DoesNotContain(Enumerable.Range(1, 30).SelectMany(seed => Drawn(5, seed, reputation: 40, types: claimed,
-                                                                                   bestiary: new[] { "ogre" }).Roster),
+                                                                                   bestiary: new[] { "bandit_captain" }).Roster),
                                   c => c.Type.StartsWith("generic"));
 
-            // a champion fights as its stat block: the ogre's name key and mini are the statblock's, its name the champion's
-            Assert.All(plain.Where(c => c.Type == "ogre_champion"), c => Assert.Equal("ogre", c.Group.Single().Monster));
+            // a champion fights as its stat block: the captain's name key and mini are the statblock's, its name the champion's
+            Assert.All(plain.Where(c => c.Type == "captain_champion"), c => Assert.Equal("bandit_captain", c.Group.Single().Monster));
         }
 
         [Fact]
@@ -432,9 +432,9 @@ namespace Content.Tests
 
             for (int seed = 1; seed <= 20; seed++)
             {
-                // level 1: the ogre is over a high fight; level 5: the goblin warrior is under half a low one
+                // level 1: the bandit captain is over a high fight; level 5: the goblin warrior is under half a low one
                 Assert.All(Drawn(1, seed, types: new[] { bruiser }).Roster, c => Assert.Equal("goblin", c.Group.Single().Monster));
-                Assert.All(Drawn(5, seed, types: new[] { bruiser }).Roster, c => Assert.Equal("ogre", c.Group.Single().Monster));
+                Assert.All(Drawn(5, seed, types: new[] { bruiser }).Roster, c => Assert.Equal("bandit_captain", c.Group.Single().Monster));
             }
 
             Assert.All(Drawn(1, 3, types: new[] { bruiser }).Roster, c => Assert.True(c.Alone));

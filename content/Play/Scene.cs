@@ -18,6 +18,9 @@ namespace Content.Play
         // the arena's roster (cc_task_cg Part 6): pick a challenger, or go back to the story
         Roster,
 
+        // the F1 help card, opened at a section by a story's <<tip>> (cc_task_nt Part 4): closing it goes on
+        Tip,
+
         // the hero died: the death screen, and reload
         Dead,
 

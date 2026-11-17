@@ -89,7 +89,7 @@ namespace Game.Play
 
             _readied = true;
 
-            if (BeforeTheFight.Offered(Run.Hero).Count == 0) return false;
+            if (BeforeTheFight.Offered(Run.Hero).Count == 0 && BeforeTheFight.Features(Run.Hero).Count == 0) return false;
 
             BeforeFightCard card = null;
 
@@ -100,6 +100,17 @@ namespace Game.Play
                 _rules.Post(() => BeforeTheFight.Cast(Run.Hero, spell, GameState.Resolver, out changed), () =>
                 {
                     _caption.CastCaption(Run.Hero.Actor, spell.NameKey, new[] { Run.Hero.Actor }, changed ?? new List<Change>());
+                    card.Said = _caption.Said;
+                    card.Again();
+                });
+            }, () => BeforeTheFight.Features(Run.Hero), feature =>
+            {
+                IReadOnlyList<Change> changed = null;
+
+                // Lone Ward (cc_task_cb): said the way a cast is ("Lone Ward: 3 temporary hit points")
+                _rules.Post(() => BeforeTheFight.Use(Run.Hero, feature, GameState.Resolver, out changed), () =>
+                {
+                    _caption.CastCaption(Run.Hero.Actor, feature.NameKey, new[] { Run.Hero.Actor }, changed ?? new List<Change>());
                     card.Said = _caption.Said;
                     card.Again();
                 });

@@ -8,7 +8,7 @@ namespace Content.Tests
 {
     // THE ARENA'S STATBLOCKS (cc_task_cg, Kathleen 2026-11-09): SRD 5.2.1's Scout (p.322), Berserker (p.263) and
     // Gladiator (p.289), each number held to its page through the engine's own maths, as the 2026-10-03 audit did
-    public class ArenaStatblockTests
+    public partial class ArenaStatblockTests
     {
         static readonly Library Srd = Library.Srd();
 

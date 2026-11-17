@@ -5,6 +5,7 @@ using Core.Characters;
 using Core.Magic;
 using Core.Dice;
 using Core.Localization;
+using Core.Resolution;
 using Core.Rules;
 using Core.Words;
 
@@ -151,6 +152,10 @@ namespace Content.Classes
         // a recovery that only a Bloodied creature can take, up to half its hit points: Preserve
         // Life
         public bool OnlyBloodied { get; init; }
+
+        // Lanorim's own, not an SRD 5.2.1 feature (Lone Ward): `not_in_srd`, the word a spell, an item and a species use.
+        // not NotInSrd, which the two-booleans guard reads as one idea with NotInHeavyArmor
+        public bool LanorimsOwn { get; init; }
 
         public bool CapHalf { get; init; }
 
@@ -334,14 +339,15 @@ namespace Content.Classes
         }
 
         // the rider a hit carries, or null when this feature is not one or its condition is unmet
-        public Rider RiderFor(int level, bool hadAdvantage, bool spent)
+        public Rider RiderFor(int level, Advantage lean, bool spent)
         {
             if (Trait != Trait.Rider || level < Level) return null;
 
             bool fires = When switch
             {
                 When.Always => true,
-                When.WithAdvantage => hadAdvantage,
+                When.WithAdvantage => lean == Advantage.Advantage,
+                When.UnlessDisadvantage => lean != Advantage.Disadvantage,
                 When.WhenSpent => spent,
                 When.OnCritical => true,
                 _ => false,

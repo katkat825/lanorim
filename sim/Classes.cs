@@ -67,15 +67,17 @@ namespace Sim
 
                         for (int run = 0; run < runs; run++)
                         {
-                            Hero hero = Make(library, cls, level);
+                            Hero hero = Make(library, cls, level, Bot.LearnFirst(cls));
                             var rng = new SeededRng(run * 7919 + level * 131 + cls.Length * 17 + entry.Length);
                             var resolver = new StandardResolver(rng);
 
+                            Bot.Ready(hero, resolver);
+
                             var watch = new DropWatch(hero.Actor);
-                            Battle battle = Battle.From(library, map, hero, fight, resolver, null, null, watch);
+                            Battle battle = Battle.From(library, map, hero, fight, resolver, null, Bot.Chooser(), watch);
                             var session = new CombatSession(battle, library.Items, library.Forms);
 
-                            Outcome outcome = new AutoPlayer().Play(session);
+                            Outcome outcome = Bot.Player().Play(session);
 
                             if (outcome == Outcome.HeroesWon) wins++;
 
@@ -115,14 +117,15 @@ namespace Sim
             Library library = Library.Srd();
 
             EncounterEntry fight = pack.Encounters.SelectMany(t => t.Entries).Single(e => e.Id == args[2]);
-            Hero hero = Make(library, args[0], level);
+            Hero hero = Make(library, args[0], level, Bot.LearnFirst(args[0]));
+            var resolver = new StandardResolver(new SeededRng(seed));
+            Bot.Ready(hero, resolver);
 
             Console.WriteLine($"{hero.Class.Id} {hero.Level}: {hero.Actor.Health.Maximum} hp, AC {hero.Actor.ArmorClass}, " +
                               $"attacks {string.Join(", ", hero.Attacks.Select(a => a.Id))}");
 
             var log = new FightLog();
-            Battle battle = Battle.From(library, pack.Maps[fight.Map], hero, fight,
-                                        new StandardResolver(new SeededRng(seed)), null, null, log);
+            Battle battle = Battle.From(library, pack.Maps[fight.Map], hero, fight, resolver, null, Bot.Chooser(), log);
 
             var session = new CombatSession(battle, library.Items, library.Forms);
 
@@ -144,7 +147,7 @@ namespace Sim
                 }
             }
 
-            Outcome outcome = new AutoPlayer { Note = n => Console.WriteLine("  > " + n) }.Play(session);
+            Outcome outcome = new AutoPlayer { Note = n => Console.WriteLine("  > " + n), KeepsAway = Bot.Person }.Play(session);
 
             foreach (LogLine line in log.Lines) Console.WriteLine("  " + line);
 
@@ -154,9 +157,9 @@ namespace Sim
 
         // the hero creation makes (Content.Creation.QuickHero, which `--begin` and "Play this map" make too): the class's
         // standard array, a human soldier, the first skills and spells on offer, the suggested improvement at 4.
-        // `learnFirst`: a spell learned before the rest (the mage's Mage Armor, MageBalance); `improve: false` leaves the
-        // improvements unpicked, as MageBalance always has
-        public static Hero Make(Library library, string cls, int level, string learnFirst = null, bool improve = true) =>
+        // `learnFirst`: spells learned before the rest (the mage's Mage Armor, MageBalance; Bot.LearnFirst); `improve:
+        // false` leaves the improvements unpicked, as MageBalance always has
+        public static Hero Make(Library library, string cls, int level, string[] learnFirst = null, bool improve = true) =>
             Content.Creation.QuickHero.Make(library, cls, level, "Sim", learnFirst, improve);
     }
 }

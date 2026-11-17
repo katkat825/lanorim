@@ -47,6 +47,11 @@ Legend: **[OPEN]** to decide · **[DECIDED]** (where) · **[DEFER]** post-v1.
   (`sim classes 200 --solo none|slot|keepsake|both --difficulty story|standard|hard`). Results: `RUN_LOG_2026-10-08_h.md`.
   - **One extra 1st-level spell slot for the Mage, Cleric and Druid** at every level, or a 1st-level spell's price
     in points (2), so the two modes stay even. Not the Paladin. The sheet says it's the solo bonus. (3.1)
+  - **Lone Ward, ON (2026-11-16, `cc_task_cb`):** the Mage, Cleric and Druid have a free action, once a long rest: temporary
+    hit points equal to proficiency bonus + level, until the next rest. Lanorim's own (not SRD), usable on the
+    before-the-fight card. Switch `SoloRules.CasterWard`. On because, with the sim's bot playing a caster as a person
+    would, the Cleric and Druid still missed the level 1 rat cellar target (87% wins / 18% drops, 86.5 / 19); with the
+    ward all three meet it (Mage 94.5 / 8, Cleric 92.5 / 11, Druid 90.5 / 13). `RUN_LOG_2026-11-16_cb.md`. (3.4)
   - **The keepsake:** every hero carries one (starting equipment whatever the class, background or kit, and added to
     a save from before it). **The moment the hero drops to 0 HP, once per long rest, it stands them back up** on their
     Hit Die's full value plus their level (a level 1 Mage 7, a level 1 Fighter 11). No roll, no action, whatever

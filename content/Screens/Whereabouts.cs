@@ -84,5 +84,12 @@ namespace Content.Screens
         };
 
         public static IEnumerable<string> Keys() => new[] { TitleKey }.Concat(Lines);
+
+        // THE SECTIONS a story's <<tip section>> can open the card at (cc_task_nt Part 4): each line but the last
+        // ("F1 or Esc closes it"), by the word its key ends in
+        public static readonly IReadOnlyList<string> Sections =
+            new[] { "story", "dice", "turn", "move", "attack", "more", "keys" };
+
+        public static string LineKey(string section) => K(section);
     }
 }

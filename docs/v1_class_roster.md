@@ -42,7 +42,7 @@ for v1. Fighter's edge is more actions plus fighting-style riders and reliabilit
 
 **Rogue** — *Thief*. DEX, d8. Skilled infiltrator and opportunist.
 Keep Expertise, Sneak Attack, Cunning Action, Uncanny Dodge, Evasion, Thieves' Tools.
-Adapt: Sneak Attack fires as a damage rider when a setup condition is met; **Cunning Action stays a
+Adapt: Sneak Attack fires as a damage rider when a setup condition is met (solo delta, 2026-11-16: any Finesse or Ranged hit not at Disadvantage, since the SRD's ally-beside-the-target clause can't happen solo); **Cunning Action stays a
 bonus-action feature** — Dash / Disengage / Hide on your bonus action, no extra full action; campaign-
 specific tricks use authored interactable tags rather than a general object sandbox. *Companion: gossiping raven.*
 
@@ -117,7 +117,9 @@ Licence: Quaternius Asset License (commercial use, no credit required, no resell
 - **Spell resource:** the spells shown on your sheet are the ones you can cast (flat **known/equipped**
   model) — no daily preparation. **Expenditure [DECIDED 2026-09-23]:** cantrips are at-will; leveled spells
   spend **spell slots** (SRD full-caster table for Mage/Cleric/Druid, half-caster for Paladin) **or spell
-  points**, the player's choice at character creation. Tracked in `decisions_checklist.md` §1.
+  points**, the player's choice at character creation. Tracked in `decisions_checklist.md` §1. **Solo deltas** for
+  the Mage, Cleric and Druid (not the Paladin): one extra 1st-level slot, and **Lone Ward** (2026-11-16), a free action
+  once a long rest for temporary hit points = proficiency bonus + level until the next rest.
 - **ASI levels:** feats are deferred, so each SRD "ASI or feat" level is a straight **+2 to spend**.
 - **"Channeling" is retired** — Cleric/Paladin use Channel Divinity (SRD); casters use the known/equipped
   model above.

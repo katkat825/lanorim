@@ -15,13 +15,26 @@ namespace Content.Sheet
         // --- hitting things ------------------------------------------------------------------
 
         // every rider the hero's features hand to a blow. the fight layer asks once per attack;
-        // whether Sneak Attack fires is a question about the attack, not about the Rogue.
-        public IReadOnlyList<Rider> RidersFor(bool hadAdvantage, bool spent = false,
+        // whether Sneak Attack fires is a question about the attack, not about the Rogue. 'lean' is the
+        // attack roll's advantage as it will be rolled (Encounter.SwingLean), cancelled included: Lanorim's
+        // solo Sneak Attack fires unless it is at disadvantage (cc_task_sa)
+        public IReadOnlyList<Rider> RidersFor(Advantage lean, bool spent = false,
                                               Attack attack = null, Turn turn = null) =>
             Features.Where(f => Eligible(f, attack, turn))
-                    .Select(f => f.RiderFor(Level, hadAdvantage, spent))
+                    .Select(f => f.RiderFor(Level, lean, spent))
                     .Where(r => r != null)
                     .ToList();
+
+        // the riders a swing at this target would carry, worked out before the roll as Hit works them, but
+        // leaving out Brutal Strike, whose trade Hit decides as it swings. the HUD's preview counts these, so
+        // the preview and the swing agree on Sneak Attack (cc_task_sa)
+        public IReadOnlyList<Rider> RidersAt(Encounter fight, Turn turn, Actor target, Attack attack,
+                                             bool spent = false) =>
+            NotForgoing(RidersFor(fight.SwingLean(Actor, target, attack), spent, attack, turn), null);
+
+        // a rider whose feature forgoes advantage (Brutal Strike) rides only when Hit chose the trade
+        List<Rider> NotForgoing(IEnumerable<Rider> riders, Feature brutal) =>
+            riders.Where(r => brutal != null || !Features.Any(f => f.Id == r.Id && f.Forgoes.Length > 0)).ToList();
 
         // SRD 5.2.1: Sneak Attack "once per turn" with "a Finesse or a Ranged weapon" (p.61);
         // Frenzy and Brutal Strike only while their stances are up (p.29-30); Radiant Strikes on a
@@ -92,16 +105,11 @@ namespace Content.Sheet
                 }
             }
 
-            // Sneak Attack's setup: whether the attack has advantage is worked out before the
-            // roll, so the rider can be handed to it rather than patched on afterwards
-            bool advantage = Strike.Lean(Actor, target, close,
-                                         fight.Sees(Actor, target), fight.Sees(target, Actor),
-                                         fearInSight: fight.FearInSight(Actor), attack: attack) ==
-                             Advantage.Advantage;
-
-            IReadOnlyList<Rider> riders = RidersFor(advantage, spendResource, attack, turn)
-                .Where(r => brutal != null || !Features.Any(f => f.Id == r.Id && f.Forgoes.Length > 0))
-                .ToList();
+            // Sneak Attack's setup: the attack roll's lean is worked out before the roll, the range band
+            // included (a shot with an enemy beside you is at disadvantage), so the rider can be handed to it
+            // rather than patched on afterwards
+            IReadOnlyList<Rider> riders = NotForgoing(RidersFor(fight.SwingLean(Actor, target, attack),
+                                                                spendResource, attack, turn), brutal);
 
             Blow blow;
 

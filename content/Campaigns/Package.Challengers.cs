@@ -36,6 +36,7 @@ namespace Content.Campaigns
         // isn't checked here, because a challenger is fitted to the hero when the roster is drawn (ChallengerFit)
         static IReadOnlyList<ChallengerType> ReadChallengers(string folder, IReadOnlyList<Monster> monsters,
                                                              IReadOnlyDictionary<string, MapLayout> maps,
+                                                             IReadOnlyList<EncounterTable> encounters,
                                                              List<ContentProblem> problems)
         {
             IReadOnlyList<ChallengerType> types =
@@ -52,13 +53,25 @@ namespace Content.Campaigns
                     problems.Add(new ContentProblem(ChallengersFolder, where,
                         $"'{band.Monster}' is not a monster in this campaign's {MonstersFolder}/ or the SRD's"));
 
+                // humanoids only (cc_task_ca Part 1, ArenaFolk)
+                foreach (string refused in type.Monsters.Select(b => ArenaFolk.Refusal(Find(b.Monster))).Where(r => r != null))
+                    problems.Add(new ContentProblem(ChallengersFolder, where, refused));
+
                 if (type.Map.Length > 0 && !maps.ContainsKey(type.Map))
                     problems.Add(new ContentProblem(ChallengersFolder, where,
                         $"'{type.Id}' is fought on '{type.Map}' and there is no {MapsFolder}/{type.Map}{MapExtension} " +
                         "in this campaign"));
             }
 
+            // a special fight is a challenger too, so the same rule holds for it
+            foreach (EncounterTable table in encounters)
+                foreach (EncounterEntry entry in table.Entries.Where(e => e.Challenger != null))
+                    foreach (string refused in entry.Monsters.Select(b => ArenaFolk.Refusal(Find(b.Monster))).Where(r => r != null))
+                        problems.Add(new ContentProblem(EncountersFolder, $"{table.Id}.{entry.Id}", refused));
+
             return types;
+
+            Monster Find(string id) => monsters.FirstOrDefault(m => m.Id == id) ?? srd.Find(id);
         }
     }
 }

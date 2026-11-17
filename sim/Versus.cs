@@ -52,17 +52,18 @@ namespace Sim
 
                     for (int run = 0; run < runs; run++)
                     {
-                        Hero hero = Classes.Make(library, cls, level);
+                        Hero hero = Classes.Make(library, cls, level, Bot.LearnFirst(cls));
                         var resolver = new StandardResolver(new SeededRng(run * 7919 + level * 131 + cls.Length * 17));
+                        Bot.Ready(hero, resolver);
                         var foes = Enumerable.Range(1, count)
                                              .Select(i => new Battle.Foe(monster, map.SpawnAt(i) ?? map.SpawnAt(1) ?? map.Start))
                                              .ToList();
 
                         var watch = new DropWatch(hero.Actor);
-                        Battle battle = Battle.Set(library, map, hero, foes, resolver, null, watch);
+                        Battle battle = Battle.Set(library, map, hero, foes, resolver, Bot.Chooser(), watch);
                         var session = new CombatSession(battle, library.Items, library.Forms);
 
-                        if (new AutoPlayer().Play(session) == Outcome.HeroesWon) wins++;
+                        if (Bot.Player().Play(session) == Outcome.HeroesWon) wins++;
 
                         rounds += battle.Fight.Round;
                         hp += Math.Max(0, hero.Actor.Health.Current) * 100 / Math.Max(1, hero.Actor.Health.Maximum);

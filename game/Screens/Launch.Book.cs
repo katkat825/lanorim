@@ -98,9 +98,10 @@ namespace Game.Screens
                 return;
             }
 
-            if (book.Pages.FirstOrDefault(p => p.Id == open) is BookPage page)
+            if (book.Find(open) is BookPage page)
             {
-                ShowCampaign(page);
+                // `--show book --open <campaign> --page 2`: its second page of characters (cc_task_nt Part 3)
+                ShowCampaign(page, int.TryParse(DevArgs.Page, out int sheet) ? sheet - 1 : 0);
                 return;
             }
 
@@ -151,16 +152,32 @@ namespace Game.Screens
             }
         }
 
-        // a campaign's two pages: its name and what it is on the left, its characters on the right
-        void ShowCampaign(BookPage p)
+        // a campaign's two pages: its name and what it is on the left, its characters on the right, five to a page
+        // (cc_task_nt Part 3): more than five turn onto further pages with Back and Next under them
+        void ShowCampaign(BookPage p, int sheet = 0)
         {
             Spread((left, right) =>
             {
                 left.AddChild(Ui.Title(p.NameKey));
                 About(left, p);
-                Heroes(right, p, () => ShowBook(p.Id));
+                Heroes(right, p, () => ShowBook(p.Id), sheet);
+                if (p.Sheets > 1) right.AddChild(Turning(p, sheet));
                 right.AddChild(Ui.Button(CampaignBook.ContentsKey, ShowBook));
             }, () => ShowBookPanel(new CampaignBook(GameState.Manifests, GameState.Saves), p.Id));
+        }
+
+        // "Back  Page 2 of 4  Next", the map builder's words for its own pages (MapBuilderView, #9)
+        HBoxContainer Turning(BookPage p, int sheet)
+        {
+            Button back = Ui.Button(Content.Screens.MapBuilderView.PageBackKey, () => ShowCampaign(p, sheet - 1));
+            back.Name = "PageBack";
+            back.Disabled = sheet <= 0;
+
+            Button on = Ui.Button(Content.Screens.MapBuilderView.PageOnKey, () => ShowCampaign(p, sheet + 1));
+            on.Name = "PageOn";
+            on.Disabled = sheet >= p.Sheets - 1;
+
+            return Ui.Row(12, back, Ui.Label(Content.Screens.MapBuilderView.PageKey, sheet + 1, p.Sheets), on);
         }
 
         // whether a page can be written on the open book (BookPages), or goes on a panel over it: no book on the
@@ -198,10 +215,11 @@ namespace Game.Screens
             page.AddChild(Ui.Label(p.DescriptionKey));
         }
 
-        // its characters, each with Delete, and New character; again() shows the page afresh
-        void Heroes(VBoxContainer page, BookPage p, Action again)
+        // its characters, each with Delete, and New character; again() shows the page afresh. `sheet`: only that page's
+        // five (the open book); left out, every one (the panel, which scrolls)
+        void Heroes(VBoxContainer page, BookPage p, Action again, int sheet = -1)
         {
-            foreach (CharacterSlot slot in p.Characters)
+            foreach (CharacterSlot slot in sheet < 0 ? p.Characters : p.OnSheet(sheet))
             {
                 CharacterSlot s = slot;
                 Button load = Ui.Button(Ui.Say(ScreenWords.Character, s.Name, s.Level,
@@ -267,14 +285,14 @@ namespace Game.Screens
 
             if (book.Pages.Count == 0) contents.AddChild(Ui.Label(CampaignBook.EmptyKey));
 
-            foreach (BookPage one in book.Pages)
+            foreach (BookPage one in book.Pages.Concat(book.Arenas))
             {
                 BookPage p = one;
                 // what the page's label says is on the page itself, not on hover
                 contents.AddChild(Ui.Button(p.NameKey, () => ShowPanelPage(page, p)));
             }
 
-            BookPage first = book.Pages.FirstOrDefault(p => p.Id == open) ?? book.Pages.FirstOrDefault();
+            BookPage first = book.Find(open) ?? book.Pages.FirstOrDefault();
 
             if (first != null) ShowPanelPage(page, first);
 

@@ -23,13 +23,17 @@ namespace Content.Workshop.Tables
 
         public bool Armory { get; set; }
 
+        // an armory's "stock": "all_mundane" (cc_task_ca Part 4), kept as it is written
+        public bool AllMundane { get; set; }
+
         public Dictionary<string, string> Kept { get; set; } = new();
 
         public static ShopDraft Read(JsonObject shop, string file, List<string> told) => new()
         {
             File = file,
             Id = DraftJson.Text(shop, "id"),
-            Stock = DraftJson.Strings(shop, "stock"),
+            AllMundane = shop["stock"] is JsonValue all && all.TryGetValue(out string word) && word == MerchantDef.AllMundane,
+            Stock = shop["stock"] is JsonArray ? DraftJson.Strings(shop, "stock") : new List<string>(),
             SellPercent = shop.ContainsKey("sell_percent") ? DraftJson.Number(shop, "sell_percent", -1) : -1,
             Armory = DraftJson.Flag(shop, "armory"),
             Kept = DraftJson.Kept(shop, MerchantReader.Keys, $"{file} {DraftJson.Text(shop, "id")}", told),
@@ -39,7 +43,8 @@ namespace Content.Workshop.Tables
         {
             var o = new JsonObject { ["id"] = Id };
             DraftJson.PutFlag(o, "armory", Armory);
-            o["stock"] = new JsonArray(Stock.Select(s => (JsonNode)JsonValue.Create(s)).ToArray());
+            o["stock"] = AllMundane ? JsonValue.Create(MerchantDef.AllMundane)
+                                    : new JsonArray(Stock.Select(s => (JsonNode)JsonValue.Create(s)).ToArray());
             if (!Armory) DraftJson.PutNumber(o, "sell_percent", SellPercent, -1);
             DraftJson.Put(o, Kept);
             return o;

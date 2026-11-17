@@ -66,6 +66,7 @@ Each archetype mini fronts many SRD statblocks by recolour/rescale/reskin.
 | Archetype | Fronts (SRD examples) | Source | Status |
 |---|---|---|---|
 | Medium humanoid | bandit, guard, cultist, orc, hobgoblin, enemy mage/priest, noble | Character Pack (Knight/Soldier/Ninja/Pirate/Viking/Wizard/Witch) + hero models | **owned** |
+| Arena humanoids (2026-11-16, `cc_task_ca`) | `soldier` (Soldier): scout, warrior infantry and veteran; `viking` (Viking): berserker, tough boss; `golden_knight` (Knight Golden): gladiator, knight | Character Pack `npcs/` figures, wired in `game/Board/MiniModels.cs` at the humanoids' height and skin | **owned** |
 | Small humanoid | goblin, kobold | Character Pack (Goblin) | **owned** |
 | Skeleton | skeleton + undead minions | Bestiary | **owned** |
 | Zombie / ghoul | zombie, ghoul, ghast, wight | Character Pack (Zombie) | **owned** |

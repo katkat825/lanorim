@@ -56,6 +56,10 @@ namespace Content.Screens
 
         // a test campaign: labelled as one, and at the back of the book
         Test,
+
+        // an arena (cc_task_ca Part 5; Kathleen 2026-11-16, "its own entry"): a campaign tagged "arena" has its own line
+        // in the contents, beside Tutorials, under its own name, and isn't among the ordinary campaigns
+        Arena,
     }
 
     // one of the five characters a campaign keeps
@@ -95,6 +99,17 @@ namespace Content.Screens
 
         public bool CanStartNew => Characters.Count < Slots;
 
+        // FIVE TO A PAGE (cc_task_nt Part 3, Kathleen: "second page"): the book's character page is laid out for five, so
+        // a campaign that allows more ("characters", up to 20) runs onto further pages. A campaign with five or fewer has
+        // one, exactly as before
+        public const int PerSheet = SaveLibrary.CharactersPerCampaign;
+
+        public int Sheets => Math.Max(1, (Characters.Count + PerSheet - 1) / PerSheet);
+
+        // the characters on one page, counting from 0
+        public IReadOnlyList<CharacterSlot> OnSheet(int sheet) =>
+            Characters.Skip(Math.Clamp(sheet, 0, Sheets - 1) * PerSheet).Take(PerSheet).ToList();
+
         // the label on a test campaign's page: it is not a real one
         public string LabelKey => Kind == PageKind.Test ? CampaignBook.TestLabel : null;
 
@@ -107,6 +122,15 @@ namespace Content.Screens
     public sealed class CampaignBook
     {
         public const string TestTag = "test";
+
+        // the pack.json tag that gives a campaign its own line in the contents (PageKind.Arena)
+        public const string ArenaTag = "arena";
+
+        // the contents' line when there is more than one arena, which opens a short picker
+        public static readonly string ArenasKey = ScreenKeys.Key("book", "arenas");
+
+        // the picker's id among the book's other pages
+        public const string ArenasPageId = "arenas";
 
         public static readonly string TestLabel = ScreenKeys.Key("book", "test_campaign");
 
@@ -133,11 +157,15 @@ namespace Content.Screens
 
             Tutorials = pages.Where(p => p.Kind == PageKind.Tutorial).ToList();
 
+            Arenas = pages.Where(p => p.Kind == PageKind.Arena).ToList();
+
             Continue = saves?.Newest();
         }
 
+        // an arena first: the Crucible test fixture is tagged both, and its own line is what it is there to show
         public static PageKind KindOf(Manifest manifest) =>
-            manifest.Tags.Contains(TestTag) ? PageKind.Test
+            manifest.Tags.Contains(ArenaTag) ? PageKind.Arena
+            : manifest.Tags.Contains(TestTag) ? PageKind.Test
             : TutorialPicker.LevelOf(manifest).HasValue ? PageKind.Tutorial
             : PageKind.Campaign;
 
@@ -161,6 +189,18 @@ namespace Content.Screens
         public IReadOnlyList<BookPage> Pages { get; }
 
         public IReadOnlyList<BookPage> Tutorials { get; }
+
+        public IReadOnlyList<BookPage> Arenas { get; }
+
+        // a campaign's page by id, an arena's included (it has its own line, not a place among the Pages)
+        public BookPage Find(string id) => Pages.Concat(Arenas).FirstOrDefault(p => p.Id == id);
+
+        // THE ARENA'S LINE: none without an arena; with one, its own name, opening its two pages; with more, "Arenas",
+        // opening a short picker
+        public IReadOnlyList<ContentsEntry> ArenaEntries =>
+            Arenas.Count == 0 ? Array.Empty<ContentsEntry>()
+            : Arenas.Count == 1 ? new[] { new ContentsEntry { Kind = ContentsKind.Campaign, NameKey = Arenas[0].NameKey, Page = Arenas[0] } }
+            : new[] { ContentsEntry.ForPage(ArenasPageId, ArenasKey) };
 
         public SaveShelf.Saved Continue { get; }
 
@@ -197,7 +237,7 @@ namespace Content.Screens
             new[]
             {
                 TestLabel, ContinueKey, NewCharacterKey, LoadKey, TutorialsKey, MapBuilderKey, SettingsKey, CreditsKey, QuitKey,
-                SlotsFullKey, EmptyKey, DeleteKey, DeleteOneKey, DeleteManyKey, KeepKey, ContentsKey,
+                SlotsFullKey, EmptyKey, DeleteKey, DeleteOneKey, DeleteManyKey, KeepKey, ContentsKey, ArenasKey,
             };
 
         public override string ToString() => $"{Pages.Count} pages, {Tutorials.Count} tutorials";

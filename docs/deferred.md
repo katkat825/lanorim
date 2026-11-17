@@ -154,6 +154,15 @@
       until the engine reads it; the file shape is suggested in `_design_docs/RUN_LOG_2026-10-12_i.md`.
 
 
+- deferred on 2026-11-16 (Kathleen's answers; `cc_task_nt` Part 6, `_design_docs/RUN_LOG_2026-11-16_nt.md`):
+    - **[DEFER]** **Encounter- or NPC-scoped consequence lines** (only around the goat, say). Campaign-wide additions are
+      built. Kathleen, 2026-11-16: deferred.
+    - **[DEFER]** **The Gladiator's Shield Bash and Parry**: a Multiattack that swaps in a save-based action, and a monster
+      reaction that adds to AC. Neither is in the engine; the Gladiator plays its other attacks. 2026-11-16.
+    - **[DEFER]** **Crowd reactions in the Crucible**, from the other companions' pools. 2026-11-16.
+    - **[DEFER]** **A `<<challengers>>` block in the Workshop's story palette.** The command works in Yarn; the palette
+      has no block for it yet. 2026-11-16.
+
 - deferred by cc_task_m2 (2026-10-22, `_design_docs/RUN_LOG_2026-10-22_m2.md`):
     - **[DONE 2026-10-23, cc_task_m3 Part 9: the plushies were replaced by the fox and the shark, both rigged with an Idle]** **The Beastfolk's plushies stand in their bind pose.** Animal Plushies (MoraAzul) carry a humanoid skeleton but no clips, so each stands in a T. What it would take: a pose made in Blender (arms down) and exported with the model, or the KayKit `Rig_Medium` clips retargeted to the plushies' bones (their names differ: `CatHips`, `TedibearHub001`). Kathleen's (#5).
     - **[DEFER]** **The board framed between the builder's two bars.** The table camera has no inset; with the side panels gone only a thin top bar and a centred bottom bar stand at the edges, so the map is clear at the default zoom. A camera inset (a `TableCamera` margin read from `BuilderLayout`) would keep it so at any zoom.

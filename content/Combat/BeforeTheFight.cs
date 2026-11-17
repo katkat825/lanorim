@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Content.Classes;
 using Content.Sheet;
 using Content.Spells;
 using Core.Characters;
@@ -49,6 +50,26 @@ namespace Content.Combat
 
             changed = Change.Since(before);
             return casting;
+        }
+
+        // a feature of the hero's that outlasts a fight and has a use left: a boost (temporary hit points) whose
+        // duration is a rest or longer - Lone Ward (cc_task_cb). Adrenaline Rush lasts the encounter, so it isn't
+        public static IReadOnlyList<Feature> Features(Hero hero) =>
+            hero == null || hero.Actor.IsShifted
+                ? new List<Feature>()
+                : hero.Activatable.Where(f => f.Trait == Trait.Boost && Outlasting.Contains(f.Duration) &&
+                                              hero.UsesLeft(f) > 0)
+                      .ToList();
+
+        // use it, outside any fight; and what it changed on you
+        public static bool Use(Hero hero, Feature feature, IResolver resolver, out IReadOnlyList<Change> changed)
+        {
+            Dictionary<(Actor, Stat), int> before = Change.Snapshot(new[] { hero.Actor });
+
+            bool used = hero.Invoke(feature, resolver);
+
+            changed = Change.Since(before);
+            return used;
         }
     }
 }

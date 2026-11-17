@@ -34,14 +34,16 @@ namespace Content.Companions
 
         public CompanionChatter Level => _level();
 
-        // whether a bark from this pool may be said now; if it may, it is the one being said
+        // whether a bark from this pool may be said now; if it may, it is the one being said. A story's own bark
+        // (<<bark>>, a rest, a knockout) always plays, whatever the cooldown, the last line's priority or "Some", and
+        // still starts the cooldown; only Off silences it (cc_task_nt Part 1, Kathleen 2026-11-16)
         public bool Allows(Bark pool, double now, bool fromStory = false)
         {
             if (Level == CompanionChatter.Off || !pool.Speaks()) return false;
 
-            if (Level == CompanionChatter.Some && pool.Frequent() && _rng.Roll(2) == 1) return false;
+            if (!fromStory && Level == CompanionChatter.Some && pool.Frequent() && _rng.Roll(2) == 1) return false;
 
-            if (!_cooldown.Ready(now) && pool.Priority() <= _last.Priority()) return false;
+            if (!fromStory && !_cooldown.Ready(now) && pool.Priority() <= _last.Priority()) return false;
 
             _cooldown.Mark(now);
             _last = pool.Pool();

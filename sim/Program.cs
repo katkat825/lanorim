@@ -20,7 +20,7 @@ namespace Sim
     {
         public static int Main(string[] args)
         {
-            args = SoloFlags.Take(args);
+            args = Bot.Take(SoloFlags.Take(args));
 
             string command = args.Length > 0 ? args[0].ToLowerInvariant() : "balance";
 

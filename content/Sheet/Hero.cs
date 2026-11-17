@@ -120,10 +120,12 @@ namespace Content.Sheet
             return id.Length == 0 ? "hero" : id.ToString();
         }
 
+        // a feature behind a solo switch (Lone Ward, SoloRules.CasterWard) is left out while the switch is off
         public IEnumerable<Feature> Features =>
             Class.By(Level).Concat(Species.Features.Where(f => f.Level <= Level))
                  .Concat(Lineage?.Features.Where(f => f.Level <= Level) ??
-                         Enumerable.Empty<Feature>());
+                         Enumerable.Empty<Feature>())
+                 .Where(f => SoloPlay.SoloRules.Allows(f.Id));
 
         // one of them by id, or null
         public Feature FeatureCalled(string id) => Features.FirstOrDefault(f => f.Id == id);

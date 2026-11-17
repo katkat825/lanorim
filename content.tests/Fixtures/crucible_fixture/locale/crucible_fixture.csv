@@ -3,6 +3,10 @@ campaign.crucible_fixture.description,A test arena: an armory and a bout that go
 campaign.crucible_fixture.name,The Crucible (test fixture)
 challenger.bruiser.description.001,A bruiser who has fought in every pit on the coast.
 challenger.bruiser.name.001,Old Knuckles
+challenger.captain.description.001,A captain who has outlasted the last three challengers.
+challenger.captain.name.001,Big Mott
+challenger.captain_champion.description.001,A captain who has never lost in front of a crowd.
+challenger.captain_champion.name.001,Grumm the Champion
 challenger.generic_single.description.001,"A confident challenger steps forward, eager to begin."
 challenger.generic_single.name.001,Ash the Undying
 challenger.generic_single.name.002,The Last Laugh
@@ -20,10 +24,6 @@ challenger.guard.name.002,Kessa the Quick
 challenger.guard.name.003,Lothar
 challenger.guard_pair.description.001,Two guards who finish each other's sentences.
 challenger.guard_pair.name.001,The Westhaven Twins
-challenger.ogre.description.001,An ogre who has eaten the last three challengers.
-challenger.ogre.name.001,Big Mott
-challenger.ogre_champion.description.001,An ogre who has never lost in front of a crowd.
-challenger.ogre_champion.name.001,Grumm the Champion
 challenger.raiders.description.001,A crew that fights for whoever paid last.
 challenger.raiders.description.002,A mob that has never agreed on a plan.
 challenger.raiders.name.001,The Skrat Tribe Raiders
@@ -48,6 +48,7 @@ dialogue.dm.line.crucible_fixture.yielded,"You raise a hand, and the bout is ove
 encounter.bouts.line.first_bout,Two goblins step onto the sand.
 encounter.bouts.line.spear_trial,A guard of the arena levels a spear.
 encounter.bouts.line.to_the_death,A goblin with nothing to lose.
+merchant.quartermaster.name,The quartermaster
 merchant.racks.name,The racks
 quest.crucible_fixture.arena.title,The arena
 quest.crucible_fixture.roster.title,The roster

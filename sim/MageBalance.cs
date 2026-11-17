@@ -110,7 +110,7 @@ namespace Sim
         }
 
         // the mage creation makes, with Mage Armor among the spells (Classes.Make, which every class's hero is)
-        static Hero Mage(Library library, int level) => Classes.Make(library, "mage", level, "mage_armor", improve: false);
+        static Hero Mage(Library library, int level) => Classes.Make(library, "mage", level, new[] { "mage_armor" }, improve: false);
 
         // hands back the part of an enemy's hit the lighter damage wouldn't have done, and notes a drop
         sealed class Watch : DropWatch

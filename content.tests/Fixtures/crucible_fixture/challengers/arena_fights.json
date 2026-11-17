@@ -51,11 +51,11 @@
       "descriptions": 2
     },
     {
-      "id": "ogre",
+      "id": "captain",
       "shape": "single",
       "monsters": [
         {
-          "monster": "ogre",
+          "monster": "bandit_captain",
           "count": "1"
         }
       ],
@@ -71,7 +71,7 @@
           "count": "1"
         },
         {
-          "monster": "ogre",
+          "monster": "bandit_captain",
           "count": "1"
         }
       ],
@@ -91,11 +91,11 @@
       "descriptions": 0
     },
     {
-      "id": "ogre_champion",
+      "id": "captain_champion",
       "shape": "single",
       "monsters": [
         {
-          "monster": "ogre",
+          "monster": "bandit_captain",
           "count": "1"
         }
       ],

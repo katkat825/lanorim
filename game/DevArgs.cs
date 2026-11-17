@@ -51,7 +51,8 @@ namespace Game
         // `--open <campaign>`: the book open at that campaign's pages, or the map builder on its maps
         public static string Open => Value("--open");
 
-        // `--show create --page spells --class mage`: a creation page part filled in
+        // `--show create --page spells --class mage`: a creation page part filled in; `--show book --open <campaign> --page 2`:
+        // its second page of characters (cc_task_nt Part 3)
         public static string Page => Value("--page");
 
         // the demonstration hero's class, and a creation page's
@@ -198,6 +199,9 @@ namespace Game
         // --- the demonstration table ---------------------------------------------------------------------------------
 
         public static bool Lineup => Has("--lineup");
+
+        // `--lineup scout,berserker,gladiator`: those statblocks instead of the goblin, the bandit and the rat (cc_task_ca)
+        public static string[] LineupOf => Word("--lineup")?.Split(',', System.StringSplitOptions.RemoveEmptyEntries);
 
         public static bool Companion => Has("--companion");
 

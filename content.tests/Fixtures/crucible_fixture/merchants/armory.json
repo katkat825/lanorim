@@ -9,6 +9,11 @@
         "shield",
         "shortbow"
       ]
+    },
+    {
+      "id": "quartermaster",
+      "armory": true,
+      "stock": "all_mundane"
     }
   ]
 }

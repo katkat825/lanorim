@@ -134,12 +134,12 @@ namespace Content.Tests
             Hero berserker = Made("barbarian", 3);
             Attack axe = Srd.Items.Find("greataxe").Attack;
 
-            Assert.DoesNotContain(berserker.RidersFor(true, attack: axe), r => r.Id == "frenzy");
+            Assert.DoesNotContain(berserker.RidersFor(Advantage.Advantage, attack: axe), r => r.Id == "frenzy");
 
             berserker.Invoke(berserker.FeatureCalled("rage"));
             berserker.Invoke(berserker.FeatureCalled("reckless_attack"));
 
-            Rider frenzy = berserker.RidersFor(false, attack: axe).Single(r => r.Id == "frenzy");
+            Rider frenzy = berserker.RidersFor(Advantage.Flat, attack: axe).Single(r => r.Id == "frenzy");
             Assert.Equal(new DiceRoll(2, Die.D6), frenzy.Amount);
         }
 

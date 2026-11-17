@@ -57,6 +57,19 @@ namespace Content.Tests
                 // SRD 5.2.1, checked 2026-11-09 (cc_task_cg): Scout p.322, Gladiator p.289
                 ["scout"] = "scout_shortsword|scout_longbow + scout_shortsword|scout_longbow",
                 ["gladiator"] = "gladiator_spear + gladiator_spear + gladiator_spear",
+                // SRD 5.2.1, checked 2026-11-16 (cc_task_ca Part 2): the rest of its humanoids
+                ["pirate"] = "pirate_dagger + pirate_dagger",
+                ["bandit_captain"] = "bandit_captain_scimitar|bandit_captain_pistol + bandit_captain_scimitar|bandit_captain_pistol",
+                ["druid"] = "druid_vine_staff|druid_verdant_wisp + druid_vine_staff|druid_verdant_wisp",
+                ["warrior_veteran"] = "warrior_veteran_greatsword|warrior_veteran_heavy_crossbow + warrior_veteran_greatsword|warrior_veteran_heavy_crossbow",
+                ["knight"] = "knight_greatsword|knight_heavy_crossbow + knight_greatsword|knight_heavy_crossbow",
+                ["guard_captain"] = "guard_captain_javelin|guard_captain_longsword + guard_captain_javelin|guard_captain_longsword",
+                ["tough_boss"] = "tough_boss_warhammer|tough_boss_heavy_crossbow + tough_boss_warhammer|tough_boss_heavy_crossbow",
+                ["pirate_captain"] = "pirate_captain_rapier|pirate_captain_pistol + pirate_captain_rapier|pirate_captain_pistol + pirate_captain_rapier|pirate_captain_pistol",
+                ["assassin"] = "assassin_shortsword|assassin_light_crossbow + assassin_shortsword|assassin_light_crossbow + assassin_shortsword|assassin_light_crossbow",
+                ["archmage"] = "archmage_arcane_burst + archmage_arcane_burst + archmage_arcane_burst + archmage_arcane_burst",
+                // SRD 5.2.1 p.345, added 2026-11-16 for The Feast (cc_task_tf Part 2)
+                ["black_bear"] = "black_bear_rend + black_bear_rend",
                 // not an SRD 5.2.1 statblock at all - see the 2026-09-25 run log
                 ["death_knight"] = "any + any",
             };

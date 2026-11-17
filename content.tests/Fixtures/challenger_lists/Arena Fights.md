@@ -42,17 +42,17 @@ stats: team of goblin warrior, guard
 1. The Skrat Tribe Raiders
 2. The North River Crew
 
-# ogre
-stats: a single ogre
+# captain
+stats: a single bandit captain
 
 ## descriptions
-1. An ogre who has eaten the last three challengers.
+1. A captain who has outlasted the last three challengers.
 
 ## names
 1. Big Mott
 
 # bruiser
-stats: a single goblin warrior or ogre
+stats: a single goblin warrior or bandit captain
 
 ## descriptions
 1. A bruiser who has fought in every pit on the coast.
@@ -63,12 +63,12 @@ stats: a single goblin warrior or ogre
 # bandit pair
 stats: two bandits
 
-# ogre champion
-stats: a single ogre
+# captain champion
+stats: a single bandit captain
 kind: champion
 
 ## descriptions
-1. An ogre who has never lost in front of a crowd.
+1. A captain who has never lost in front of a crowd.
 
 ## names
 1. Grumm the Champion

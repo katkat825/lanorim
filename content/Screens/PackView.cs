@@ -206,9 +206,10 @@ namespace Content.Screens
 
         // --- the armory's racks (cc_task_i 3.3) ----------------------------------------------------------------
 
-        // what the armory lends this hero: the merchant's own class and level filters
+        // what the armory lends this hero: the merchant's own class and level filters, and nothing magical (cc_task_ca
+        // Part 4: "every non-magical item that the hero can use at their level")
         public IReadOnlyList<Item> Racks =>
-            Armory ? Merchant.Showing(Hero.Class.Id, Hero.Level).ToList() : Array.Empty<Item>();
+            Armory ? Merchant.Showing(Hero.Class.Id, Hero.Level).Where(i => !i.Magical).ToList() : Array.Empty<Item>();
 
         Item OnTheRacks(string itemId) => Racks.FirstOrDefault(i => i.Id == itemId);
 

@@ -25,7 +25,7 @@ namespace Content.Classes
             "while_stances", "needs_weapon", "forgoes", "crit_on", "aura_ability", "armored_ac", "use_time",
             "reaction", "spells", "free_casts", "cantrips_by_level", "known_by_level", "skill_picks",
             "expertise_from", "dc", "dc_step", "stays_up_at", "speed_change", "only_bloodied",
-            "cap_half", "max_hp_per_level", "not_in_heavy_armor", "spell", "spell_abilities",
+            "cap_half", "max_hp_per_level", "not_in_heavy_armor", "spell", "spell_abilities", "not_in_srd",
         };
 
         // inside 'stays_up_at'
@@ -123,6 +123,7 @@ namespace Content.Classes
                 Dc = raw.Number("dc"),
                 DcStep = raw.Number("dc_step"),
                 OnlyBloodied = raw.Flag("only_bloodied"),
+                LanorimsOwn = raw.Flag("not_in_srd"),
                 CapHalf = raw.Flag("cap_half"),
                 MaxHitPointsPerLevel = raw.Number("max_hp_per_level"),
                 NotInHeavyArmor = raw.Flag("not_in_heavy_armor"),

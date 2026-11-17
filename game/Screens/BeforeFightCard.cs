@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Content.Classes;
 using Content.Spells;
 using Core.Magic;
 using Godot;
@@ -15,13 +16,20 @@ namespace Game.Screens
         readonly Func<IReadOnlyList<Spell>> _offered;
         readonly Action<Spell> _cast;
 
+        // a feature that outlasts the fight too (Lone Ward, cc_task_cb), and what using it does
+        readonly Func<IReadOnlyList<Feature>> _features;
+        readonly Action<Feature> _use;
+
         // what the last cast changed ("Mage Armor: your Armor Class is now 14")
         public string Said { get; set; } = "";
 
-        public BeforeFightCard(Func<IReadOnlyList<Spell>> offered, Action<Spell> cast)
+        public BeforeFightCard(Func<IReadOnlyList<Spell>> offered, Action<Spell> cast,
+                               Func<IReadOnlyList<Feature>> features = null, Action<Feature> use = null)
         {
             _offered = offered;
             _cast = cast;
+            _features = features ?? (() => Array.Empty<Feature>());
+            _use = use ?? (_ => { });
             Width = 620;
         }
 
@@ -42,6 +50,16 @@ namespace Game.Screens
                 card.ThemeTypeVariation = "CardLabel";
                 Body.AddChild(card);
                 Body.AddChild(Ui.Button(ScreenWords.BeforeFightCast, () => _cast(one), Ui.Say(one.NameKey)));
+            }
+
+            foreach (Feature feature in _features())
+            {
+                Feature one = feature;
+
+                Label card = Ui.Plain(Ui.Say(one.NameKey) + "\n" + Ui.Say(one.DescriptionKey));
+                card.ThemeTypeVariation = "CardLabel";
+                Body.AddChild(card);
+                Body.AddChild(Ui.Button(ScreenWords.BeforeFightUse, () => _use(one), Ui.Say(one.NameKey)));
             }
 
             Body.AddChild(Ui.Button(ScreenWords.ToTheFight, Close));

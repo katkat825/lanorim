@@ -75,6 +75,15 @@ namespace Content.Dialogue
         // <<challengers>> - the arena's roster (cc_task_cg Part 5): a scene, like a shop. the player picks one, or
         // walks away to the story; $challenger says who, and <<fight {$challenger}>> fights them
         Challengers,
+
+        // <<tip dice>> - the F1 help card opens at that section, as if the player had pressed F1 and gone there
+        // (cc_task_nt Part 4; the tutorial engine's ask A3). A scene: the story waits until the card is closed
+        Tip,
+
+        // <<map briarwood_inn>> - the scene's backdrop changes to one of the campaign's maps (cc_task_tf Part 1). nothing
+        // to answer; the story goes straight on, like <<bark>>. A later fight's own map still wins while it's fought,
+        // and the scene after it keeps that map until the next <<map>>
+        Map,
     }
 
     public sealed class Request
@@ -133,6 +142,8 @@ namespace Content.Dialogue
                 ["bark"] = RequestKind.Bark,
                 ["armory"] = RequestKind.Armory,
                 ["challengers"] = RequestKind.Challengers,
+                ["tip"] = RequestKind.Tip,
+                ["map"] = RequestKind.Map,
             };
 
         // null when it is not an engine verb at all; a problem when it is one written wrong
@@ -151,8 +162,10 @@ namespace Content.Dialogue
                 RequestKind.Roll => ReadRoll,
                 RequestKind.Rest => ReadRest,
                 RequestKind.Bark => ReadBark,
+                RequestKind.Tip => ReadTip,
                 RequestKind.Challengers => ReadBare,
-                RequestKind.Encounter or RequestKind.Fight or RequestKind.Loot or RequestKind.Shop or RequestKind.Armory => ReadId,
+                RequestKind.Encounter or RequestKind.Fight or RequestKind.Loot or RequestKind.Shop or RequestKind.Armory or
+                    RequestKind.Map => ReadId,
                 RequestKind.Give => ReadGive,
                 RequestKind.Gold or RequestKind.Silver or RequestKind.Copper or RequestKind.Level or RequestKind.Xp
                     => ReadAmount,
@@ -226,6 +239,16 @@ namespace Content.Dialogue
                        string.Join(", ", BarkPools.Spoken.Select(p => p.Id()));
 
             request.Id = pool.Id();
+            return null;
+        }
+
+        // <<tip section>>: one of the help card's own sections (HelpCard.Sections)
+        static string ReadTip(Request request, string[] words, string command)
+        {
+            if (words.Length != 2 || !Screens.HelpCard.Sections.Contains(words[1]))
+                return $"'{command}' - it is <<tip section>>, the section one of " + string.Join(", ", Screens.HelpCard.Sections);
+
+            request.Id = words[1];
             return null;
         }
 

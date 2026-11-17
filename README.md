@@ -188,7 +188,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 | `--open <campaign>` | launch.tscn | yes | with --show book, that campaign's two pages; with --show builder, that campaign's maps |
 | `--book-overlay` | launch.tscn |  | the menu on panels over the book, as when the pages are too small |
 | `--ask-delete` | launch.tscn |  | with --show book, the first character's Delete pressed, for a picture of the question |
-| `--page <step>` | launch.tscn |  | with --show create, that creation page, part filled in |
+| `--page <step>` | launch.tscn |  | with --show create, that creation page, part filled in; with --show book --open, that page of the campaign's characters (from 1) |
 | `--class <class>` | wherever it applies |  | with --show create, that class (mage otherwise); on the demonstration table, the hero's class (rogue otherwise) |
 | `--look <skin,hair>` | launch.tscn |  | with --show create, that skin tone and hair colour picked (FigureSkins, from 0) |
 | `--longest` | launch.tscn |  | with --show create --page, the picks that make that page longest (equipment, traits, cantrips, spells; check-layout's worst case) |
@@ -255,7 +255,7 @@ is how `check-export.ps1` runs it, and the ones the game's own classes read.
 
 | flag | where | in a release | what it does |
 |---|---|---|---|
-| `--lineup` | table.tscn on its own |  | a goblin, a bandit and a giant rat in a row beside the hero, as their minis |
+| `--lineup [ids]` | table.tscn on its own |  | a goblin, a bandit and a giant rat in a row beside the hero, as their minis; or the statblocks named, comma-separated |
 | `--companion [look]` | table.tscn on its own |  | the class's companion by the GM screen, or any look by name |
 | `--mood <mood>` | table.tscn on its own |  | with --companion, it feels that (pleased, alert, quiet, watching) |
 | `--mood-after <seconds>` | table.tscn on its own |  | with --mood, so many seconds in (2 otherwise) |

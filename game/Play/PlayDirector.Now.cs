@@ -35,6 +35,9 @@ namespace Game.Play
 
             Tell();
 
+            // a story's <<map>> (cc_task_tf Part 1): a scene on another map lays it; the same map, nothing
+            if (!_fighting && Run.Now is Scene.Line or Scene.Choice && Run.MapId != _laidMap) LayChapterMap();
+
             switch (Run.Now)
             {
                 case Scene.Line:
@@ -64,6 +67,10 @@ namespace Game.Play
                 case Scene.Roster:
                     _dialogue.Visible = false;
                     OpenRoster();
+                    break;
+
+                case Scene.Tip:
+                    OpenTip();
                     break;
 
                 case Scene.Dead:

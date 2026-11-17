@@ -47,7 +47,7 @@ namespace Content.Combat
             new[] { "initiative", "round", "turn", "moved", "hit", "critical", "miss", "damage",
                     "damage_lessened", "save_made", "save_failed",
                     "opportunity", "reacted", "condition_on", "condition_off", "down", "door_opened", "death_save_up",
-                    "death_save_dead", "won", "lost", "fled", "roll_table", "roll_hidden", "diverted",
+                    "death_save_dead", "knocked_out", "won", "lost", "fled", "roll_table", "roll_hidden", "diverted",
                     "roll_attack", "roll_save", "roll_check", "roll_initiative", "cast", "cast_on" }
                 .Concat(Enum.GetValues<Stat>().Select(ChangedWord))
                 .Concat(Enum.GetValues<Core.Magic.Command>().Where(w => w != Core.Magic.Command.None).Select(ObeysWord))
@@ -211,6 +211,9 @@ namespace Content.Combat
 
         public override void DeathSaved(Actor actor, Attempt attempt) =>
             Add(attempt.Succeeded ? "death_save_up" : "death_save_dead", actor, attempt.Total);
+
+        // "Pell rolls 6 on the death save and is knocked out." (a fight whose defeat continues, cc_task_nt Part 2)
+        public override void KnockedOut(Actor actor, Attempt attempt) => Add("knocked_out", actor, attempt.Total);
 
         public override void Ended(Outcome outcome)
         {

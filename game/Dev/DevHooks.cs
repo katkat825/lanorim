@@ -41,7 +41,7 @@ namespace Game.Dev
             new("--open", "<campaign>", Where.Launch, true, "with --show book, that campaign's two pages; with --show builder, that campaign's maps"),
             new("--book-overlay", "", Where.Launch, false, "the menu on panels over the book, as when the pages are too small"),
             new("--ask-delete", "", Where.Launch, false, "with --show book, the first character's Delete pressed, for a picture of the question"),
-            new("--page", "<step>", Where.Launch, false, "with --show create, that creation page, part filled in"),
+            new("--page", "<step>", Where.Launch, false, "with --show create, that creation page, part filled in; with --show book --open, that page of the campaign's characters (from 1)"),
             new("--class", "<class>", Where.Any, false, "with --show create, that class (mage otherwise); on the demonstration table, the hero's class (rogue otherwise)"),
             new("--look", "<skin,hair>", Where.Launch, false, "with --show create, that skin tone and hair colour picked (FigureSkins, from 0)"),
             new("--longest", "", Where.Launch, false, "with --show create --page, the picks that make that page longest (equipment, traits, cantrips, spells; check-layout's worst case)"),
@@ -96,7 +96,7 @@ namespace Game.Dev
             new("--frames", "<n>", Where.Any, false, "with --shot, so many pictures, one a frame (tools/flicker.ps1)"),
 
             // the demonstration table
-            new("--lineup", "", Where.Table, false, "a goblin, a bandit and a giant rat in a row beside the hero, as their minis"),
+            new("--lineup", "[ids]", Where.Table, false, "a goblin, a bandit and a giant rat in a row beside the hero, as their minis; or the statblocks named, comma-separated"),
             new("--companion", "[look]", Where.Table, false, "the class's companion by the GM screen, or any look by name"),
             new("--mood", "<mood>", Where.Table, false, "with --companion, it feels that (pleased, alert, quiet, watching)"),
             new("--mood-after", "<seconds>", Where.Table, false, "with --mood, so many seconds in (2 otherwise)"),

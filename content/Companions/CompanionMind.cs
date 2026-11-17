@@ -306,6 +306,15 @@ namespace Content.Companions
             if (_hero != null && ReferenceEquals(actor, _hero)) Say(Bark.Nerve);
         }
 
+        // a bout lost by a knockout: a Knock-Out line, a story-level moment, so the cooldown doesn't drop it
+        // (cc_task_nt Part 2)
+        public override void KnockedOut(Actor actor, Attempt attempt)
+        {
+            DeathSaved(actor, attempt);
+
+            if (_hero != null && ReferenceEquals(actor, _hero)) Say(Bark.KnockOut, fromStory: true);
+        }
+
         public override void Ended(Outcome outcome)
         {
             if (outcome == Outcome.HeroesWon) Say(Bark.Victory);

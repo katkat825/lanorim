@@ -28,6 +28,10 @@ namespace Content.Tests
             yield return new object[] { Path.Combine(SampleCampaignTests.Folder, "dialogue", "story.yarn") };
             yield return new object[] { Path.Combine(CrucibleTests.Folder, "dialogue", "arena.yarn") };
 
+            // The Feast, whose every scene starts with a <<map>> (cc_task_tf Part 1.4)
+            foreach (string file in Directory.EnumerateFiles(Path.Combine(FeastCampaignTests.Folder, "dialogue"), "*.yarn").OrderBy(f => f))
+                yield return new object[] { file };
+
             string old = Old();
             if (old == null) yield break;
 
@@ -84,6 +88,19 @@ namespace Content.Tests
             Assert.Equal("check", check.Verb);
             Assert.Equal("$passed", check.After.Arms[0].Condition);
             Assert.NotNull(check.After.Else);
+        }
+
+        [Fact]
+        public void AMapCommandIsABlockOfItsCardNotAReasonForATextCard()
+        {
+            StoryDraft story = StoryFiles.Open(FeastCampaignTests.Folder);
+
+            CardDraft inn = story.Card("briarwood_inn");
+            Assert.False(inn.IsText);
+            Do map = inn.Blocks.OfType<Do>().First();
+            Assert.Equal(("map", "briarwood_inn"), (map.Verb, map.Words));
+
+            Assert.All(story.Cards.Where(c => YarnText.Of(c.Read).Text.Contains("<<map ")), c => Assert.False(c.IsText, c.Title));
         }
 
         [Fact]

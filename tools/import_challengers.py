@@ -28,6 +28,10 @@ and '## Teams' sections, each with '### Names' and '### Descriptions'. A type us
 own takes the shared one for its shape (the singles' for a single, the teams' for a group or a team). And every stat
 block no type claims is offered under the shared lists too: one of them as a single, or a team of one of them.
 
+HUMANOIDS ONLY (Kathleen, 2026-11-16: "v1 won't have non-humanoid challengers"): every monster a stats: line names has
+to carry one of the tags in content/Challengers/ArenaFolk.cs (humanoid, goblinoid); any other is refused, naming the
+file and the line ("ogre isn't a humanoid: v1's challengers are humanoids only").
+
 A monster is named by its English statblock name, matched against monster.<id>.name in the game's locale and the
 pack's (case and a plural -s or -es don't matter), or by its id written as words. A name that matches nothing, or more
 than one monster, is a problem that names the file and the line; every problem is listed, and then nothing is written.
@@ -51,6 +55,8 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAULT = os.path.join(os.path.dirname(ROOT), 'campaign_authoring', 'The Crucible', 'Challengers')
 GAME_LOCALE = os.path.join(ROOT, 'game', 'locale', 'game.csv')
+MONSTERS = os.path.join(ROOT, 'content', 'srd', 'monsters')
+ARENA_FOLK = os.path.join(ROOT, 'content', 'Challengers', 'ArenaFolk.cs')
 
 NUMBERS = {'a': 1, 'an': 1, 'one': 1, 'single': 1, 'a single': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
            'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10}
@@ -102,6 +108,34 @@ def monster_names(pack_locale):
                 for said in (text.strip().lower(), parts[1].replace('_', ' ')):
                     names.setdefault(said, set()).add(parts[1])
     return names
+
+
+def arena_tags():
+    """the tags a challenger's stat block may carry, from ArenaFolk.Tags, so the list lives in one place"""
+    text = io.open(ARENA_FOLK, encoding='utf-8').read()
+    block = re.search(r'Tags\s*=\s*new\[\]\s*\{(.*?)\}', text, re.S).group(1)
+    return re.findall(r'"(\w+)"', block)
+
+
+def monster_tags(pack):
+    """every stat block's tags, the SRD's and the pack's own, by id"""
+    tags = {}
+    for folder in (MONSTERS, os.path.join(pack, 'monsters')):
+        if not os.path.isdir(folder):
+            continue
+        for name in sorted(os.listdir(folder)):
+            if name.endswith('.json'):
+                with io.open(os.path.join(folder, name), encoding='utf-8') as f:
+                    for m in json.load(f).get('monsters', []):
+                        tags[m['id']] = m.get('tags', [])
+    return tags
+
+
+def humanoids_only(monsters, tags, allowed, where):
+    """a problem for every monster on a stats: line that isn't one the arena takes"""
+    refused = [m['monster'] for m in monsters if not set(tags.get(m['monster'], [])) & set(allowed)]
+    if refused:
+        raise Problem('\n'.join(f"{where}: {m} isn't a humanoid: v1's challengers are humanoids only" for m in refused))
 
 
 def monster(name, names, where):
@@ -226,7 +260,7 @@ def blocks_of(path, problems):
     return blocks
 
 
-def read_list(path, names, problems):
+def read_list(path, names, problems, tags=None, allowed=None):
     """one vault file: its types (a # heading with a stats: line) and its shared lists (a # heading with none: each
     '## Single Challengers' or '## Teams' section's '### Names' and '### Descriptions' are drawn from by every type of
     that shape, beside the type's own)"""
@@ -236,6 +270,8 @@ def read_list(path, names, problems):
         try:
             if b['stats']:
                 shape, monsters = stats(b['stats'][0], names, b['stats'][1])
+                if tags is not None:
+                    humanoids_only(monsters, tags, allowed, b['stats'][1])
                 lists = {'names': [], 'descriptions': []}
                 for section in b['sections']:
                     if snake(section['name']) not in lists:
@@ -362,7 +398,7 @@ def main():
     for name in sorted(os.listdir(vault)):
         if not name.endswith('.md'):
             continue
-        types = read_list(os.path.join(vault, name), names, problems)
+        types = read_list(os.path.join(vault, name), names, problems, monster_tags(pack), arena_tags())
         files[snake(name[:-3]) + '.json'] = challengers_json(types)
         every.extend(types)
 

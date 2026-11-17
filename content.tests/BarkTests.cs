@@ -16,7 +16,7 @@ namespace Content.Tests
 {
     // COMPANION BARKS IN THE GAME (cc_task_i Part 2): Kathleen's pools imported into game-wide banks, each pool raised
     // at its moment (the folded names too), and a chatter that keeps it from talking too much
-    public class BarkTests
+    public partial class BarkTests
     {
         static readonly string[] Companions =
             { "bonded_wolf", "gossiping_raven", "bound_imp", "saints_fragment", "borrowed_shape_spirit" };
@@ -311,7 +311,8 @@ namespace Content.Tests
         [Fact]
         public void ThePriorityOrderIsKathleens()
         {
-            Assert.Equal(new[] { Bark.Snag, Bark.Maxed, Bark.Danger, Bark.Victory, Bark.Secret, Bark.Camp, Bark.Nearby },
+            // Knock-Out (cc_task_nt, 2026-11-16) beside Victory, the other end of a bout; it always plays as a story bark
+            Assert.Equal(new[] { Bark.Snag, Bark.Maxed, Bark.Danger, Bark.Victory, Bark.KnockOut, Bark.Secret, Bark.Camp, Bark.Nearby },
                          BarkPools.Spoken.OrderByDescending(p => p.Priority()));
             Assert.Equal(Bark.Snag.Priority(), Bark.Trouble.Priority());
             Assert.Equal(Bark.Maxed.Priority(), Bark.Perfect.Priority());

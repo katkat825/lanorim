@@ -61,6 +61,9 @@ namespace Content.Screens
                 Page = p,
             }));
 
+            // the arena's own line just before the book's other pages, beside Tutorials (cc_task_ca Part 5)
+            entries.AddRange(book.ArenaEntries);
+
             entries.AddRange(pages ?? Enumerable.Empty<ContentsEntry>());
             entries.Add(new ContentsEntry { Kind = ContentsKind.Quit, NameKey = CampaignBook.QuitKey });
 

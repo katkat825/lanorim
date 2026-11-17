@@ -102,6 +102,10 @@ namespace Content.Play
 
             if (request.Kind == RequestKind.Challengers) return RosterAsked();
 
+            if (request.Kind == RequestKind.Tip) return TipAsked(request);
+
+            if (request.Kind == RequestKind.Map) MapAsked(request);
+
             Referees(request);
             return null;
         }
@@ -138,6 +142,14 @@ namespace Content.Play
             }
 
             return Scene.Shop;
+        }
+
+        // <<map id>> (cc_task_tf Part 1): the scene's backdrop is that map from now on; one the campaign doesn't have is a
+        // complaint for the author's playthrough, and the map stays as it was. The referee then answers it like any ask
+        void MapAsked(Request request)
+        {
+            if (Pack.Maps.ContainsKey(request.Id)) MapId = request.Id;
+            else Talk.Complained.Add($"no map '{request.Id}' in this campaign");
         }
 
         // everything else the story asks of the table: the referee settles it, and the run hears what came of it

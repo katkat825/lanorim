@@ -13,6 +13,11 @@ namespace Content.Classes
         // second "is anybody next to them" system
         WithAdvantage,
 
+        // the attack roll was not at disadvantage: a flat roll, advantage, or both cancelled. Lanorim's solo
+        // Sneak Attack (cc_task_sa, Kathleen 2026-11-16): the SRD's "an ally next to the target" can't
+        // happen with no party, so this stands in for it
+        UnlessDisadvantage,
+
         OnCritical,
 
         // you spent the resource to make it happen. Divine Smite

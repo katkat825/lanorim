@@ -19,6 +19,7 @@ namespace Game.Screens
             new SettingsPage(),
             new SpellsPage(),
             new CreditsPage(),
+            new ArenasPage(),
         };
 
         // their lines in the contents: the Workshop where the Map builder was (cc_task_m 1.1), which it now opens

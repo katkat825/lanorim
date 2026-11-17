@@ -149,6 +149,10 @@ namespace Core.Combat
         // give it up on their turn. no knockout, no roll; the story hears "yielded"
         public bool Yieldable { get; set; }
 
+        // what losing means here, set by the campaign (cc_task_i 3.1): in a fight whose defeat continues, a failed death
+        // save is a knockout, and the table is told so (cc_task_nt Part 2)
+        public Defeat Defeat { get; set; } = Defeat.Death;
+
         public bool CanYield(Turn turn) =>
             Yieldable && turn != null && !turn.Ended && !Over &&
             turn.Actor.Side == Allegiance.Hero && !turn.Actor.IsDown;

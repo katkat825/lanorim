@@ -195,7 +195,7 @@
       "id": "orc",
       "speed": 30,
       "features": [
-        { "id": "adrenaline_rush", "trait": "boost", "level": 1, "use_time": "bonus_action",
+        { "id": "adrenaline_rush", "trait": "boost", "level": 1, "use_time": "bonus_action", "manoeuvres": ["dash"],
           "uses_by_level": {"1": 2, "5": 3, "9": 4, "13": 5, "17": 6}, "recharge": "short_rest" },
         { "id": "darkvision_120", "level": 1 },
         { "id": "relentless_endurance", "trait": "death_intercept", "level": 1, "stays_up_at": {"hit_points": 1},

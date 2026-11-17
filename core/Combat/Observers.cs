@@ -74,6 +74,10 @@ namespace Core.Combat
 
         void DeathSaved(Actor actor, Attempt attempt);
 
+        // the death save failed in a fight whose defeat continues (cc_task_nt Part 2): a knockout, not a death. told in
+        // the failed save's place; whoever doesn't say otherwise hears it as the failed save it also is
+        void KnockedOut(Actor actor, Attempt attempt) => DeathSaved(actor, attempt);
+
         void TurnEnded(Turn turn);
 
         void Ended(Outcome outcome);
@@ -142,6 +146,8 @@ namespace Core.Combat
 
         public virtual void DeathSaved(Actor actor, Attempt attempt) { }
 
+        public virtual void KnockedOut(Actor actor, Attempt attempt) => DeathSaved(actor, attempt);
+
         public virtual void TurnEnded(Turn turn) { }
 
         public virtual void Ended(Outcome outcome) { }
@@ -198,6 +204,8 @@ namespace Core.Combat
         public void Away(Actor actor, bool away) => Each(w => w.Away(actor, away));
 
         public void DeathSaved(Actor actor, Attempt attempt) => Each(w => w.DeathSaved(actor, attempt));
+
+        public void KnockedOut(Actor actor, Attempt attempt) => Each(w => w.KnockedOut(actor, attempt));
 
         public void TurnEnded(Turn turn) => Each(w => w.TurnEnded(turn));
 

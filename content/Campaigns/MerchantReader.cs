@@ -27,7 +27,19 @@ namespace Content.Campaigns
             if (armory && entry.Has("sell_percent"))
                 problems.Add($"{id}: an armory lends its gear and buys nothing, so it has no 'sell_percent'");
 
-            return new MerchantDef(id, entry.Strings("stock"), entry.Has("sell_percent") ? entry.Number("sell_percent") : -1, armory);
+            // "stock": "all_mundane" - an armory's way of saying every non-magical wearable item (cc_task_ca Part 4)
+            bool everything = entry.TryGetProperty("stock", out JsonElement stock) && stock.ValueKind == JsonValueKind.String;
+
+            if (everything && stock.GetString() != MerchantDef.AllMundane)
+                problems.Add($"{id}: 'stock' is a list of item ids, or \"{MerchantDef.AllMundane}\" on an armory");
+            else if (everything && !armory)
+                problems.Add($"{id}: only an armory can stock \"{MerchantDef.AllMundane}\" - a shop lists what it sells");
+
+            return new MerchantDef(id, everything ? null : entry.Strings("stock"),
+                                   entry.Has("sell_percent") ? entry.Number("sell_percent") : -1, armory)
+            {
+                StocksAllMundane = everything && armory && stock.GetString() == MerchantDef.AllMundane,
+            };
         }
 
         // THE STARTING SHOP every campaign has unless it writes its own merchant with this id: the SRD's mundane

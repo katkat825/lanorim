@@ -408,7 +408,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `damage_type` | damage type | a rider's damage type | | class | existing |
 | `condition` | condition | a rider's condition | | reserved: no class rider puts a condition on yet (Sneak Attack and Divine Strike only add damage) | existing |
 | `ability` | ability | the ability it works with: spellcasting, unarmored defence, an intercept's save | | class | existing |
-| `when` | `always`, `with_advantage`, `on_critical`, `when_spent` | when a rider fires | | class | existing |
+| `when` | `always`, `with_advantage`, `unless_disadvantage`, `on_critical`, `when_spent` | when a rider fires | | class | existing |
 | `grants` | `action`, `bonus_action`, `reaction` | which part of the turn an action grant adds to | | reserved: every grant is the default, an action | existing; `Spend`'s words, where it had its own enum (leftovers #13) |
 | `boons` | list of boons (the `boon` keys) | what it gives: a stance's one boon, put on when it is switched on; any other feature's, the creature's for good | the boon keys on the feature itself, `advantage_on`, `unless_incapacitated`, `defense` + `damage_type` and `trait: resistance`, a stance's `flat` | class, species | the item's word for the same list; no feature key means one thing to a stance and another to a speed feature (leftovers Part A, #4, #11) |
 | `speed_change` | feet | feet added to walking speed (Fast Movement) | `flat` on a speed feature | class | the boon's word for feet of speed; a feature, not a boon, because it needs the heavy-armor gate and changes the speed the sheet shows (leftovers #4) |
@@ -420,11 +420,11 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `recharge` | `short_rest`, `one_per_short_rest`, `long_rest` | how its uses come back: the rest that gives them back (words were `short`, `short_one`, `long`; a duration's `long_rest` is the same rest) | | class, species | existing; a statblock action's `recharge` is the same idea, a d6 record (leftovers #3) |
 | `spends` | feature id | the pool a use comes out of (Channel Divinity) | | class | existing |
 | `count` | number | skills an expertise picks, forms a shape has, actions a grant adds | | class | existing |
-| `duration` | duration | how long a stance lasts | | class | existing |
+| `duration` | duration | how long a stance lasts, or a boost's temporary hit points; a boost that lasts a `rest` or longer is offered on the before-the-fight card (Lone Ward) | | class | existing (the boost's use, cc_task_cb 2026-11-16: the same idea, how long what it gives lasts) |
 | `skills` | list of skills | trained skills | | class, species | existing |
 | `saves` | list of abilities | trained saves | | class | existing |
 | `progression` | caster progression | how a spellcaster climbs the slot levels | | class | existing |
-| `manoeuvres` | list of `dash`, `disengage`, `hide` | what a nimble feature frees the bonus action for | | class | existing (a statblock's too, leftovers #13) |
+| `manoeuvres` | list of `dash`, `disengage`, `hide` | what a nimble feature frees the bonus action for; on a boost, what using it also does (Adrenaline Rush's Dash) | | class | existing (a statblock's too, leftovers #13; a boost's since cc_task_cb, 2026-11-16, where Adrenaline Rush's Dash was written only in code) |
 | `once_per_turn` | flag | a rider that fires once a turn | | class | existing |
 | `while_stances` | list of feature ids | works only while these stances are up | | class | existing |
 | `needs_weapon` | `finesse_or_ranged`, `melee` | the weapons a rider rides on | `weapon` | class | `weapon` is an item's weapon record (leftovers #13) |
@@ -446,6 +446,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `cap_half` | flag | up to half its hit points | | class | existing |
 | `max_hp_per_level` | number | the hit point maximum rises this much each level | | species | existing |
 | `not_in_heavy_armor` | flag | a speed feature that counts only out of heavy armor | | class | existing |
+| `not_in_srd` | flag | Lanorim's own, not an SRD 5.2.1 feature (Lone Ward, in `content/srd/features/shared.json`) | | class | the spell's, item's, species', background's and statblock's word for the same idea, reused (cc_task_cb, 2026-11-16) |
 | `spell` | a spell | a species' own spell, inline (the Dragonborn's breath) | | species | existing |
 | `spell_abilities` | list of abilities | the abilities a species' spells may be cast with | | species | existing |
 
@@ -557,7 +558,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 | `loot` | id | the loot table a won fight opens | | encounter | existing |
 | `level` | number, 1 to 20 | the hero's level the fight is meant for: the campaign check holds its monsters to the SRD's XP Budget per Character for one character, and to the solo enemy cap. never read in play (cc_task_h 3.5) | | encounter | a statblock's challenge is the monster's; this is the fight's, at a level |
 | `difficulty` | `low` \| `moderate` \| `high` | how hard the fight is meant to be at that level, the SRD's Combat Encounter Difficulty; moderate when unsaid (cc_task_h 3.5) | | encounter | the DC ladder's words (`Difficulty`) are a check's, and the player's Story/Standard/Hard is a setting, not data |
-| `morale` | `none` \| `leader` \| `half` | when the enemies break and run (or surrender with nowhere to run): when the leader falls, or half of them are down. none is to the end (cc_task_h 3.4) | | reserved: no shipped fight has one yet; a campaign's author decides it per fight | nothing said when a fight ends but its outcome; morale is a fight's, not a monster's |
+| `morale` | `none` \| `leader` \| `half` | when the enemies break and run (or surrender with nowhere to run): when the leader falls, or half of them are down. none is to the end (cc_task_h 3.4) | | encounter (The Feast's `mill_collectors` and `kitchen_guards`, 2026-11-16) | nothing said when a fight ends but its outcome; morale is a fight's, not a monster's |
 | `defeat` | `death` \| `continues` | what losing this fight means: death is the death screen; continues goes back to the story with `$fight` "lost", the hero brought round, and a failed death save a knockout. unsaid is the campaign's `defeat` in pack.json (cc_task_i 3.1) | | reserved: no shipped fight has one yet; the Crucible pack is Kathleen's | `morale` is when the enemies give up; this is what happens when the hero does |
 | `challenger` | `encounter.challenger` | this hand-written fight is also offered on the arena's roster, beside the generated challengers, with its own name and description keys `challenger.<id>.name` and `.description` (cc_task_cg 3.4) | | reserved: the Crucible pack is Kathleen's | a challenger type (`challengers/`) is generated from her lists; this is one fight she wrote, which keeps everything a fight entry has |
 
@@ -567,7 +568,7 @@ in `docs/deferred.md` for when dim light is played. Each is refused by name if a
 |---|---|---|---|---|---|
 | `monster` | id | the statblock | | encounter | existing |
 | `count` | dice | how many | | encounter | existing |
-| `leader` | flag | the first of this band leads: its fall breaks a `"morale": "leader"` fight. none marked, the fight's first monster leads (cc_task_h 3.4) | | reserved: no shipped fight has a morale yet | a statblock's `tags` are the creature's in every fight; leading is this fight's |
+| `leader` | flag | the first of this band leads: its fall breaks a `"morale": "leader"` fight. none marked, the fight's first monster leads (cc_task_h 3.4) | | encounter.monster (The Feast's `mill_collectors`, 2026-11-16) | a statblock's `tags` are the creature's in every fight; leading is this fight's |
 
 ### `encounter.challenger`: a fight entry's `challenger`, the terms it goes on the roster by (cc_task_cg 3.4)
 

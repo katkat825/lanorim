@@ -175,6 +175,10 @@ namespace Content.Dialogue
             foreach (CompilationJob.File source in sources)
                 _problems.AddRange(TwoKeys.Warnings(source.FileName, source.Source));
 
+            // an engine verb written wrong, named by its line (cc_task_nt Part 4, VerbCheck)
+            foreach (CompilationJob.File source in sources)
+                _problems.AddRange(VerbCheck.Problems(source.FileName, source.Source));
+
             CompilationResult result;
 
             // the compiler is a third party at the edge of the loader, and Workshop content is the

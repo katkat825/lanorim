@@ -5,6 +5,7 @@
     "maxed": 15,
     "danger": 10,
     "victory": 30,
+    "knock_out": 10,
     "secret": 20,
     "camp": 15,
     "nearby": 10

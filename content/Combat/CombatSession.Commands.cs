@@ -184,8 +184,8 @@ namespace Content.Combat
 
             bool invoked = Hero.Invoke(feature, Fight.Resolver);
 
-            // Adrenaline Rush: the bonus action is a Dash too
-            if (invoked && feature.Trait == Trait.Boost) Turn.Hasten();
+            // Adrenaline Rush: the bonus action is a Dash too (its 'manoeuvres'; Lone Ward has none)
+            if (invoked && feature.Trait == Trait.Boost && feature.Manoeuvres.HasFlag(Manoeuvre.Dash)) Turn.Hasten();
 
             return Done(invoked, "no_uses");
         }

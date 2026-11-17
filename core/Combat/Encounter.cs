@@ -171,7 +171,9 @@ namespace Core.Combat
             if (actor.Side == Allegiance.Hero && !actor.Stable)
             {
                 Attempt save = Checks.DeathSave(_resolver, actor);
-                Observer.DeathSaved(actor, save);
+
+                if (!save.Succeeded && Defeat == Defeat.Continues) Observer.KnockedOut(actor, save);
+                else Observer.DeathSaved(actor, save);
 
                 if (!save.Succeeded) Field.Remove(actor);
             }

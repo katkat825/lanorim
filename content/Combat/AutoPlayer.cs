@@ -13,7 +13,7 @@ namespace Content.Combat
     // say does the most damage - a sword, a cantrip, a slot - and walk in when nothing reaches.
     // For the balance sim and headless play-throughs; nothing in the game plays the hero with it.
     // Not clever on purpose: it measures the numbers, not tactics.
-    public sealed class AutoPlayer
+    public sealed partial class AutoPlayer
     {
         // hit points at or under this share of the maximum and it heals first
         public double LowAt { get; init; } = 1.0 / 3;
@@ -44,7 +44,7 @@ namespace Content.Combat
         {
             Note?.Invoke($"turn: {session.Phase}, {session.Options().Count} options");
 
-            bool stanced = false;
+            bool stanced = false, keptAway = !KeepsAway;
 
             for (int step = 0; step < 16 && session.Phase == SessionPhase.Choosing; step++)
             {
@@ -56,6 +56,14 @@ namespace Content.Combat
                 }
 
                 if (Low(session) && Heal(session)) continue;
+
+                // once a turn, a ranged caster in melee may step out first (AutoPlayer.KeepAway.cs)
+                if (!keptAway)
+                {
+                    keptAway = true;
+
+                    if (KeepAway(session)) continue;
+                }
 
                 if (Strike(session)) continue;
 
@@ -116,6 +124,33 @@ namespace Content.Combat
         // first goblin
         bool Strike(CombatSession session)
         {
+            foreach (var c in Ranked(session))
+            {
+                if (!session.Select(c.option)) continue;
+
+                session.Point(c.facing);
+
+                ActionResult done = c.square.HasValue
+                    ? session.Confirm(c.square.Value)
+                    : c.target != null
+                        ? session.Confirm(c.target)
+                        : session.Confirm();
+
+                Note?.Invoke($"{c.option.Id} at {c.target?.Id ?? c.square?.ToString() ?? c.facing.ToString()} " +
+                             $"(~{c.damage:0.0}): {(done.Done ? "done" : done.WhyNotKey)}");
+
+                if (done.Done) return true;
+
+                session.Cancel();
+            }
+
+            return false;
+        }
+
+        // every option and aim with damage in it, best first, a leveled spell left out unless it beats the best weapon
+        // by the margin
+        List<(ActionOption option, Actor target, Cell? square, Facing facing, double damage)> Ranked(CombatSession session)
+        {
             var candidates = new List<(ActionOption option, Actor target, Cell? square, Facing facing, double damage)>();
 
             foreach (ActionOption option in session.Options().Where(o => o.Enabled &&
@@ -137,31 +172,10 @@ namespace Content.Combat
                                           .Max();
 
             // a tie goes to the option first on the action bar (a stable sort); it was the option's id until 2026-10-03
-            foreach (var c in candidates.OrderByDescending(c => c.damage))
-            {
-                bool leveled = c.option.Spell != null && c.option.Spell.Level > 0;
-
-                if (leveled && bestWeapon > 0 && c.damage < bestWeapon * SpellMargin) continue;
-
-                if (!session.Select(c.option)) continue;
-
-                session.Point(c.facing);
-
-                ActionResult done = c.square.HasValue
-                    ? session.Confirm(c.square.Value)
-                    : c.target != null
-                        ? session.Confirm(c.target)
-                        : session.Confirm();
-
-                Note?.Invoke($"{c.option.Id} at {c.target?.Id ?? c.square?.ToString() ?? c.facing.ToString()} " +
-                             $"(~{c.damage:0.0}): {(done.Done ? "done" : done.WhyNotKey)}");
-
-                if (done.Done) return true;
-
-                session.Cancel();
-            }
-
-            return false;
+            return candidates.OrderByDescending(c => c.damage)
+                             .Where(c => !(c.option.Spell != null && c.option.Spell.Level > 0 && bestWeapon > 0 &&
+                                           c.damage < bestWeapon * SpellMargin))
+                             .ToList();
         }
 
         static IEnumerable<(Actor, Cell?, Facing, double)> Aims(CombatSession session, ActionOption option)

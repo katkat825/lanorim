@@ -87,6 +87,7 @@ namespace Game.Screens
         public static readonly string BeforeFightTitle = K("combat", "before_title");
         public static readonly string BeforeFightLine = K("combat", "before_line");
         public static readonly string BeforeFightCast = K("combat", "before_cast");
+        public static readonly string BeforeFightUse = K("combat", "before_use");
         public static readonly string ToTheFight = K("combat", "to_the_fight");
         public static readonly string CaptionCast = K("combat", "caption_cast");
         public static readonly string CaptionCastOn = K("combat", "caption_cast_on");
@@ -128,7 +129,7 @@ namespace Game.Screens
                 TheEnd, TheEndBlurb, DemoEnd,
                 ThrowPrompt, VerdictHit, VerdictCritical, VerdictMiss, VerdictSaved, VerdictFailed, TurnHint, AimHint, CameRound, YourTurn, FightWon, FightFled,
                 OnYourself, CaptionCast, CaptionCastOn, CaptionChanged,
-                BeforeFightTitle, BeforeFightLine, BeforeFightCast, ToTheFight,
+                BeforeFightTitle, BeforeFightLine, BeforeFightCast, BeforeFightUse, ToTheFight,
                 SheetTitle, SheetLevel, SheetXp, SheetXpTop, SheetHp, SheetAc, SheetSpells, SheetFeatures, SheetSoloSlot, SheetKeepsakeReady, SheetKeepsakeSpent, SheetSize, SheetSpeciesSpells,
                 TraitSkill, TraitSpellAbility, TraitSize,
                 KitFromClass, KitFromBackground, KitGear, KitGold, KitStartsWith, KitShopFirst, KitList, KitNoGear,

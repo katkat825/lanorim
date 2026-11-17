@@ -284,10 +284,15 @@ namespace Game.Play
             _rules.Post(call, Refresh);
         }
 
+        // the map the board has on it now, for a story scene: what LayChapterMap last laid (Run.MapId, or the chapter's
+        // first when that was empty)
+        string _laidMap;
+
         void LayChapterMap()
         {
             Package pack = Run.Pack;
             string id = Run.MapId;
+            _laidMap = id;
 
             if (string.IsNullOrEmpty(id))
                 id = pack.Manifest?.Chapters.FirstOrDefault()?.Maps.FirstOrDefault() ?? pack.Maps.Keys.FirstOrDefault();

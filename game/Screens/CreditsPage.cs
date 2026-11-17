@@ -38,10 +38,62 @@ namespace Game.Screens
                 foreach (Credit credit in lines) page.AddChild(Line(credit));
             }
 
+            // the engine's and the runtime's own licences, whole, each behind a button: too long for the page
+            page.AddChild(Ui.Title(CreditsView.EngineHeadingKey));
+            page.AddChild(Ui.Plain(Engine.GetLicenseText().Split('\n')[0]));
+            page.AddChild(Ui.Button(CreditsView.GodotLicenceKey, () => Notice(launch, GodotNotice())));
+            page.AddChild(Ui.Button(CreditsView.DotnetLicenceKey, () => Notice(launch, DotnetNotice())));
+
             page.AddChild(Ui.Button(Content.Screens.CampaignBook.ContentsKey, launch.ShowBook));
 
             launch.Show(Ui.Panel(Ui.Scroll(page, 560)), 860);
         }
+
+        // A WHOLE LICENCE, VERBATIM, on a scrolling page of its own, and back to the credits (cc_task_nt Part 5.2)
+        void Notice(Launch launch, string text)
+        {
+            var page = Ui.Column(12, Ui.Button(CreditsView.BackKey, () => Open(launch)));
+
+            var words = new TextEdit
+            {
+                Text = text,
+                Editable = false,
+                WrapMode = TextEdit.LineWrappingMode.Boundary,
+                CustomMinimumSize = new Vector2(800, 520),
+            };
+            page.AddChild(words);
+
+            launch.Show(Ui.Panel(page), 860);
+        }
+
+        // Godot's MIT licence, then every third-party component it carries with its copyright, then each licence they name
+        static string GodotNotice()
+        {
+            var text = new System.Text.StringBuilder(Engine.GetLicenseText()).Append("\n\n");
+
+            foreach (Godot.Collections.Dictionary component in Engine.GetCopyrightInfo())
+            {
+                text.Append(component["name"]).Append('\n');
+
+                foreach (Godot.Collections.Dictionary part in (Godot.Collections.Array)component["parts"])
+                {
+                    foreach (string line in (string[])part["copyright"]) text.Append("  Copyright ").Append(line).Append('\n');
+                    text.Append("  License: ").Append(part["license"]).Append('\n');
+                }
+
+                text.Append('\n');
+            }
+
+            foreach (var licence in Engine.GetLicenseInfo())
+                text.Append("----- ").Append(licence.Key).Append(" -----\n").Append(licence.Value).Append("\n\n");
+
+            return text.ToString();
+        }
+
+        // the .NET runtime's, shipped beside the game (game/licenses/, from the runtime pack the export carries)
+        static string DotnetNotice() =>
+            Godot.FileAccess.GetFileAsString("res://licenses/dotnet_LICENSE.txt") + "\n\n" +
+            Godot.FileAccess.GetFileAsString("res://licenses/dotnet_THIRD-PARTY-NOTICES.txt");
 
         // "Quaternius - Ultimate Animated Animals, Fantasy Props MegaKit - 3D models - Quaternius Asset License", then
         // "by ..." for a clip's or a font's authors, and the link

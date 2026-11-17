@@ -116,6 +116,14 @@ And one function: **`has_item("rope")`** is true when the item is in the pack or
 | `<<xp 50>>` | experience points, in a campaign that levels by XP; ignored with a warning in a milestone one |
 | `<<level 3>>` | as before, milestone levelling; ignored with a warning in a campaign that levels by XP |
 | `<<challengers>>` | the arena's roster (cc_task_cg, §13): the player picks a challenger or goes back to the story. `$challenger` says who |
+| `<<map id>>` | the scene's backdrop becomes that map of the campaign's, with its look and props (2026-11-16, `cc_task_tf`). Nothing to answer; the story goes straight on. The same map again changes nothing. A map the campaign doesn't have is a campaign check problem naming the file, node and line |
+| `<<tip section>>` | opens the F1 help card at that section, as if the player had pressed F1 and gone there (2026-11-16, `cc_task_nt`). The section is one of the card's own: `story`, `dice`, `turn`, `move`, `attack`, `more`, `keys`. Nothing on the screen is highlighted. The story waits until the card is closed (F1 or Esc), then goes on. Any other section is a campaign check error naming the line |
+
+**A story's `<<bark>>` always plays** (2026-11-16, `cc_task_nt`): whatever the chatter cooldown or the last line, and
+it still starts the cooldown, so an ordinary bark straight after it is dropped. Only the Off setting silences it, and
+"Some" never thins it. **Every engine command is now checked as the story is read:** one written wrong (`<<bark
+nowhere>>`, `<<tip sheet>>`) is an error that names its file, node and line. A command with a `{$variable}` in it is
+left to the playthrough.
 
 **The GM screen rattles rarely now** (cc_task_i Part 1): for an encounter table (`<<encounter>>`, or a `<<fight>>` that
 names a table) and a `<<roll ... heard>>`, and never more than once every five minutes of play. An enemy's attacks,
@@ -134,6 +142,7 @@ companion, its lines keyed `dialogue.<companion>.bark.<pool>.<campaign>.001` in 
 | `maxed` | a natural 20 on the hero's attack, check or save |
 | `danger` | `<<bark danger>>`; and at a fight's start, one time in three, unless the story barked in the last ten seconds. Never when the hero is Bloodied: its lines warn of something coming |
 | `victory` | a fight is won |
+| `knock_out` | a bout lost by a knockout: the hero fails the death save in a fight whose defeat continues (2026-11-16). It always plays, like a story's bark. A yield isn't a knockout. The fight's log says the hero "is knocked out" |
 | `secret` | the GM screen rattles (§6) |
 | `camp` | `<<rest short>>` or `<<rest long>>` |
 | `nearby` | only `<<bark nearby>>` |
@@ -154,13 +163,17 @@ Each of these is optional; left out, the campaign plays as the game always has.
 | `characters` | 1 to 20 (default 5) | how many characters the campaign holds |
 | `starting_shop` | `true` (default), `false` | false: a new hero goes straight into the story, wearing the best of what it has |
 | `challengers` | an object (§13) | the arena's numbers: reputation for a win and a loss, the roster's size, a won bout's XP |
+| `tags` | a list of words | `"test"` (at the back of the book, labelled), `"tutorial_beginner"` and the other two (the tutorial picker), `"arena"` (its own line in the contents, §13), `"mature"` (§11) |
 | `consequences` | `"add"` (default), `"replace"` | the campaign's own `consequences/*.json` (the shape of `content/srd/consequences/pool.json`) are added to the game's nat-1 / nat-20 pool while it runs, or replace it. An entry can be flavour only: `"kind": "flavour"`, a line and no effect. Added ones can't reuse a game id; a replacing pool needs a boon and a bane |
 
 **Yield:** in a fight where defeat continues and the map has no way off, "Yield" is in More actions. It ends the bout
 at once, no knockout: `$fight` is `"yielded"`.
 
 **An armory** is a merchant with `"armory": true` and a stock of things to wear (no consumables: the check refuses
-them). `<<armory id>>` opens it: the hero puts on anything in it for free, as often as they like; what it replaces goes
+them). Its stock can be the word **`"stock": "all_mundane"`** instead of a list (2026-11-16): every non-magical item in
+the library that is worn or held, so an arena's quartermaster needn't list them. Whichever way it's written, the racks
+show each hero only what isn't magical and what their class and level can use (an item's `classes` and
+`minimum_level`). Magical means a boon while worn, a spell (a wand) or a bonus to hit. `<<armory id>>` opens it: the hero puts on anything in it for free, as often as they like; what it replaces goes
 back to the racks (if it was lent) or into the pack (if it was theirs). No gold moves and nothing borrowed goes in the
 pack; a loan taken off goes back, and can't be sold.
 
@@ -196,6 +209,8 @@ starting gold, and a consequence's `"kind": "gold"`.
 *cc_task_l, 2026-10-12.* A map is `maps/<id>.map` in the campaign, made in the map builder (the book's **Map
 builder**) and readable in a text editor. A map that belongs to no campaign lives in **My maps** (`user://maps`; on
 Windows `%APPDATA%\Godot\app_userdata\Lanorim\maps`), and the builder's **Copy to campaign...** puts it in one.
+
+**Which map a story scene shows** (2026-11-16): the last `<<map>>` or the last fight's map, whichever came later; with neither, the chapter's first map.
 
 **Format 2** adds how the map looks. Format 1 still reads, as stone floor and stone walls, so older maps load unchanged.
 
@@ -298,6 +313,20 @@ The tutorials (`campaigns/tutorial_*/dialogue/fight_cues.yarn`) are the model.
 *Added 2026-11-04 (`cc_task_cg`).* A campaign like the Crucible offers a **roster** of challengers to fight: drawn from
 your lists, fitted to the hero's level, and growing with the hero's reputation. Waves (several groups with no break)
 aren't built yet.
+
+**Humanoids only** (2026-11-16, `cc_task_ca`). Kathleen: "v1 won't have non-humanoid challengers", and "goblin is close
+enough to humanoid. it just needs to be a thinking, intelligent enough being that can voluntarily decide to try to
+prove it's the best warrior in the universe." So every stat block a challenger is made of carries one of the tags
+**`humanoid` or `goblinoid`**. The SRD types the Goblin Warrior as Fey (Goblinoid), and the stat blocks stay faithful,
+so the rule is the tags, not a retag; a later stat block that passes her test joins by adding one word to
+`content/Challengers/ArenaFolk.cs`, which the importer reads too. The goblins can fight; the ogre, the beasts and the
+undead can't. The importer refuses a `stats:` line that names one ("ogre isn't a humanoid: v1's challengers are
+humanoids only", with the file and the line), the campaign check refuses a type or a special fight with one, and the
+shared lists draw only humanoids.
+
+**Its own line in the book** (2026-11-16): tag the campaign **`arena`** in pack.json's `tags`, and it gets a line of its
+own in the book's contents, beside Tutorials, under the campaign's own name. It isn't in the ordinary campaign list.
+With more than one arena campaign, the line says "Arenas" and opens a short picker.
 
 ### Your lists, and the importer
 

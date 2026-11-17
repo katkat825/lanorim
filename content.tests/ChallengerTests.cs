@@ -123,6 +123,9 @@ namespace Content.Tests
         [InlineData("stats: a single goblin or two guards", "'or' is between single monsters")]
         [InlineData("stats: a single thug or scout", "'thug' is not a monster")]
         [InlineData("stats: team of goblin, wibbler", "'wibbler' is not a monster")]
+        // humanoids only (cc_task_ca Part 1): an ogre is a giant, a wolf a beast; a goblin passes (goblinoid)
+        [InlineData("stats: a single ogre", "ogre isn't a humanoid: v1's challengers are humanoids only")]
+        [InlineData("stats: team of goblin, wolf", "wolf isn't a humanoid")]
         public void ABadStatsLineIsAnErrorThatNamesTheLineAndWritesNothing(string line, string says)
         {
             string temp = Path.Combine(Path.GetTempPath(), "lanorim_challengers_" + Guid.NewGuid().ToString("N"));
@@ -159,7 +162,7 @@ namespace Content.Tests
 
             Assert.Equal(10, pack.Challengers.Count);
             Assert.Equal(new[] { "generic_single", "generic_team" }, pack.Challengers.Where(t => t.Shared).Select(t => t.Id));
-            Assert.Equal(new[] { "goblin", "ogre" }, pack.Challengers.Single(t => t.Id == "bruiser").Monsters.Select(b => b.Monster));
+            Assert.Equal(new[] { "goblin", "bandit_captain" }, pack.Challengers.Single(t => t.Id == "bruiser").Monsters.Select(b => b.Monster));
 
             EncounterEntry special = pack.SpecialChallengers.Single();
             Assert.Equal("spear_trial", special.Id);
@@ -168,7 +171,7 @@ namespace Content.Tests
 
             List<string> keys = pack.Keys().ToList();
             Assert.Contains("challenger.raiders.name.002", keys);
-            Assert.Contains("challenger.ogre.description.001", keys);
+            Assert.Contains("challenger.captain.description.001", keys);
             Assert.Contains("challenger.spear_trial.name", keys);
             Assert.Contains("challenger.spear_trial.description", keys);
         }

@@ -150,6 +150,16 @@ dialogue.bonded_wolf.bark.danger.007,The GM's smiling. I'm not sure I like that.
 dialogue.bonded_wolf.bark.danger.008,Keep your eyes open.
 dialogue.bonded_wolf.bark.danger.009,I smell a fight!
 dialogue.bonded_wolf.bark.danger.010,Something's ahead. Should be fun!
+dialogue.bonded_wolf.bark.knock_out.001,They got lucky!
+dialogue.bonded_wolf.bark.knock_out.002,That was tougher than expected.
+dialogue.bonded_wolf.bark.knock_out.003,We'll remember that opponent!
+dialogue.bonded_wolf.bark.knock_out.004,There's always another battle.
+dialogue.bonded_wolf.bark.knock_out.005,That's how it goes sometimes.
+dialogue.bonded_wolf.bark.knock_out.006,Not every battle needs to be won today.
+dialogue.bonded_wolf.bark.knock_out.007,"Well, that escalated quickly!"
+dialogue.bonded_wolf.bark.knock_out.008,WHAT WAS THAT?!
+dialogue.bonded_wolf.bark.knock_out.009,I was rooting for you!
+dialogue.bonded_wolf.bark.knock_out.010,"Next time, we're bringing snacks."
 dialogue.bonded_wolf.bark.maxed.001,Did you SEE that?!
 dialogue.bonded_wolf.bark.maxed.002,Again! Do it again!
 dialogue.bonded_wolf.bark.maxed.003,YES! More of that!
@@ -265,6 +275,16 @@ dialogue.borrowed_shape_spirit.bark.danger.007,Why does your species put candles
 dialogue.borrowed_shape_spirit.bark.danger.008,I have been practicing smiling. So far it has been unsuccessful.
 dialogue.borrowed_shape_spirit.bark.danger.009,Something's wrong... Oh! I'm just standing on a rock.
 dialogue.borrowed_shape_spirit.bark.danger.010,Teeth are just bones sticking out of one's face?
+dialogue.borrowed_shape_spirit.bark.knock_out.001,An unfortunate outcome.
+dialogue.borrowed_shape_spirit.bark.knock_out.002,That opponent was remarkably effective.
+dialogue.borrowed_shape_spirit.bark.knock_out.003,The probability of victory was lower than anticipated.
+dialogue.borrowed_shape_spirit.bark.knock_out.004,Perhaps a different strategy would yield better results.
+dialogue.borrowed_shape_spirit.bark.knock_out.005,The evidence suggests we were outmatched.
+dialogue.borrowed_shape_spirit.bark.knock_out.006,I have acquired valuable information.
+dialogue.borrowed_shape_spirit.bark.knock_out.007,That was statistically unfortunate.
+dialogue.borrowed_shape_spirit.bark.knock_out.008,Does your species always fight like that?
+dialogue.borrowed_shape_spirit.bark.knock_out.009,Is this a normal recovery method for your species?
+dialogue.borrowed_shape_spirit.bark.knock_out.010,I believe the ground has won.
 dialogue.borrowed_shape_spirit.bark.maxed.001,That was mathematically beautiful.
 dialogue.borrowed_shape_spirit.bark.maxed.002,The probability of that was rather low.
 dialogue.borrowed_shape_spirit.bark.maxed.003,A most impressive demonstration.
@@ -380,6 +400,16 @@ dialogue.bound_imp.bark.danger.007,"Whatever comes, I'll supervise. From over th
 dialogue.bound_imp.bark.danger.008,I'm beginning to suspect this isn't the scenic route.
 dialogue.bound_imp.bark.danger.009,You need to survive whatever may come. You owe me a drink.
 dialogue.bound_imp.bark.danger.010,This is an unusually ominous atmosphere.
+dialogue.bound_imp.bark.knock_out.001,"Well, those dice were just rude."
+dialogue.bound_imp.bark.knock_out.002,Wake up! I'm ready for more adventure.
+dialogue.bound_imp.bark.knock_out.003,Well. That could've gone better.
+dialogue.bound_imp.bark.knock_out.004,I think the universe owes you an apology.
+dialogue.bound_imp.bark.knock_out.005,That's not the strategy I'd have used.
+dialogue.bound_imp.bark.knock_out.006,And here I thought today was going so well.
+dialogue.bound_imp.bark.knock_out.007,I'm starting to think this adventure is hazardous.
+dialogue.bound_imp.bark.knock_out.008,I suppose the ground needed company?
+dialogue.bound_imp.bark.knock_out.009,I guess that's one way to end a fight.
+dialogue.bound_imp.bark.knock_out.010,The math rocks have betrayed us.
 dialogue.bound_imp.bark.maxed.001,"I don't care what anyone says, that was magic."
 dialogue.bound_imp.bark.maxed.002,Send some of that luck my way.
 dialogue.bound_imp.bark.maxed.003,The universe owes you an apology!
@@ -495,6 +525,16 @@ dialogue.gossiping_raven.bark.danger.007,"Hey GM, how long did this trap take yo
 dialogue.gossiping_raven.bark.danger.008,"This has ""roll for initiative"" written all over it."
 dialogue.gossiping_raven.bark.danger.009,The GM's being awfully quiet.
 dialogue.gossiping_raven.bark.danger.010,That shadow moved! I saw it!
+dialogue.gossiping_raven.bark.knock_out.001,I want revenge!
+dialogue.gossiping_raven.bark.knock_out.002,Did you see your face?
+dialogue.gossiping_raven.bark.knock_out.003,I'll make you look better when I tell the guys.
+dialogue.gossiping_raven.bark.knock_out.004,"GM, I'm telling everyone that you got carried away."
+dialogue.gossiping_raven.bark.knock_out.005,That opponent was a disgrace to their ancestors.
+dialogue.gossiping_raven.bark.knock_out.006,The dice are fired. All of them.
+dialogue.gossiping_raven.bark.knock_out.007,"Oh, we're doing a tactical nap I see."
+dialogue.gossiping_raven.bark.knock_out.008,I heard they were having relationship struggles.
+dialogue.gossiping_raven.bark.knock_out.009,Does this adventure come with a warranty?
+dialogue.gossiping_raven.bark.knock_out.010,Let's see where we end up after this.
 dialogue.gossiping_raven.bark.maxed.001,I'm telling EVERYONE about this!
 dialogue.gossiping_raven.bark.maxed.002,The math rocks have spoken!
 dialogue.gossiping_raven.bark.maxed.003,The GM isn't going to like that.
@@ -610,6 +650,16 @@ dialogue.saints_fragment.bark.danger.007,The wind carries an ill omen.
 dialogue.saints_fragment.bark.danger.008,This place has seen suffering.
 dialogue.saints_fragment.bark.danger.009,This area feels ill-favored.
 dialogue.saints_fragment.bark.danger.010,The gods send warnings in many forms.
+dialogue.saints_fragment.bark.knock_out.001,The darkness comes for us all.
+dialogue.saints_fragment.bark.knock_out.002,"Not today, death. Not quite."
+dialogue.saints_fragment.bark.knock_out.003,The world is rarely merciful.
+dialogue.saints_fragment.bark.knock_out.004,Another scar for the soul.
+dialogue.saints_fragment.bark.knock_out.005,The silence afterwards is always the worst.
+dialogue.saints_fragment.bark.knock_out.006,Some lessons are written in blood.
+dialogue.saints_fragment.bark.knock_out.007,We have looked into the abyss.
+dialogue.saints_fragment.bark.knock_out.008,This is not yet the final chapter.
+dialogue.saints_fragment.bark.knock_out.009,Fortune has turned her face away today.
+dialogue.saints_fragment.bark.knock_out.010,The fates have chosen a difficult path.
 dialogue.saints_fragment.bark.maxed.001,The gods are taking notes.
 dialogue.saints_fragment.bark.maxed.002,Perhaps there's hope yet.
 dialogue.saints_fragment.bark.maxed.003,Fate seems to favor you.
@@ -866,6 +916,8 @@ feature.lay_on_hands.description,"A bonus action: restore five times your paladi
 feature.lay_on_hands.name,Lay on Hands
 feature.life_domain_spells.description,"Aid, Bless, Cure Wounds and Lesser Restoration always prepared; Death Ward at 7th level and Greater Restoration at 9th."
 feature.life_domain_spells.name,Life Domain Spells
+feature.lone_ward.description,"An action, no spell slot: gain temporary hit points equal to your proficiency bonus plus your level, until your next rest. Once a long rest. Lanorim's solo bonus for a caster alone."
+feature.lone_ward.name,Lone Ward
 feature.memorize_spell.description,Swap a spell on a short rest.
 feature.memorize_spell.name,Memorize Spell
 feature.mindless_rage.description,"While raging, you cannot be charmed or frightened."
@@ -952,7 +1004,7 @@ feature.slippery_mind.description,Trained in Wisdom and Charisma saving throws.
 feature.slippery_mind.name,Slippery Mind
 feature.smite_of_protection.description,Your smites grant cover.
 feature.smite_of_protection.name,Smite of Protection
-feature.sneak_attack.description,"Once a turn, 1d6 extra damage when you hit with a finesse or ranged weapon and had the advantage. One more d6 every two levels."
+feature.sneak_attack.description,"Once a turn, 1d6 extra damage when you hit with a finesse or ranged weapon, unless you had disadvantage. One more d6 every two levels."
 feature.sneak_attack.name,Sneak Attack
 feature.spell_mastery.description,Two low-level spells you cast at will.
 feature.spell_mastery.name,Spell Mastery
@@ -1188,20 +1240,32 @@ merchant.not_for_you.line,That's no use to someone like you.
 merchant.not_stocked.line,I don't carry that.
 merchant.nothing_to_sell.line,You haven't got one of those.
 merchant.pack_full.line,You couldn't carry another thing. Make some room first.
+monster.archmage.description,170 hit points; Armor Class 17; speed 30 feet; Archmage Arcane Burst for 4d10 force; attacks 4 times a turn; takes no psychic damage.
+monster.archmage.name,Archmage
+monster.assassin.description,97 hit points; Armor Class 16; speed 30 feet; Assassin Shortsword for 1d6 piercing; Assassin Light Crossbow for 1d8 piercing; attacks 3 times a turn; resists poison damage.
+monster.assassin.name,Assassin
 monster.bandit.description,11 hit points; Armor Class 12; speed 30 feet; Bandit Scimitar for 1d6 slashing; Bandit Crossbow for 1d8 piercing.
 monster.bandit.name,Bandit
+monster.bandit_captain.description,52 hit points; Armor Class 15; speed 30 feet; Bandit Captain Scimitar for 1d6 slashing; Bandit Captain Pistol for 1d10 piercing; attacks 2 times a turn.
+monster.bandit_captain.name,Bandit Captain
 monster.berserker.description,67 hit points; Armor Class 13; speed 30 feet; Berserker Greataxe for 1d12 slashing.
 monster.berserker.name,Berserker
+monster.black_bear.description,19 hit points; Armor Class 11; speed 30 feet; Black Bear Rend for 1d6 slashing; attacks 2 times a turn.
+monster.black_bear.name,Black Bear
 monster.boar.description,13 hit points; Armor Class 11; speed 40 feet; Boar Gore for 1d6 piercing.
 monster.boar.name,Boar
 monster.brown_bear.description,22 hit points; Armor Class 11; speed 40 feet; Bear Bite for 1d8 piercing; Bear Claw for 1d4 slashing; attacks 2 times a turn.
 monster.brown_bear.name,Brown Bear
 monster.cultist.description,9 hit points; Armor Class 12; speed 30 feet; Sickle for 1d4 slashing.
 monster.cultist.name,Cultist
+monster.cultist_fanatic.description,44 hit points; Armor Class 13; speed 30 feet; Cultist Fanatic Pact Blade for 1d8 slashing.
+monster.cultist_fanatic.name,Cultist Fanatic
 monster.death_knight.description,180 hit points; Armor Class 20; speed 30 feet; Dread Longsword for 2d8 slashing; Hellfire Orb for 6d6 fire; attacks 2 times a turn; takes no poison damage; takes no necrotic damage.
 monster.death_knight.name,Death Knight
 monster.dire_wolf.description,22 hit points; Armor Class 14; speed 50 feet; Dire Bite for 1d10 piercing.
 monster.dire_wolf.name,Dire Wolf
+monster.druid.description,44 hit points; Armor Class 13; speed 30 feet; Druid Vine Staff for 1d8 bludgeoning; Druid Verdant Wisp for 3d6 radiant; attacks 2 times a turn.
+monster.druid.name,Druid
 monster.ghoul.description,22 hit points; Armor Class 12; speed 30 feet; Ghoul Bite for 1d6 piercing; Ghoul Claw for 1d4 slashing; attacks 2 times a turn; takes no poison damage.
 monster.ghoul.name,Ghoul
 monster.giant_rat.description,7 hit points; Armor Class 13; speed 30 feet; Rat Bite for 1d4 piercing.
@@ -1218,8 +1282,12 @@ monster.goblin_boss.description,21 hit points; Armor Class 17; speed 30 feet; Sc
 monster.goblin_boss.name,Goblin Boss
 monster.guard.description,11 hit points; Armor Class 16; speed 30 feet; Guard Spear for 1d6 piercing.
 monster.guard.name,Guard
+monster.guard_captain.description,75 hit points; Armor Class 18; speed 30 feet; Guard Captain Javelin for 3d6 piercing; Guard Captain Longsword for 2d10 slashing; attacks 2 times a turn.
+monster.guard_captain.name,Guard Captain
 monster.imp.description,21 hit points; Armor Class 13; speed 20 feet; Sting for 1d6 piercing; takes no fire damage; takes no poison damage; halves cold damage.
 monster.imp.name,Imp
+monster.knight.description,52 hit points; Armor Class 18; speed 30 feet; Knight Greatsword for 2d6 slashing; Knight Heavy Crossbow for 2d10 piercing; attacks 2 times a turn.
+monster.knight.name,Knight
 monster.kobold_warrior.description,7 hit points; Armor Class 14; speed 30 feet; Kobold Dagger for 1d4 piercing.
 monster.kobold_warrior.name,Kobold Warrior
 monster.mage.description,81 hit points; Armor Class 15; speed 30 feet; Arcane Burst for 3d8 force; attacks 3 times a turn.
@@ -1228,12 +1296,28 @@ monster.ogre.description,68 hit points; Armor Class 11; speed 40 feet; Greatclub
 monster.ogre.name,Ogre
 monster.owlbear.description,59 hit points; Armor Class 13; speed 40 feet; Owlbear Rend for 2d8 slashing; attacks 2 times a turn.
 monster.owlbear.name,Owlbear
+monster.pirate.description,33 hit points; Armor Class 14; speed 30 feet; Pirate Dagger for 1d4 piercing; attacks 2 times a turn.
+monster.pirate.name,Pirate
+monster.pirate_captain.description,84 hit points; Armor Class 17; speed 30 feet; Pirate Captain Rapier for 2d8 piercing; Pirate Captain Pistol for 2d10 piercing; attacks 3 times a turn.
+monster.pirate_captain.name,Pirate Captain
 monster.priest.description,38 hit points; Armor Class 13; speed 30 feet; Priest Mace for 1d6 bludgeoning; Radiant Flame for 2d10 radiant; attacks 2 times a turn.
 monster.priest.name,Priest
+monster.priest_acolyte.description,11 hit points; Armor Class 13; speed 30 feet; Priest Acolyte Mace for 1d6 bludgeoning; Priest Acolyte Radiant Flame for 2d6 radiant.
+monster.priest_acolyte.name,Priest Acolyte
 monster.scout.description,16 hit points; Armor Class 13; speed 30 feet; Scout Shortsword for 1d6 piercing; Scout Longbow for 1d8 piercing; attacks 2 times a turn.
 monster.scout.name,Scout
 monster.skeleton.description,13 hit points; Armor Class 14; speed 30 feet; Rusted Shortsword for 1d6 piercing; Shortbow for 1d6 piercing; takes no poison damage; takes double bludgeoning damage.
 monster.skeleton.name,Skeleton
+monster.spy.description,27 hit points; Armor Class 12; speed 30 feet; Spy Shortsword for 1d6 piercing; Spy Hand Crossbow for 1d6 piercing.
+monster.spy.name,Spy
+monster.tough.description,32 hit points; Armor Class 12; speed 30 feet; Tough Mace for 1d6 bludgeoning; Tough Heavy Crossbow for 1d10 piercing.
+monster.tough.name,Tough
+monster.tough_boss.description,82 hit points; Armor Class 16; speed 30 feet; Tough Boss Warhammer for 2d8 bludgeoning; Tough Boss Heavy Crossbow for 2d10 piercing; attacks 2 times a turn.
+monster.tough_boss.name,Tough Boss
+monster.warrior_infantry.description,9 hit points; Armor Class 13; speed 30 feet; Warrior Infantry Spear for 1d6 piercing.
+monster.warrior_infantry.name,Warrior Infantry
+monster.warrior_veteran.description,65 hit points; Armor Class 17; speed 30 feet; Warrior Veteran Greatsword for 2d6 slashing; Warrior Veteran Heavy Crossbow for 2d10 piercing; attacks 2 times a turn.
+monster.warrior_veteran.name,Warrior Veteran
 monster.werewolf.description,71 hit points; Armor Class 15; speed 30 feet; Claw for 2d6 slashing; Werewolf Bite for 2d8 piercing; Longbow for 2d8 piercing; attacks 2 times a turn.
 monster.werewolf.name,Werewolf
 monster.wolf.description,11 hit points; Armor Class 12; speed 40 feet; Bite for 1d6 piercing.
@@ -2100,6 +2184,7 @@ ui.area.cone.name,{0}-foot cone
 ui.area.cube.name,{0}-foot cube
 ui.area.line.name,{0}-foot line
 ui.area.radius.name,{0}-foot radius
+ui.book.arenas,Arenas
 ui.book.contents,Main menu
 ui.book.continue,Continue
 ui.book.credits,Credits
@@ -2113,7 +2198,7 @@ ui.book.map_builder,Map builder
 ui.book.new_character,New character
 ui.book.quit,Quit
 ui.book.settings,Settings
-ui.book.slots_full,All five characters are in use. Delete one to start another.
+ui.book.slots_full,Every character slot is in use. Delete one to start another.
 ui.book.test_campaign,Test campaign
 ui.book.tutorials,Tutorial
 ui.book.workshop,Workshop
@@ -2138,6 +2223,7 @@ ui.combat.aim_hint,{0} and {1} or the wheel turn it; Shift and the wheel zoom; {
 ui.combat.before_cast,Cast {0} on yourself
 ui.combat.before_line,A spell that lasts longer than a fight can be cast on yourself now. It costs a slot as usual.
 ui.combat.before_title,Before the fight
+ui.combat.before_use,Use {0} now
 ui.combat.bonus_action,Bonus action
 ui.combat.caption_cast,You cast {0}
 ui.combat.caption_cast_on,You cast {0} on {1}
@@ -2287,7 +2373,11 @@ ui.create.title_species_class,A new {0} {1}
 ui.create.trait_size,Your size
 ui.create.trait_skill,A skill your species or background gives you
 ui.create.trait_spell_ability,Your species' spells are cast with
+ui.credits.back,Back to the credits
 ui.credits.by,by {0}
+ui.credits.dotnet_licence,The .NET runtime's licence
+ui.credits.engine_heading,Godot Engine and .NET
+ui.credits.godot_licence,Godot's licence
 ui.credits.licence_bsd,BSD License
 ui.credits.licence_cc0,CC0
 ui.credits.licence_cc_by,CC BY
@@ -2395,6 +2485,7 @@ ui.log.fled.name,You get away.
 ui.log.held_up.name,"{0} would fall, but the keepsake holds them up on {1} hit points."
 ui.log.hit.name,Hit: {0} hits {1} ({2} against Armor Class {3}).
 ui.log.initiative.name,Initiative is rolled: {0}.
+ui.log.knocked_out.name,{0} rolls {1} on the death save and is knocked out.
 ui.log.lost.name,The fight is lost.
 ui.log.miss.name,Miss: {0} misses {1} ({2} against Armor Class {3}).
 ui.log.moved.name,{0} moves {1} squares.
@@ -2877,6 +2968,7 @@ ui.workshop.back_to_editor,Back to the editor
 ui.workshop.bark_pool,What it's for
 ui.workshop.bark_pool_camp,At the campfire
 ui.workshop.bark_pool_danger,Danger ahead
+ui.workshop.bark_pool_knock_out,A bout lost by a knockout
 ui.workshop.bark_pool_maxed,A great roll
 ui.workshop.bark_pool_nearby,Something's near
 ui.workshop.bark_pool_secret,A secret roll behind the screen
@@ -2992,11 +3084,13 @@ ui.workshop.does_give,give {0}
 ui.workshop.does_gold,give {0} gold
 ui.workshop.does_level,raise the hero to level {0}
 ui.workshop.does_loot,search {0}
+ui.workshop.does_map,show the map {0}
 ui.workshop.does_rest,take a {0}
 ui.workshop.does_roll,roll {0}
 ui.workshop.does_save,"ask for a {0} save, DC {1}"
 ui.workshop.does_shop,open the shop {0}
 ui.workshop.does_silver,give {0} silver
+ui.workshop.does_tip,open the help card at {0}
 ui.workshop.does_xp,give {0} experience
 ui.workshop.done,Done
 ui.workshop.down,Down

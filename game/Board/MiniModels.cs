@@ -21,6 +21,11 @@ namespace Game.Board
             ["bandit"] = new("pirate_male.gltf", 0.1875f, Skin: FigureSkins.For("bandit")),
             ["guard"] = new("knight_male.gltf", 0.1875f, Skin: FigureSkins.For("guard")),
             ["priest"] = new("knight_male.gltf", 0.1875f, Skin: FigureSkins.For("priest")),
+            // the arena's fighters (cc_task_ca Part 3): the scout, the berserker and the gladiator, from the same pack's
+            // npcs/ figures, at the humanoids' height and with their skin
+            ["soldier"] = new("npcs/Soldier_Male.gltf", 0.1875f, Skin: FigureSkins.For("soldier")),
+            ["viking"] = new("npcs/Viking_Male.gltf", 0.1875f, Skin: FigureSkins.For("viking")),
+            ["golden_knight"] = new("npcs/Knight_Golden_Male.gltf", 0.1875f, Skin: FigureSkins.For("golden_knight")),
             ["zombie"] = new("zombie_male.gltf", 0.1875f),
             ["wolf"] = new("wolf.gltf", 0.11f),
             ["rat"] = new("rat.tscn", 0.06f),

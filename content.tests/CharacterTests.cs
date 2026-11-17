@@ -366,15 +366,17 @@ namespace Content.Tests
             Attack dagger = Srd.Items.Find("dagger").Attack;
             Attack club = Srd.Items.Find("club").Attack;
 
-            Assert.Empty(hero.RidersFor(false, attack: dagger));
-            Assert.Contains(hero.RidersFor(true, attack: dagger), r => r.Id == "sneak_attack");
+            // the solo delta (cc_task_sa, 2026-11-16): any roll not at disadvantage, a flat one included
+            Assert.Empty(hero.RidersFor(Advantage.Disadvantage, attack: dagger));
+            Assert.Contains(hero.RidersFor(Advantage.Flat, attack: dagger), r => r.Id == "sneak_attack");
+            Assert.Contains(hero.RidersFor(Advantage.Advantage, attack: dagger), r => r.Id == "sneak_attack");
 
             // SRD 5.2.1 (p.61): a Finesse or a Ranged weapon - not a club
-            Assert.DoesNotContain(hero.RidersFor(true, attack: club), r => r.Id == "sneak_attack");
+            Assert.DoesNotContain(hero.RidersFor(Advantage.Advantage, attack: club), r => r.Id == "sneak_attack");
 
             // 3d6 at level 5
             Assert.Equal(new DiceRoll(3, Die.D6),
-                         hero.RidersFor(true, attack: dagger).First(r => r.Id == "sneak_attack").Amount);
+                         hero.RidersFor(Advantage.Advantage, attack: dagger).First(r => r.Id == "sneak_attack").Amount);
         }
 
         [Fact]

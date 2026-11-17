@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Content.Classes;
 using Core.Characters;
+using Core.Dice;
 using Core.Resolution;
 using Core.Rules;
 
@@ -86,11 +87,17 @@ namespace Content.Sheet
                         break;
                     }
 
-                // the Orc's Adrenaline Rush: temporary hit points equal to the proficiency bonus;
-                // the Dash is the turn's (CombatSession)
+                // temporary hit points: its 'amount' (Lone Ward's proficiency bonus + level, by level), or with none the
+                // proficiency bonus (the Orc's Adrenaline Rush). they don't stack: the higher pool stays (SRD). a Dash in
+                // its 'manoeuvres' is the turn's (CombatSession)
                 case Trait.Boost:
-                    Actor.Health.GrantTemporary(Actor.ProficiencyBonus);
-                    break;
+                    {
+                        DiceRoll amount = feature.AmountAt(Level);
+                        Actor.Health.GrantTemporary(amount.IsNothing
+                                                        ? Actor.ProficiencyBonus
+                                                        : Math.Max(0, resolver?.Roll(amount) ?? amount.Average));
+                        break;
+                    }
 
                 // the Fairy's Flutter: the flight is the fight's (CombatSession.DoFlight), and this spends the use
                 case Trait.Flight:

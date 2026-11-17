@@ -177,15 +177,33 @@ namespace Game.Access
 
         public bool HelpShowing => _help?.Visible == true;
 
-        public void Help(bool show)
+        // the card was closed (F1 again, or Esc): a story's <<tip>> waits for this (cc_task_nt Part 4)
+        public event Action HelpClosed;
+
+        // `section`: a story's <<tip section>> opens the card there (HelpCard.Sections): the narrator reads from that
+        // line on, and its label carries the theme variation "HelpSection" for the card's look to pick out (#5: until
+        // the theme has one, it looks like the other lines). No highlighting anywhere else on the screen
+        public void Help(bool show, string section = null)
         {
-            if (show) _help = BuildHelp();
+            bool was = HelpShowing;
+
+            if (show) _help = BuildHelp(section);
             else if (_help != null) _help.Visible = false;
 
-            if (show) Say(new[] { Ui.Say(HelpCard.TitleKey) }.Concat(HelpCard.Lines.Select(k => Ui.Say(k))).ToArray());
+            if (show)
+            {
+                IEnumerable<string> lines = HelpCard.Lines;
+                string from = section != null ? HelpCard.LineKey(section) : null;
+
+                if (from != null && HelpCard.Lines.Contains(from)) lines = lines.SkipWhile(k => k != from);
+
+                Say(new[] { Ui.Say(HelpCard.TitleKey) }.Concat(lines.Select(k => Ui.Say(k))).ToArray());
+            }
+
+            if (!show && was) HelpClosed?.Invoke();
         }
 
-        PanelContainer BuildHelp()
+        PanelContainer BuildHelp(string section = null)
         {
             _help?.QueueFree();
 
@@ -197,7 +215,11 @@ namespace Game.Access
             var column = Ui.Column(8, Ui.Title(HelpCard.TitleKey));
 
             foreach (string line in HelpCard.Lines)
-                column.AddChild(Ui.Label(line));
+            {
+                Label label = Ui.Label(line);
+                if (section != null && line == HelpCard.LineKey(section)) label.ThemeTypeVariation = "HelpSection";
+                column.AddChild(label);
+            }
 
             // the keys, each as the Controls page says it
             foreach (Act act in Enum.GetValues<Act>())
