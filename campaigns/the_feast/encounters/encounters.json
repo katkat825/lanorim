@@ -23,12 +23,12 @@
         {
           "id": "pond_bear",
           "level": 1,
-          "difficulty": "high",
+          "difficulty": "low",
           "kind": "fight",
           "map": "briarwood_pond",
           "monsters": [
             {
-              "monster": "black_bear"
+              "monster": "wolf"
             }
           ]
         },

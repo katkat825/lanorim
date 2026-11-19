@@ -211,7 +211,7 @@ ENCOUNTERS = {"tables": [
     {"id": "set_pieces", "entries": [
         fight("mill_collectors", "mill_yard",
               [{"monster": "bandit", "leader": True}, {"monster": "bandit"}], morale="leader"),
-        fight("pond_bear", "briarwood_pond", [{"monster": "black_bear"}], difficulty="high"),
+        fight("pond_bear", "briarwood_pond", [{"monster": "wolf"}]),
         fight("kitchen_hound", "kitchen_yard", [{"monster": "wolf"}]),
         fight("kitchen_guards", "kitchen_yard_guards", [{"monster": "guard", "count": "2"}], morale="half"),
     ]},
@@ -219,7 +219,7 @@ ENCOUNTERS = {"tables": [
 
 ENCOUNTER_LINES = {
     "encounter.set_pieces.line.mill_collectors": "Rufus Pickle and his partner draw their blades.",
-    "encounter.set_pieces.line.pond_bear": "A bear, as hungry as everyone else this winter.",
+    "encounter.set_pieces.line.pond_bear": "A wolf, as hungry as everyone else this winter.",
     "encounter.set_pieces.line.kitchen_hound": "One of the largest hounds you've ever seen.",
     "encounter.set_pieces.line.kitchen_guards": "Two of his lordship's guards.",
 }

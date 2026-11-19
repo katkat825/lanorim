@@ -56,20 +56,20 @@ speaker: dm
         Tobias waves from the roof of the barn, a hammer in one hand. Her Royal Hoggness's empty pen still has fresh straw in it. #line:village_farm_after_bear
         <<jump village_hub>>
     <<endif>>
-    Tobias looks up from a fence post the bear knocked over in the night. #line:village_farm_again
-    Any luck with that bear? #line:village_farm_any_luck #speaker:tobias
+    Tobias looks up from a fence post the wolf knocked over in the night. #line:village_farm_again
+    Any luck with that wolf? #line:village_farm_any_luck #speaker:tobias
 <<else>>
     <<set $visited_farm to true>>
     The sound of a hammer rings out as you approach the farmhouse. You go around to the back of the house where the banging is coming from. #line:village_farm_hammer
     Great! Hold this shutter in place while I re-attach the hinges. #line:village_farm_shutter #speaker:tobias
     <<if $bear_won>>
-        You help Tobias with that and a couple of other repairs. He talks about the bear the whole time, and how glad he is it won't be back. #line:village_farm_repairs_after
+        You help Tobias with that and a couple of other repairs. He talks about the wolf the whole time, and how glad he is it won't be back. #line:village_farm_repairs_after
         <<jump village_hub>>
     <<endif>>
-    As you help Tobias with that and a couple of other repairs, he tells you about the bear that keeps coming onto the farm and causing damage. #line:village_farm_repairs
-    Even the bears don't have food, I guess. Any chance I can convince you to take the bear out? The wife got me a healing potion just in case it gets me. You can have it if you take down the bear. #line:village_farm_ask #speaker:tobias
+    As you help Tobias with that and a couple of other repairs, he tells you about the wolf that keeps coming onto the farm and causing damage. #line:village_farm_repairs
+    Even the wolves don't have food, I guess. Any chance I can convince you to take the wolf out? The wife got me a healing potion just in case it gets me. You can have it if you take down the wolf. #line:village_farm_ask #speaker:tobias
 <<endif>>
--> "I'll take care of your bear." #line:village_farm_opt_bear
+-> "I'll take care of your wolf." #line:village_farm_opt_bear
     <<jump bear_trouble>>
 -> Not right now. #line:village_farm_opt_later
     <<jump village_hub>>

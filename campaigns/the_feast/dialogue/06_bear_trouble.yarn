@@ -19,13 +19,13 @@ speaker: dm
 <<if $hunting>>
     The rustling seems to be coming from the direction of a small clearing you passed earlier while you were looking for game. #line:bear_from_clearing
 <<else>>
-    You search the woods for the bear that's been causing trouble on the farm. #line:bear_search
+    You search the woods for the wolf that's been causing trouble on the farm. #line:bear_search
     As the sun touches the horizon, you hear a rustling from the trees. It seems to be coming from the direction of a small clearing you passed earlier in your search. #line:bear_rustling
 <<endif>>
 -> Investigate the noise. #line:bear_opt_investigate
     <<check investigation 8>>
     <<if $passed>>
-        The rustling gets louder as you come to a small clearing. A bear is rooting through the underbrush. He looks up as you approach. #line:bear_investigate_pass
+        The rustling gets louder as you come to a small clearing. A wolf is rooting through the underbrush. He looks up as you approach. #line:bear_investigate_pass
     <<else>>
         The rustling gets louder as you come to a small clearing. You look around as you enter the clearing but don't see anything. A loud roar comes from directly behind you. #line:bear_investigate_fail
     <<endif>>
@@ -33,15 +33,15 @@ speaker: dm
 -> Duck back into the bushes and hide. #line:bear_opt_hide
     <<check stealth 8>>
     <<if $passed>>
-        The rustling gets louder as something approaches. A large bear comes into sight from behind a tree. #line:bear_hide_pass
+        The rustling gets louder as something approaches. A large wolf comes into sight from behind a tree. #line:bear_hide_pass
         -> Stay hidden. #line:bear_opt_stay_hidden
-            The bear snuffles along the edge of the pond, then lumbers back into the trees. You wait until the rustling has faded completely before you head back to the village. It will be back, and so can you. #line:bear_stayed_hidden
+            The wolf snuffles along the edge of the pond, then lumbers back into the trees. You wait until the rustling has faded completely before you head back to the village. It will be back, and so can you. #line:bear_stayed_hidden
             <<set $hunting to false>>
             <<jump village_hub>>
         -> Attack. #line:bear_opt_attack
             <<set $bear_fight to true>>
     <<else>>
-        The rustling gets louder as something approaches. A large bear comes into sight from behind a tree. He sniffs the air and looks directly at you. #line:bear_hide_fail
+        The rustling gets louder as something approaches. A large wolf comes into sight from behind a tree. He sniffs the air and looks directly at you. #line:bear_hide_fail
         <<set $bear_fight to true>>
     <<endif>>
 -> Watch and wait. #line:bear_opt_wait
@@ -57,11 +57,11 @@ speaker: dm
 <<set $hunting to false>>
 <<if $fight == "won">>
     <<set $bear_won to true>>
-    Tobias comes running up just as the bear falls. He has a pitchfork in hand, brandishing it before him. #line:bear_won_tobias
+    Tobias comes running up just as the wolf falls. He has a pitchfork in hand, brandishing it before him. #line:bear_won_tobias
     What's going on? #line:bear_won_whats_going_on #speaker:tobias
-    Tobias stops short and slowly lowers his pitchfork as he sees the dead bear. #line:bear_won_lowers
+    Tobias stops short and slowly lowers his pitchfork as he sees the dead wolf. #line:bear_won_lowers
     You did it! You took it down! Here, I owe you. That beast won't be troubling us anymore. #line:bear_won_thanks #speaker:tobias
-    Tobias hands you a healing potion. You add it to your supplies and help him get the bear onto the makeshift cart Tobias had made out of a wheelbarrow and some wood. #line:bear_won_potion
+    Tobias hands you a healing potion. You add it to your supplies and help him get the wolf onto the makeshift cart Tobias had made out of a wheelbarrow and some wood. #line:bear_won_potion
     <<give potion_of_healing 1>>
     Together you bring the meat back to the village and deposit the bounty by the inn's kitchen door. #line:bear_won_meat
     Maisie comes running out and exclaims in glee at the sight. She tells you to head inside and she'll take it from here. #line:bear_won_maisie

@@ -47,10 +47,10 @@ dialogue.dm.line.the_feast.banquet_whistle,You make it out to the cold night air
 dialogue.dm.line.the_feast.bear_fled_cart,Tobias is pulling a makeshift cart made out of a wheelbarrow and some wood. He tells you to hop in and he'll pull you back to the inn since he's heading there anyway.
 dialogue.dm.line.the_feast.bear_fled_road,You flee back to the road and almost run into Tobias.
 dialogue.dm.line.the_feast.bear_from_clearing,The rustling seems to be coming from the direction of a small clearing you passed earlier while you were looking for game.
-dialogue.dm.line.the_feast.bear_hide_fail,The rustling gets louder as something approaches. A large bear comes into sight from behind a tree. He sniffs the air and looks directly at you.
-dialogue.dm.line.the_feast.bear_hide_pass,The rustling gets louder as something approaches. A large bear comes into sight from behind a tree.
+dialogue.dm.line.the_feast.bear_hide_fail,The rustling gets louder as something approaches. A large wolf comes into sight from behind a tree. He sniffs the air and looks directly at you.
+dialogue.dm.line.the_feast.bear_hide_pass,The rustling gets louder as something approaches. A large wolf comes into sight from behind a tree.
 dialogue.dm.line.the_feast.bear_investigate_fail,The rustling gets louder as you come to a small clearing. You look around as you enter the clearing but don't see anything. A loud roar comes from directly behind you.
-dialogue.dm.line.the_feast.bear_investigate_pass,The rustling gets louder as you come to a small clearing. A bear is rooting through the underbrush. He looks up as you approach.
+dialogue.dm.line.the_feast.bear_investigate_pass,The rustling gets louder as you come to a small clearing. A wolf is rooting through the underbrush. He looks up as you approach.
 dialogue.dm.line.the_feast.bear_lost_cart,He steadies and guides you into a makeshift cart he made out of a wheelbarrow and some wood. He tells you he'll pull you back to the inn since he's heading there anyway.
 dialogue.dm.line.the_feast.bear_lost_wake,Tobias shakes you awake some time later and helps you sit up.
 dialogue.dm.line.the_feast.bear_opt_attack,Attack.
@@ -59,14 +59,14 @@ dialogue.dm.line.the_feast.bear_opt_investigate,Investigate the noise.
 dialogue.dm.line.the_feast.bear_opt_stay_hidden,Stay hidden.
 dialogue.dm.line.the_feast.bear_opt_wait,Watch and wait.
 dialogue.dm.line.the_feast.bear_rustling,"As the sun touches the horizon, you hear a rustling from the trees. It seems to be coming from the direction of a small clearing you passed earlier in your search."
-dialogue.dm.line.the_feast.bear_search,You search the woods for the bear that's been causing trouble on the farm.
-dialogue.dm.line.the_feast.bear_stayed_hidden,"The bear snuffles along the edge of the pond, then lumbers back into the trees. You wait until the rustling has faded completely before you head back to the village. It will be back, and so can you."
-dialogue.dm.line.the_feast.bear_won_lowers,Tobias stops short and slowly lowers his pitchfork as he sees the dead bear.
+dialogue.dm.line.the_feast.bear_search,You search the woods for the wolf that's been causing trouble on the farm.
+dialogue.dm.line.the_feast.bear_stayed_hidden,"The wolf snuffles along the edge of the pond, then lumbers back into the trees. You wait until the rustling has faded completely before you head back to the village. It will be back, and so can you."
+dialogue.dm.line.the_feast.bear_won_lowers,Tobias stops short and slowly lowers his pitchfork as he sees the dead wolf.
 dialogue.dm.line.the_feast.bear_won_maisie,Maisie comes running out and exclaims in glee at the sight. She tells you to head inside and she'll take it from here.
 dialogue.dm.line.the_feast.bear_won_meat,Together you bring the meat back to the village and deposit the bounty by the inn's kitchen door.
-dialogue.dm.line.the_feast.bear_won_potion,Tobias hands you a healing potion. You add it to your supplies and help him get the bear onto the makeshift cart Tobias had made out of a wheelbarrow and some wood.
+dialogue.dm.line.the_feast.bear_won_potion,Tobias hands you a healing potion. You add it to your supplies and help him get the wolf onto the makeshift cart Tobias had made out of a wheelbarrow and some wood.
 dialogue.dm.line.the_feast.bear_won_roast,The next day you come in to the inn to the delicious smell of roasting meat. Maisie has a huge smile on her face as she approaches with a heaping platter of meat.
-dialogue.dm.line.the_feast.bear_won_tobias,"Tobias comes running up just as the bear falls. He has a pitchfork in hand, brandishing it before him."
+dialogue.dm.line.the_feast.bear_won_tobias,"Tobias comes running up just as the wolf falls. He has a pitchfork in hand, brandishing it before him."
 dialogue.dm.line.the_feast.done_boy_pig,"A boy comes running out of the kitchen leading a pig, loudly announcing that he got her."
 dialogue.dm.line.the_feast.done_hester,"Hester comes out from the kitchen, wiping her hands on her apron. She checks the boar on the spit and declares that it's done."
 dialogue.dm.line.the_feast.done_spit,Barnaby and Grist each grab an end of the spit and carry boar and spit out the back gate. Both are grinning ear to ear as they pass you.
@@ -285,12 +285,12 @@ dialogue.dm.line.the_feast.village_ask,What would you like to do before the cele
 dialogue.dm.line.the_feast.village_days,The days leading up to Lord Percival's grand celebration pass slowly. The collectors have stopped coming to Briarwood. There's little enough left for them to take.
 dialogue.dm.line.the_feast.village_explore,"With no pressing obligations before the celebration begins, you decide to spend some time exploring the village and surrounding countryside."
 dialogue.dm.line.the_feast.village_farm_after_bear,"Tobias waves from the roof of the barn, a hammer in one hand. Her Royal Hoggness's empty pen still has fresh straw in it."
-dialogue.dm.line.the_feast.village_farm_again,Tobias looks up from a fence post the bear knocked over in the night.
+dialogue.dm.line.the_feast.village_farm_again,Tobias looks up from a fence post the wolf knocked over in the night.
 dialogue.dm.line.the_feast.village_farm_hammer,The sound of a hammer rings out as you approach the farmhouse. You go around to the back of the house where the banging is coming from.
-dialogue.dm.line.the_feast.village_farm_opt_bear,"""I'll take care of your bear."""
+dialogue.dm.line.the_feast.village_farm_opt_bear,"""I'll take care of your wolf."""
 dialogue.dm.line.the_feast.village_farm_opt_later,Not right now.
-dialogue.dm.line.the_feast.village_farm_repairs,"As you help Tobias with that and a couple of other repairs, he tells you about the bear that keeps coming onto the farm and causing damage."
-dialogue.dm.line.the_feast.village_farm_repairs_after,"You help Tobias with that and a couple of other repairs. He talks about the bear the whole time, and how glad he is it won't be back."
+dialogue.dm.line.the_feast.village_farm_repairs,"As you help Tobias with that and a couple of other repairs, he tells you about the wolf that keeps coming onto the farm and causing damage."
+dialogue.dm.line.the_feast.village_farm_repairs_after,"You help Tobias with that and a couple of other repairs. He talks about the wolf the whole time, and how glad he is it won't be back."
 dialogue.dm.line.the_feast.village_grim,Life in the village continues as best it can. Every once in a while someone mentions the upcoming celebration with a grim face.
 dialogue.dm.line.the_feast.village_inn_abel,"Abel is behind the bar, polishing a tankard that looks perfectly clean already."
 dialogue.dm.line.the_feast.village_inn_again,"Abel is still behind the bar, polishing the same perfectly clean tankard."
@@ -407,11 +407,11 @@ dialogue.tobias.line.the_feast.race_lap3_tobias,Her Royal Hoggness?
 dialogue.tobias.line.the_feast.race_lost_backup,At least we have a backup plan. Kitchen help it is.
 dialogue.tobias.line.the_feast.the_meeting_10,Probably an adventurer.
 dialogue.tobias.line.the_feast.the_meeting_5,Probably for my prized sow. He took her too. Didn't give me a choice.
-dialogue.tobias.line.the_feast.village_farm_any_luck,Any luck with that bear?
-dialogue.tobias.line.the_feast.village_farm_ask,"Even the bears don't have food, I guess. Any chance I can convince you to take the bear out? The wife got me a healing potion just in case it gets me. You can have it if you take down the bear."
+dialogue.tobias.line.the_feast.village_farm_any_luck,Any luck with that wolf?
+dialogue.tobias.line.the_feast.village_farm_ask,"Even the wolves don't have food, I guess. Any chance I can convince you to take the wolf out? The wife got me a healing potion just in case it gets me. You can have it if you take down the wolf."
 dialogue.tobias.line.the_feast.village_farm_shutter,Great! Hold this shutter in place while I re-attach the hinges.
 encounter.set_pieces.line.kitchen_guards,Two of his lordship's guards.
 encounter.set_pieces.line.kitchen_hound,One of the largest hounds you've ever seen.
 encounter.set_pieces.line.mill_collectors,Rufus Pickle and his partner draw their blades.
-encounter.set_pieces.line.pond_bear,"A bear, as hungry as everyone else this winter."
+encounter.set_pieces.line.pond_bear,"A wolf, as hungry as everyone else this winter."
 quest.the_feast.the_meeting.title,The Feast
